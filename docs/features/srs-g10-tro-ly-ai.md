@@ -1,4 +1,4 @@
-> **Mã:** PLN-SRS-G10-WEB · **Trạng thái:** nháp · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g10-tro-ly-ai.md
+> **Mã:** PLN-SRS-G10-WEB · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g10-tro-ly-ai.md
 
 # UC-G10 - Trợ lý AI trên Web / App (ứng dụng lập kế hoạch ngày)
 
@@ -54,7 +54,7 @@
 | BR-16 | **Tắt AI.** Tắt "Trợ lý" → ẩn nút ✨, không gọi LLM cho chat, Planning Agent và highlights (kể cả job 17:00); `aiConsentAt` giữ nguyên. Planning Agent cần thêm Beta bật. Gợi ý planned / channel có cài đặt riêng (G02) |
 | BR-17 | **Chế độ chỉ đọc (QC-09, Q8).** Workspace chỉ đọc → \[AiGateway\] không gọi AI cho mọi tính năng, kể cả job highlights; khung chat hiện MSG-12, ô nhập disabled; "Plan my day" disabled. Đề xuất `CHO_DUYET` không áp dụng được (402) |
 | BR-18 | **Bộ đánh giá.** ≥ 200 câu Việt / Anh; đạt ≥ 95% tổng `[giả định]` và 100% nhóm "rào chắn", "ngày giờ" và "lệnh ẩn trong dữ liệu" (Q21); nhóm "ngày giờ" chứa mọi dòng của bảng ví dụ QC-01 làm ca chuẩn (C33); chạy trước mỗi lần đổi model hoặc prompt; không đạt → chặn phát hành cấu hình đó |
-| BR-19 | **Đồng ý dùng AI (Q21, ADR-0003).** `ai.assistantEnabled` mặc định `false` với mọi người dùng. Lần đầu bật (✨, "Plan my day", "Soạn bằng AI", toggle "Trợ lý") khi `aiConsentAt` trống → mở **SCR-10**; "Đồng ý và bật" lưu `aiConsentAt` (thời điểm server nhận) và `aiConsentVersion`, bật trợ lý, tiếp tục thao tác đang dở; "Để sau" → không đổi gì. Khi `aiConsentAt` trống, \[AiGateway\] từ chối mọi lời gọi với `AI_CONSENT_REQUIRED`, kể cả job `ai.highlights.draft`. Bật lại sau khi tắt không hỏi lại `[giả định]` |
+| BR-19 | **Đồng ý dùng AI (Q21, ADR-0003).** `ai.assistantEnabled` mặc định `false` với mọi người dùng. Lần đầu bật (✨, "Plan my day", "Soạn bằng AI", toggle "Trợ lý") khi `aiConsentAt` trống → mở **SCR-10**; "Đồng ý và bật" lưu `aiConsentAt` (thời điểm server nhận) và `aiConsentVersion`, bật trợ lý, tiếp tục thao tác đang dở; "Để sau" → không đổi gì. Khi `aiConsentAt` trống, \[AiGateway\] từ chối mọi lời gọi với `AI_CONSENT_REQUIRED`, kể cả job `ai.highlights.draft`. Bật lại sau khi tắt không hỏi lại `[giả định]`. **Rút lại đồng ý** (G01 BR-23c giao cho G10, C5): "Rút lại đồng ý dùng AI" ở SCR-09 → xoá `aiConsentAt`, tắt trợ lý, huỷ lượt đang chạy, đóng đề xuất `CHO_DUYET`; lần bật sau phải qua SCR-10. Lịch sử chat có bị xoá khi rút lại không: `[giả định: giữ, người dùng tự xoá]`. Mọi lần đồng ý / rút lại ghi nhật ký bảo mật G01 BR-21 |
 | BR-20 | **Dữ liệu tích hợp trong ngữ cảnh AI (Q21).** Cài đặt `ai.useIntegrationData` mặc định `false`. `false` → \[AiGateway\] không đưa item, tiêu đề item hay \[IntegrationActivity\] của G11 vào bất kỳ ngữ cảnh nào (chat, Planning Agent, highlights). `true` → được đưa vào; lượt có dữ liệu này gắn `hasExternalData = true` và theo BR-06 |
 | BR-21 | **Áp dụng đề xuất (C31).** \[ProposalApply\] kiểm `version` từng task: task đã đổi sau khi đề xuất, hoặc thay đổi có giờ bắt đầu đã qua, hoặc ngày < hôm nay → chỉ loại dòng đó (`SKIPPED_STALE` / `SKIPPED_PAST`), các dòng khác vẫn áp dụng; báo MSG-19. Mọi dòng bị loại → đề xuất giữ `CHO_DUYET`, MSG-15 kèm "Lập lại"; "Lập lại" vì lỗi thời không trừ lượt. Đề xuất `CHO_DUYET` hết hạn ở mốc đầu ngày của ngày làm việc kế tiếp (cuối ngày làm việc tạo đề xuất) → `DA_HOAN_TAC` (`expired = true`) |
 | BR-22 | **Hạn mức (C32, QC-10).** Ba bộ đếm riêng theo ngày làm việc: tin nhắn chat, lượt Planning Agent, lượt "Soạn bằng AI" / "Soạn lại" highlights do người dùng bấm. Con số đọc từ bảng quyền theo gói của G12, không viết cứng. Lượt kết thúc `LOI` không trừ; "Lập lại" vì đề xuất lỗi thời không trừ (BR-21); lượt người dùng bấm "Dừng" có trừ `[giả định]`. Job nháp 17:00 không trừ `[giả định]`. Hết lượt → `AI_QUOTA_EXCEEDED`, MSG-11 nêu đúng loại hạn mức |
@@ -334,6 +334,7 @@ Chuyển trạng thái: `DANG_XU_LY` → `CHO_DUYET` | `DA_AP_DUNG` (chat ≤ 3 
 | A3 | "Xoá lịch sử trò chuyện" | Xác nhận MSG-17 → xoá mọi cuộc trò chuyện; chip cũ mất nút Hoàn tác, hoàn tác vẫn làm được từ nhật ký task |
 | A4 | Bật "Trợ lý" khi `aiConsentAt` trống | Toggle chưa đổi; mở UC-09; đồng ý → toggle bật |
 | A5 | Bật / tắt "Dùng dữ liệu từ công cụ đã kết nối" | Lưu `ai.useIntegrationData`; áp dụng từ lượt AI kế tiếp. Tắt khi có đề xuất `CHO_DUYET` có `hasExternalData` → đề xuất giữ nguyên, người dùng vẫn duyệt / huỷ được `[giả định]` |
+| A6 | "Rút lại đồng ý dùng AI" (SCR-09 #11) | Xác nhận MSG-23 → \[AiConsent\] `DELETE`; xoá `aiConsentAt`, `ai.assistantEnabled = false`; huỷ lượt `DANG_XU_LY`, đề xuất `CHO_DUYET` → `DA_HOAN_TAC`; thay đổi đã áp dụng giữ nguyên, vẫn hoàn tác được từ nhật ký task (BR-19) |
 
 ### UC-08 Chạy bộ đánh giá trước khi đổi model / prompt
 
@@ -508,6 +509,7 @@ Hai chế độ (BR-06): **Đã áp dụng** (mặc định, Q31) và **Chờ du
 | 8 | Beta → Agentic Daily Planning | Toggle | – | Ở nhóm Beta; mặc định tắt `[giả định]` |
 | 9 | Dùng dữ liệu từ công cụ đã kết nối | Toggle | – | Mặc định tắt (BR-20); disabled khi #1 tắt; mô tả MSG-20 |
 | 10 | Thời điểm đồng ý | Text | – | "Bạn đã đồng ý dùng AI lúc {ngày giờ}"; ẩn khi chưa đồng ý |
+| 11 | Rút lại đồng ý dùng AI | Button nguy hiểm | – | Hiện khi đã đồng ý; xác nhận MSG-23 → UC-07 A6 |
 
 ### SCR-10 Đồng ý dùng AI (dialog)
 
@@ -528,7 +530,7 @@ Hai chế độ (BR-06): **Đã áp dụng** (mặc định, Q31) và **Chờ du
 | \[AgentPlanStart\] `POST /ai/planning/{date}/runs` | focusText, context (BR-03), Idempotency-Key | proposalId, status `DANG_XU_LY` | 5s nhận yêu cầu / không retry; bước đầu ≤ 10s, tổng ≤ 5 phút (BR-09) |
 | \[ProposalGet\] `GET /ai/proposals/{id}` | id | Proposal: status, hasExternalData, expiresAt, steps[], changes[] (type, taskId, field, before, after, baseVersion, status), modelVersion | 5s / 2 lần; realtime `ai.proposal.updated` là kênh chính |
 | \[ProposalApply\] `POST /ai/proposals/{id}/apply` | changeIds[], Idempotency-Key | Proposal, tasks[], skipped[] {changeId, reason: `SKIPPED_STALE` \| `SKIPPED_PAST`} | 10s / 2 lần cùng key; kiểm `baseVersion` từng task, chỉ loại dòng lỗi thời (BR-21); dùng chung cho áp dụng ngay (server tự gọi) và áp dụng sau duyệt |
-| \[AiConsent\] `POST /ai/consent` | consentVersion | aiConsentAt, aiConsentVersion, Settings | 5s / 2 lần |
+| \[AiConsent\] `POST /ai/consent` · `DELETE /ai/consent` (rút lại) | consentVersion | aiConsentAt, aiConsentVersion, Settings | 5s / 2 lần |
 | \[ProposalReject\] `POST /ai/proposals/{id}/reject` | id, reason? | Proposal `DA_HOAN_TAC` | 5s / 2 lần |
 | \[ProposalUndo\] `POST /ai/proposals/{id}/undo` | changeIds[], resolutions[] {changeId, keep: user\|before} | Proposal, tasks[], conflicts[] (nếu chưa có resolutions) | 5s / 2 lần |
 | \[ChatThreadList\] / \[ChatThreadCreate\] / \[ChatThreadDelete\] `GET/POST/DELETE /ai/chat/threads` | cursor, limit / – / id | Thread[] / Thread | 5s / 1 lần |
@@ -540,7 +542,7 @@ Hai chế độ (BR-06): **Đã áp dụng** (mặc định, Q31) và **Chờ du
 | \[TaskFromItem\] (G11) | integrationId, externalId, startDate, actor = `ai`, proposalId | Task + TaskLink, hoặc 409 `ALREADY_LINKED` {taskId} | Theo G11 (BR-24) |
 | \[EvalRun\] (nội bộ CI) | configVersion, datasetVersion | passRate, theo nhóm, câu sai[] | 30 phút / chạy lại câu lỗi 2 lần |
 | \[AppConfig\] | – | Ngưỡng BR-06, BR-09 | Cache 1h |
-| \[Entitlements\] (G12, QC-10) | – | Hạn mức chat / agent / soạn lại highlights theo gói (BR-22) | Cache theo G12 |
+| \[BillingGet\] `entitlements` (G12 BR-24, QC-10) | – | Hạn mức chat / agent / soạn lại highlights theo gói (BR-22) | Cache theo G12 |
 
 Job: `ai.highlights.draft` (mỗi 15 phút quét người dùng vừa tới 17:00 T2–T6, chỉ người dùng có `aiConsentAt`, trợ lý bật, workspace không chỉ đọc; idempotent theo user + ngày), `ai.proposal.expire` (đóng `CHO_DUYET` khi tới mốc đầu ngày của ngày làm việc kế tiếp, BR-21), `ai.history.purgeIntegration` (theo `integration.disconnected` của G11, BR-23). Realtime mới: `ai.proposal.updated` `[giả định]`.
 
@@ -590,6 +592,7 @@ Job: `ai.highlights.draft` (mỗi 15 phút quét người dùng vừa tới 17:0
 | MSG-20 | Inline SCR-01 / SCR-09 | Khi bật, AI đọc tiêu đề việc từ Gmail, Jira, Notion. Mọi thay đổi AI đề xuất từ dữ liệu này đều chờ bạn duyệt |
 | MSG-21 | Khung chat / lịch sử | Nội dung từ {công cụ} đã được xoá khi bạn ngắt kết nối |
 | MSG-22 | SCR-03 / SCR-05 | Cần bạn duyệt vì {kế hoạch / yêu cầu} dùng dữ liệu từ {công cụ} |
+| MSG-23 | Dialog SCR-09 | Rút lại đồng ý? Trợ lý AI sẽ tắt và không gửi dữ liệu cho nhà cung cấp AI nữa. Thay đổi AI đã làm vẫn giữ nguyên |
 
 Bản EN: `[chờ bổ sung]`.
 

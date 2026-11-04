@@ -1,4 +1,4 @@
-> **Mã:** PLN-PRD-G11 · **Trạng thái:** nháp · **Người viết:** Tan Ho (soạn cùng Claude) · **SRS:** srs-g11-tich-hop.md
+> **Mã:** PLN-PRD-G11 · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **SRS:** srs-g11-tich-hop.md
 
 # PRD Tích hợp công cụ trên Web / App (ứng dụng lập kế hoạch ngày)
 
@@ -231,7 +231,7 @@ AC05: Planning Agent (G10) tạo task từ item cũng đi qua cùng cơ chế; i
 
 User Story: Là Linh, tôi muốn thấy issue Jira và email cần trả lời ngay trong bước Thêm task của Daily planning, để lập kế hoạch sáng mà không phải mở panel riêng.
 
-AC01: Bước "Thêm task cho hôm nay" của Daily planning (G08) có tab "Tích hợp" cạnh Lịch và Backlog, hiện khi có ≥ 1 tích hợp đã kết nối (C34).
+AC01: Bước "Thêm task cho hôm nay" của Daily planning (G08) có tab "Tích hợp" cạnh Lịch và Backlog từ bản 1.1 (C34).
 
 AC02: Tab liệt kê item theo từng nguồn (chọn nguồn bằng chip), cùng dữ liệu và dấu "Đã lên kế hoạch · {ngày}" như panel tích hợp.
 

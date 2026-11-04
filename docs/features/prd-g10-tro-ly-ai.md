@@ -1,4 +1,4 @@
-> **Mã:** PLN-PRD-G10 · **Trạng thái:** nháp · **Người viết:** Tan Ho (soạn cùng Claude) · **SRS:** srs-g10-tro-ly-ai.md
+> **Mã:** PLN-PRD-G10 · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **SRS:** srs-g10-tro-ly-ai.md
 
 # PRD Trợ lý AI trên Web / App (ứng dụng lập kế hoạch ngày)
 
@@ -310,6 +310,8 @@ AC03: "Đồng ý và bật" → lưu thời điểm đồng ý, bật trợ lý
 AC04: Trước khi có thời điểm đồng ý, server từ chối mọi lời gọi AI của người dùng đó, kể cả job highlights 17:00 (Q21, ADR-0003).
 
 AC05: Cài đặt → AI hiện "Bạn đã đồng ý lúc {ngày giờ}". Tắt trợ lý sau đó → ngừng mọi lời gọi AI; bật lại không hỏi lại `[giả định]`.
+
+AC06: Cài đặt → AI có "Rút lại đồng ý dùng AI": xác nhận → xoá thời điểm đồng ý, tắt trợ lý, huỷ lượt đang chạy và đề xuất chờ duyệt; thay đổi AI đã áp dụng giữ nguyên; lần bật sau phải đồng ý lại (C5, G01 giao phần đồng ý AI cho G10).
 
 ### US6.2 Bật riêng dữ liệu từ công cụ đã kết nối
 

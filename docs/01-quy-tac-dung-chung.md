@@ -46,7 +46,7 @@ Bảng ví dụ dùng làm ca kiểm thử chuẩn (cả cho bộ đánh giá AI
 | Thời điểm | Hôm nay | Ngày mai | Ghi chú |
 |---|---|---|---|
 | 03/11 23:30 | 03/11 | 04/11 | |
-| 04/11 02:10 | 03/11 | 04/11 | AI hỏi lại khi người dùng nói "ngày mai" (G10 BR-05): "Thứ Ba 4/11 hay Thứ Tư 5/11?" |
+| 04/11 02:10 | 03/11 | 04/11 | AI hỏi lại khi người dùng nói "ngày mai" (G10 BR-05): "Thứ Tư 4/11 hay Thứ Năm 5/11?" |
 | 04/11 04:00 | 04/11 | 05/11 | Rollover cho ngày 03/11 chạy từ thời điểm này |
 | 04/11 02:00, đổi mốc sang 00:00 | 03/11 | 04/11 | Mốc mới có hiệu lực từ ngày làm việc 04/11 |
 | Bay sang Paris (UTC+1) lúc 04/11 20:00 giờ VN | 04/11 | 05/11 | Task giữ nguyên ngày; timebox 23:30 giờ VN hiện 17:30 giờ Paris |
@@ -198,7 +198,7 @@ Lượt AI bị lỗi không trừ vào hạn mức. "Lập lại" do đề xu�
 | EC-14 | Sự kiện timebox bị dời ở lịch ngoài | G05 |
 | EC-15 | Mất kết nối lịch (token lỗi / bị thu hồi) | G05 |
 | EC-16 | Timebox chồng với sự kiện bận | G05 |
-| EC-17 | Sự kiện free / cả ngày không chặn thời gian | G05 |
+| EC-17 | Sự kiện free, đã từ chối hoặc cả ngày không chặn thời gian | G05 |
 | EC-18 | Hết khe trống trong ngày | G04, G05 |
 | EC-19 | Item nguồn không còn hoặc mất quyền xem; task không bị xoá | G11 |
 | EC-20 | Kéo một item nhiều lần chỉ tạo một task | G11 |
@@ -217,7 +217,7 @@ Lượt AI bị lỗi không trừ vào hạn mức. "Lập lại" do đề xu�
 | EC-34 | Hết hạn gói giữa một thao tác | G12, QC-09 |
 | EC-35 | Webhook thanh toán tới trùng | G12 |
 | EC-36 | Chủ sở hữu duy nhất xoá tài khoản khi còn thành viên | G01, G12 |
-| EC-37 | Thay đổi AI ảnh hưởng > 3 task cần xác nhận | G10 |
+| EC-37 | Thay đổi AI ảnh hưởng > 3 task cần xác nhận (trừ Planning Agent không dùng dữ liệu tích hợp, Q31) | G10 |
 | EC-38 | Hoàn tác AI không xoá phần người dùng đã sửa | G10 |
 | EC-39 | AI lỗi thì chuyển sang luồng thủ công | G10 |
 | EC-40 | Ngày có rất nhiều task (500) | G04 |
