@@ -1,10 +1,10 @@
 > **Mã:** PLN-SRS-G09-WEB · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g09-weekly-objective.md
 
-# UC-G09 - Weekly planning, Weekly review, objective & analytics trên Web / App (ứng dụng lập kế hoạch ngày)
+# UC-G09 - Weekly planning, Weekly review, objective & analytics (ứng dụng lập kế hoạch ngày)
 
 > **Bản nháp.** Giá trị `[giả định]` cần BA / PO xác nhận. SRS này chỉ mô tả Weekly review, Weekly planning, objective tuần, gắn task với objective, Analytics và recap tuần qua email (bản 1.1). Khung wizard, task ghi chép ritual, chia sẻ kết quả và job nhắc ritual dùng lại của G08; task (G02), task lặp (G03), board và khối lượng (G04), backlog (G06), thời gian thực tế (G07), tóm tắt AI (G10), Slack / Teams (G11), kênh thông báo, huỷ nhận và chế độ chỉ đọc (G12) đặc tả ở SRS riêng. API objective, analytics, recap chưa có trong tài liệu "Thiết kế kỹ thuật & đặc tả API — MVP 1.0" (thuộc 1.1); đường dẫn dưới đây là đề xuất `[giả định]`.
 >
-> Đã sửa theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). Quy tắc dùng chung (`QC-xx`) xem [`docs/01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); thuật ngữ xem [`CONTEXT.md`](../../CONTEXT.md). Mọi "ngày" là ngày làm việc (QC-01); các ngày hiển thị trong tuần lấy từ lịch làm việc (QC-02); thời gian thực tế theo QC-07. Điểm mở rộng G08 dành cho G09: G08 BR-25.
+> Đã sửa theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). Quy tắc dùng chung (`QC-xx`) xem [`docs/01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); thuật ngữ xem [`CONTEXT.md`](../../CONTEXT.md). Mọi "ngày" là ngày làm việc (QC-01); các ngày hiển thị trong tuần, ngày làm việc đầu / cuối tuần và giờ gửi recap lấy từ **lịch chung** (QC-02 mục 8), không theo khung giờ channel; thời gian thực tế theo QC-07. Điểm mở rộng G08 dành cho G09: G08 BR-25.
 
 ## 1. Tổng quan
 
@@ -13,8 +13,8 @@
 | Mục tiêu | Người dùng đặt objective tuần, xếp việc vào các ngày, nhìn lại tuần bằng số liệu thời gian thật và nhận recap tuần mà không phải tự viết báo cáo |
 | Actor | Người dùng đã đăng nhập · Hệ thống · Job \[ritual.prompt\] (G08), \[analytics.aggregate\], \[weekly.recap.send\], \[objective.close\] · Dịch vụ gửi email · Người nhận email |
 | Phạm vi | Weekly review 3 bước, Weekly planning 4 bước, gộp review vào planning, tự kích hoạt ritual tuần, objective (tạo, sửa, đạt, chuyển tuần, xoá), gắn task, Analytics tuần + CSV, recap tuần qua email (Beta), Cài đặt → Ritual (phần tuần) |
-| Ngoài phạm vi | Daily planning / shutdown và chia sẻ (G08); tóm tắt tuần bằng AI (G10, 1.2); analytics nâng cao, analytics nhóm (sau 1.2); objective tháng / quý |
-| Nền tảng | Web, App iOS / Android, desktop (bản 1.1) |
+| Ngoài phạm vi | Daily planning / shutdown và chia sẻ (G08); tóm tắt tuần bằng AI (G10; trợ lý AI qua Claude Code CLI có từ 1.0, không có hạn mức theo gói — QC-12, Q46; tóm tắt tuần chưa đặc tả); analytics nâng cao, analytics nhóm (sau 1.2); objective tháng / quý |
+| Nền tảng | Bản 1.1: app Windows, web, macOS; iOS / Android từ 1.2, dùng cùng đặc tả (Q45, ADR-0005). Kênh nhắc ritual tuần theo G12; ở app Windows là thông báo Windows và thông báo trong app. Chi tiết kỹ thuật: tech chốt — `docs/tech/` |
 | Figma | `[chưa có]` |
 
 ## 2. User Story
@@ -34,15 +34,15 @@
 
 | **Mã** | **Quy tắc** |
 | --- | --- |
-| BR-01 | **Tuần** gồm 7 ngày liên tiếp, mỗi ngày tính theo ngày làm việc (QC-01, mốc đầu ngày 04:00), bắt đầu từ ngày đầu tuần trong cài đặt (mặc định Thứ Hai, G01). Mã tuần `weekStart` = ngày đầu tuần. **Ngày làm việc của tuần** = các ngày trong tuần thuộc lịch làm việc (QC-02, mặc định Thứ Hai–Thứ Sáu); **ngày làm việc đầu / cuối tuần** = ngày đầu / cuối trong số đó |
+| BR-01 | **Tuần** gồm 7 ngày liên tiếp, mỗi ngày tính theo ngày làm việc (QC-01, mốc đầu ngày 04:00), bắt đầu từ ngày đầu tuần trong cài đặt (mặc định Thứ Hai, G01). Mã tuần `weekStart` = ngày đầu tuần. **Ngày làm việc của tuần** = các ngày trong tuần thuộc **lịch chung** (QC-02 mục 1, 8; mặc định Thứ Hai–Thứ Sáu); khung giờ channel (QC-02 mục 5) không thêm ngày làm việc cho tuần; **ngày làm việc đầu / cuối tuần** = ngày đầu / cuối trong số đó |
 | BR-02 | **Phiên ritual tuần** dùng bảng `ritual_sessions` của G08 với `type` = `weekly_planning` / `weekly_review`, `date = weekStart`; UNIQUE(user, type, date). Lưu tiến độ, thoát / mở lại, ẩn bước, Hoàn tác như G08 |
 | BR-03 | **Tự kích hoạt** mỗi loại tối đa 1 lần / tuần: Weekly planning khi ≥ ngày giờ planning (mặc định Thứ Hai 08:00), Weekly review khi ≥ ngày giờ review (mặc định Thứ Sáu 15:00); phiên tuần đó `CHUA_BAT_DAU`, `autoPromptedAt` trống. Bỏ lỡ nhiều tuần → chỉ xét tuần hiện tại (như EC-27). Bật "Gộp review vào planning" → không nhắc Weekly review riêng `[giả định]` |
 | BR-04 | **Trùng Daily planning** (điểm mở rộng G08 BR-25 mục d). Ngày Weekly planning tự mở mà Daily planning hôm nay chưa `HOAN_TAT` → Weekly planning chạy trước; Done → mở Daily planning (G08) ngay; Daily planning không tự mở thêm lần nữa trong ngày |
 | BR-05 | **Cửa sổ review.** Weekly review tuần W mở được từ ngày đầu tuần W đến hết ngày cuối tuần W; sau đó `QUA_HAN`. **Gộp review vào planning (C25):** bật và review W−1 chưa `HOAN_TAT` → bước 1–2 của review W−1 (SCR-02, SCR-03) chèn **trước bước 1** của Weekly planning W; không có bước Chia sẻ riêng của review; một bước Chia sẻ duy nhất ở cuối (BR-26). Hoàn tất ghi phiên `weekly_review` W−1 và `weekly_planning` W, mỗi phiên một task ghi chép |
-| BR-06 | **What got done** dùng định nghĩa BR-17: cột giờ thực tế cho từng ngày làm việc của tuần (BR-01, QC-02); bật "Gồm ngày nghỉ" → hiện đủ 7 ngày; donut phân bổ theo channel, tối đa 6 lát + "Khác" `[giả định]` |
+| BR-06 | **What got done** dùng định nghĩa BR-17: cột giờ thực tế cho từng ngày làm việc của tuần theo lịch chung (BR-01, QC-02 mục 8); bật "Gồm ngày nghỉ" → hiện đủ 7 ngày; donut phân bổ theo channel, tối đa 6 lát + "Khác" `[giả định]` |
 | BR-07 | **Đã xong tuần này / Đã xong tuần trước**: sinh sẵn danh sách task xong trong tuần (trừ task ghi chép ritual, G08 BR-27), mỗi dòng "- {tiêu đề}", nhóm theo channel; sửa tay; 0–10.000 ký tự `[giả định]`. "Làm mới" khi đã sửa → hỏi MSG-23 |
 | BR-08 | **Rà soát objective** (review W, hoặc nhóm "Từ tuần trước" trong planning W+1): mỗi objective `DANG_MO` của tuần W có 3 thao tác: Đạt → `DAT`; Chuyển sang tuần sau (BR-16); Để lại (giữ `DANG_MO`, chỉ chuyển `KHONG_DAT` theo BR-24). Áp ngay, có Hoàn tác |
-| BR-09 | **Xếp việc vào tuần** (planning): trái = bucket backlog "Tuần tới" (G06); phải = một cột cho mỗi ngày làm việc của tuần (QC-02); ngày nghỉ hiện thu gọn, mở được `[giả định]`. Kéo vào cột → ngày dự định theo QC-05 dòng "Kéo sang ngày khác, chọn ngày" (G06 \[TaskMove\]); chỉ thả vào ngày ≥ hôm nay. Mỗi cột hiện tổng planned, quá tải theo G04 → MSG-24 |
+| BR-09 | **Xếp việc vào tuần** (planning): trái = bucket backlog "Tuần tới" (G06); phải = một cột cho mỗi ngày làm việc của tuần theo lịch chung (BR-01, QC-02 mục 8); ngày nghỉ của lịch chung hiện thu gọn, mở được (để xếp task của channel có khung giờ vào ngày đó) `[giả định]`. Kéo vào cột → ngày dự định theo QC-05 dòng "Kéo sang ngày khác, chọn ngày" (G06 \[TaskMove\]); chỉ thả vào ngày ≥ hôm nay. Mỗi cột hiện tổng planned, quá tải theo G04 → MSG-24 |
 | BR-10 | **Kế hoạch tuần này**: objective của W theo thứ tự, dưới mỗi objective là task gắn có `startDate` trong W ("{tiêu đề} ({planned})"); task không gắn ở nhóm "Việc khác"; kèm "Đã xong tuần trước" (BR-07 cho W−1). Sửa tay; giới hạn như BR-07 |
 | BR-11 | **Hoàn tất ritual tuần** theo BR-11 – BR-14, BR-22, BR-26, BR-27 của G08: task ghi chép "Weekly planning" / "Weekly review" đã xong, ngày dự định = ngày làm việc của thời điểm hoàn tất (QC-01) `[giả định]`, channel cho task ritual, notes = nội dung chốt; bản ghi thời gian `ritual` ≤ 120 phút, chỉ khi không có timer đang chạy (QC-07); chia sẻ theo G08. Không hoàn tất không tạo task (EC-26). Weekly planning W hoàn tất → kích hoạt BR-24 cho objective W−1 |
 | BR-12 | **Objective**: mô tả 1–200 ký tự (cắt khoảng trắng hai đầu); `weekStart` từ tuần hiện tại đến 12 tuần tới `[giả định]`; channel tuỳ chọn; tối đa 20 objective `DANG_MO` + `DAT` / tuần / người dùng; `position` kéo đổi được. Tuần đã qua chỉ xem |
@@ -50,14 +50,14 @@
 | BR-14 | **Tiến độ objective (C26)** luôn hiện cả hai số: (1) **% giờ** = Σ planned task xong gắn / Σ planned task gắn, chỉ trên task có planned; Σ planned = 0 → hiện "—"; (2) **x/y task** = số task gắn đã xong / số task gắn (mọi task, kể cả chưa ước lượng). Dạng hiển thị "{p}% giờ · {x}/{y} task"; kèm tổng planned "h:mm" (kiểm chứng "1:00"). Tiến độ 100% không tự chuyển `DAT`. **Cố định khi đóng:** objective chuyển sang `DAT`, `KHONG_DAT` hoặc `DA_CHUYEN` → lưu `progressSnapshot` (p, x, y, tổng planned, thời điểm); mọi thay đổi task sau đó (xong muộn, dời tuần, xoá) không đổi số đã cố định. `DAT` → `DANG_MO` (bỏ đạt) thì bỏ snapshot, tính lại |
 | BR-15 | **Biến task thành objective**: tạo objective mô tả = tiêu đề task (cắt 200 ký tự), tuần của task (BR-13), channel của task; gắn task vào objective mới |
 | BR-16 | **Chuyển sang tuần sau**: tạo objective mới ở W+1 (`carriedFromId`), objective cũ → `DA_CHUYEN`; task chưa xong gắn chuyển sang objective mới, task xong ở lại `[giả định]`. W+1 đã đủ 20 → MSG-04 |
-| BR-17 | **Định nghĩa analytics** (dùng chung trang Analytics, What got done, recap). G09 là nơi duy nhất cộng số liệu theo ngày / tuần (QC-07 mục 5). Mọi "ngày d" là ngày làm việc (QC-01). (a) Giờ thực tế ngày d = Σ bản ghi thời gian (mọi `source`, kể cả `ritual`) có ngày làm việc của `startedAt` = d, không chia khi vắt mốc (QC-07 mục 1) + planned của task hoàn thành trong d có cờ `plannedAsActual` và **không có bản ghi nào** (QC-07 mục 4–5). Planned chỉ được cộng theo nhánh thứ hai, không bao giờ cộng thêm vào task đã có bản ghi. Giá trị `plannedAsActual` lấy từ task (chốt lúc hoàn thành), không đọc cài đặt hiện tại. Bản ghi của task đã xoá không tính. (b) Phân bổ channel = (a) theo channel của task; lọc context = channel thuộc context đó. (c) Tỉ lệ hoàn thành task đã lên kế hoạch = task trong ảnh chụp kế hoạch ngày d xong trong d / task trong ảnh chụp; ảnh chụp = `planSnapshot` lần đầu do G08 lưu khi hoàn tất Daily planning d (G08 BR-11, B12); không có Daily planning → ảnh chụp lúc 12:00 `[giả định]`. (d) Độ lệch = (Σ actual − Σ planned) / Σ planned trên task xong có cả hai, %; actual theo QC-07 mục 5. (e) Ngày vượt ngưỡng = ngày có cờ quá tải trong ảnh chụp. (f) Chuỗi = số ngày làm việc (QC-02) liên tiếp có Daily planning đã hoàn tất (`firstCompletedAt` có giá trị, G08 BR-22) tính tới cuối tuần đang xem; ngày nghỉ không làm đứt chuỗi `[giả định]`. Task ghi chép ritual tính vào (a), (b) qua bản ghi thời gian; không tính vào mọi phép đếm task (C21, G08 BR-27) |
+| BR-17 | **Định nghĩa analytics** (dùng chung trang Analytics, What got done, recap). G09 là nơi duy nhất cộng số liệu theo ngày / tuần (QC-07 mục 5). Mọi "ngày d" là ngày làm việc (QC-01). (a) Giờ thực tế ngày d = Σ bản ghi thời gian (mọi `source`, kể cả `ritual`) có ngày làm việc của `startedAt` = d, không chia khi vắt mốc (QC-07 mục 1) + planned của task hoàn thành trong d có cờ `plannedAsActual` và **không có bản ghi nào** (QC-07 mục 4–5). Planned chỉ được cộng theo nhánh thứ hai, không bao giờ cộng thêm vào task đã có bản ghi. Giá trị `plannedAsActual` lấy từ task (chốt lúc hoàn thành), không đọc cài đặt hiện tại. Bản ghi của task đã xoá không tính. (b) Phân bổ channel = (a) theo channel của task; lọc context = channel thuộc context đó. (c) Tỉ lệ hoàn thành task đã lên kế hoạch = task trong ảnh chụp kế hoạch ngày d xong trong d / task trong ảnh chụp; ảnh chụp = `planSnapshot` lần đầu do G08 lưu khi hoàn tất Daily planning d (G08 BR-11, B12); không có Daily planning → ảnh chụp lúc 12:00 `[giả định]`. (d) Độ lệch = (Σ actual − Σ planned) / Σ planned trên task xong có cả hai, %; actual theo QC-07 mục 5. (e) Ngày vượt ngưỡng = ngày có cờ quá tải trong ảnh chụp. (f) Chuỗi = số ngày làm việc theo lịch chung (QC-02 mục 8) liên tiếp có Daily planning đã hoàn tất (`firstCompletedAt` có giá trị, G08 BR-22) tính tới cuối tuần đang xem; ngày nghỉ không làm đứt chuỗi `[giả định]`. Task ghi chép ritual tính vào (a), (b) qua bản ghi thời gian; không tính vào mọi phép đếm task (C21, G08 BR-27) |
 | BR-18 | **Ít dữ liệu**: tuần có < 3 task xong có bản ghi thời gian `[giả định]`, không tính task ghi chép ritual (C21) → MSG-09; vẫn hiện số |
 | BR-19 | **Cập nhật** số liệu tuần hiện tại ≤ 15 phút (job \[analytics.aggregate\] tổng hợp theo ngày, chỉ tính lại ngày có thay đổi). Sửa bản ghi thời gian / task của tuần cũ → tính lại tuần đó; objective đã đóng giữ số đã cố định (BR-14). Hiện "Cập nhật lúc" (MSG-10) |
 | BR-20 | **CSV**: tuần và bộ lọc đang xem; UTF-8 có BOM; mỗi dòng (ngày, channel): ngày, channel, context, giờ thực tế, giờ planned, task xong, task trong snapshot, task snapshot đã xong, vượt ngưỡng (có / không), Daily planning hoàn tất (có / không) |
-| BR-21 | **Recap tuần (Beta)**: gửi tại **mốc đầu ngày của ngày sau ngày làm việc cuối tuần** (Q19, QC-01, QC-02) theo timezone người dùng, cho tuần vừa xong. Ví dụ lịch T2–T6, mốc 04:00 → Thứ Bảy 04:00; lịch T2–T7 → Chủ Nhật 04:00. Nội dung: tổng giờ, giờ theo ngày làm việc, top 5 channel, objective + tiến độ (BR-14), số task xong (trừ task ghi chép ritual), 10 task xong đầu tiên. Người nhận: chính người dùng (bật mặc định `[giả định]`) + tối đa 5 email. Tuần không có task xong và không có bản ghi thời gian → không gửi. Idempotent theo (user, weekStart, người nhận) |
+| BR-21 | **Recap tuần (Beta)**: gửi tại **mốc đầu ngày của ngày sau ngày làm việc cuối tuần** theo lịch chung (Q19, QC-01, QC-02 mục 8) theo timezone người dùng, cho tuần vừa xong. Ví dụ lịch T2–T6, mốc 04:00 → Thứ Bảy 04:00; lịch T2–T7 → Chủ Nhật 04:00. Nội dung: tổng giờ, giờ theo ngày làm việc, top 5 channel, objective + tiến độ (BR-14), số task xong (trừ task ghi chép ritual), 10 task xong đầu tiên. Người nhận: chính người dùng (bật mặc định `[giả định]`) + tối đa 5 email. Tuần không có task xong và không có bản ghi thời gian → không gửi. Idempotent theo (user, weekStart, người nhận) |
 | BR-22 | **Riêng tư**: analytics chỉ dữ liệu của chính người dùng. Bản recap / chia sẻ gửi người khác không chứa task ở channel private; tên task riêng tư chỉ có trong bản gửi chính người dùng |
 | BR-23 | **Chỉ đọc (bản 1.1, QC-09)**: vẫn xem analytics, tải CSV; không tạo / sửa objective, không mở phiên ritual mới; phiên đang `DANG_LAM` được hoàn tất trong 2 giờ (QC-09, EC-34); recap vẫn gửi `[giả định]`. Job đóng objective (BR-24) dừng trong thời gian đóng băng, chạy bù một lần khi thoát |
-| BR-24 | **Đóng objective tuần (B13).** Objective `DANG_MO` của tuần W chuyển `KHONG_DAT` (lưu `progressSnapshot`, BR-14) tại thời điểm **sớm hơn** trong hai mốc: (1) Weekly planning tuần W+1 `HOAN_TAT`; (2) hết ngày làm việc đầu tiên của W+1 (mốc đầu ngày của ngày kế sau nó, QC-01, QC-02). Trước đó objective vẫn `DANG_MO`, hiện ở nhóm "Từ tuần trước" của Weekly planning W+1 và nhận được Đạt / Chuyển sang tuần này / Để lại. Job \[objective.close\] chạy mỗi 15 phút `[giả định]`; idempotent |
+| BR-24 | **Đóng objective tuần (B13).** Objective `DANG_MO` của tuần W chuyển `KHONG_DAT` (lưu `progressSnapshot`, BR-14) tại thời điểm **sớm hơn** trong hai mốc: (1) Weekly planning tuần W+1 `HOAN_TAT`; (2) hết ngày làm việc đầu tiên của W+1 theo lịch chung (mốc đầu ngày của ngày kế sau nó, QC-01, QC-02 mục 8). Trước đó objective vẫn `DANG_MO`, hiện ở nhóm "Từ tuần trước" của Weekly planning W+1 và nhận được Đạt / Chuyển sang tuần này / Để lại. Job \[objective.close\] chạy mỗi 15 phút `[giả định]`; idempotent |
 | BR-25 | **Gắn cho cả series (C26).** Task là instance lặp: menu "Gắn với objective" có tuỳ chọn "Gắn cho cả series". Chọn → mọi instance của series có ngày dự định trong tuần của objective, kể cả instance sinh sau, được gắn objective đó `[giả định — phạm vi trong tuần của objective]`; instance ngoài tuần không gắn. Bỏ gắn trên một instance chỉ áp cho instance đó. G03 sao chép `objectiveId` khi sinh instance thuộc phạm vi này |
 | BR-26 | **Chia sẻ khi gộp review vào planning (C25).** Bước Chia sẻ duy nhất (SCR-08) xem trước và gửi **một** email cho mỗi đích, nội dung gồm hai phần: review W−1 (tổng giờ, "Đã xong tuần này", rà soát objective) rồi kế hoạch W (SCR-07). Task ghi chép "Weekly review" (W−1) lưu phần review; "Weekly planning" (W) lưu phần kế hoạch. Lựa chọn đích nhớ theo loại `weekly_planning` |
 
@@ -119,7 +119,7 @@ Chuyển: `DANG_MO` ⇄ `DAT` (UC-03 A3, UC-01 bước 6, UC-02 A2) · `DANG_MO`
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | A1 | Phiên `DANG_LAM` / `HOAN_TAT` | Như G08 UC-01 A1 / A2 |
-| A2 | Bật "Gồm ngày nghỉ" | Biểu đồ và danh sách hiện đủ 7 ngày, gồm ngày không thuộc lịch làm việc (BR-06) |
+| A2 | Bật "Gồm ngày nghỉ" | Biểu đồ và danh sách hiện đủ 7 ngày, gồm ngày không thuộc lịch chung (BR-06) |
 | A3 | Tuần W không có objective | Cột phải MSG-08, nút "Thêm objective cho tuần sau" → SCR-10 với W+1 |
 | A4 | Bấm "Tự động hoá" (Automate) ở footer | Mở SCR-14 `[giả định]` |
 | A5 | Esc / × giữa chừng | Lưu tiến độ, không tạo task ghi chép (EC-26) |
@@ -270,7 +270,7 @@ Chuyển: `DANG_MO` ⇄ `DAT` (UC-03 A3, UC-01 bước 6, UC-02 A2) · `DANG_MO`
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
 | 1 | Người dùng | Menu workspace → Analytics (**SCR-12**) |
-| 2 | Hệ thống | Gọi \[AnalyticsWeekly\] tuần trước, context "Tổng", "Gồm ngày nghỉ" tắt (chỉ ngày trong lịch làm việc, QC-02); hiện MSG-10 |
+| 2 | Hệ thống | Gọi \[AnalyticsWeekly\] tuần trước, context "Tổng", "Gồm ngày nghỉ" tắt (chỉ ngày trong lịch chung, QC-02 mục 8); hiện MSG-10 |
 | 3 | Người dùng | Đổi tuần ‹ ›, bật / tắt "Gồm ngày nghỉ", chọn context |
 | 4 | Hệ thống | Tải lại theo BR-17; ít dữ liệu → MSG-09 (BR-18) |
 | 5 | Người dùng | Bấm "Tải xuống" |
@@ -318,7 +318,7 @@ Chuyển: `DANG_MO` ⇄ `DAT` (UC-03 A3, UC-01 bước 6, UC-02 A2) · `DANG_MO`
 | A2 | Bấm "Gửi thử cho tôi" | \[RecapTest\] gửi recap tuần gần nhất cho chính người dùng; toast MSG-16 |
 | A3 | Người nhận bấm "Huỷ nhận" | Gỡ khỏi danh sách (G12); SCR-14 hiện nhãn "Đã huỷ nhận" |
 | A4 | Đổi timezone / mốc đầu ngày trong tuần | Có hiệu lực từ ngày làm việc kế tiếp (QC-01 mục 3); giờ gửi tính theo cài đặt đang hiệu lực tại ngày gửi |
-| A5 | Đổi lịch làm việc trong tuần (G01) | Giờ gửi tính lại theo lịch làm việc mới cho tuần hiện tại nếu chưa gửi `[giả định]`; không gửi hai lần cho cùng tuần (idempotent BR-21) |
+| A5 | Đổi lịch chung trong tuần (G01; đổi khung giờ channel không ảnh hưởng) | Giờ gửi tính lại theo lịch chung mới cho tuần hiện tại nếu chưa gửi `[giả định]`; không gửi hai lần cho cùng tuần (idempotent BR-21) |
 
 **Luồng lỗi**
 
@@ -365,19 +365,19 @@ Chuyển: `DANG_MO` ⇄ `DAT` (UC-03 A3, UC-01 bước 6, UC-02 A2) · `DANG_MO`
 
 ## 6. Điểm vào
 
-| **Điểm vào** | **Web** | **App** | **Ghi chú** |
+| **Điểm vào** | **App Windows, web, macOS (1.1)** | **iOS / Android (1.2)** | **Ghi chú** |
 | --- | --- | --- | --- |
 | Sidebar / command menu "Weekly planning", "Weekly review" | ✓ | ✓ | Tuần hiện tại |
-| Tự mở / thông báo ritual tuần | ✓ | ✓ | UC-07 |
-| Shift+R, panel phải → Objectives | ✓ | ✓ (desktop) | SCR-09 |
-| Phím R / $ trên task, menu … → "Gắn với objective" | ✓ | ✓ | SCR-11 |
+| Tự mở / thông báo ritual tuần | ✓ (app Windows: thông báo Windows + thông báo trong app) | ✓ | UC-07; kênh theo G12 |
+| Shift+R, panel phải → Objectives | ✓ | – (mở từ menu) | SCR-09 |
+| Phím R / $ trên task, menu … → "Gắn với objective" | ✓ | ✓ (menu) | SCR-11 |
 | Menu workspace → Analytics | ✓ | ✓ | SCR-12 |
-| Email recap → "Mở Analytics" | ✓ | ✓ | Deep link tới tuần của recap |
+| Email recap → "Mở Analytics" | ✓ | ✓ | Deep link tới tuần của recap; cách mở app từ link: tech chốt — `docs/tech/` |
 | Cài đặt → Ritual (tuần) / Thông báo → Recap tuần | ✓ | ✓ | SCR-14 |
 
 ## 7. Mô tả màn hình
 
-Ánh xạ bước → màn hình: Weekly review bước 1–3 = SCR-02, SCR-03, SCR-04; Weekly planning bước 1–4 = SCR-05, SCR-06, SCR-07, SCR-08. Mọi bước nằm trong khung SCR-01. Mobile: hai cột của một bước chuyển thành hai tab.
+Ánh xạ bước → màn hình: Weekly review bước 1–3 = SCR-02, SCR-03, SCR-04; Weekly planning bước 1–4 = SCR-05, SCR-06, SCR-07, SCR-08. Mọi bước nằm trong khung SCR-01. Di động (1.2) và cửa sổ hẹp: hai cột của một bước chuyển thành hai tab.
 
 ### SCR-01 Khung wizard ritual tuần
 
@@ -391,7 +391,7 @@ Chuyển: `DANG_MO` ⇄ `DAT` (UC-03 A3, UC-01 bước 6, UC-02 A2) · `DANG_MO`
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
-| 1 | "Năng suất theo ngày" | Biểu đồ cột | Giờ thực tế từng ngày làm việc của tuần theo lịch làm việc (đủ 7 ngày nếu bật "Gồm ngày nghỉ", BR-06); tooltip số giờ |
+| 1 | "Năng suất theo ngày" | Biểu đồ cột | Giờ thực tế từng ngày làm việc của tuần theo lịch chung (QC-02 mục 8; đủ 7 ngày nếu bật "Gồm ngày nghỉ", BR-06); tooltip số giờ |
 | 2 | "Thời gian đã dành cho" | Donut | Theo channel, màu channel, ≤ 6 lát + "Khác"; kèm bảng số |
 | 3 | Tổng tuần | Số lớn | "h:mm" thực tế · số task xong |
 | 4 | Cảnh báo | Banner | MSG-09 / MSG-27 |
@@ -425,7 +425,7 @@ Chuyển: `DANG_MO` ⇄ `DAT` (UC-03 A3, UC-01 bước 6, UC-02 A2) · `DANG_MO`
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
 | 1 | Backlog "Tuần tới" | List (trái) | Task bucket "Tuần tới" (G06); rỗng → MSG-20 |
-| 2 | Cột ngày | Board (phải) | Một cột cho mỗi ngày làm việc theo lịch làm việc (QC-02); ngày nghỉ thu gọn `[giả định]`; tổng planned mỗi cột; ngày đã qua mờ |
+| 2 | Cột ngày | Board (phải) | Một cột cho mỗi ngày làm việc theo lịch chung (QC-02 mục 8); ngày nghỉ của lịch chung thu gọn `[giả định]`; tổng planned mỗi cột; ngày đã qua mờ |
 | 3 | Kéo thả / menu "Chuyển tới ngày…" | Action | \[TaskMove\]; quá tải → MSG-24 |
 | 4 | Icon objective trên card | Icon | R / $ mở SCR-11 |
 
@@ -479,7 +479,7 @@ Chuyển: `DANG_MO` ⇄ `DAT` (UC-03 A3, UC-01 bước 6, UC-02 A2) · `DANG_MO`
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
 | 1 | Chọn tuần | Header + ‹ › | Mặc định "Tuần trước {ngày} – {ngày}" |
-| 2 | "Gồm ngày nghỉ" (Sunsama: "Weekends") | Toggle | Mặc định tắt: chỉ ngày trong lịch làm việc (QC-02); bật: đủ 7 ngày |
+| 2 | "Gồm ngày nghỉ" (Sunsama: "Weekends") | Toggle | Mặc định tắt: chỉ ngày trong lịch chung (QC-02 mục 8); bật: đủ 7 ngày |
 | 3 | Bộ lọc context | Segmented | Tổng / personal / work / context khác |
 | 4 | Tổng tuần | Thẻ số | Giờ thực tế, giờ planned, task xong, tỉ lệ hoàn thành task đã lên kế hoạch, độ lệch, ngày vượt ngưỡng, chuỗi Daily planning (BR-17) |
 | 5 | Giờ theo ngày | Biểu đồ cột | Tooltip A2 UC-05 |

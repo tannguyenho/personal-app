@@ -1,16 +1,16 @@
 > **Mã:** PLN-PRD-G08 · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **SRS:** srs-g08-daily-rituals.md
 
-# PRD Daily planning & Daily shutdown trên Web / App (ứng dụng lập kế hoạch ngày)
+# PRD Daily planning & Daily shutdown (ứng dụng lập kế hoạch ngày)
 
 > **Bản nháp.** Con số đánh dấu `[giả định]` dùng để dựng flow, cần PO xác nhận trước khi dùng. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026: bản Daily plan liệt kê cả task đã xong hôm nay; hoàn tất ritual tạo task "Daily planning" đã xong ở #work, notes chứa bản kế hoạch, có thời gian thực tế; mở task này hiện "Use keyboard shortcut P to enter daily planning". Thứ tự 6 bước Daily planning lấy từ help center Sunsama (luồng thủ công, bản Legacy). **Các bước chi tiết của Daily shutdown trên Sunsama chưa kiểm chứng**; luồng shutdown trong tài liệu này là đề xuất, cần kiểm chứng trước khi chốt thiết kế. Chỗ khác Sunsama có chủ đích được ghi rõ.
 >
-> Đã sửa theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). Quy tắc dùng chung (`QC-xx`) xem [`docs/01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md): ngày làm việc (QC-01), lịch làm việc (QC-02), số ngày bị hoãn (QC-04), đổi ngày task (QC-05), instance trùng series (QC-06), bản ghi thời gian (QC-07), chế độ chỉ đọc (QC-09, bản 1.1). Thuật ngữ xem [`CONTEXT.md`](../../CONTEXT.md).
+> Đã sửa theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). Quy tắc dùng chung (`QC-xx`) xem [`docs/01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md): ngày làm việc (QC-01), lịch làm việc và khung giờ channel (QC-02), số ngày bị hoãn (QC-04), đổi ngày task (QC-05), instance trùng series (QC-06), bản ghi thời gian (QC-07), chế độ chỉ đọc (QC-09, bản 1.1), trợ lý AI qua Claude Code CLI (QC-12). Thuật ngữ xem [`CONTEXT.md`](../../CONTEXT.md).
 
 # 1. Bối cảnh và vấn đề
 
 ## 1.1 Bối cảnh
 
-Ritual là vòng lặp tạo khác biệt của sản phẩm: mở đầu ngày bằng Daily planning, kết thúc ngày bằng Daily shutdown. Nhóm G08 lo hai ritual ngày theo luồng thủ công và việc chia sẻ kết quả ritual (bản kế hoạch, highlights). Ritual không có dữ liệu riêng về công việc: nó dẫn người dùng qua task (G02), board và khối lượng ngày (G04), lịch và timebox (G05), backlog và rollover (G06), thời gian thực tế (G07). Planning Agent và highlights do AI soạn thuộc G10 (1.2); Weekly planning / Weekly review thuộc G09 (1.1).
+Ritual là vòng lặp tạo khác biệt của sản phẩm: mở đầu ngày bằng Daily planning, kết thúc ngày bằng Daily shutdown. Nhóm G08 lo hai ritual ngày theo luồng thủ công và việc chia sẻ kết quả ritual (bản kế hoạch, highlights). Ritual không có dữ liệu riêng về công việc: nó dẫn người dùng qua task (G02), board và khối lượng ngày (G04), lịch và timebox (G05), backlog và rollover (G06), thời gian thực tế (G07). Planning Agent và highlights do AI soạn thuộc G10, có từ **1.0** qua Claude Code CLI khi người dùng bật trợ lý AI (QC-12, Q46); Weekly planning / Weekly review thuộc G09 (1.1).
 
 ## 1.2 Vấn đề
 
@@ -43,10 +43,11 @@ Ritual là vòng lặp tạo khác biệt của sản phẩm: mở đầu ngày 
 
 ## 3.1 Trong phạm vi (MVP)
 
-- Nền tảng: Web (desktop, mobile web). App iOS / Android và desktop dùng cùng đặc tả từ bản 1.1.
+- Nền tảng (Q45, ADR-0005): bản 1.0 là app Windows; web và macOS từ 1.1; iOS / Android từ 1.2, dùng cùng đặc tả. Nhắc ritual ở 1.0 bằng thông báo Windows và thông báo trong app (kênh theo G12).
 - Daily planning thủ công 6 bước: Xem lại hôm qua → Thêm task cho hôm nay → Kiểm tra khối lượng → Chốt → Daily plan → Chia sẻ.
-- Daily shutdown 5 bước (đề xuất, chưa kiểm chứng): Việc đã xong → Xử lý task chưa xong → Highlights (biên tập tay) → Chia sẻ → Hoàn tất.
-- Tự kích hoạt Daily planning tối đa 1 lần / ngày; nhắc Daily shutdown theo giờ; chỉ vào ngày làm việc theo lịch làm việc (QC-02).
+- Daily shutdown 5 bước (đề xuất, chưa kiểm chứng): Việc đã xong → Xử lý task chưa xong → Highlights (biên tập tay; khi trợ lý AI bật thì điền sẵn nháp AI do G10 soạn) → Chia sẻ → Hoàn tất.
+- Tự kích hoạt Daily planning tối đa 1 lần / ngày; nhắc Daily shutdown theo giờ; chỉ vào ngày làm việc theo **lịch chung** (QC-02 mục 8). Khung giờ channel không làm ritual mở thêm vào ngày nghỉ của lịch chung.
+- Nút "Hoàn tác kế hoạch AI" ở bước Daily plan (1.0, chỉ hiện khi trợ lý AI bật và Planning Agent đã áp dụng kế hoạch cho ngày đó).
 - Lưu tiến độ ritual: thoát giữa chừng, mở lại về đúng bước đang làm. Ritual vắt qua mốc đầu ngày được hoàn tất cho ngày cũ trong 2 giờ.
 - Task ghi chép ritual (đã xong) tạo khi hoàn tất: notes chứa nội dung ritual, thời gian thực tế = thời gian làm ritual (chỉ khi không có timer đang chạy, QC-07).
 - Lưu ảnh chụp kế hoạch khi hoàn tất Daily planning (task, planned, quá tải, thời gian trống) để G09 tính analytics từ dữ liệu bản 1.0.
@@ -55,11 +56,11 @@ Ritual là vòng lặp tạo khác biệt của sản phẩm: mở đầu ngày 
 
 ## 3.2 Ngoài phạm vi
 
-- Planning Agent ("Agentic Daily Planning") và highlights do AI soạn → G10 (1.2). Planning Agent áp dụng ngay; G08 chỉ đặt nút "Hoàn tác kế hoạch AI" ở bước Daily plan (1.2).
+- Planning Agent ("Agentic Daily Planning") và highlights do AI soạn → G10, có từ 1.0 qua Claude Code CLI (QC-12). Thay đổi AI áp dụng ngay, gắn chip "AI", có Hoàn tác (QC-12 mục 5); G08 chỉ đặt nút "Hoàn tác kế hoạch AI" ở bước Daily plan và chỗ nhận nháp highlights ở bước Highlights. Máy chưa có Claude Code hoặc trợ lý AI tắt → ritual chạy đủ luồng thủ công (QC-12 mục 2).
 - Weekly planning, Weekly review, objective tuần → G09 (1.1). Ở 1.0, nguồn "Objective tuần" trong bước Thêm task bị ẩn. G08 khai báo trước điểm mở rộng cho G09 (SRS BR-25).
 - Đích chia sẻ Slack / Microsoft Teams → G11 (1.2). Tab Tích hợp trong bước Thêm task và kéo item vào Backlog → G11 đặc tả (1.1).
 - Chế độ chỉ đọc → bản 1.1 (QC-09). Bản 1.0 miễn phí, gắn nhãn Beta.
-- Câu hỏi "Bạn theo dõi công việc ở đâu?" (Sunsama: "Where do you keep track of your work?") để lấy hoạt động từ công cụ nguồn cho highlights → G10 / G11 (1.2).
+- Câu hỏi "Bạn theo dõi công việc ở đâu?" (Sunsama: "Where do you keep track of your work?") để lấy hoạt động từ công cụ nguồn cho highlights → G10 / G11 (cần tích hợp của G11, từ 1.1; dữ liệu tích hợp chỉ vào ngữ cảnh AI khi bật công tắc riêng, QC-12 mục 6).
 - Rollover và backlog → G06; timebox → G05; projection và cảnh báo khối lượng → G04; timer → G07. G08 chỉ gọi lại các hành vi này bên trong ritual.
 
 # 4. Nguyên tắc sản phẩm
@@ -70,7 +71,7 @@ Mọi bước có ← / → và bỏ qua được; "Bỏ qua bước này từ l
 
 ## 4.2 Nhắc một lần là đủ
 
-Daily planning tự mở tối đa 1 lần / ngày. Vắng nhiều ngày chỉ nhắc ngày hiện tại, không bắt làm bù ngày cũ (EC-27). Không nhắc, không tự mở vào ngày nghỉ theo lịch làm việc (QC-02), sau giờ shutdown, hoặc khi shutdown hôm nay đã hoàn tất.
+Daily planning tự mở tối đa 1 lần / ngày. Vắng nhiều ngày chỉ nhắc ngày hiện tại, không bắt làm bù ngày cũ (EC-27). Không nhắc, không tự mở vào ngày nghỉ theo lịch chung (QC-02 mục 8), sau giờ shutdown, hoặc khi shutdown hôm nay đã hoàn tất.
 
 ## 4.3 Chỉ ghi khi hoàn tất
 
@@ -88,7 +89,7 @@ Bản kế hoạch / highlights chỉ gửi đi khi bấm "Bắt đầu ngày" h
 | Tự kích hoạt Daily planning | Bật / tắt | Bật | Tối đa 1 lần / ngày, chỉ ngày làm việc, trước giờ shutdown và khi shutdown chưa hoàn tất; vắng nhiều ngày chỉ nhắc hôm nay (EC-27) |
 | Sau khi plan đi tới | Home / Today | Home | |
 | Tự nhắc Daily shutdown | Bật / tắt | Bật | Chỉ thông báo, không tự mở `[giả định]` |
-| Giờ Daily shutdown | 00:00–23:55, bước 5 phút | Giờ kết thúc làm việc của ngày theo lịch làm việc (17:00) `[giả định]` | Cũng là "giờ kết thúc ngày" mặc định ở bước Chốt |
+| Giờ Daily shutdown | 00:00–23:55, bước 5 phút | Giờ kết thúc làm việc của ngày theo lịch chung (17:00) `[giả định]` | Cũng là "giờ kết thúc ngày" mặc định ở bước Chốt. Không đọc khung giờ channel (QC-02 mục 8) |
 | Thông điệp cuối ngày | 0–280 ký tự | "Hôm nay vậy là đủ. Hẹn gặp lại ngày mai." `[giả định]` | Hiện ở màn Hoàn tất shutdown |
 | Channel cho task ritual | Một channel của người dùng | `work` (theo kiểm chứng #work) | Channel bị xoá → về channel mặc định (G02) |
 | Ngưỡng khối lượng | 1–24 giờ | 8 giờ | Dùng chung với G04 |
@@ -99,11 +100,11 @@ Bản kế hoạch / highlights chỉ gửi đi khi bấm "Bắt đầu ngày" h
 | Đích chia sẻ | Tối đa 10 / người dùng; 20 email chia sẻ / ngày | Không có | Email ở 1.0; Slack / Teams 1.2 |
 | Thời gian ritual tính vào actual | Tối đa 120 phút / lần | | Bỏ khoảng không tương tác > 5 phút; chỉ ghi khi không có timer đang chạy (QC-07, đã chốt) |
 | Mốc đầu ngày | 00:00–06:00 | 04:00 | Đã chốt (QC-01). Xác định "hôm nay", "hôm qua" của ritual |
-| Ngày có ritual | Lịch làm việc (G01) | Thứ Hai–Thứ Sáu | Đã chốt (QC-02). Ngày nghỉ không nhắc, không tự mở; "Ngày mai" = ngày làm việc kế tiếp |
+| Ngày có ritual | Lịch chung (G01) | Thứ Hai–Thứ Sáu | Đã chốt (QC-02 mục 8). Ngày nghỉ của lịch chung không nhắc, không tự mở, kể cả khi có khung giờ channel vào ngày đó. "Ngày mai" của từng task = ngày làm việc kế tiếp **theo lịch của task** (khung giờ channel nếu có, ngược lại lịch chung; QC-02 mục 6) |
 | Ân hạn ritual vắt qua mốc đầu ngày | 2 giờ sau mốc | — | Đã chốt (Q18). Rollover chờ phiên shutdown trong khoảng này |
 
 - Các giá trị là **cấu hình hệ thống / cài đặt người dùng**, không hard-code.
-- Cài đặt ritual tuần (Thứ Hai 08:00, Thứ Sáu 15:00) → G09. Giờ nháp highlights AI (T2–T6 17:00) → G10.
+- Cài đặt ritual tuần (Thứ Hai 08:00, Thứ Sáu 15:00) → G09. Nháp highlights AI → G10: soạn vào các ngày trong lịch làm việc, tại giờ kết thúc làm việc (Q39, QC-12), chỉ khi trợ lý AI bật.
 
 # 6. Luồng trải nghiệm tổng thể
 
@@ -128,7 +129,7 @@ Bước 7 thuộc nhóm khác, chỉ nêu để thấy vị trí của G08. PRD 
 
 AC01: Mở được bằng phím P, mục "Daily planning" ở sidebar, nút "Plan" khi hover cột ngày (G04), hoặc từ lời nhắc.
 
-AC02: Tự mở lần đầu người dùng mở app sau giờ Daily planning (hoặc khi tới giờ mà app đang mở), tối đa 1 lần / ngày. Vắng nhiều ngày chỉ mở cho hôm nay (EC-27). Không tự mở khi: hôm nay là ngày nghỉ theo lịch làm việc (QC-02); đã qua giờ Daily shutdown; Daily shutdown hôm nay đã hoàn tất.
+AC02: Tự mở lần đầu người dùng mở app sau giờ Daily planning (hoặc khi tới giờ mà app đang mở), tối đa 1 lần / ngày. Vắng nhiều ngày chỉ mở cho hôm nay (EC-27). Không tự mở khi: hôm nay là ngày nghỉ theo lịch chung (QC-02 mục 8); đã qua giờ Daily shutdown; Daily shutdown hôm nay đã hoàn tất.
 
 AC03: Ritual đang làm dở → mở lại đúng bước đang làm, giữ dữ liệu đã nhập.
 
@@ -144,7 +145,7 @@ User Story: Là người dùng, tôi muốn quyết định nhanh từng việc 
 
 AC01: Liệt kê task chưa xong của ngày đang plan có số ngày bị hoãn ≥ 1 (QC-04), kèm nhãn "Dời {n} ngày". Trước khi tải, hệ thống bảo đảm rollover của người dùng đã chạy xong (API "đảm bảo rollover" của G06). Task được người dùng dời bằng "Ngày mai" ở shutdown hôm trước vẫn hiện ở đây.
 
-AC02: Mỗi task có 4 thao tác: Giữ hôm nay (mặc định), Dời (phím D / "Ngày mai" = ngày làm việc kế tiếp, không reset số ngày bị hoãn; hoặc chọn ngày, có reset), Đưa vào backlog (chọn bucket, phím Z), Đánh dấu xong (phím C; ngày hoàn thành là hôm nay theo ngày làm việc). Timebox, timer, sự kiện lịch ngoài xử lý theo QC-05.
+AC02: Mỗi task có 4 thao tác: Giữ hôm nay (mặc định), Dời (phím D / "Ngày mai" = ngày làm việc kế tiếp theo lịch của task — khung giờ channel nếu có, ngược lại lịch chung (QC-02 mục 6) — không reset số ngày bị hoãn; hoặc chọn ngày, có reset), Đưa vào backlog (chọn bucket, phím Z), Đánh dấu xong (phím C; ngày hoàn thành là hôm nay theo ngày làm việc). Timebox, timer, sự kiện lịch ngoài xử lý theo QC-05.
 
 AC03: Thao tác áp dụng ngay, có toast Hoàn tác. Instance lặp bị dời vào ngày đã có instance cùng series → QC-06.
 
@@ -162,7 +163,7 @@ AC03: Nguồn Tích hợp (G11 đặc tả, 1.1) và Objective tuần (G09, 1.1)
 
 User Story: Là Linh, tôi muốn thấy ngay ngày hôm nay còn bao nhiêu giờ trống sau khi trừ họp, để không nhận quá nhiều việc.
 
-AC01: Hiện tổng thời lượng của task chưa xong và thời gian trống **còn lại** trong giờ làm việc (đã trừ sự kiện bận; plan giữa ngày chỉ tính từ thời điểm hiện tại).
+AC01: Hiện tổng thời lượng của task chưa xong và thời gian trống **còn lại** trong ngày theo sức chứa của G04 (hợp của lịch chung và các khung giờ channel trong ngày, QC-02 mục 7; đã trừ sự kiện bận; plan giữa ngày chỉ tính từ thời điểm hiện tại).
 
 AC02: Quá tải theo định nghĩa của G04 (planned của task chưa xong > sức chứa còn lại) → tổng màu đỏ, task vượt có chấm cảnh báo "Chỉ còn X giờ trống" (giống G04).
 
@@ -192,7 +193,7 @@ AC04: Sửa tay được; "Làm mới" sinh lại, hỏi trước nếu đã s�
 
 AC05: "Đây là gì?" giải thích ngắn về bước; "Bỏ qua bước này từ lần sau" ẩn bước.
 
-AC06: Bản 1.2: Planning Agent (G10) đã áp dụng kế hoạch cho ngày này → bước có nút "Hoàn tác kế hoạch AI"; bấm sẽ trả các thay đổi của agent về như trước, giữ sửa đổi của người dùng, rồi sinh lại bản kế hoạch (hỏi trước nếu đã sửa tay).
+AC06: Bản 1.0 (Q46, QC-12): trợ lý AI đang bật và Planning Agent (G10) đã áp dụng kế hoạch cho ngày này → bước có nút "Hoàn tác kế hoạch AI"; bấm sẽ trả các thay đổi của agent về như trước, giữ sửa đổi của người dùng, rồi sinh lại bản kế hoạch (hỏi trước nếu đã sửa tay). Trợ lý AI tắt hoặc máy chưa có Claude Code → không hiện nút.
 
 ### US1.7 Ảnh chụp kế hoạch
 
@@ -226,7 +227,7 @@ AC05: Gửi lỗi không chặn hoàn tất ritual; thông báo trong app có n�
 
 AC01: Mở bằng phím O, mục "Daily shutdown" ở sidebar hoặc lời nhắc.
 
-AC02: Tới giờ shutdown của ngày làm việc → thông báo trong app (desktop 1.1: thông báo hệ thống), 1 lần / ngày; không tự mở `[giả định]`. Ngày nghỉ theo lịch làm việc không nhắc (QC-02).
+AC02: Tới giờ shutdown của ngày làm việc → thông báo Windows và thông báo trong app (bản 1.0; kênh theo G12), 1 lần / ngày; không tự mở `[giả định]`. Ngày nghỉ theo lịch chung không nhắc (QC-02 mục 8).
 
 AC03: Lời nhắc có "Bỏ qua hôm nay"; chọn thì không nhắc lại trong ngày, vẫn mở tay được.
 
@@ -240,15 +241,15 @@ AC02: Timer đang chạy → bước đầu tiên nhắc tên task và nút "D�
 
 ### US3.3 Xử lý task chưa xong
 
-AC01: Mỗi task chưa xong của hôm nay: Ngày mai (mặc định `[giả định]`; là ngày làm việc kế tiếp, ví dụ shutdown Thứ Sáu thì sang Thứ Hai), Đưa vào backlog, Đánh dấu xong.
+AC01: Mỗi task chưa xong của hôm nay: Ngày mai (mặc định `[giả định]`), Đưa vào backlog, Đánh dấu xong. "Ngày mai" là ngày làm việc kế tiếp **theo lịch của task** (QC-02 mục 6): ví dụ shutdown Thứ Sáu, task `#Công ty` (khung T2–T6) sang Thứ Hai, task `#Cá nhân` (khung T2–CN) sang Thứ Bảy; task ở channel không có khung theo lịch chung. Mỗi dòng hiện ngày đích cụ thể.
 
 AC02: Áp dụng ngay, có toast Hoàn tác. Task để "Ngày mai" **không** bị đặt lại số ngày bị hoãn (QC-04), nên vẫn hiện nhãn "Dời n ngày" và vẫn tự lưu trữ khi bị hoãn quá lâu. Timebox giữ giờ, dời sang ngày mới; timer không dừng (QC-05). Instance lặp trùng series ở ngày đích → QC-06.
 
 ### US3.4 Highlights
 
-AC01: 1.0: sinh sẵn danh sách task đã xong dạng gạch đầu dòng, người dùng sửa tay.
+AC01: Trợ lý AI tắt (hoặc máy chưa có Claude Code): sinh sẵn danh sách task đã xong dạng gạch đầu dòng, người dùng sửa tay.
 
-AC02: 1.2: AI soạn nháp từ task xong và hoạt động ở công cụ kết nối (G10).
+AC02: Từ 1.0, trợ lý AI bật (Q39, Q46, QC-12): G10 soạn nháp highlights qua Claude Code CLI vào các ngày trong lịch làm việc, tại giờ kết thúc làm việc, từ task xong (và hoạt động ở công cụ kết nối khi có tích hợp từ 1.1 và người dùng bật công tắc dữ liệu tích hợp, QC-12 mục 6). Bước Highlights điền sẵn nháp này, gắn nhãn "Nháp AI"; người dùng sửa và duyệt trước khi lưu, bản chia sẻ chỉ gửi khi bấm "Hoàn tất". Chưa có nháp (shutdown mở sớm hơn giờ soạn, AI lỗi hoặc chậm) → dùng danh sách sinh sẵn của AC01.
 
 ### US3.5 Hoàn tất
 
@@ -318,7 +319,8 @@ AC03: Bật lại bước đã ẩn từ danh sách bước đã ẩn.
 | Mốc đầu ngày | "Hôm nay", "hôm qua" của ritual phụ thuộc mốc này | Đã chốt 04:00, chỉnh 00:00–06:00 (QC-01) |
 | Hết trial giữa ritual (G12, bản 1.1) | Ritual đang làm bị chặn ghi | Theo QC-09: phiên đang làm được hoàn tất, kể cả thao tác task bên trong, trong 2 giờ (EC-34) |
 | G09 cần dữ liệu từ 1.0 | Analytics 1.1 cần kế hoạch từng ngày | Lưu ảnh chụp kế hoạch ngay từ 1.0 (US1.7) |
-| Planning Agent áp dụng ngay (G10, 1.2) | Kế hoạch bị AI đổi mà người dùng không duyệt trước | Nút "Hoàn tác kế hoạch AI" ở bước Daily plan; kế hoạch dùng dữ liệu tích hợp vẫn chờ duyệt |
+| Planning Agent áp dụng ngay (G10, 1.0 qua Claude Code CLI, QC-12) | Kế hoạch bị AI đổi mà người dùng không duyệt trước | Nút "Hoàn tác kế hoạch AI" ở bước Daily plan (chỉ khi trợ lý AI bật); phiên AI đã bật đọc dữ liệu tích hợp thì mọi thay đổi trong phiên đó chờ duyệt (QC-12 mục 6) |
+| Không có Claude Code trên máy (QC-12 mục 2) | Một phần người dùng không có nháp highlights, Planning Agent | Ritual luôn chạy đủ luồng thủ công; tính năng AI ẩn, thay bằng hướng dẫn cài Claude Code |
 
 # 10. Câu hỏi mở
 
@@ -331,7 +333,10 @@ AC03: Bật lại bước đã ẩn từ danh sách bước đã ẩn.
 - Gửi email tới địa chỉ ngoài workspace có cần người nhận xác nhận lần đầu không?
 - Đã chốt 04/11/2026: task tạo từ sự kiện lịch dùng timebox liên kết sự kiện, không trừ thời gian trống hai lần (B8).
 - Bucket backlog nào được coi là "tới kỳ" để hiện ở bước Thêm task (G06)?
-- Đã chốt 04/11/2026: shutdown "Ngày mai" = ngày làm việc kế tiếp, không reset số ngày bị hoãn, không dừng timer, timebox giữ giờ (Q5, Q14, Q19; QC-02, QC-04, QC-05).
+- Đã chốt 04/11/2026: shutdown "Ngày mai" = ngày làm việc kế tiếp, không reset số ngày bị hoãn, không dừng timer, timebox giữ giờ (Q5, Q14, Q19; QC-02, QC-04, QC-05). "Ngày làm việc kế tiếp" tính theo lịch của task: khung giờ channel nếu có, ngược lại lịch chung (Q38a, QC-02 mục 6).
+- Đã chốt 04/11/2026: ritual ngày (tự mở, nhắc, giờ shutdown mặc định) theo lịch chung, không theo khung giờ channel (Q38a, QC-02 mục 8).
+- Đã chốt 04/11/2026: trợ lý AI có từ 1.0 qua Claude Code CLI; nút "Hoàn tác kế hoạch AI" ở bước Daily plan thuộc 1.0, chỉ hiện khi trợ lý AI bật; highlights do AI soạn tại giờ kết thúc làm việc (Q39, Q46, QC-12).
+- Highlights AI soạn theo giờ kết thúc làm việc của lịch chung hay theo giờ Daily shutdown người dùng đã đổi? (Đề xuất: theo giờ kết thúc của lịch chung, khớp QC-02 mục 8 `[giả định]`; G10 chốt.)
 - Đã chốt 04/11/2026: ritual vắt qua mốc đầu ngày được hoàn tất cho ngày cũ trong 2 giờ; rollover chờ phiên shutdown; lên kế hoạch lại bỏ dở thì giữ bản cũ (Q18).
 - Đã chốt 04/11/2026: không cho ẩn bước Chia sẻ; shutdown có "Bỏ qua hôm nay"; G08 khai báo điểm mở rộng cho G09 (C24).
 - Lên kế hoạch lại rồi hoàn tất: analytics G09 dùng ảnh chụp lần đầu hay lần cuối? (Đề xuất: lần đầu `[giả định]`.)
