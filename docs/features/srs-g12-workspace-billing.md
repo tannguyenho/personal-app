@@ -600,7 +600,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | \[NotificationRead\] `POST /notifications/read` | ids[] \| all | unreadCount | 5s / 2 lần |
 | \[Unsubscribe\] `POST /notifications/unsubscribe` `[giả định]` | token, undo? | eventType, channel, enabled | 5s / 1 lần |
 
-Path đánh dấu `[giả định]` chưa có trong danh sách API đã chốt; cần BE xác nhận. Mọi API ghi dữ liệu nghiệp vụ khi `CHI_DOC` trả 402 `WORKSPACE_READ_ONLY` (BR-06).
+Path đánh dấu `[giả định]` chưa có trong danh sách API đã chốt; cần BE xác nhận. Mọi API ghi dữ liệu nghiệp vụ khi `CHI_DOC` trả 402 `WORKSPACE_READ_ONLY` (BR-06, QC-09). API Billing, ghế, trial chỉ có từ 1.1; ở 1.0 trả 404.
 
 **Map lỗi API → thông báo**
 
@@ -609,13 +609,16 @@ Path đánh dấu `[giả định]` chưa có trong danh sách API đã chốt; 
 | `WORKSPACE_READ_ONLY` (402) | MSG-03 |
 | `PAYMENT_CANCELLED` / `PAYMENT_FAILED` | MSG-07 |
 | `PAYMENT_GATEWAY_UNAVAILABLE` | MSG-08 |
-| `SEATS_BELOW_MEMBERS` (422) | MSG-09 |
-| `FORBIDDEN` (403, sai vai trò) | MSG-14 |
+| `SEATS_BELOW_MEMBERS` (422) | MSG-09 || `FORBIDDEN` (403, sai vai trò) | MSG-14 |
 | `INVITE_LIMIT` (422) | MSG-15 |
 | `VALIDATION_FAILED` · field email | MSG-16 |
 | `INVITE_INVALID` (404, hết hạn / thu hồi) | MSG-20 |
 | `LINK_INVITES_DISABLED` (403) | MSG-21 |
 | `INVITE_EMAIL_MISMATCH` (403) | MSG-44 |
+| `NO_SEAT_AVAILABLE` (202, lời mời `CHO_GHE`) | MSG-46 |
+| `EXISTING_WORKSPACE_BLOCKS_JOIN` (409) | MSG-47 |
+| `MOVE_DATA_CONFIRM_REQUIRED` (409) | MSG-48 |
+| `TAX_ID_INVALID` (422) | MSG-56 |
 | `OWNER_MUST_TRANSFER` (409) | MSG-25 |
 | `WORKSPACE_NAME_MISMATCH` (422) | MSG-27 |
 | `MEMBERSHIP_REVOKED` (401) | MSG-28 |
@@ -638,7 +641,7 @@ Path đánh dấu `[giả định]` chưa có trong danh sách API đã chốt; 
 | MSG-06 | Toast | Đã nâng cấp lên {gói}. Hoá đơn đã gửi tới {email} |
 | MSG-07 | Toast | Thanh toán chưa thành công hoặc đã bị huỷ · Thử lại |
 | MSG-08 | Toast | Không mở được trang thanh toán. Thử lại |
-| MSG-09 | Inline | Số ghế không được ít hơn {n} (thành viên và lời mời đang chờ) |
+| MSG-09 | Inline | Số ghế không được ít hơn {n} (số thành viên hiện tại) |
 | MSG-10 | Dialog | Kỳ này: {số tiền} cho phần còn lại tới {ngày}. Từ {ngày}: {số tiền} / {tháng / năm} |
 | MSG-11 | Toast | Đã cập nhật gói |
 | MSG-12 | Toast | Gói sẽ kết thúc ngày {ngày}. Bạn vẫn dùng đầy đủ tới lúc đó · Tiếp tục gói |
@@ -652,12 +655,12 @@ Path đánh dấu `[giả định]` chưa có trong danh sách API đã chốt; 
 | MSG-20 | SCR-13 | Lời mời đã hết hạn hoặc đã bị thu hồi. Hãy nhờ người mời gửi lại |
 | MSG-21 | SCR-13 | Workspace này đã tắt mời qua link |
 | MSG-22 | Toast | {tên} đã trở thành {vai trò} |
-| MSG-23 | Dialog | Xoá {tên} khỏi workspace? Timer đang chạy sẽ dừng, {n} task được giao chưa xong chuyển về người giao. Gói giảm 1 ghế từ kỳ sau |
+| MSG-23 | Dialog | Xoá {tên} khỏi workspace? Timer đang chạy sẽ dừng, {n} task được giao chưa xong chuyển về người giao, task cá nhân của {tên} chuyển sang workspace cá nhân mới của họ. Gói giảm 1 ghế từ kỳ sau |
 | MSG-24 | Toast | Đã xoá {tên} khỏi workspace |
 | MSG-25 | Inline | Bạn là chủ sở hữu duy nhất. Hãy chuyển quyền sở hữu trước · Chuyển quyền sở hữu |
 | MSG-26 | Toast | {tên} là chủ sở hữu mới. Bạn trở thành Quản trị |
 | MSG-27 | Inline | Gõ đúng tên workspace để xác nhận |
-| MSG-28 | Màn hình | Bạn không còn là thành viên của {workspace} |
+| MSG-28 | Màn hình | Bạn không còn là thành viên của {workspace}. Task cá nhân của bạn đã được chuyển sang workspace cá nhân mới |
 | MSG-29 | Inline SCR-08 | Workspace của bạn đang riêng tư. Chỉ dữ liệu bạn đặt "Thành viên" mới hiện với người khác |
 | MSG-30 | Toast | Nội dung này đã bị xoá hoặc bạn không còn quyền xem |
 | MSG-31 | Toast | Đã giao "{tiêu đề}" cho {tên} |
@@ -675,6 +678,17 @@ Path đánh dấu `[giả định]` chưa có trong danh sách API đã chốt; 
 | MSG-43 | Trung tâm / email | "{tiêu đề}": {n} cập nhật mới |
 | MSG-44 | SCR-13 | Lời mời này gửi tới {email}. Hãy đăng nhập bằng email đó |
 | MSG-45 | Tooltip | Task trong channel riêng tư không giao được cho người khác |
+| MSG-46 | SCR-13 | {workspace} đã hết ghế. Chúng tôi đã báo chủ sở hữu; bạn sẽ vào workspace ngay khi có ghế trống |
+| MSG-47 | SCR-13 | Bạn đang có workspace "{tên}" đang trả phí hoặc có thành viên khác. Hãy huỷ gói hoặc chuyển quyền sở hữu trước khi nhận lời mời |
+| MSG-48 | Dialog | Task cá nhân của bạn sẽ chuyển sang {workspace mời} ở chế độ "Chỉ mình tôi", workspace "{tên cũ}" sẽ bị đóng · Nhận lời mời · Huỷ |
+| MSG-49 | Trung tâm / email | {email} đã chấp nhận lời mời nhưng {workspace} đã hết ghế · Mua thêm ghế |
+| MSG-50 | Trung tâm / email | Bạn là chủ sở hữu mới của {workspace}. Hãy nhập phương thức thanh toán trước {ngày} để gói không bị gián đoạn · Cập nhật thanh toán |
+| MSG-51 | Trung tâm / email (bắt buộc) | Workspace {tên} ở chế độ chỉ đọc. Dữ liệu workspace sẽ bị xoá ngày {ngày}; tài khoản của bạn vẫn giữ. Xuất dữ liệu trước ngày đó · Xuất dữ liệu · Nâng cấp |
+| MSG-52 | Inline SCR-05 / SCR-06 | Đang dùng {x}/{y} ghế. Người chấp nhận lời mời khi hết ghế sẽ chờ tới khi bạn mua thêm ghế · Mua thêm ghế |
+| MSG-53 | Toast | Đã lưu phương thức thanh toán. Gói {gói} bắt đầu tính tiền từ {ngày kết thúc trial} |
+| MSG-54 | Trung tâm / email | Đã ghi nhận {hoàn tiền {số tiền} / tranh chấp} cho hoá đơn {số}. Trạng thái gói: {trạng thái} |
+| MSG-55 | Trung tâm / email | Bản mới đã có gói trả phí. Bạn được dùng thử miễn phí 14 ngày, tới {ngày} · Xem gói |
+| MSG-56 | Inline | Mã số thuế chưa đúng định dạng |
 
 Bản EN: `[chờ bổ sung]`.
 
@@ -683,10 +697,10 @@ Bản EN: `[chờ bổ sung]`.
 | **Mục** | **Yêu cầu** `[giả định]` |
 | --- | --- |
 | Hiệu năng | SCR-02 mở ≤ 1s; webhook xử lý xong ≤ 10s từ khi nhận; thông báo trong app tới người nhận ≤ 5s; email thông báo ≤ 2 phút (p95); \[InviteCreate\] 20 email ≤ 2s |
-| Độ tin cậy | Webhook idempotent (BR-04); đối soát trạng thái gói với cổng hằng ngày; job `billing.lifecycle` idempotent; không mất thông báo khi dịch vụ email lỗi (hàng đợi, thử lại BR-19) |
+| Độ tin cậy | Webhook idempotent (BR-04); đối soát trạng thái gói với cổng hằng ngày; job `billing.lifecycle` idempotent; job chuyển 1.0 → 1.1 (BR-23) idempotent theo workspace; không mất thông báo khi dịch vụ email lỗi (hàng đợi, thử lại BR-19); chế độ chỉ đọc đóng băng mọi job ghi theo QC-09 |
 | Offline | Billing, mời, thành viên, Privacy cần mạng; trung tâm thông báo xem bản cache, đánh dấu đã đọc xếp hàng đợi |
-| Bảo mật | Không chạm số thẻ (PCI DSS — chỉ hosted checkout của cổng); xác thực chữ ký webhook, chỉ nhận từ IP / secret của cổng; quyền vai trò (BR-01) và Privacy (BR-15) kiểm tra ở server, có kiểm thử tự động cho cả 6 loại dữ liệu; token mời và token huỷ đăng ký ngẫu nhiên ≥ 128 bit, chỉ lưu dạng băm |
-| Quyền riêng tư, tuân thủ | Product updates cần đồng ý (BR-18); hoá đơn, thuế theo quy định Việt Nam — chờ kế toán / pháp chế; nơi lưu dữ liệu — câu hỏi mở |
+| Bảo mật | Không chạm số thẻ (PCI DSS — chỉ hosted checkout của cổng); xác thực chữ ký webhook, chỉ nhận từ IP / secret của cổng; quyền vai trò (BR-01) và Privacy (BR-15) kiểm tra ở server, có kiểm thử tự động cho cả 5 loại dữ liệu và ngoại lệ giao / follow; token mời và token huỷ đăng ký ngẫu nhiên ≥ 128 bit, chỉ lưu dạng băm |
+| Quyền riêng tư, tuân thủ | Product updates cần đồng ý, rút lại được (BR-18); hoá đơn điện tử theo NĐ 123/2020/NĐ-CP, thu mã số thuế, giữ hoá đơn và chứng từ 10 năm (BR-10); hoàn tiền khi xoá tài khoản chờ pháp chế (Luật Bảo vệ quyền lợi người tiêu dùng 2023); nơi lưu dữ liệu: 1.0 máy chủ khu vực châu Á, cần hồ sơ đánh giá tác động chuyển dữ liệu ra nước ngoài (NĐ 13/2023), pháp chế xác nhận trước phát hành |
 | Log / audit | BR-21 cho mọi hành động quản trị và thanh toán, giữ ≥ 1 năm; nhật ký webhook giữ payload đã lược bỏ dữ liệu cá nhân |
-| Tracking | Sự kiện: `trial_banner_shown`, `upgrade_clicked` (nguồn), `checkout_started`, `checkout_completed` / `_failed`, `subscription_renewed` / `_retry_failed`, `workspace_read_only`, `subscription_changed`, `subscription_cancelled` / `_resumed`, `invite_sent` (số email, vai trò), `invite_accepted`, `invite_link_copied`, `member_role_changed`, `member_removed`, `ownership_transferred`, `privacy_changed` (loại dữ liệu), `task_assigned`, `task_followed`, `notification_setting_changed`, `notification_opened`, `email_unsubscribed` |
+| Tracking | Sự kiện: `trial_banner_shown`, `upgrade_clicked` (nguồn), `checkout_started`, `checkout_completed` / `_failed`, `subscription_renewed` / `_retry_failed`, `workspace_read_only`, `subscription_changed`, `subscription_cancelled` / `_resumed`, `trial_migrated_from_beta`, `subscription_refunded` / `_disputed`, `workspace_data_purged`, `invite_sent` (số email, vai trò), `invite_accepted`, `invite_waiting_seat`, `invite_blocked_existing_workspace`, `personal_data_moved` (số task), `invite_link_copied`, `member_role_changed`, `member_removed`, `ownership_transferred`, `privacy_changed` (loại dữ liệu), `task_assigned`, `task_followed`, `notification_setting_changed`, `notification_opened`, `email_unsubscribed` |
 | Accessibility | Banner có role="status" / "alert" theo mức độ; ma trận toggle SCR-10 có nhãn "{sự kiện} – {kênh}"; badge chuông đọc được số chưa đọc; điều hướng bằng bàn phím đầy đủ; tương phản đạt WCAG 2.1 AA ở cả giao diện sáng / tối |

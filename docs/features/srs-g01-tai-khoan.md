@@ -143,7 +143,7 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | --- | --- | --- |
 | A1 | `provider + sub` chưa liên kết, email chưa có tài khoản | Hiện SCR-01 rút gọn chỉ có ô đồng ý (BR-06) → bấm "Tạo tài khoản" → khởi tạo BR-05 → SCR-05 bước 1 |
 | A2 | `provider + sub` chưa liên kết, email trùng tài khoản `HOAT_DONG` có mật khẩu | Hỏi mật khẩu tài khoản hiện có (MSG-13); đúng → liên kết `provider + sub` rồi đăng nhập. Không tự liên kết theo email |
-| A3 | Từ link mời workspace (1.1) | Sau bước 5 gia nhập workspace mời (G12) |
+| A3 | Từ link mời workspace (1.1) | Sau bước 5 gia nhập workspace mời (G12 UC-04); tài khoản đã có workspace → G12 BR-25 |
 | A4 | `provider + sub` chưa liên kết, email trùng tài khoản `CHUA_XAC_MINH` | Thay thế bản ghi chưa xác minh (BR-03): huỷ mật khẩu, mã đang chờ, rồi tiếp tục như A1; ghi BR-21 |
 | A5 | Đã liên kết, email bên nhà cung cấp khác email chính trong app | Đăng nhập bình thường theo `provider + sub`; không đổi email chính |
 | A6 | `purpose=reauth` (xác nhận lại, BR-10) | Không cấp phiên mới; `provider + sub` phải khớp tài khoản đang đăng nhập → trả `reauthToken` về màn đang mở; không khớp → MSG-11 |
@@ -181,7 +181,7 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | A1 | Đăng xuất | Menu tài khoản → "Đăng xuất"; còn thay đổi chưa đồng bộ → MSG-40 ("Huỷ" giữ nguyên phiên); xác nhận → \[AuthLogout\]; xoá cookie, hàng đợi và dữ liệu offline (BR-18); về SCR-03 |
 | A2 | Tài khoản `CHUA_XAC_MINH` | Gửi mã mới (BR-03), mở SCR-02 với MSG-05 |
 | A3 | Tài khoản bật 2FA (1.1) | Sau mật khẩu đúng hỏi mã TOTP 6 số |
-| A4 | Mở từ link mời workspace (1.1) | Sau bước 3 gia nhập workspace mời (G12) |
+| A4 | Mở từ link mời workspace (1.1) | Sau bước 3 gia nhập workspace mời (G12 UC-04); đã có workspace → theo G12 BR-25 (chuyển task cá nhân hoặc chặn), hết ghế → G12 BR-27 |
 | A5 | Nhận `session.revoked` | Xoá token; **giữ** hàng đợi offline đã mã hoá, gắn `userId` (BR-18); về SCR-03 với MSG-16 |
 | A6 | Đăng nhập lại sau A5 / E4 | Đúng tài khoản có hàng đợi → gửi hàng đợi lên theo QC-08 (lệnh sửa cụm vị trí trên phiên bản cũ bị từ chối như QC-08 mục 2); khác tài khoản → hàng đợi giữ nguyên, không gửi, không hiển thị |
 

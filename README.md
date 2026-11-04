@@ -45,7 +45,7 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
 
 | Nhóm | Tính năng | Phát hành | PRD | SRS |
 |---|---|---|---|---|
-| G01 | Tài khoản, onboarding & cài đặt | 1.0 | [prd-g01](docs/features/prd-g01-tai-khoan.md) | [srs-g01](docs/features/srs-g01-tai-khoan.md) |
+| G01 | Tài khoản, onboarding, cài đặt & lịch làm việc | 1.0 | [prd-g01](docs/features/prd-g01-tai-khoan.md) | [srs-g01](docs/features/srs-g01-tai-khoan.md) |
 | G02 | Quản lý task (subtask, channel, xoá / khôi phục) | 1.0 | [prd-g02](docs/features/prd-g02-quan-ly-task.md) | [srs-g02](docs/features/srs-g02-quan-ly-task.md) |
 | G03 | Task lặp lại | 1.0 | [prd-g03](docs/features/prd-g03-task-lap-lai.md) | [srs-g03](docs/features/srs-g03-task-lap-lai.md) |
 | G04 | Board ngày, projection, khối lượng, tìm kiếm & phím tắt | 1.0 | [prd-g04](docs/features/prd-g04-board-ngay.md) | [srs-g04](docs/features/srs-g04-board-ngay.md) |
