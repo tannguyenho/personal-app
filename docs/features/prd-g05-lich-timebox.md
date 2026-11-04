@@ -2,7 +2,7 @@
 
 # PRD Lịch & timebox (ứng dụng lập kế hoạch ngày)
 
-> **Bản nháp.** Con số đánh dấu `[giả định]` dùng để dựng flow, cần PO xác nhận trước khi dùng. Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). Quy tắc dùng chung (ngày làm việc QC-01, lịch làm việc và khung giờ channel QC-02, đổi ngày task QC-05, bản ghi thời gian QC-07, chế độ chỉ đọc QC-09, quyền theo gói QC-10) xem [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); PRD này chỉ tham chiếu, không định nghĩa lại. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026 (badge giờ timebox màu cam "10:55" trên card; chi tiết task "Thursday, Nov 5 · 10:55–11:55 · 1 hr" kèm icon lịch; kéo block sang ngày khác đổi ngày bắt đầu; block thời gian thực tế "2:01 – 2:02" trên lịch; panel "Calendars", nút zoom 1x); chỗ khác Sunsama có chủ đích được ghi rõ.
+> **Bản nháp.** Con số đánh dấu `[giả định]` dùng để dựng flow, cần PO xác nhận trước khi dùng. Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md), gồm vòng 7: instance lưu trữ `skipped` xử lý timebox như "Đưa vào backlog" (D6); bản 1.1 vẫn một người dùng, nhiều thành viên từ 1.2 trở đi (Q47). Quy tắc dùng chung (ngày làm việc QC-01, lịch làm việc và khung giờ channel QC-02, đổi ngày task QC-05, bản ghi thời gian QC-07, chế độ chỉ đọc QC-09, quyền theo gói QC-10) xem [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); PRD này chỉ tham chiếu, không định nghĩa lại. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026 (badge giờ timebox màu cam "10:55" trên card; chi tiết task "Thursday, Nov 5 · 10:55–11:55 · 1 hr" kèm icon lịch; kéo block sang ngày khác đổi ngày bắt đầu; block thời gian thực tế "2:01 – 2:02" trên lịch; panel "Calendars", nút zoom 1x); chỗ khác Sunsama có chủ đích được ghi rõ.
 
 # 1. Bối cảnh và vấn đề
 
@@ -63,7 +63,7 @@ Lịch là nơi thời gian thật của người dùng được quyết định
 - Chế độ xem, điều hướng ngày, projection, cảnh báo khối lượng → G04.
 - Timer và dữ liệu thời gian thực tế → G07 (QC-07). Các đường đổi ngày task (rollover, phím D, backlog, shutdown, hoàn thành, xoá) → bảng QC-05 do G06 sở hữu; G05 chỉ thực hiện phần timebox và sự kiện ngoài theo bảng đó. Lập lịch cứng cho task lặp do **G05** sở hữu (1.1); G03 chỉ lưu `approxTime`.
 - Tích hợp công cụ công việc (Gmail, Jira, Notion…) → G11.
-- Privacy "Lịch" (người khác trong workspace xem lịch của mình) → bản sau, cùng các tính năng nhiều thành viên ([`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md), Q35, Q37). Khuyến nghị khi làm: người khác chỉ thấy bận / rảnh và timebox, không thấy chi tiết sự kiện lịch ngoài (tiêu đề, mô tả, người tham dự). Bản 1 chỉ có một người dùng nên G05 không có quyền xem lịch của người khác.
+- Privacy "Lịch" (người khác trong workspace xem lịch của mình) → bản sau (1.2 trở đi), cùng các tính năng nhiều thành viên ([`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md), Q35, Q37, Q47). Khuyến nghị khi làm: người khác chỉ thấy bận / rảnh và timebox, không thấy chi tiết sự kiện lịch ngoài (tiêu đề, mô tả, người tham dự). Bản 1 chỉ có một người dùng nên G05 không có quyền xem lịch của người khác.
 - Cài đặt **khung giờ channel** → G02 (QC-02 mục 5). G05 chỉ đọc khung này cho auto-schedule (1.1).
 
 # 4. Nguyên tắc sản phẩm
@@ -333,7 +333,7 @@ AC05: Đổi `approxTime` hoặc quy tắc lặp của series → timebox của 
 
 AC06: Dừng series hoặc tắt toggle → ngừng tạo timebox mới; timebox đã có giữ nguyên, trừ instance bị G03 xoá (theo QC-05).
 
-AC07: Instance bị dời (phím D, kéo, rollover, shutdown, backlog, lưu trữ do trùng series) → timebox theo bảng QC-05. Instance tự lưu trữ `stale` xử lý timebox như "Đưa vào backlog" (đã chốt, Q42, QC-05); instance lưu trữ `skipped` (trùng series, QC-06) cũng như "Đưa vào backlog" `[giả định]`.
+AC07: Instance bị dời (phím D, kéo, rollover, shutdown, backlog, lưu trữ do trùng series) → timebox theo bảng QC-05. Instance tự lưu trữ `stale` xử lý timebox như "Đưa vào backlog" (đã chốt, Q42, QC-05); instance lưu trữ `skipped` (trùng series, QC-06) cũng như "Đưa vào backlog" (đã chốt, D6, QC-05).
 
 AC08: Không tạo timebox cho ngày quá 90 ngày (C18) hoặc khi workspace ở chế độ chỉ đọc (QC-09).
 
@@ -374,7 +374,7 @@ AC08: Không tạo timebox cho ngày quá 90 ngày (C18) hoặc khi workspace �
 - Đã chốt 04/11/2026: đổi tiêu đề trên lịch ngoài không đổi task; app thắng và ghi đè ở lần đồng bộ kế tiếp (Q15).
 - Đã chốt 04/11/2026: lập lịch cứng cho task lặp do G05 sở hữu, phát hành 1.1 (Q7). Còn mở: số ngày tạo trước (đề xuất 7), có cho bật / tắt riêng từng series không.
 - Đã chốt 04/11/2026: sửa giờ (hoặc gỡ) timebox của instance lặp lập lịch cứng tính là sửa riêng (`customized`, G03 BR-07); hệ thống không tạo lại, không ghi đè (Q44).
-- Đã chốt 04/11/2026: instance tự lưu trữ `stale` xử lý timebox như "Đưa vào backlog" (Q42, QC-05). Còn mở: instance lưu trữ `skipped` (trùng series) có xử lý giống vậy không (hiện `[giả định]` có)?
+- Đã chốt 04/11/2026: instance tự lưu trữ `stale` xử lý timebox như "Đưa vào backlog" (Q42, QC-05); instance lưu trữ `skipped` (trùng series) cũng xử lý như "Đưa vào backlog" (D6, QC-05).
 - Đã chốt 04/11/2026: auto-schedule (1.1) chỉ xếp task vào khung giờ channel của task, channel không có khung thì dùng lịch chung; G02 sở hữu cài đặt khung giờ channel (Q38a, QC-02 mục 5–6).
 - Đã chốt 04/11/2026: rollover và tự lưu trữ không có Hoàn tác; Hoàn tác khôi phục liên kết timebox chỉ áp cho đường do người dùng / AI thực hiện (Q41, QC-05).
 - Đã chốt 04/11/2026: Privacy "Lịch" để bản sau; khuyến nghị người khác chỉ thấy bận / rảnh và timebox, không thấy chi tiết sự kiện ngoài (Q37, `docs/02-tinh-nang-ban-sau.md`).

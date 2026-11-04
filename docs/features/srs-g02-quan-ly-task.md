@@ -7,6 +7,8 @@
 > Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). Quy tắc `QC-xx` ở [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md). G02 sở hữu **QC-03** (trạng thái task và khôi phục) và **QC-08** (đồng bộ nhiều thiết bị, offline); mục 4 của SRS này là đặc tả chi tiết của QC-03 trong phạm vi G02. G02 cũng sở hữu cài đặt **khung giờ channel** (QC-02 mục 5–9, Q38a), đặc tả ở BR-22 – BR-24, UC-06 và SCR-06. "Hôm nay", "ngày" trong SRS này luôn là ngày làm việc (QC-01).
 >
 > Cập nhật thêm theo vòng 5–6 (Q33–Q46): bản 1.0 là app Windows cho một người dùng (Q35, Q45, [ADR-0005](../adr/0005-nen-tang-windows-truoc.md)); gợi ý task dùng trợ lý AI qua Claude Code CLI (QC-12, Q33, [ADR-0004](../adr/0004-ai-qua-claude-code-cli.md)); AI hoàn thành / xoá task chỉ khi người dùng bật công tắc (QC-12 mục 4); bỏ lưu trữ thủ công khỏi 1.0 (Q34). Tính năng để bản sau gom ở [`02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md).
+>
+> Cập nhật theo vòng 7: khung giờ channel một khoảng mỗi ngày, không vắt nửa đêm, bước 15 phút (D1), đổi khung có hiệu lực từ ngày làm việc kế tiếp (D2), "Chưa phân loại" không có khung riêng (D3) — BR-22, BR-24, UC-06, SCR-06; số ngày bị hoãn theo lịch hiện tại của task (D4); công tắc AI hoàn thành / xoá áp cho cả subtask, AI không hoàn thành hay xoá task có liên kết tích hợp (D10) — BR-21; chờ duyệt chỉ áp cho thay đổi sau lần đầu đọc dữ liệu tích hợp (D8); phím toàn cục Ctrl+Shift+A có ở 1.0 (D11); bản 1.1 vẫn một người dùng, nhiều thành viên từ 1.2 trở đi (Q47).
 
 ## 1. Tổng quan
 
@@ -15,7 +17,7 @@
 | Mục tiêu | Người dùng ghi task trong vài giây, bổ sung chi tiết khi cần, hoàn thành, nhân bản, xoá và khôi phục mà không mất dữ liệu; phân loại task theo channel |
 | Actor | Người dùng đã đăng nhập · Hệ thống · Trợ lý AI (Claude Code CLI trên máy người dùng, điều khiển app qua MCP local, QC-12; tác nhân `ai`) · Dịch vụ đọc tiêu đề URL |
 | Phạm vi | Tạo task (ô soạn, phím A, dán URL), gợi ý thời lượng / channel qua trợ lý AI, chi tiết task, subtask (một cấp, xoá có Hoàn tác), priority, due, notes, comment, nhật ký, hoàn thành, nhân bản, xoá mềm, Thùng rác 30 ngày, context & channel (channel hệ thống "Chưa phân loại"), khung giờ channel (QC-02 mục 5–9), bộ trạng thái task (QC-03), đồng bộ nhiều thiết bị và offline (QC-08) |
-| Ngoài phạm vi | Lặp lại, kéo thả và sắp xếp board, projection và sức chứa (G04, đọc khung giờ channel), timebox và auto-schedule (G05), backlog và rollover (G06), timer, đính kèm file (1.1), lưu trữ thủ công `manual` (bản sau, Q34), giao task / follow và quyền tạo channel chung / riêng tư (bản sau, Q35), trial / thanh toán / chế độ chỉ đọc (1.1, QC-09), gộp task |
+| Ngoài phạm vi | Lặp lại, kéo thả và sắp xếp board, projection và sức chứa (G04, đọc khung giờ channel), timebox và auto-schedule (G05), backlog và rollover (G06), timer, đính kèm file (1.1), lưu trữ thủ công `manual` (bản sau, Q34), giao task / follow và quyền tạo channel chung / riêng tư (bản sau, 1.2 trở đi, Q35, Q47), trial / thanh toán gói cá nhân một người dùng / chế độ chỉ đọc (1.1, QC-09, Q47), gộp task |
 | Nền tảng | App **Windows** (Flutter) ở 1.0, một người dùng, dữ liệu trên cloud gắn tài khoản (Q45, ADR-0005). Web, macOS từ 1.1; iOS / Android từ 1.2, dùng cùng đặc tả |
 | Figma | `[chưa có]` |
 
@@ -52,16 +54,16 @@
 | BR-12 | **Khôi phục** từ Thùng rác: theo bảng QC-03 mục 3 (về đúng trạng thái trước khi xoá). Khôi phục reset số ngày bị hoãn (QC-04 mục 3). Instance lặp: áp QC-06 đường thủ công (cho khôi phục, cảnh báo MSG-24). Khôi phục từ Thùng rác (sau khi toast đã tắt) không tạo lại timebox. Khôi phục không gỡ ngày ngoại lệ của series (G03 BR-15) |
 | BR-13 | Mọi thay đổi ghi \[ActivityLog\]: tác nhân (`user` / `ai` / `integration` / `system`), trường, giá trị cũ, giá trị mới, thời điểm |
 | BR-14 | **Channel.** Tên 1–50 ký tự, không chứa "#", không trùng trong cùng context (không phân biệt hoa thường). Xoá channel phải chọn channel nhận task (mặc định "Chưa phân loại"); không xoá task. \[ChannelDelete\] chuyển **mọi** task của channel sang channel nhận, kể cả task `LUU_TRU`, `DA_XOA` (Thùng rác) và mẫu của series lặp (G03) (C10). Không xoá được channel hệ thống "Chưa phân loại" (B4). Channel hệ thống thuộc context nào `[giả định: không thuộc context nào, hiện ở đầu danh sách channel]`. Bản 1.0 một người dùng: người dùng tạo, sửa, xoá channel tự do, không phân quyền; quyền tạo channel chung / riêng tư theo vai trò để bản sau (Q35). Cờ `isPrivate` ở 1.0 chỉ dùng cho G05 (sự kiện timebox ghi ra lịch ngoài thành Private); phần chia sẻ trong workspace để bản sau (Q37). Khung giờ channel theo BR-22 – BR-24 |
-| BR-15 | Bản 1 chỉ một người dùng (Q35): người dùng chỉ thấy và sửa task của chính mình. Workspace nhiều thành viên, giao task, follow để bản sau (G12, [`02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md)); khi làm, task được giao vào bucket backlog "Tuần sau", đặt lên đầu (Q36) |
+| BR-15 | Bản 1 chỉ một người dùng (Q35): người dùng chỉ thấy và sửa task của chính mình. Workspace nhiều thành viên, giao task, follow để bản sau, 1.2 trở đi; bản 1.1 vẫn chỉ một người dùng (Q47; G12, [`02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md)); khi làm, task được giao vào bucket backlog "Tuần sau", đặt lên đầu (Q36) |
 | BR-16 | Phím tắt một ký tự chỉ hoạt động khi không có ô nhập nào đang focus; lệnh có tác dụng phụ (C, Ctrl+Backspace) luôn có toast Hoàn tác |
 | BR-17 | **Subtask** (C9). (a) Chỉ một cấp: subtask không có subtask con. (b) Tích subtask cuối cùng **không** tự hoàn thành task. (c) Thêm subtask vào task `HOAN_THANH` → subtask `CHUA_XONG`, task giữ `HOAN_THANH`, không mở lại. (d) Xoá subtask không hỏi xác nhận, có toast Hoàn tác (MSG-21) ≥ 5 giây; Hoàn tác trả subtask về đúng vị trí, trạng thái, thời lượng, thời gian thực tế. Subtask đã xoá không vào Thùng rác `[giả định]`. (e) Timer chạy trên task cha, không chạy trên subtask (QC-07 mục 6) |
 | BR-18 | **Trạng thái task** theo QC-03 (G02 sở hữu), đặc tả ở mục 4. Mọi thao tác của G02 làm đổi trạng thái hoặc ngày dự định ghi **cụm vị trí** nguyên khối và tăng `positionVersion` |
 | BR-19 | **Đồng bộ** theo QC-08 (G02 sở hữu). Lệnh sửa cụm vị trí (hoàn thành, bỏ hoàn thành, xoá, khôi phục, đổi ngày trong SCR-03) gửi kèm `positionVersion`; lệch → 412 `VERSION_CONFLICT`, MSG-23. Trường khác gộp theo từng trường, bản server nhận sau thắng, người dùng bị ghi đè thấy MSG-12. Lệnh sửa task `DA_XOA` → 409 `TASK_DELETED`, MSG-22 |
 | BR-20 | **Ngày.** Mọi "hôm nay", "ngày hoàn thành", "ngày xoá" trong G02 tính bằng `workday(t)` của QC-01; không dùng ngày lịch hay nửa đêm |
-| BR-21 | **AI hoàn thành / xoá task** (QC-12 mục 4–5, Q46; thay một phần Q20). Lệnh \[TaskComplete\] / \[TaskDelete\] với tác nhân `ai` (từ MCP local) chỉ được nhận khi: (a) trợ lý AI đang bật (QC-12 mục 7); (b) người dùng đã bật công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt, cài đặt AI của G10); (c) với hoàn thành: task **không** có liên kết tích hợp (G11), kể cả khi đã bật công tắc. Thiếu (a) hoặc (b) → 403 `AI_ACTION_FORBIDDEN` · reason `TOGGLE_OFF`; vi phạm (c) → 403 `AI_ACTION_FORBIDDEN` · reason `LINKED_TASK` (dùng chung mã của G10); lỗi trả cho Claude Code qua MCP, không đổi task. Lệnh hợp lệ áp đúng BR-08 / BR-11 như người dùng, ghi \[ActivityLog\] tác nhân `ai`, gắn chip "AI" trên task, có Hoàn tác (từng thay đổi và "Hoàn tác kế hoạch AI", G10). Phiên AI đã bật đọc dữ liệu tích hợp → lệnh chuyển sang chờ duyệt thay vì áp dụng ngay (QC-12 mục 6, G10). Bỏ hoàn thành (BR-09) không có trong MCP `[giả định]` |
-| BR-22 | **Khung giờ channel** (QC-02 mục 5, Q38a; G02 sở hữu cài đặt). Mỗi channel, kể cả channel hệ thống "Chưa phân loại" `[giả định]`, có trường tuỳ chọn `workWindow`. `workWindow` = null (mặc định) → channel dùng lịch làm việc chung (G01 BR-22, `workSchedule`) và tự theo khi lịch chung đổi. Khi bật, `workWindow` = danh sách ngày trong tuần, mỗi ngày {`weekday`, `start`, `end`}; ràng buộc: (a) ≥ 1 ngày (MSG-26); (b) mỗi ngày đúng một khoảng `[giả định]`; (c) `end` > `start` (MSG-25), cùng một ngày lịch, không vắt qua 24:00 `[giả định]`; (d) giờ theo bước 15 phút `[giả định]`, theo timezone của người dùng; (e) được chọn cả ngày không có trong lịch chung (ví dụ Chủ Nhật). Bật lần đầu → điền sẵn bằng lịch chung hiện tại `[giả định]`. Lịch chung đổi sau đó không đổi `workWindow` đã bật. Đồng bộ: `workWindow` gộp như **một trường** theo QC-08 mục 3 (bản server nhận sau thắng cả khối) `[giả định]` |
+| BR-21 | **AI hoàn thành / xoá task và subtask** (QC-12 mục 4–5, Q46, D10; thay một phần Q20). Lệnh \[TaskComplete\] / \[TaskDelete\] và lệnh hoàn thành / xoá subtask (\[SubtaskUpdate\] `completedAt`, \[SubtaskDelete\]) với tác nhân `ai` (từ MCP local) chỉ được nhận khi: (a) trợ lý AI đang bật (QC-12 mục 7); (b) người dùng đã bật công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt, cài đặt AI của G10); công tắc áp cho cả subtask (D10); (c) cả hoàn thành lẫn xoá: task (với subtask: task cha) **không** có liên kết tích hợp (G11), kể cả khi đã bật công tắc (D10). Thiếu (a) hoặc (b) → 403 `AI_ACTION_FORBIDDEN` · reason `TOGGLE_OFF`; vi phạm (c) → 403 `AI_ACTION_FORBIDDEN` · reason `LINKED_TASK`, áp cho cả hoàn thành và xoá (dùng chung mã của G10); lỗi trả cho Claude Code qua MCP, không đổi task. Lệnh hợp lệ áp đúng BR-08 / BR-11 / BR-17 như người dùng, ghi \[ActivityLog\] tác nhân `ai`, gắn chip "AI" trên task, có Hoàn tác (từng thay đổi và "Hoàn tác kế hoạch AI", G10). Phiên AI đã bật đọc dữ liệu tích hợp → các lệnh **sau** lần đầu đọc dữ liệu tích hợp trong phiên đó chuyển sang chờ duyệt thay vì áp dụng ngay (QC-12 mục 6, D8, G10). Bỏ hoàn thành (BR-09) không có trong MCP `[giả định]` |
+| BR-22 | **Khung giờ channel** (QC-02 mục 5, Q38a; G02 sở hữu cài đặt). Mỗi channel do người dùng tạo có trường tuỳ chọn `workWindow`. Channel hệ thống "Chưa phân loại" **không** có khung riêng, luôn theo lịch chung (D3): SCR-06 ẩn phần "Khung giờ" của channel này; server từ chối `workWindow` khác null cho channel `isSystem` (`VALIDATION_FAILED` · field workWindow · `SYSTEM_CHANNEL`). `workWindow` = null (mặc định) → channel dùng lịch làm việc chung (G01 BR-22, `workSchedule`) và tự theo khi lịch chung đổi. Khi bật, `workWindow` = danh sách ngày trong tuần, mỗi ngày {`weekday`, `start`, `end`}; ràng buộc: (a) ≥ 1 ngày (MSG-26); (b) mỗi ngày đúng một khoảng (D1); (c) `end` > `start` (MSG-25), cùng một ngày lịch, không vắt qua nửa đêm (24:00) (D1); (d) giờ theo bước 15 phút (D1), theo timezone của người dùng; (e) được chọn cả ngày không có trong lịch chung (ví dụ Chủ Nhật). Bật lần đầu → điền sẵn bằng lịch chung hiện tại `[giả định]`. Lịch chung đổi sau đó không đổi `workWindow` đã bật. Đồng bộ: `workWindow` gộp như **một trường** theo QC-08 mục 3 (bản server nhận sau thắng cả khối) `[giả định]` |
 | BR-23 | **Lịch làm việc của task** (QC-02 mục 6–8). = `workWindow` của channel của task nếu có, ngược lại lịch làm việc chung. G02 chỉ sở hữu cài đặt; các nhóm đọc `workWindow` qua \[ChannelList\] và tự áp: (a) G04 — projection và cờ "Vượt giờ làm" của task theo lịch của task; sức chứa ngày D = thời gian trống trong **hợp** của lịch chung và mọi `workWindow` có ngày D (QC-02 mục 7); (b) G06 — số ngày bị hoãn chỉ đếm ngày có trong lịch của task (QC-04, Q32); (c) G04 phím D, G08 shutdown "Ngày mai" — "ngày làm việc kế tiếp" theo lịch của task (QC-02 mục 2, QC-05); (d) G05 — auto-schedule chỉ xếp task vào khung của channel (bản 1.1). **Không** dùng cho: ritual ngày (G08) và cột ngày G09 (theo lịch chung, QC-02 mục 8); quy tắc lặp (G03, Q43) |
-| BR-24 | **Hiệu lực khi đổi khung** `[giả định]` (theo tinh thần Q3, QC-01 mục 3). Bật, sửa hoặc tắt `workWindow` có hiệu lực từ **ngày làm việc kế tiếp** (`workWindowEffectiveFrom` = ngày làm việc kế tiếp của hôm nay theo QC-01): ngày hôm nay vẫn dùng khung cũ (projection, sức chứa, "ngày làm việc kế tiếp" khi dời trong hôm nay); các ngày ≥ `workWindowEffectiveFrom` dùng khung mới ngay khi lưu. Server lưu khung đang áp và khung chờ (`pendingWorkWindow`, `workWindowEffectiveFrom`); tới mốc đầu ngày của `workWindowEffectiveFrom` thì khung chờ thành khung đang áp. Sửa tiếp trước ngày hiệu lực → ghi đè khung chờ. Cách số ngày bị hoãn phản ứng khi lịch của task đổi do G06 quyết định (G06 BR-10, QC-04). Đổi channel của một task (UC-02) hoặc chuyển task khi xoá channel (BR-14) → lịch của task theo channel mới ngay từ hôm nay `[giả định]` |
+| BR-24 | **Hiệu lực khi đổi khung** (D2, cùng tinh thần Q3, QC-01 mục 3). Bật, sửa hoặc tắt `workWindow` có hiệu lực từ **ngày làm việc kế tiếp** (`workWindowEffectiveFrom` = ngày làm việc kế tiếp của hôm nay theo QC-01): ngày hôm nay vẫn dùng khung cũ (projection, sức chứa, "ngày làm việc kế tiếp" khi dời trong hôm nay); các ngày ≥ `workWindowEffectiveFrom` dùng khung mới ngay khi lưu. Server lưu khung đang áp và khung chờ (`pendingWorkWindow`, `workWindowEffectiveFrom`); tới mốc đầu ngày của `workWindowEffectiveFrom` thì khung chờ thành khung đang áp. Sửa tiếp trước ngày hiệu lực → ghi đè khung chờ. Số ngày bị hoãn luôn tính theo lịch **hiện tại** của task, nên đổi khung hoặc đổi channel có thể làm số thay đổi (D4; G06 BR-10, QC-04 mục 1). Đổi channel của một task (UC-02) hoặc chuyển task khi xoá channel (BR-14) → lịch của task theo channel mới ngay từ hôm nay `[giả định]` |
 
 ## 4. Trạng thái
 
@@ -219,7 +221,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | A4 | Hoàn thành instance lặp ở ngày tương lai | Giữ nguyên ngày dự định (BR-08 d, Q12); instance hiện xong ở cột ngày đó |
 | A5 | Hoàn thành lúc 00:00–mốc đầu ngày (ví dụ 02:00 ngày 05/11, mốc 04:00) | Ngày hoàn thành = 04/11 (`workday`, QC-01); task không nhảy sang cột 05/11 |
 | A6 | Đang bật "Tính planned là actual", task không có bản ghi thời gian | Lưu `plannedAsActual = true`; card hiện actual = planned; không tạo bản ghi thời gian (BR-08 c) |
-| A7 | Trợ lý AI (Claude Code qua MCP local) hoàn thành task | Kiểm BR-21: đủ điều kiện → áp BR-08 như bước 2–3, tác nhân `ai`, chip "AI", Hoàn tác (G10); thiếu công tắc → 403 `AI_ACTION_FORBIDDEN` · `TOGGLE_OFF`; task có liên kết tích hợp → 403 `AI_ACTION_FORBIDDEN` · `LINKED_TASK`; task không đổi |
+| A7 | Trợ lý AI (Claude Code qua MCP local) hoàn thành task | Kiểm BR-21: đủ điều kiện → áp BR-08 như bước 2–3, tác nhân `ai`, chip "AI", Hoàn tác (G10); thiếu công tắc → 403 `AI_ACTION_FORBIDDEN` · `TOGGLE_OFF`; task có liên kết tích hợp → 403 `AI_ACTION_FORBIDDEN` · `LINKED_TASK`; task không đổi. Hoàn thành subtask bởi AI kiểm cùng điều kiện (BR-21, D10) |
 
 **Luồng lỗi**
 
@@ -256,7 +258,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | A4 | Xoá instance lặp | Như luồng chính; thêm ngày gốc vào danh sách ngày ngoại lệ của series (G03 BR-15). Hoàn tác / khôi phục không gỡ ngày ngoại lệ |
 | A5 | Khôi phục instance lặp vào ngày đã có instance của cùng series (QC-06 mục 1) | Vẫn khôi phục; toast MSG-13 kèm cảnh báo MSG-24 (QC-06 mục 3) |
 | A6 | Khôi phục task trước đó `HOAN_THANH` / `LUU_TRU` / `BACKLOG` | Về đúng trạng thái trước khi xoá theo QC-03 mục 3: giữ ngày dự định và `completedAt`; về Lưu trữ với lý do cũ; về đúng bucket. MSG-13 nêu nơi đến |
-| A7 | Trợ lý AI (Claude Code qua MCP local) xoá task | Kiểm BR-21 (a), (b): đủ điều kiện → như bước 2, tác nhân `ai`, chip "AI", Hoàn tác (G10); chưa bật công tắc → 403 `AI_ACTION_FORBIDDEN` · `TOGGLE_OFF`, task không đổi |
+| A7 | Trợ lý AI (Claude Code qua MCP local) xoá task | Kiểm BR-21 (a), (b), (c): đủ điều kiện → như bước 2, tác nhân `ai`, chip "AI", Hoàn tác (G10); chưa bật công tắc → 403 `AI_ACTION_FORBIDDEN` · `TOGGLE_OFF`; task có liên kết tích hợp → 403 `AI_ACTION_FORBIDDEN` · `LINKED_TASK` (D10); task không đổi. Xoá subtask bởi AI kiểm cùng điều kiện (BR-21) |
 
 **Luồng lỗi**
 
@@ -320,7 +322,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | A2 | Ẩn channel | Tắt "Bật" → không hiện trong ô soạn và bộ lọc; task giữ nguyên; khung giờ channel giữ nguyên và vẫn áp cho task của channel |
 | A3 | Xoá channel | Mở **SCR-07** chọn channel nhận task → \[ChannelDelete\] với `moveTasksTo`; server chuyển mọi task của channel, kể cả `LUU_TRU`, `DA_XOA` và mẫu series (BR-14, C10), trong một giao dịch. Task đã chuyển dùng lịch làm việc của channel nhận ngay (BR-24); khung giờ của channel bị xoá mất theo channel |
 | A4 | Xoá context | Chỉ cho xoá context rỗng; còn channel → MSG-16 |
-| A5 | Bật "Khung giờ riêng" cho channel (Q38a) | Trên dòng channel mở phần "Khung giờ" (SCR-06 #7–#10); bật công tắc → 7 dòng Thứ Hai … Chủ Nhật điền sẵn theo lịch chung hiện tại (BR-22) `[giả định]`; người dùng bật / tắt từng ngày (kể cả ngày không có trong lịch chung), chọn giờ bắt đầu / kết thúc; bấm "Lưu" → kiểm BR-22 → \[ChannelUpdate\] `workWindow`; server trả `workWindowEffectiveFrom` = ngày làm việc kế tiếp (BR-24); hiện MSG-27 |
+| A5 | Bật "Khung giờ riêng" cho channel (Q38a) | Trên dòng channel mở phần "Khung giờ" (SCR-06 #7–#10); bật công tắc → 7 dòng Thứ Hai … Chủ Nhật điền sẵn theo lịch chung hiện tại (BR-22) `[giả định]`; người dùng bật / tắt từng ngày (kể cả ngày không có trong lịch chung), chọn giờ bắt đầu / kết thúc (một khoảng / ngày, bước 15 phút, không vắt nửa đêm — D1); bấm "Lưu" → kiểm BR-22 → \[ChannelUpdate\] `workWindow`; server trả `workWindowEffectiveFrom` = ngày làm việc kế tiếp (BR-24); hiện MSG-27 |
 | A6 | Sửa khung giờ đã bật | Như A5; khung mới là khung chờ, có hiệu lực từ ngày làm việc kế tiếp; hôm nay vẫn dùng khung cũ (BR-24); MSG-27 |
 | A7 | Tắt "Khung giờ riêng" | \[ChannelUpdate\] `workWindow = null`; từ ngày làm việc kế tiếp task của channel dùng lịch chung (BR-24); MSG-27 |
 | A8 | Lịch làm việc chung (G01) đổi | Channel không bật khung riêng theo lịch chung mới (theo hiệu lực của G01); channel đã bật khung riêng không đổi (BR-22) |
@@ -336,6 +338,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | E4 | Khung giờ: giờ kết thúc ≤ giờ bắt đầu ở một ngày | MSG-25 tại dòng đó; nút "Lưu" disabled; server trả `VALIDATION_FAILED` · field workWindow · `END_BEFORE_START` |
 | E5 | Khung giờ bật nhưng không ngày nào được bật | MSG-26; nút "Lưu" disabled; server trả `VALIDATION_FAILED` · field workWindow · `EMPTY` |
 | E6 | Mất mạng khi lưu khung giờ | Lưu vào hàng đợi trên máy (QC-08), dòng channel có biểu tượng "chờ đồng bộ"; ngày hiệu lực tính theo thời điểm server nhận `[giả định]` |
+| E7 | Đặt khung giờ cho channel hệ thống "Chưa phân loại" (gọi API trực tiếp; UI không có phần "Khung giờ" cho channel này) | Server trả `VALIDATION_FAILED` · field workWindow · `SYSTEM_CHANNEL`, không lưu (BR-22, D3) |
 
 ## 6. Điểm vào
 
@@ -343,13 +346,13 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | --- | --- | --- | --- |
 | Nút "Thêm task" trên cột ngày | ✓ | ✓ | Ngày = cột đó |
 | Phím A / command menu "Thêm task" | ✓ | ✓ | Cột ngày đang chọn, mặc định hôm nay |
-| Phím tắt toàn cục Ctrl+Shift+A | ✓ `[giả định]` | macOS ✓, web – | Ngày = hôm nay |
+| Phím tắt toàn cục Ctrl+Shift+A | ✓ (có từ 1.0, D11) | macOS ✓, web – | Ngày = hôm nay; chạy cả khi cửa sổ app không ở trước; tắt phím tắt (G01 BR-15) thì ngừng |
 | Dán URL vào ô soạn | ✓ | ✓ | A1 UC-01 |
 | Bấm tiêu đề card / Ctrl+Enter | ✓ | ✓ | Mở SCR-03 |
 | Panel phải → Thùng rác / lệnh "Task đã xoá gần đây" | ✓ | ✓ | Mở SCR-05 |
 | Cài đặt → Context & channel / bộ lọc → "Quản lý channel" | ✓ | ✓ | Mở SCR-06 |
-| Dòng channel trong SCR-06 → "Khung giờ" | ✓ | ✓ | UC-06 A5–A7 |
-| Claude Code qua MCP local (hoàn thành, xoá task) | ✓ khi bật trợ lý AI và công tắc (BR-21) | Cách cung cấp AI trên web để tech chốt (ADR-0004) | UC-03 A7, UC-04 A7 |
+| Dòng channel trong SCR-06 → "Khung giờ" | ✓ | ✓ | UC-06 A5–A7; không có ở channel "Chưa phân loại" (D3) |
+| Claude Code qua MCP local (hoàn thành, xoá task và subtask) | ✓ khi bật trợ lý AI và công tắc (BR-21) | Cách cung cấp AI trên web để tech chốt (ADR-0004) | UC-03 A7, UC-04 A7 |
 
 ## 7. Mô tả màn hình
 
@@ -425,8 +428,8 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | 4 | Riêng tư | Toggle | Không | Ở 1.0 chỉ ảnh hưởng hiển thị trên lịch ngoài (G05: sự kiện timebox luôn Private); chia sẻ trong workspace (G12) để bản sau (Q35, Q37) |
 | 5 | Bật / ẩn | Toggle | – | A2 UC-06 |
 | 6 | Xoá | Icon | – | Mở SCR-07; ẩn với channel hệ thống "Chưa phân loại" |
-| 7 | Khung giờ riêng | Toggle (theo dòng channel) | Không | Mặc định tắt = dùng lịch làm việc chung (G01, nhãn "Theo lịch làm việc chung"); bật → hiện #8 (UC-06 A5, A7; BR-22) |
-| 8 | Ngày và giờ của khung | 7 dòng Thứ Hai … Chủ Nhật, thứ tự theo ngày đầu tuần (G01); mỗi dòng: toggle + 2 time picker | Có khi #7 bật | Điền sẵn theo lịch chung khi bật lần đầu `[giả định]`; bật được ngày không có trong lịch chung; bước 15 phút `[giả định]`; một khoảng / ngày, không vắt qua 24:00 `[giả định]`; kết thúc ≤ bắt đầu → MSG-25; không ngày nào bật → MSG-26 |
+| 7 | Khung giờ riêng | Toggle (theo dòng channel) | Không | Mặc định tắt = dùng lịch làm việc chung (G01, nhãn "Theo lịch làm việc chung"); bật → hiện #8 (UC-06 A5, A7; BR-22). Ẩn với channel hệ thống "Chưa phân loại", channel này luôn hiện nhãn "Theo lịch làm việc chung" (D3) |
+| 8 | Ngày và giờ của khung | 7 dòng Thứ Hai … Chủ Nhật, thứ tự theo ngày đầu tuần (G01); mỗi dòng: toggle + 2 time picker | Có khi #7 bật | Điền sẵn theo lịch chung khi bật lần đầu `[giả định]`; bật được ngày không có trong lịch chung; bước 15 phút; một khoảng / ngày, không vắt qua nửa đêm (24:00) (D1); kết thúc ≤ bắt đầu → MSG-25; không ngày nào bật → MSG-26 |
 | 9 | Ghi chú hiệu lực | Text | – | Sau khi lưu: MSG-27; khi có khung chờ: "Khung mới áp dụng từ {ngày}" (BR-24) |
 | 10 | "Lưu" / "Huỷ" (phần Khung giờ) | Button | – | "Lưu" disabled khi vi phạm BR-22; "Huỷ" bỏ thay đổi chưa lưu |
 
@@ -450,10 +453,10 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | \[TaskUpdate\] `PATCH /tasks/{id}` | Trường thay đổi; `positionVersion` bắt buộc khi đổi cụm vị trí (BR-19), If-Match (tuỳ chọn) cho trường khác | Task, version, positionVersion | 5s / 2 lần |
 | \[TaskComplete\] / \[TaskUncomplete\] | id, positionVersion; tác nhân (`user` / `ai` / `integration`) suy từ kênh gọi (MCP local → `ai`) | Task, timer (nếu bị dừng); tác nhân `ai` sai BR-21 → 403 `AI_ACTION_FORBIDDEN` (`TOGGLE_OFF` / `LINKED_TASK`) | 5s / 2 lần |
 | \[TaskDuplicate\] `POST /tasks/{id}/duplicate` | id, Idempotency-Key | Task mới | 5s / 2 lần cùng key |
-| \[TaskDelete\] `DELETE /tasks/{id}` | id, positionVersion; tác nhân như \[TaskComplete\] | deletedAt, deletedFromStatus; tác nhân `ai` sai BR-21 → 403 `AI_ACTION_FORBIDDEN` (`TOGGLE_OFF`) | 5s / 2 lần |
+| \[TaskDelete\] `DELETE /tasks/{id}` | id, positionVersion; tác nhân như \[TaskComplete\] | deletedAt, deletedFromStatus; tác nhân `ai` sai BR-21 → 403 `AI_ACTION_FORBIDDEN` (`TOGGLE_OFF` / `LINKED_TASK`, D10) | 5s / 2 lần |
 | \[TaskRestore\] `POST /tasks/{id}/restore` | id, `undo` (true khi Hoàn tác từ toast) | Task, `sameSeriesWarning` (true khi áp QC-06 mục 3) | 5s / 2 lần |
 | \[TrashList\] `GET /tasks/trash` | cursor, limit | Task[], nextCursor | 5s / 1 lần |
-| \[SubtaskCreate\] / \[SubtaskUpdate\] / \[SubtaskDelete\] | taskId, title, plannedMin, position, completedAt | Subtask; \[SubtaskDelete\] trả thêm `undoToken` | 5s / 2 lần |
+| \[SubtaskCreate\] / \[SubtaskUpdate\] / \[SubtaskDelete\] | taskId, title, plannedMin, position, completedAt; tác nhân như \[TaskComplete\] | Subtask; \[SubtaskDelete\] trả thêm `undoToken`; tác nhân `ai` hoàn thành (`completedAt`) / xoá sai BR-21 → 403 `AI_ACTION_FORBIDDEN` (`TOGGLE_OFF` / `LINKED_TASK`, D10) | 5s / 2 lần |
 | \[SubtaskRestore\] `POST /tasks/{taskId}/subtasks/restore` | undoToken | Subtask | 5s / 2 lần |
 | \[CommentCreate\] / \[CommentList\] | taskId, body | Comment | 5s / 1 lần |
 | \[ActivityLog\] `GET /tasks/{id}/activity` | id, cursor | Entry[] | 5s / 1 lần |
@@ -478,6 +481,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | `WORKSPACE_READ_ONLY` (402, từ 1.1) | MSG-11 |
 | `VALIDATION_FAILED` · field workWindow · `END_BEFORE_START` | MSG-25 |
 | `VALIDATION_FAILED` · field workWindow · `EMPTY` | MSG-26 |
+| `VALIDATION_FAILED` · field workWindow · `SYSTEM_CHANNEL` | Không hiện trong app (UI không cho đặt khung cho "Chưa phân loại", D3); MSG-10 nếu lọt tới người dùng |
 | `AI_ACTION_FORBIDDEN` (403) · reason `TOGGLE_OFF` / `LINKED_TASK` | Không hiện trong app; trả cho Claude Code qua MCP để AI báo lại người dùng trong chat (G10) |
 | 5xx / timeout | MSG-10 |
 

@@ -7,6 +7,8 @@
 > Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). Quy tắc dùng chung `QC-xx` ở [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); G02 sở hữu **QC-03** (trạng thái task và khôi phục), **QC-08** (đồng bộ nhiều thiết bị, offline) và phần **khung giờ channel** của **QC-02** (mục 5–9). Thuật ngữ theo [`CONTEXT.md`](../../CONTEXT.md).
 >
 > Cập nhật thêm theo vòng 5–6 (Q33–Q46): bản 1.0 là app Windows cho một người dùng (Q35, Q45, [ADR-0005](../adr/0005-nen-tang-windows-truoc.md)); gợi ý task dùng trợ lý AI qua Claude Code CLI (QC-12, Q33, [ADR-0004](../adr/0004-ai-qua-claude-code-cli.md)); bỏ lưu trữ thủ công khỏi 1.0 (Q34); thêm khung giờ channel (Q38a). Tính năng để bản sau gom ở [`02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md).
+>
+> Cập nhật theo vòng 7: khung giờ channel một khoảng mỗi ngày, không vắt nửa đêm, bước 15 phút, đổi có hiệu lực từ ngày làm việc kế tiếp, "Chưa phân loại" không có khung riêng (D1–D3); công tắc AI hoàn thành / xoá áp cho cả subtask, AI không hoàn thành hay xoá task có liên kết tích hợp (D10); phím toàn cục Ctrl+Shift+A có ở 1.0 (D11); bản 1.1 vẫn chỉ một người dùng, nhiều thành viên từ 1.2 trở đi (Q47).
 
 # 1. Bối cảnh và vấn đề
 
@@ -49,11 +51,11 @@ Task là đơn vị trung tâm của sản phẩm: board theo ngày, lịch, tim
 - Tạo task: từ ô soạn trên cột ngày, phím A, dán URL.
 - Gợi ý thời lượng và channel bằng trợ lý AI qua Claude Code CLI (QC-12). Trợ lý AI tắt, chưa đồng ý hoặc máy không có Claude Code → không có gợi ý AI; app không gọi LLM nào khác (Q33).
 - Chi tiết task: channel, priority, ngày dự định, hạn chót (due), thời lượng kế hoạch, subtask (một cấp), notes, comment, nhật ký hoạt động.
-- Hoàn thành / bỏ hoàn thành task và subtask; xoá subtask có Hoàn tác. Trợ lý AI chỉ hoàn thành / xoá task khi người dùng bật công tắc riêng; task có liên kết tích hợp không bao giờ được AI hoàn thành (QC-12 mục 4).
+- Hoàn thành / bỏ hoàn thành task và subtask; xoá subtask có Hoàn tác. Trợ lý AI chỉ hoàn thành / xoá task và subtask khi người dùng bật công tắc riêng; task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (QC-12 mục 4, D10).
 - Nhân bản, xoá mềm, hoàn tác, Thùng rác, khôi phục.
 - Bộ trạng thái task dùng chung cho mọi nhóm (QC-03) và quy tắc đồng bộ nhiều thiết bị, offline (QC-08).
 - Context và channel: tạo, sửa, ẩn, xoá (chuyển task sang channel khác); channel hệ thống "Chưa phân loại". Bản 1.0 một người dùng: người dùng tạo channel tự do, không phân quyền (Q35).
-- **Khung giờ channel** (QC-02 mục 5–9, Q38a): mỗi channel tuỳ chọn đặt ngày và giờ riêng; không đặt thì dùng lịch làm việc chung (G01). G02 sở hữu cài đặt; G04 (projection, sức chứa), G06 (số ngày bị hoãn, QC-04), G04 / G08 (phím D, shutdown "Ngày mai") và G05 (auto-schedule, bản 1.1) đọc để dùng.
+- **Khung giờ channel** (QC-02 mục 5–9, Q38a): mỗi channel tuỳ chọn đặt ngày và giờ riêng (một khoảng mỗi ngày, D1); không đặt thì dùng lịch làm việc chung (G01); channel "Chưa phân loại" luôn theo lịch chung (D3). G02 sở hữu cài đặt; G04 (projection, sức chứa), G06 (số ngày bị hoãn, QC-04), G04 / G08 (phím D, shutdown "Ngày mai") và G05 (auto-schedule, bản 1.1) đọc để dùng.
 
 ## 3.2 Ngoài phạm vi
 
@@ -61,10 +63,10 @@ Task là đơn vị trung tâm của sản phẩm: board theo ngày, lịch, tim
 - Kéo thả trên board, sắp xếp, projection → G04.
 - Timebox lên lịch → G05. Backlog, rollover, lưu trữ tự động → G06. Timer, Focus → G07.
 - Đính kèm file → bản 1.1.
-- Giao task cho người khác, follow task → bản sau (Q35, [`02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md)). Khi làm: task được giao vào bucket backlog "Tuần sau", đặt lên đầu (Q36).
-- Quyền tạo channel chung / channel riêng tư theo vai trò trong workspace → bản sau (Q35).
+- Giao task cho người khác, follow task → bản sau, 1.2 trở đi (Q35, Q47, [`02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md)). Khi làm: task được giao vào bucket backlog "Tuần sau", đặt lên đầu (Q36).
+- Quyền tạo channel chung / channel riêng tư theo vai trò trong workspace → bản sau, 1.2 trở đi (Q35, Q47).
 - Lưu trữ thủ công (`manual`) → bản sau (Q34). Ở 1.0 người dùng đưa task vào backlog hoặc xoá.
-- Trial, thanh toán và chế độ chỉ đọc → bản 1.1 (QC-09, ADR-0002). Bản 1.0 miễn phí, không giới hạn, gắn nhãn Beta.
+- Trial, thanh toán (gói cá nhân một người dùng, không tính ghế) và chế độ chỉ đọc → bản 1.1 (QC-09, Q47, ADR-0002). Bản 1.0 miễn phí, không giới hạn, gắn nhãn Beta.
 - Đổi ngày task (phím D, kéo thả, rollover, backlog) → G04, G06 theo QC-05.
 - Gộp task (giữ Alt khi kéo) → sau 1.1.
 
@@ -96,7 +98,7 @@ Sửa trường nào lưu trường đó ngay; mất mạng thì giữ ở máy 
 | Thời lượng kế hoạch | 1 phút – 24 giờ; preset 5, 10, 15, 20, 25, 30, 45 phút, 1 giờ | Gợi ý của trợ lý AI; không có gợi ý (trợ lý tắt, không có Claude Code) thì trống | Cộng vào tổng ngày |
 | Priority | Urgent (1), Priority (2), Normal (3), Low (4) | Normal | Reset khi rollover theo cài đặt (G06) |
 | Channel | Một channel thuộc một context | Gợi ý của trợ lý AI, không có thì channel hệ thống "Chưa phân loại" (B4) | Mỗi task đúng một channel; lịch làm việc của task theo khung giờ của channel (QC-02 mục 6) |
-| Khung giờ channel | Tuỳ chọn; ≥ 1 ngày trong tuần khi bật; mỗi ngày một khoảng giờ, giờ kết thúc > giờ bắt đầu, bước 15 phút `[giả định]` | Tắt (dùng lịch làm việc chung của G01) | Đổi có hiệu lực từ ngày làm việc kế tiếp `[giả định]` |
+| Khung giờ channel | Tuỳ chọn; ≥ 1 ngày trong tuần khi bật; mỗi ngày một khoảng giờ, không vắt qua nửa đêm, giờ kết thúc > giờ bắt đầu, bước 15 phút (D1) | Tắt (dùng lịch làm việc chung của G01) | Đổi có hiệu lực từ ngày làm việc kế tiếp (D2). Channel "Chưa phân loại" không có khung riêng, luôn theo lịch chung (D3) |
 | Subtask | Một cấp; tối đa 100 / task, tiêu đề 1–500 ký tự | — | Có thời lượng và thời gian thực tế riêng; timer chỉ chạy trên task cha (QC-07) |
 | Notes | Rich text, tối đa 50.000 ký tự | Trống | Đậm, nghiêng, danh sách, checklist, link |
 | Comment | 1–5.000 ký tự | — | Hiện tác giả, giờ |
@@ -139,6 +141,8 @@ AC04: Esc khi đã gõ nội dung → giữ bản nháp, mở lại ô soạn th
 AC05: Ô soạn có sẵn các tuỳ chọn: ngày, thời lượng, channel, objective (1.1), priority, vị trí.
 
 AC06: Cột ngày đã qua (ngày < hôm nay theo ngày làm việc, QC-01) → không tạo được task chưa xong; server từ chối theo QC-05 và báo lỗi.
+
+AC07: Phím toàn cục **Ctrl+Shift+A** (app Windows, có từ 1.0 — D11) mở ô thêm task nhanh kể cả khi app đang chạy nền hoặc cửa sổ không ở trước; task tạo vào hôm nay. Tắt phím tắt trong cài đặt (G01) thì phím này ngừng.
 
 ### US1.2 Tạo task từ link
 
@@ -216,7 +220,7 @@ AC05: Card hiện "actual / planned" (ví dụ 0:02 / 1:30); có toast Hoàn tá
 
 AC06: Số ngày bị hoãn của task reset về 0 (QC-04).
 
-AC07: Trợ lý AI (qua MCP local) chỉ hoàn thành được task khi người dùng đã bật công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt). Task có liên kết tích hợp không bao giờ được AI hoàn thành, kể cả khi đã bật. Task do AI hoàn thành có chip "AI", nhật ký ghi tác nhân AI và có Hoàn tác (QC-12 mục 4–5).
+AC07: Trợ lý AI (qua MCP local) chỉ hoàn thành được task khi người dùng đã bật công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt). Công tắc áp cho cả subtask (D10). Task có liên kết tích hợp không bao giờ được AI hoàn thành, kể cả khi đã bật. Task do AI hoàn thành có chip "AI", nhật ký ghi tác nhân AI và có Hoàn tác (QC-12 mục 4–5).
 
 ### US3.2 Bỏ hoàn thành
 
@@ -246,7 +250,7 @@ AC04: Task đang chạy timer bị xoá → dừng timer, lưu thời gian trư�
 
 AC05: Xoá một instance lặp → ngày gốc của instance thành ngày ngoại lệ của series, series không sinh lại ngày đó (G03, Q26).
 
-AC06: Trợ lý AI chỉ xoá được task khi người dùng đã bật công tắc "Cho phép AI hoàn thành và xoá task"; xoá do AI có chip "AI", nhật ký và Hoàn tác như xoá thường (QC-12 mục 4–5).
+AC06: Trợ lý AI chỉ xoá được task (và subtask) khi người dùng đã bật công tắc "Cho phép AI hoàn thành và xoá task"; task có liên kết tích hợp không bao giờ được AI xoá, kể cả khi đã bật (D10); xoá do AI có chip "AI", nhật ký và Hoàn tác như xoá thường (QC-12 mục 4–5).
 
 ### US4.3 Khôi phục từ Thùng rác
 
@@ -286,9 +290,9 @@ AC01: Trong cài đặt channel có công tắc "Khung giờ riêng", mặc đ�
 
 AC02: Bật → hiện 7 dòng Thứ Hai … Chủ Nhật, mỗi dòng một công tắc và giờ bắt đầu / kết thúc; điền sẵn theo lịch chung hiện tại `[giả định]`. Được bật cả ngày không có trong lịch chung (ví dụ Chủ Nhật).
 
-AC03: Giờ kết thúc ≤ giờ bắt đầu → báo lỗi tại dòng, không lưu. Bật khung mà không chọn ngày nào → báo lỗi, không lưu. Giờ chọn theo bước 15 phút, không vắt qua nửa đêm `[giả định]`.
+AC03: Giờ kết thúc ≤ giờ bắt đầu → báo lỗi tại dòng, không lưu. Bật khung mà không chọn ngày nào → báo lỗi, không lưu. Mỗi ngày một khoảng giờ, chọn theo bước 15 phút, không vắt qua nửa đêm (D1).
 
-AC04: Lưu → hiện ghi chú "Áp dụng từ ngày làm việc kế tiếp ({ngày})"; hôm nay vẫn dùng khung cũ, các ngày từ ngày làm việc kế tiếp trở đi hiển thị theo khung mới ngay `[giả định]` (theo tinh thần Q3).
+AC04: Lưu → hiện ghi chú "Áp dụng từ ngày làm việc kế tiếp ({ngày})"; hôm nay vẫn dùng khung cũ, các ngày từ ngày làm việc kế tiếp trở đi hiển thị theo khung mới ngay (D2, cùng tinh thần Q3).
 
 AC05: Từ ngày có hiệu lực, task của channel dùng khung này cho: projection và cờ "Vượt giờ làm" (G04); số ngày bị hoãn (QC-04, G06); "ngày làm việc kế tiếp" khi dời bằng phím D (G04) hoặc shutdown "Ngày mai" (G08); auto-schedule chỉ xếp trong khung (G05, bản 1.1). Sức chứa của một ngày = thời gian trống trong hợp của lịch chung và mọi khung channel có trong ngày đó (G04, QC-02 mục 7).
 
@@ -297,6 +301,10 @@ AC06: Khung giờ channel **không** ảnh hưởng: ritual ngày (G08) và cộ
 AC07: Xoá channel có khung giờ riêng → task chuyển sang channel nhận và dùng lịch của channel nhận (US5.1 AC04). Ẩn channel không đổi khung giờ.
 
 AC08: Đổi lịch làm việc chung (G01) không đổi khung của channel đã bật khung riêng.
+
+AC09: Channel hệ thống "Chưa phân loại" không có công tắc "Khung giờ riêng"; task của channel này luôn theo lịch làm việc chung (D3).
+
+AC10: Số ngày bị hoãn của task tính theo lịch **hiện tại** của task: đổi khung giờ channel hoặc đổi channel của task có thể làm số này thay đổi (D4, QC-04 mục 1).
 
 # 8. Chỉ số theo dõi `[giả định]`
 
@@ -316,7 +324,7 @@ AC08: Đổi lịch làm việc chung (G01) không đổi khung của channel đ
 |---|---|---|
 | Gợi ý thời lượng / channel | Gợi ý phụ thuộc trợ lý AI qua Claude Code CLI trên máy người dùng (Q33): trợ lý tắt hoặc không có Claude Code thì không có gợi ý; Claude Code có thể chậm hoặc hết hạn mức của gói Claude | Ô soạn không chờ gợi ý; quá thời gian thì bỏ qua; ẩn gợi ý khi độ tin cậy thấp; không gọi LLM nào khác |
 | Khung giờ channel | Nhiều lịch cùng lúc (lịch chung + khung channel) dễ làm người dùng khó hiểu vì sao projection, sức chứa hay "ngày làm việc kế tiếp" khác nhau giữa các task | Tooltip trên card nêu lịch đang áp ("Theo khung #{channel}"); quy tắc tính ở một chỗ (QC-02 mục 5–9) |
-| AI hoàn thành / xoá task | Claude Code thao tác sai trên nhiều task | Mặc định tắt; công tắc riêng; không bao giờ hoàn thành task có liên kết tích hợp; chip "AI" và Hoàn tác (QC-12) |
+| AI hoàn thành / xoá task | Claude Code thao tác sai trên nhiều task | Mặc định tắt; công tắc riêng, áp cho cả subtask; không bao giờ hoàn thành hay xoá task có liên kết tích hợp (D10); chip "AI" và Hoàn tác (QC-12) |
 | Đồng bộ nhiều thiết bị | Hai máy sửa cùng task, hoặc máy offline sửa task mà job hệ thống (rollover) vừa đổi | Theo QC-08: cụm vị trí {trạng thái, ngày dự định, bucket, lưu trữ, số ngày bị hoãn} ghi nguyên khối, lệnh offline trên phiên bản cũ bị từ chối; trường khác gộp theo từng trường, thứ tự theo server nhận; notes dùng CRDT (thiết kế kỹ thuật mục 6) |
 | Phím tắt một chữ | Gõ khi chưa focus ô nhập kích hoạt lệnh (đã gặp trên Sunsama) | Phím tắt chỉ chạy khi không focus ô nhập; lệnh có tác dụng phụ có toast Hoàn tác |
 | Lấy tiêu đề từ URL | Trang chậm, chặn bot, URL nội bộ | Timeout 3 giây, chặn IP nội bộ, fallback dùng URL |
@@ -336,8 +344,9 @@ AC08: Đổi lịch làm việc chung (G01) không đổi khung của channel đ
 - Đã chốt 04/11/2026: bỏ lưu trữ thủ công (`manual`) khỏi 1.0, để bản sau (Q34).
 - Đã chốt 04/11/2026: bản 1 chỉ một người dùng; người dùng tạo channel tự do; quyền tạo channel chung / riêng tư, giao task, follow để bản sau (Q35). Task được giao (bản sau) vào bucket "Tuần sau", đặt lên đầu (Q36).
 - Đã chốt 04/11/2026: G02 sở hữu cài đặt khung giờ channel; lịch của task = khung channel nếu có, ngược lại lịch chung (Q38a, QC-02 mục 5–9).
-- Đã chốt 04/11/2026: AI chỉ hoàn thành / xoá task khi người dùng bật công tắc; task có liên kết tích hợp không bao giờ được AI hoàn thành (Q46, QC-12 mục 4).
+- Đã chốt 04/11/2026: AI chỉ hoàn thành / xoá task khi người dùng bật công tắc; công tắc áp cho cả subtask; task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (Q46, D10, QC-12 mục 4).
 - Đã chốt 04/11/2026: nền tảng 1.0 là app Windows (Flutter), 1.1 web + macOS, 1.2 iOS / Android (Q45, ADR-0005).
-- Khung giờ channel: một ngày có được nhiều khoảng giờ không (ví dụ 08:00–10:00 và 19:00–22:00)? Có cho vắt qua nửa đêm không? Bản này giả định một khoảng / ngày, không vắt qua nửa đêm.
-- Khung giờ channel: đổi khung có hiệu lực ngay hay từ ngày làm việc kế tiếp? Bản này giả định từ ngày làm việc kế tiếp, theo tinh thần Q3.
-- Khung giờ channel: channel hệ thống "Chưa phân loại" có được đặt khung riêng không? Bản này giả định có.
+- Đã chốt 04/11/2026: khung giờ channel một khoảng mỗi ngày, không vắt qua nửa đêm, bước 15 phút (D1).
+- Đã chốt 04/11/2026: đổi khung giờ channel có hiệu lực từ ngày làm việc kế tiếp (D2).
+- Đã chốt 04/11/2026: channel hệ thống "Chưa phân loại" không có khung giờ riêng, luôn theo lịch chung (D3).
+- Đã chốt 04/11/2026: phím toàn cục Ctrl+Shift+A (thêm task) có ở 1.0 trên app Windows (D11).

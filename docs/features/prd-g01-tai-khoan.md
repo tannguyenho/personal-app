@@ -2,7 +2,7 @@
 
 # PRD Tài khoản, onboarding & cài đặt trên app Windows (ứng dụng lập kế hoạch ngày)
 
-> **Bản nháp.** Con số đánh dấu `[giả định]` dùng để dựng flow, cần PO xác nhận trước khi dùng. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026 (tooltip theo ngữ cảnh "Task projections", "Your first keyboard shortcut"; danh sách nhóm trong trang Cài đặt); chỗ khác Sunsama có chủ đích được ghi rõ. Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md), gồm vòng 5–6 (Q32–Q46): bản 1.0 là app Windows cho một người dùng ([ADR-0005](../adr/0005-nen-tang-windows-truoc.md)), trợ lý AI chạy qua Claude Code CLI ([ADR-0004](../adr/0004-ai-qua-claude-code-cli.md), QC-12). Quy tắc dùng chung (QC-xx) xem [`docs/01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md), thuật ngữ xem [`CONTEXT.md`](../../CONTEXT.md), tính năng để bản sau xem [`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md).
+> **Bản nháp.** Con số đánh dấu `[giả định]` dùng để dựng flow, cần PO xác nhận trước khi dùng. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026 (tooltip theo ngữ cảnh "Task projections", "Your first keyboard shortcut"; danh sách nhóm trong trang Cài đặt); chỗ khác Sunsama có chủ đích được ghi rõ. Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md), gồm vòng 5–7 (Q32–Q48, D1–D16): bản 1.0 là app Windows cho một người dùng ([ADR-0005](../adr/0005-nen-tang-windows-truoc.md)), trợ lý AI chạy qua Claude Code CLI ([ADR-0004](../adr/0004-ai-qua-claude-code-cli.md), QC-12). Quy tắc dùng chung (QC-xx) xem [`docs/01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md), thuật ngữ xem [`CONTEXT.md`](../../CONTEXT.md), tính năng để bản sau xem [`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md).
 
 # 1. Bối cảnh và vấn đề
 
@@ -14,7 +14,7 @@ G01 là cửa vào sản phẩm: đăng ký, đăng nhập, onboarding lần đ�
 - **Lịch làm việc chung** (ngày làm việc trong tuần, giờ làm từng ngày) do G01 sở hữu (QC-02 mục 1–4): G04 tính sức chứa, G05 auto-schedule (1.1), G08 không mở ritual vào ngày nghỉ, G09 dựng cột ngày và giờ gửi recap. **Khung giờ channel** do G02 sở hữu (QC-02 mục 5–9); G01 chỉ tham chiếu, không đặc tả lại;
 - giờ plan ngày xác định lúc nhắc Daily planning (G08).
 
-Bản 1.0 là **app Windows (Flutter)** cho **một người dùng**, có tài khoản và dữ liệu trên cloud (Q35, Q45, [ADR-0005](../adr/0005-nen-tang-windows-truoc.md)); web và macOS từ 1.1, iOS / Android từ 1.2. Bản 1.0 miễn phí, gắn nhãn Beta: đăng ký tạo workspace cá nhân, **không** tạo trial. Trial 14 ngày và thanh toán bắt đầu từ bản 1.1 (G12, [ADR-0002](../adr/0002-thanh-toan-chuyen-sang-1-1.md)); tài khoản có từ 1.0 nhận trial 14 ngày tính từ ngày phát hành 1.1. Các phần nhiều thành viên (lời mời, xoá tài khoản khi ở workspace nhiều người) là **bản sau** — xem [`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md). G01 đặc tả khung trang Cài đặt và các nhóm Chung, Hiển thị, Lịch làm việc, Phím tắt, Hồ sơ, Tài khoản; nhóm **Trợ lý AI** chỉ là điểm vào trong khung trang, hành vi do G10 sở hữu (QC-12); các nhóm cài đặt khác do nhóm sở hữu đặc tả.
+Bản 1.0 là **app Windows (Flutter)** cho **một người dùng**, có tài khoản và dữ liệu trên cloud (Q35, Q45, [ADR-0005](../adr/0005-nen-tang-windows-truoc.md)); web và macOS từ 1.1, iOS / Android từ 1.2. Bản 1.0 miễn phí, gắn nhãn Beta: đăng ký tạo workspace cá nhân, **không** tạo trial. Trial 14 ngày và thanh toán **gói cá nhân cho một người dùng** (không tính ghế) bắt đầu từ bản 1.1 (G12, Q47, [ADR-0002](../adr/0002-thanh-toan-chuyen-sang-1-1.md)); tài khoản có từ 1.0 nhận trial 14 ngày tính từ ngày phát hành 1.1. Các phần nhiều thành viên (lời mời, ghế, xoá tài khoản khi ở workspace nhiều người) là **bản sau (1.2 trở đi)** — xem [`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md). G01 đặc tả khung trang Cài đặt và các nhóm Chung, Hiển thị, Lịch làm việc, Phím tắt, Hồ sơ, Tài khoản; nhóm **Trợ lý AI** chỉ là điểm vào trong khung trang, hành vi do G10 sở hữu (QC-12); các nhóm cài đặt khác do nhóm sở hữu đặc tả.
 
 ## 1.2 Vấn đề
 
@@ -59,7 +59,7 @@ Bản 1.0 là **app Windows (Flutter)** cho **một người dùng**, có tài k
 
 - Xác thực 2 lớp (2FA TOTP) → bản 1.1 (G01).
 - Nhận lời mời workspace → bản sau (Q35, xem `docs/02-tinh-nang-ban-sau.md`): phần đăng ký / đăng nhập ở G01, lời mời và thành viên ở G12.
-- Trial, thanh toán, Billing → G12, bản 1.1. Thành viên, Privacy → G12, bản sau (Q35, Q37). Cài đặt Thông báo → G12, bản 1.0.
+- Trial, thanh toán gói cá nhân một người dùng (không tính ghế), Billing → G12, bản 1.1 (Q47). Thành viên, ghế, Privacy → G12, bản sau (1.2 trở đi; Q35, Q37, Q47). Cài đặt Thông báo → G12, bản 1.0; nhắc ritual và nhắc timer bằng thông báo Windows và trong app từ 1.0 (D12).
 - Context & channel, khung giờ channel → G02. Ritual → G08 (Weekly G09). Timebox → G05. Focus → G07. Trợ lý AI (bật / tắt, phát hiện Claude Code, MCP local, quyền của AI, màn đồng ý), Beta → G10, QC-12; G01 chỉ đặt lối vào. Tích hợp → G05 (lịch) / G11.
 - Ngày lễ trong Lịch làm việc → chưa hỗ trợ ở 1.0 (QC-02 mục 4).
 - Đăng nhập bằng Apple, SSO doanh nghiệp (SAML) → chưa có kế hoạch `[giả định]`.
@@ -108,20 +108,20 @@ Không cho người ngoài biết một email đã đăng ký hay chưa. Không 
 | Màu sự kiện trên lịch | Theo channel / theo lịch `[giả định]` | Theo channel | |
 | Ẩn task đã xong | Bật / tắt | Tắt | |
 | Hiệu ứng chúc mừng (pháo giấy) | Bật / tắt | Bật `[giả định]` | Khi hoàn thành task |
-| Phím tắt | Bật / tắt | Bật | Phím toàn cục Ctrl+Shift+A, Ctrl+Shift+Space trên app desktop, từ 1.1 (C20) |
+| Phím tắt | Bật / tắt | Bật | Phím toàn cục Ctrl+Shift+A (thêm task), Ctrl+Shift+Space (timer) trên app Windows, từ 1.0 (D11, thay C20) |
 | Lịch làm việc chung (nhập ở onboarding) | Chọn các ngày làm việc trong tuần; giờ bắt đầu < giờ kết thúc, theo từng ngày | Thứ Hai–Thứ Sáu, 09:00–17:00 `[giả định giờ]` | QC-02 mục 1–4; cho thêm Thứ Bảy hoặc ngày bất kỳ; chỉnh ở nhóm Lịch làm việc (G01). Khung giờ riêng của từng channel: G02 (QC-02 mục 5) |
 | Giờ plan ngày (nhập ở onboarding) | 00:00–23:55 | 09:00 | Nhắc Daily planning (G08) |
 
 - Các giới hạn là **cấu hình hệ thống**, không cố định trong code.
 - Nhóm cài đặt do nhóm khác sở hữu (Ritual, Timebox, Focus, Trợ lý AI, Beta, Thông báo, Context & channel, Tích hợp; bản sau: Thành viên, Privacy; 1.1: Billing) chỉ có lối vào trong khung trang Cài đặt; nội dung đặc tả ở nhóm sở hữu.
-- Nhóm **Trợ lý AI** (G10 sở hữu hành vi, QC-12) gồm: bật / tắt trợ lý (mặc định tắt); trạng thái phát hiện Claude Code (đã cài, đã đăng nhập, phiên bản hỗ trợ; chưa có thì hiện hướng dẫn cài); công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt); công tắc cho AI đọc dữ liệu tích hợp (mặc định tắt). Bật lần đầu hiện màn đồng ý gọn của G10 (QC-12 mục 7).
+- Nhóm **Trợ lý AI** (G10 sở hữu hành vi, QC-12) gồm: bật / tắt trợ lý (mặc định tắt); trạng thái phát hiện Claude Code (đã cài, đã đăng nhập, phiên bản hỗ trợ; chưa có thì hiện hướng dẫn cài); công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt, áp cho cả subtask; task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá — D10); công tắc cho AI đọc dữ liệu tích hợp (mặc định tắt). Bật lần đầu hiện màn đồng ý gọn của G10 (QC-12 mục 7).
 - Xung đột cài đặt giữa các thiết bị xử lý theo từng trường (QC-08 mục 3); người dùng được báo khi giá trị họ vừa đổi bị ghi đè.
 
 # 6. Luồng trải nghiệm tổng thể
 
 | **Bước** | **Giai đoạn** | **Trải nghiệm** | **Đầu ra** |
 |---|---|---|---|
-| 1 | Đăng ký | Cài và mở app Windows; bấm "Tiếp tục với Google / Microsoft" (mở trình duyệt hệ thống, xong quay lại app) hoặc nhập email + mật khẩu, nhập mã 6 số | Tài khoản, workspace cá nhân, context `work` / `personal`, channel hệ thống "Chưa phân loại"; 1.0 không có trial (Beta miễn phí), từ 1.1 trial 14 ngày (G12) |
+| 1 | Đăng ký | Cài và mở app Windows; bấm "Tiếp tục với Google / Microsoft" (mở trình duyệt hệ thống, xong quay lại app) hoặc nhập email + mật khẩu, nhập mã 6 số | Tài khoản, workspace cá nhân, context `work` / `personal`, channel hệ thống "Chưa phân loại"; 1.0 không có trial (Beta miễn phí), từ 1.1 trial 14 ngày cho gói cá nhân một người dùng (G12, Q47) |
 | 2 | Onboarding | 5 bước: ngôn ngữ + timezone → kết nối lịch → công cụ công việc → lịch làm việc + giờ plan → 3 task đầu | Cài đặt cơ bản đúng, có task hôm nay |
 | 3 | Ngày đầu tiên | Daily planning có hướng dẫn (G08); tooltip giải thích projection, phím tắt khi gặp lần đầu | Ngày đầu tiên được lên kế hoạch |
 | 4 | Dùng hằng ngày | Đăng nhập một lần trên máy Windows, phiên tự gia hạn 30 ngày | Không phải đăng nhập lại mỗi ngày |
@@ -144,7 +144,7 @@ AC02: Mật khẩu < 10 ký tự hoặc nằm trong danh sách bị lộ → bá
 
 AC03: Hợp lệ → gửi mã 6 số tới email, mở màn nhập mã; mã hết hạn sau 10 phút; dán mã đủ 6 số tự gửi.
 
-AC04: Nhập đúng mã → tạo tài khoản, workspace cá nhân (người dùng là chủ sở hữu), 2 context `work`, `personal`, channel hệ thống "Chưa phân loại" (không xoá được, là channel mặc định — G02), mở onboarding. Bản 1.0 không tạo trial (Beta miễn phí); từ 1.1 bắt đầu trial 14 ngày, mỗi email chỉ một lần (G12).
+AC04: Nhập đúng mã → tạo tài khoản, workspace cá nhân (người dùng là chủ sở hữu), 2 context `work`, `personal`, channel hệ thống "Chưa phân loại" (không xoá được, là channel mặc định — G02), mở onboarding. Bản 1.0 không tạo trial (Beta miễn phí); từ 1.1 bắt đầu trial 14 ngày của gói cá nhân một người dùng, không tính ghế, mỗi email chỉ một lần (G12, Q47).
 
 AC05: "Gửi lại mã" bật sau 60 giây `[giả định]`.
 
@@ -284,7 +284,7 @@ User Story: Là người dùng, tôi muốn tìm thấy mọi cài đặt về t
 
 AC01: Khung trang Cài đặt có nhóm "Trợ lý AI". G01 chỉ đặt lối vào; nội dung, hành vi và thông báo do G10 đặc tả theo QC-12.
 
-AC02: Nhóm gồm: bật / tắt trợ lý (mặc định tắt); trạng thái phát hiện Claude Code (đã cài, đã đăng nhập, phiên bản hỗ trợ; chưa có → hướng dẫn "Cài Claude Code để bật trợ lý AI", QC-12 mục 2); công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt, QC-12 mục 4); công tắc cho AI đọc dữ liệu tích hợp (mặc định tắt, QC-12 mục 6).
+AC02: Nhóm gồm: bật / tắt trợ lý (mặc định tắt); trạng thái phát hiện Claude Code (đã cài, đã đăng nhập, phiên bản hỗ trợ; chưa có → hướng dẫn "Cài Claude Code để bật trợ lý AI", QC-12 mục 2); công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt, áp cho cả subtask, không áp cho task có liên kết tích hợp; QC-12 mục 4, D10); công tắc cho AI đọc dữ liệu tích hợp (mặc định tắt, QC-12 mục 6).
 
 AC03: Bật trợ lý lần đầu → màn đồng ý gọn của G10 nói rõ dữ liệu nào được đưa cho Claude Code; app lưu thời điểm đồng ý (QC-12 mục 7). Đồng ý này tách khỏi đồng ý xử lý dữ liệu của tài khoản (US5.6).
 
@@ -326,9 +326,9 @@ AC01: Cần xác nhận lại (mật khẩu hoặc Google / Microsoft) và gõ "
 
 AC02: Xoá → đăng xuất mọi phiên, thu hồi kết nối lịch / tích hợp, xoá workspace cá nhân (từ 1.1: huỷ gói, G12); dữ liệu bị xoá vĩnh viễn ≤ 30 ngày. Giữ lại có cơ sở pháp lý: hoá đơn, chứng từ 10 năm (G12); nhật ký bảo mật 1 năm, ẩn danh.
 
-AC03: (Bản sau — workspace nhiều người, xem `docs/02-tinh-nang-ban-sau.md`) Không phải chủ sở hữu → trước khi xoá, người dùng rời workspace theo G12 (task được giao chưa xong trả về người giao, giảm ghế); gói của nhóm **không** bị huỷ.
+AC03: (Bản sau, 1.2 trở đi — workspace nhiều người, xem `docs/02-tinh-nang-ban-sau.md`) Không phải chủ sở hữu → trước khi xoá, người dùng rời workspace theo G12 (task được giao chưa xong trả về người giao, giảm ghế); gói của nhóm **không** bị huỷ.
 
-AC04: (Bản sau — workspace nhiều người) Chủ sở hữu của workspace còn thành viên khác → chặn, yêu cầu chuyển quyền sở hữu hoặc xoá workspace trước (G12). Chủ sở hữu workspace chỉ có mình (mọi tài khoản khi chưa có tính năng nhiều thành viên) → xoá tài khoản kèm xoá workspace, huỷ gói nếu có (G12).
+AC04: (Bản sau, 1.2 trở đi — workspace nhiều người) Chủ sở hữu của workspace còn thành viên khác → chặn, yêu cầu chuyển quyền sở hữu hoặc xoá workspace trước (G12). Chủ sở hữu workspace chỉ có mình (mọi tài khoản khi chưa có tính năng nhiều thành viên) → xoá tài khoản kèm xoá workspace, huỷ gói nếu có (G12).
 
 AC05: Đang có yêu cầu xuất dữ liệu đang xử lý → không cho xoá tới khi bản xuất sẵn sàng hoặc lỗi.
 
@@ -382,7 +382,9 @@ AC04: Đồng ý dùng Trợ lý AI là đồng ý riêng, qua màn gọn của 
 - Đã chốt 04/11/2026: trợ lý AI chạy bằng Claude Code CLI, có từ 1.0, mặc định tắt, màn đồng ý gọn; G01 chỉ đặt nhóm cài đặt "Trợ lý AI", hành vi do G10 sở hữu (Q46, QC-12, ADR-0004).
 - Đã chốt 04/11/2026: lịch làm việc chung do G01 sở hữu; khung giờ channel do G02 sở hữu (Q38 / Q38a, QC-02).
 - (Mới) Bản 1.0 chỉ có app Windows: link đặt lại mật khẩu, "Không phải tôi", tải bản xuất dữ liệu trong email mở ở đâu — trang web tối giản hay mở app qua deep link? Cần tech chốt (`docs/tech/`).
-- (Mới) Phím toàn cục Ctrl+Shift+A, Ctrl+Shift+Space đang để 1.1 (C20) khi 1.0 đã là app desktop: giữ 1.1 hay đưa lên 1.0?
+- Đã chốt 04/11/2026: phím toàn cục Ctrl+Shift+A (thêm task), Ctrl+Shift+Space (timer) có ở 1.0 trên app Windows (D11, thay C20).
+- Đã chốt 04/11/2026: bản 1.1 có trial và thanh toán gói cá nhân cho một người dùng, không tính ghế; nhiều thành viên và ghế để bản sau, 1.2 trở đi (Q47, ADR-0002).
+- Đã chốt 04/11/2026: nhắc ritual và nhắc timer > 4 giờ bằng thông báo Windows và trong app, từ 1.0 (D12; cài đặt Thông báo thuộc G12).
 - Xoá tài khoản có cho khôi phục trong 30 ngày không `[giả định: không]`?
 - Bản 1.0 hỗ trợ những ngôn ngữ nào (Tiếng Việt, English)?
 - Bước 5 onboarding bắt buộc ít nhất 1 task hay cho bỏ qua?

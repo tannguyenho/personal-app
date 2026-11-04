@@ -4,7 +4,7 @@
 
 > **Bản nháp.** Con số đánh dấu `[giả định]` dùng để dựng flow, cần PO xác nhận trước khi dùng. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026: Backlog 6 bucket ("Someday in the next week or two / next month / next quarter / next year / Someday / Never"), "Add folder", nhóm theo channel, phím Z chọn bucket bằng 1–5, 0 và toast "[task] moved to next month in Backlog · OPEN TASK · DISMISS", Shift+Z lên đầu backlog không hỏi, menu Ngày bắt đầu ("Snooze one day (D), Snooze one week, Move to backlog (Z), Move to top of backlog (Shift+Z)"), Archive có "Auto-archive", "Tasks which have rolled over at least 4 consecutive days", "Delete all". Chỗ khác Sunsama có chủ đích được ghi rõ.
 >
-> **Quy tắc dùng chung:** PRD này tham chiếu [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md) (QC-01 ngày làm việc, QC-02 lịch làm việc và khung giờ channel, QC-03 trạng thái task, QC-04 số ngày bị hoãn, QC-05 đổi ngày task, QC-06 instance trùng series, QC-08 đồng bộ, QC-09 chỉ đọc). G06 sở hữu QC-04 và QC-05. Thuật ngữ theo [`CONTEXT.md`](../../CONTEXT.md); "Archive" trên Sunsama tương ứng **Lưu trữ** trong app.
+> **Quy tắc dùng chung:** PRD này tham chiếu [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md) (QC-01 ngày làm việc, QC-02 lịch làm việc và khung giờ channel, QC-03 trạng thái task, QC-04 số ngày bị hoãn, QC-05 đổi ngày task, QC-06 instance trùng series, QC-08 đồng bộ, QC-09 chỉ đọc). G06 sở hữu QC-04 và QC-05. Thuật ngữ theo [`CONTEXT.md`](../../CONTEXT.md); "Archive" trên Sunsama tương ứng **Lưu trữ** trong app. Cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md) vòng 7: số ngày bị hoãn theo lịch hiện tại của task (D4); "Hoãn 1 tuần" = max(ngày dự định, hôm nay) + 7 ngày, rơi vào ngày nghỉ thì giữ nguyên (D5); lưu trữ `skipped` xử lý timebox như "Đưa vào backlog" (D6).
 
 # 1. Bối cảnh và vấn đề
 
@@ -58,7 +58,7 @@ Không phải việc nào cũng làm hôm nay, và không phải việc nào lê
 - Thùng rác → G02. Timebox → G05.
 - Chế độ chỉ đọc và hành vi rollover khi chỉ đọc → bản 1.1 (QC-09, ADR-0002).
 - Tự chuyển task giữa các bucket theo thời gian (ví dụ "Tháng tới" sau 30 ngày thành "Tuần tới") → chưa đưa vào.
-- Backlog dùng chung cho nhóm, task được giao → bản sau (nhiều thành viên, Q35, `docs/02-tinh-nang-ban-sau.md`). Hướng đã chốt: task được giao vào bucket "Tuần tới" của người nhận, đặt lên đầu (Q36; US1.3 AC03).
+- Backlog dùng chung cho nhóm, task được giao → bản sau, 1.2 trở đi (nhiều thành viên, Q35, Q47, `docs/02-tinh-nang-ban-sau.md`). Hướng đã chốt: task được giao vào bucket "Tuần tới" của người nhận, đặt lên đầu (Q36; US1.3 AC03).
 - Lưu trữ thủ công (`archiveReason = manual`) → bản sau (Q34, `docs/02`). Ở 1.0, người dùng muốn bỏ một task thì đưa vào backlog (ví dụ bucket "Không bao giờ") hoặc xoá.
 
 # 4. Nguyên tắc sản phẩm
@@ -95,7 +95,7 @@ Rollover idempotent theo người dùng + ngày: chạy lại không chuyển ha
 | Tự lưu trữ | Bật / tắt | Bật `[giả định]` | Toggle trong panel Lưu trữ |
 | Ngưỡng Tự lưu trữ | Số ngày bị hoãn (QC-04), chỉ đếm ngày có trong lịch làm việc của task (QC-02 mục 6, Q32) | 4 `[giả định]` | Như Sunsama về con số; khác Sunsama ở chỗ không đếm ngày nghỉ của task |
 | Timebox ngày cũ khi rollover | Theo QC-05: timebox quá khứ gỡ liên kết, task về projection; timebox tương lai giữ | — | Sự kiện quá khứ trên lịch ngoài **giữ lại** làm lịch sử (Q6) |
-| Timebox khi tự lưu trữ | Theo dòng "Tự lưu trữ (`stale`)" của QC-05: như "Đưa vào backlog" — timebox tương lai gỡ, sự kiện ngoài bị xoá; timebox quá khứ gỡ liên kết, sự kiện giữ | — | Q42 |
+| Timebox khi tự lưu trữ hoặc lưu trữ do trùng series | Theo dòng "Tự lưu trữ (`stale`), lưu trữ do trùng series (`skipped`)" của QC-05: như "Đưa vào backlog" — timebox tương lai gỡ, sự kiện ngoài bị xoá; timebox quá khứ gỡ liên kết, sự kiện giữ | — | Q42 (`stale`), D6 (`skipped`) |
 | Hoàn tác rollover / tự lưu trữ | Không có | — | Job hệ thống, chỉ ghi nhật ký (Q41, QC-05) |
 | Thời gian giữ trong Lưu trữ | Không giới hạn đến khi xoá `[giả định]` | — | "Xoá tất cả" đưa vào Thùng rác 30 ngày (G02, Q28) |
 
@@ -195,6 +195,8 @@ AC07: Rollover chạy mọi ngày, kể cả ngày không có trong lịch làm 
 
 AC08: Rollover không có Hoàn tác và không có toast (Q41); thay đổi ghi nhật ký. Người dùng muốn trả task về ngày khác thì kéo hoặc chọn ngày (G04).
 
+AC09: n tính theo lịch **hiện tại** của task (D4): người dùng đổi khung giờ channel, đổi lịch chung hoặc đổi channel của task thì n được tính lại trên toàn bộ khoảng từ ngày dự định đầu tiên, có thể tăng hoặc giảm ngay. Ví dụ task `#Công ty` ở AC07 đang n = 1 vào Thứ Hai 09/11, chuyển sang `#Cá nhân` → n = 3 ngay.
+
 ### US3.2 Nhiều ngày bị lỡ
 
 AC01: Job không chạy được nhiều ngày (sự cố) hoặc task có ngày cũ hơn hôm qua → chuyển một lần về hôm nay, nhật ký một dòng (EC-05); nhãn "Dời {n} ngày" vẫn đúng số ngày có trong lịch làm việc của task kể từ ngày dự định đầu tiên (QC-04 mục 1).
@@ -203,7 +205,9 @@ AC02: Đổi timezone hoặc mốc đầu ngày → có hiệu lực từ ngày 
 
 ### US3.3 Instance lặp
 
-AC01: Instance lặp cũ chưa xong, series đã có instance hôm nay → không chuyển, vào Lưu trữ với lý do "bị bỏ qua" (EC-30, QC-06); không có toast, chỉ ghi nhật ký.
+AC01: Instance lặp cũ chưa xong, series đã có instance hôm nay → không chuyển, vào Lưu trữ với lý do "bị bỏ qua" (`skipped`, EC-30, QC-06); không có toast, chỉ ghi nhật ký.
+
+AC02: Instance lưu trữ `skipped` xử lý timebox như "Đưa vào backlog": timebox tương lai bị gỡ và sự kiện trên lịch ngoài bị xoá; timebox quá khứ chỉ gỡ liên kết, sự kiện giữ lại; timer không dừng (D6, dòng "lưu trữ do trùng series" của QC-05). Áp cho mọi đường lưu trữ `skipped` (rollover, phím D, shutdown "Ngày mai").
 
 ### US3.4 Chế độ chỉ đọc (bản 1.1)
 
@@ -278,4 +282,6 @@ AC03: Khôi phục một task như vậy từ Thùng rác đưa task về lại 
 - Đã chốt 04/11/2026: bỏ lưu trữ thủ công (`manual`) khỏi 1.0; người dùng đưa vào backlog hoặc xoá; để bản sau (Q34, `docs/02`).
 - Đã chốt 04/11/2026: tự lưu trữ (`stale`) xử lý timebox như "Đưa vào backlog" — đã thêm dòng "Tự lưu trữ" vào QC-05 (Q42).
 - Đã chốt 04/11/2026: "Hoãn 1 tuần" và phím S đặt lại số ngày bị hoãn (Q40, QC-04 mục 3, QC-05).
-- Số ngày bị hoãn tính theo lịch hiện tại của task: khi người dùng đổi khung giờ channel, đổi lịch chung hoặc đổi channel của task, n có tính lại cho cả quá khứ không? SRS tạm: n là giá trị suy ra, luôn tính theo lịch hiện tại (có thể tăng hoặc giảm ngay).
+- Đã chốt 04/11/2026: số ngày bị hoãn tính theo lịch hiện tại của task; đổi khung giờ channel, đổi lịch chung hoặc đổi channel của task thì n được tính lại (có thể tăng hoặc giảm ngay) (D4, QC-04 mục 1).
+- Đã chốt 04/11/2026: "Hoãn 1 tuần" = max(ngày dự định, hôm nay) + 7 ngày; rơi vào ngày nghỉ thì giữ nguyên ngày đó (D5, QC-05; G04 sở hữu lệnh).
+- Đã chốt 04/11/2026: instance lưu trữ `skipped` (trùng series) xử lý timebox như "Đưa vào backlog" (D6, QC-05).
