@@ -37,6 +37,8 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
     ├── tech/                           # câu hỏi tech stack & API, chờ grill riêng với tech
     ├── adr/                            # quyết định khó đảo ngược
     ├── review/                         # báo cáo review và quyết định chốt mâu thuẫn
+    ├── research/                       # research Sunsama và kết quả kiểm chứng bằng Chrome
+    ├── design-brief/                   # design brief cho designer; _khuon.md là khuôn chung
     └── features/
         ├── prd-g01-tai-khoan.md        # PRD: vì sao, cho ai, phạm vi, user story, AC, chỉ số
         ├── srs-g01-tai-khoan.md        # SRS: business rule, trạng thái, use case, màn hình, API, thông báo
