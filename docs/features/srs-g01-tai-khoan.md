@@ -1,8 +1,8 @@
-> **Mã:** PLN-SRS-G01-WEB · **Trạng thái:** nháp · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g01-tai-khoan.md
+> **Mã:** PLN-SRS-G01-WEB · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g01-tai-khoan.md
 
 # UC-G01 - Tài khoản, onboarding & cài đặt trên Web / App (ứng dụng lập kế hoạch ngày)
 
-> **Bản nháp.** Giá trị `[giả định]` cần BA / PO xác nhận. SRS này mô tả đăng ký, đăng nhập, phiên, quên mật khẩu, onboarding, khung trang Cài đặt và các nhóm Chung, Hiển thị, Phím tắt, Hồ sơ, Tài khoản (đổi mật khẩu / email, đăng xuất mọi phiên, xuất dữ liệu, xoá tài khoản). Context & channel (G02), Lịch làm việc (G04 / G05), kết nối lịch (G05), Focus (G07), Daily planning (G08), Ritual (G08 / G09), AI và Beta (G10), Tích hợp (G11), trial, thanh toán, Thông báo, Thành viên, Privacy (G12) đặc tả ở SRS riêng của từng nhóm. Mã API, CSDL tham chiếu tài liệu "Thiết kế kỹ thuật & đặc tả API — MVP 1.0".
+> **Bản nháp.** Giá trị `[giả định]` cần BA / PO xác nhận. SRS này mô tả đăng ký, đăng nhập, phiên, quên mật khẩu, onboarding, khung trang Cài đặt và các nhóm Chung, Hiển thị, Lịch làm việc, Phím tắt, Hồ sơ, Tài khoản (đổi mật khẩu / email, đăng xuất mọi phiên, xuất dữ liệu, xoá tài khoản, đồng ý xử lý dữ liệu). G01 sở hữu QC-01 (ngày làm việc) và QC-02 (lịch làm việc) trong [`docs/01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md). Context & channel (G02), kết nối lịch (G05), Focus (G07), Daily planning (G08), Ritual (G08 / G09), AI, màn đồng ý Trợ lý AI và Beta (G10), Tích hợp (G11), Thông báo (G12, 1.0), trial, thanh toán, Thành viên, Privacy (G12, 1.1) đặc tả ở SRS riêng của từng nhóm. Cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). Mã API, CSDL tham chiếu tài liệu "Thiết kế kỹ thuật & đặc tả API — MVP 1.0".
 
 ## 1. Tổng quan
 
@@ -10,8 +10,8 @@
 | --- | --- |
 | Mục tiêu | Người dùng đăng ký và vào được ngày đầu tiên đã lên kế hoạch trong vài phút; đăng nhập an toàn; tự chỉnh cài đặt và quản lý tài khoản, dữ liệu của mình |
 | Actor | Khách (chưa đăng nhập) · Người dùng đã đăng nhập · Hệ thống · Nhà cung cấp danh tính (Google, Microsoft) · Dịch vụ gửi email |
-| Phạm vi | Đăng ký email / Google / Microsoft, xác minh email, đăng nhập, phiên và token, đăng xuất, khoá tạm, quên mật khẩu, onboarding 5 bước, tooltip theo ngữ cảnh, khung trang Cài đặt, nhóm Chung / Hiển thị / Phím tắt / Hồ sơ / Tài khoản, xuất dữ liệu, xoá tài khoản |
-| Ngoài phạm vi | 2FA TOTP (1.1), lời mời và thành viên (G12, 1.1), trial / thanh toán / Thông báo (G12), nội dung các nhóm cài đặt khác, SSO doanh nghiệp |
+| Phạm vi | Đăng ký email / Google / Microsoft, xác minh email, đăng nhập, phiên và token, đăng xuất, khoá tạm, quên mật khẩu, onboarding 5 bước, tooltip theo ngữ cảnh, khung trang Cài đặt, nhóm Chung / Hiển thị / Lịch làm việc / Phím tắt / Hồ sơ / Tài khoản, ngày làm việc (QC-01), lịch làm việc (QC-02), xuất dữ liệu, xoá tài khoản, rút lại / xin lại đồng ý |
+| Ngoài phạm vi | 2FA TOTP (1.1), lời mời và thành viên (G12, 1.1), trial / thanh toán (G12, 1.1), Thông báo (G12), màn đồng ý Trợ lý AI (G10), nội dung các nhóm cài đặt khác, SSO doanh nghiệp, ngày lễ |
 | Nền tảng | Web (desktop, mobile web) ở 1.0. App iOS / Android, desktop từ 1.1 dùng cùng đặc tả |
 | Figma | `[chưa có]` |
 
@@ -27,32 +27,36 @@
 | US-06 | Người dùng | Được hỏi khi timezone máy khác cài đặt | "Hôm nay" và giờ nhắc luôn đúng |
 | US-07 | Người dùng | Đổi mật khẩu, email, đăng xuất mọi thiết bị | Giữ tài khoản an toàn |
 | US-08 | Người dùng | Xuất và xoá dữ liệu của mình | Kiểm soát dữ liệu cá nhân |
+| US-09 | Người dùng | Chọn ngày làm việc trong tuần và giờ làm từng ngày | App không đẩy việc, không nhắc ritual vào ngày nghỉ |
+| US-10 | Người dùng | Xem, rút lại đồng ý và được hỏi lại khi điều khoản đổi | Kiểm soát việc xử lý dữ liệu cá nhân |
 
 ## 3. Business Rules
 
 | **Mã** | **Quy tắc** |
 | --- | --- |
-| BR-01 | **Định danh.** Tài khoản định danh bằng email chính (cắt khoảng trắng, không phân biệt hoa thường). Một email = một tài khoản; một tài khoản liên kết được nhiều phương thức đăng nhập (mật khẩu, Google, Microsoft) |
+| BR-01 | **Định danh.** Tài khoản định danh bằng email chính (cắt khoảng trắng, không phân biệt hoa thường). Một email = một tài khoản; một tài khoản liên kết được nhiều phương thức đăng nhập (mật khẩu, Google, Microsoft). Phương thức Google / Microsoft gắn theo `provider + sub` của nhà cung cấp, không theo email: đổi email bên nhà cung cấp không làm mất liên kết, đổi email chính trong app không đổi liên kết |
 | BR-02 | **Mật khẩu.** 10–128 ký tự (tối đa 128 `[giả định]`); không nằm trong danh sách mật khẩu bị lộ; băm Argon2id; không ghi log, không gửi lại qua email |
-| BR-03 | **Mã xác minh email.** 6 số, hết hạn 10 phút, dùng 1 lần; nhập sai 5 lần → mã vô hiệu `[giả định]`; "Gửi lại mã" sau 60 giây, ≤ 5 lần / giờ / email `[giả định]`; mã mới làm mã cũ vô hiệu. Tài khoản `CHUA_XAC_MINH` quá 24 giờ bị xoá `[giả định]` |
+| BR-03 | **Mã xác minh email.** 6 số, hết hạn 10 phút, dùng 1 lần; nhập sai 5 lần → mã vô hiệu `[giả định]`; "Gửi lại mã" sau 60 giây, ≤ 5 lần / giờ / email `[giả định]`; mã mới làm mã cũ vô hiệu. Tài khoản `CHUA_XAC_MINH` quá 24 giờ bị xoá hẳn (không qua `CHO_XOA`). Đăng nhập Google / Microsoft có email đã xác minh trùng email của tài khoản `CHUA_XAC_MINH` → bản ghi chưa xác minh bị thay thế: huỷ mật khẩu và mã đang chờ, tạo tài khoản theo UC-02 A1 |
 | BR-04 | **Chống dò email.** Đăng ký bằng email đã có và quên mật khẩu bằng email chưa có trả response, thời gian phản hồi và giao diện giống trường hợp hợp lệ. Thông tin thật chỉ gửi qua email: email đã có tài khoản nhận thư "Bạn đã có tài khoản" kèm link đăng nhập / quên mật khẩu |
-| BR-05 | **Khởi tạo khi đăng ký** (một giao dịch): User; Workspace với người dùng là chủ sở hữu (G12); 3 context `work`, `personal`, `uncategorized` (G02); cài đặt mặc định (BR-12); trial 14 ngày (G12); onboarding `CHUA_BAT_DAU`. Đăng ký qua lời mời (1.1): không tạo workspace mới `[giả định]`, gia nhập workspace mời (G12) |
-| BR-06 | **Đồng ý xử lý dữ liệu.** Tài khoản mới (mọi phương thức) phải tick đồng ý Điều khoản sử dụng và Chính sách quyền riêng tư (không tick sẵn); lưu phiên bản văn bản và thời điểm đồng ý (Nghị định 13/2023/NĐ-CP, GDPR — chờ pháp chế xác nhận) |
-| BR-07 | **Khoá đăng nhập.** Sai mật khẩu 5 lần trong 15 phút → khoá đăng nhập bằng mật khẩu 15 phút, gửi email cảnh báo; Google / Microsoft và quên mật khẩu vẫn dùng được `[giả định]`. Giới hạn 10 lần gọi đăng nhập / phút / IP (429) |
+| BR-05 | **Khởi tạo khi đăng ký** (một giao dịch): User; workspace cá nhân với người dùng là chủ sở hữu (G12); 2 context `work`, `personal` (G02); channel hệ thống "Chưa phân loại" (`isSystem`, không xoá được, là channel mặc định của task — G02); cài đặt mặc định (BR-12) gồm lịch làm việc mặc định (BR-22); onboarding `CHUA_BAT_DAU`. **Gói:** bản 1.0 không tạo trial, workspace dùng miễn phí không giới hạn, nhãn Beta; từ 1.1 tạo trial 14 ngày (G12), mỗi email chỉ được trial 1 lần; tài khoản có từ 1.0 nhận trial 14 ngày tính từ ngày phát hành 1.1 (G12). Đăng ký qua lời mời (1.1): không tạo workspace cá nhân, gia nhập workspace mời (G12) |
+| BR-06 | **Đồng ý xử lý dữ liệu.** Tài khoản mới (mọi phương thức) phải tick đồng ý Điều khoản sử dụng và Chính sách quyền riêng tư (không tick sẵn); lưu phiên bản văn bản và thời điểm đồng ý (Nghị định 13/2023/NĐ-CP, GDPR — chờ pháp chế xác nhận). Rút lại và xin lại đồng ý theo BR-23 |
+| BR-07 | **Khoá đăng nhập.** Sai mật khẩu 5 lần trong 15 phút từ cùng IP → khoá đăng nhập bằng mật khẩu 15 phút cho **cặp tài khoản + IP**; IP khác không bị ảnh hưởng. Phản hồi luôn là một thông báo chung MSG-14, không phân biệt sai mật khẩu, email không tồn tại hay đang bị khoá. Email cảnh báo gửi chủ tài khoản tối đa 1 lần / 24 giờ. Google / Microsoft và quên mật khẩu vẫn dùng được `[giả định]`. Giới hạn 10 lần gọi đăng nhập / phút / IP (429) |
 | BR-08 | **Phiên.** Access token JWT 15 phút. Refresh token 30 ngày trong cookie httpOnly, Secure, SameSite=Lax `[giả định]`; mỗi lần làm mới phát token mới, token cũ hết hiệu lực. Token cũ bị dùng lại → thu hồi cả chuỗi token của phiên đó, phát `session.revoked` |
 | BR-09 | **Đặt lại mật khẩu.** Link hiệu lực 30 phút, dùng 1 lần, link mới làm link cũ vô hiệu. Đặt lại thành công → mở khoá BR-07, thu hồi mọi phiên khác `[giả định]`, gửi email thông báo |
-| BR-10 | **Xác nhận lại.** Đổi mật khẩu, đổi email, xoá tài khoản cần nhập mật khẩu hiện tại; tài khoản chỉ có Google / Microsoft → đăng nhập lại với nhà cung cấp trong 5 phút gần nhất `[giả định]` |
-| BR-11 | **Onboarding.** 5 bước theo thứ tự: (1) ngôn ngữ + timezone → (2) kết nối lịch → (3) công cụ công việc → (4) giờ làm việc + giờ plan ngày → (5) task đầu tiên. Mọi trường điền sẵn; bước 2 bỏ qua được; lưu tiến độ sau mỗi bước; mở lại app tiếp tục bước dở. Hoàn tất → mở Daily planning hôm nay ở chế độ có hướng dẫn (G08). Chỉ hiện một lần / tài khoản |
-| BR-12 | **Cài đặt.** Mỗi trường lưu ngay qua \[SettingsUpdate\] (chỉ trường đổi), áp dụng ngay không tải lại trang; phát `settings.changed` tới thiết bị khác ≤ 5 giây; xung đột theo trường, bản sau thắng. Mặc định và giới hạn theo PRD mục 5, lấy từ \[AppConfig\] |
-| BR-13 | **Timezone.** Mặc định theo thiết bị lúc đăng ký. Mỗi lần mở app so timezone thiết bị với cài đặt; lệch → banner MSG-23, không tự đổi; chọn "Giữ" thì không hỏi lại tới khi timezone thiết bị đổi tiếp. Đổi timezone giữ thời điểm tuyệt đối của timebox (G05) |
-| BR-14 | **Giờ bắt đầu ngày** (day_start_time): mặc định 04:00 `[giả định — chờ PO chốt 04:00 hay 00:00]`, khoảng 00:00–06:00 `[giả định]`. Mọi tính toán "hôm nay" (rollover, ritual, AI) dùng mốc này theo timezone người dùng. Đổi giá trị áp dụng từ ngày làm việc kế tiếp `[giả định]` |
+| BR-10 | **Xác nhận lại.** Đổi mật khẩu, đổi email, xoá tài khoản và chuyển quyền sở hữu workspace (G12) cần một trong hai: nhập mật khẩu hiện tại, hoặc `reauthToken` có được khi đăng nhập lại qua Google / Microsoft đã liên kết. `reauthToken` dùng 1 lần, hiệu lực 5 phút `[giả định]`. Tài khoản chỉ có Google / Microsoft chỉ dùng được `reauthToken` |
+| BR-11 | **Onboarding.** 5 bước theo thứ tự: (1) ngôn ngữ + timezone → (2) kết nối lịch → (3) công cụ công việc → (4) lịch làm việc (BR-22) + giờ plan ngày → (5) task đầu tiên. Mọi trường điền sẵn; bước 2 bỏ qua được; lưu tiến độ sau mỗi bước; mở lại app tiếp tục bước dở. Hoàn tất → mở Daily planning hôm nay ở chế độ có hướng dẫn (G08). Chỉ hiện một lần / tài khoản |
+| BR-12 | **Cài đặt.** Mỗi trường lưu ngay qua \[SettingsUpdate\] (chỉ trường đổi, kèm `version` của từng trường), áp dụng ngay không tải lại trang; phát `settings.changed` tới thiết bị khác ≤ 5 giây. Xung đột xử lý theo từng trường (QC-08 mục 3): bản server nhận sau thắng; thiết bị có lệnh bị từ chối (412) lấy giá trị server **của trường đó** và hiện MSG-41; các trường khác trong cùng lệnh vẫn được lưu. Mặc định và giới hạn theo PRD mục 5, lấy từ \[AppConfig\] |
+| BR-13 | **Timezone.** Mặc định theo thiết bị lúc đăng ký. Mỗi lần mở app so timezone thiết bị với cài đặt; lệch → banner MSG-23, không tự đổi; chọn "Giữ" thì không hỏi lại tới khi timezone thiết bị đổi tiếp. MSG-23 là banner duy nhất cho lệch timezone trong toàn app (G04 MSG-16 bỏ). Đổi timezone có hiệu lực từ ngày làm việc kế tiếp (QC-01 mục 3); ngày dự định giữ nguyên, timebox giữ thời điểm tuyệt đối, cờ "Lệch ngày" theo QC-01 mục 4 |
+| BR-14 | **Mốc đầu ngày và ngày làm việc.** Ngày làm việc và hàm `workday(t)` theo QC-01 (G01 sở hữu). Mốc đầu ngày mặc định 04:00, chỉnh trong 00:00–06:00. Đổi mốc có hiệu lực từ ngày làm việc kế tiếp, hiện MSG-24; không chạy lại rollover cho ngày đã có lượt xong (QC-01 mục 3) |
 | BR-15 | **Phím tắt.** Tắt phím tắt → mọi phím một ký tự ngừng; Ctrl/Cmd+K và Esc vẫn chạy `[giả định]`. Phím một ký tự chỉ chạy khi không focus ô nhập; gõ ≥ 4 ký tự / 1 giây ngoài ô nhập → khoá phím tắt 1 giây (EC-25). Phím toàn cục Ctrl+Shift+A, Ctrl+Shift+Space chỉ trên desktop (1.1) |
 | BR-16 | **Tooltip theo ngữ cảnh** hiện tối đa 1 lần / tài khoản (lưu trong cài đặt, đồng bộ mọi thiết bị); đánh dấu đã xem khi đóng hoặc khi làm hành động được gợi ý. 1.0: "Task projections" (lần đầu thấy projection, G04), "Your first keyboard shortcut" (lần đầu dùng phím tắt, G04); danh sách khác `[giả định]` |
-| BR-17 | **Đổi email.** Gửi mã 6 số (BR-03) tới email mới; chỉ đổi khi nhập đúng mã. Email mới đã thuộc tài khoản khác → vẫn hiện bước nhập mã, bước xác nhận báo MSG-32 (BR-04). Email cũ nhận thư thông báo có link "Không phải tôi" dẫn tới đặt lại mật khẩu `[giả định]` |
-| BR-18 | **Đăng xuất mọi phiên.** Thu hồi mọi refresh token trừ phiên hiện tại; phát `session.revoked`; thiết bị khác về SCR-03 ≤ 1 phút `[giả định]`. Đăng xuất (một phiên hay mọi phiên) xoá dữ liệu offline trên thiết bị bị đăng xuất |
-| BR-19 | **Xuất dữ liệu.** Gói zip: JSON đầy đủ (task, subtask, notes, comment, channel, context, time entry, ritual, cài đặt) + CSV (task, time entry). Sẵn sàng ≤ 24 giờ; link tải 7 ngày, cần đăng nhập đúng tài khoản; tối đa 1 yêu cầu đang xử lý. Dùng được khi workspace chỉ đọc (G12) |
-| BR-20 | **Xoá tài khoản.** Ngay lập tức: tài khoản `CHO_XOA`, đăng xuất mọi phiên, thu hồi token lịch (G05) và tích hợp (G11), huỷ gói (G12), gửi email xác nhận. Xoá vĩnh viễn mọi dữ liệu ≤ 30 ngày. Chủ sở hữu duy nhất của workspace còn thành viên khác → chặn (G12, EC-36) |
-| BR-21 | **Nhật ký bảo mật.** Ghi đăng ký, đăng nhập (thành công / thất bại), khoá, đặt lại / đổi mật khẩu, đổi email, đăng xuất mọi phiên, xuất, xoá: thời điểm, IP, user agent, kết quả. Không ghi mật khẩu, mã, token |
+| BR-17 | **Đổi email.** Xác nhận lại theo BR-10. Gửi mã 6 số (BR-03) tới email mới; chỉ đổi khi nhập đúng mã. Email mới đã thuộc tài khoản khác → vẫn hiện bước nhập mã, bước xác nhận báo MSG-32 (BR-04). Đổi xong, email cũ nhận thư thông báo có link "Không phải tôi", hiệu lực **72 giờ**, dùng 1 lần. Bấm link → huỷ việc đổi email (email cũ trở lại là email chính), thu hồi mọi phiên trên mọi thiết bị (phát `session.revoked`), gửi link đặt lại mật khẩu (BR-09) tới **email cũ**, ghi BR-21 (UC-07 A5) |
+| BR-18 | **Đăng xuất mọi phiên.** Thu hồi mọi refresh token trừ phiên hiện tại; phát `session.revoked`; thiết bị khác về SCR-03 ≤ 1 phút `[giả định]`. **Bị đăng xuất từ xa** (`session.revoked`, refresh 401): giữ hàng đợi offline đã mã hoá, gắn `userId`, gửi lên khi đăng nhập lại đúng tài khoản; đăng nhập tài khoản khác thì hàng đợi không được gửi, không hiển thị (QC-08 mục 6). **Chủ động đăng xuất** trên thiết bị: còn thay đổi chưa đồng bộ → cảnh báo MSG-40; người dùng xác nhận thì xoá hàng đợi và dữ liệu offline của thiết bị đó |
+| BR-19 | **Xuất dữ liệu.** Phạm vi: dữ liệu người dùng sở hữu + task được giao cho người dùng (1.1). Gói zip: JSON đầy đủ (task, subtask, notes, comment, channel, context, bản ghi thời gian, ritual, cài đặt) + CSV (task, bản ghi thời gian). Sẵn sàng ≤ 24 giờ; link tải 7 ngày, cần đăng nhập đúng tài khoản; tối đa 1 yêu cầu đang xử lý. Dùng được khi workspace chỉ đọc (1.1, QC-09) |
+| BR-20 | **Xoá tài khoản.** Điều kiện: không có yêu cầu xuất `DANG_XU_LY` (MSG-44). **Bản 1.1, theo vai trò:** (a) không phải `OWNER` → trong cùng thao tác, rời workspace theo G12 BR-13 trước (task được giao chưa xong trả về người giao, giảm ghế), **không** huỷ gói của nhóm; (b) `OWNER` của workspace còn thành viên khác → chặn, phải chuyển quyền sở hữu hoặc xoá workspace trước (G12 BR-14, EC-36); (c) `OWNER` của workspace chỉ có mình (mọi tài khoản ở 1.0) → xoá workspace cùng lúc, huỷ gói ngay (G12 BR-09; hoàn tiền theo G12). Ngay lập tức: tài khoản `CHO_XOA`, đăng xuất mọi phiên, thu hồi token lịch (G05) và tích hợp (G11), gửi email xác nhận. Xoá vĩnh viễn mọi dữ liệu ≤ 30 ngày, trừ ngoại lệ lưu giữ: hoá đơn và chứng từ giữ 10 năm (G12 BR-10); nhật ký bảo mật giữ 1 năm, ẩn danh (BR-21) |
+| BR-21 | **Nhật ký bảo mật.** Ghi đăng ký, đăng nhập (thành công / thất bại), khoá, đặt lại / đổi mật khẩu, đổi email, "Không phải tôi", đăng xuất mọi phiên, xuất, xoá, đồng ý / rút lại đồng ý: thời điểm, IP, user agent, kết quả. Không ghi mật khẩu, mã, token. Giữ 1 năm; khi tài khoản bị xoá, bản ghi được ẩn danh (bỏ email, tên, gắn mã ngẫu nhiên) thay vì xoá |
+| BR-22 | **Lịch làm việc** (QC-02, G01 sở hữu). Các ngày làm việc trong tuần, mỗi ngày có giờ bắt đầu < giờ kết thúc. Mặc định Thứ Hai–Thứ Sáu, 09:00–17:00 `[giả định giờ]`; thêm được Thứ Bảy hoặc ngày bất kỳ. Cần ≥ 1 ngày làm việc `[giả định]` (MSG-46). Lưu như mọi cài đặt (BR-12) trong trường `workSchedule`; đổi có hiệu lực từ ngày làm việc kế tiếp `[giả định]`. Ngày làm việc kế tiếp, nhóm đọc và cách dùng theo QC-02 mục 2–3; G09 gửi recap tuần tại mốc đầu ngày của ngày sau ngày làm việc cuối cùng trong tuần. Ngày lễ chưa hỗ trợ ở 1.0 |
+| BR-23 | **Rút lại và xin lại đồng ý** (Nghị định 13/2023/NĐ-CP). (a) Văn bản Điều khoản / Chính sách có phiên bản mới đánh dấu "cần đồng ý lại" → lần mở app kế tiếp hiện **SCR-15** (MSG-47); chưa đồng ý thì API trả `CONSENT_REQUIRED` cho mọi thao tác trừ đọc cài đặt Tài khoản, xuất dữ liệu, xoá tài khoản, đăng xuất `[giả định]`. (b) "Rút lại đồng ý xử lý dữ liệu" ở SCR-11 → MSG-48 → xác nhận lại (BR-10) → chạy UC-09 (xoá tài khoản) `[giả định — chờ pháp chế]`. (c) Đồng ý dùng Trợ lý AI (G10) và nhận email Product updates (G12) là đồng ý riêng, rút lại ở nhóm sở hữu. Mọi lần đồng ý / rút lại lưu phiên bản, thời điểm (BR-06) và ghi BR-21 |
 
 ## 4. Trạng thái
 
@@ -62,15 +66,17 @@
 | --- | --- | --- |
 | `CHUA_XAC_MINH` | Đăng ký bằng email, chưa nhập đúng mã | Đăng nhập → mở SCR-02 |
 | `HOAT_DONG` | Đã xác minh (hoặc tạo qua Google / Microsoft) | Dùng bình thường |
-| `TAM_KHOA` | Sai mật khẩu 5 lần / 15 phút, chưa hết 15 phút | SCR-03 hiện MSG-15; Google / Microsoft vẫn đăng nhập được |
+| `TAM_KHOA` | (Bỏ khỏi trạng thái tài khoản — khoá đăng nhập theo cặp tài khoản + IP, là cờ riêng, không đổi trạng thái tài khoản; xem BR-07) | SCR-03 hiện MSG-14 |
 | `CHO_XOA` | Đã xác nhận xoá, chưa quá 30 ngày | Không đăng nhập được; dữ liệu ẩn |
-| `DA_XOA` | Đã xoá vĩnh viễn | Không còn bản ghi; email dùng đăng ký lại được |
+| `DA_XOA` | Đã xoá vĩnh viễn | Không còn bản ghi (trừ ngoại lệ lưu giữ BR-20); email dùng đăng ký lại được |
 
-Chuyển trạng thái: `CHUA_XAC_MINH` → `HOAT_DONG` (UC-01) · `HOAT_DONG` ⇄ `TAM_KHOA` (UC-03, hết 15 phút hoặc UC-04) · `HOAT_DONG` → `CHO_XOA` (UC-09) → `DA_XOA` (job xoá vĩnh viễn).
+Chuyển trạng thái: `CHUA_XAC_MINH` → `HOAT_DONG` (UC-01) · `CHUA_XAC_MINH` → `DA_XOA` (job sau 24 giờ, hoặc bị thay thế khi đăng nhập Google / Microsoft có email đã xác minh — BR-03, UC-02 A4) · `HOAT_DONG` → `CHO_XOA` (UC-09, UC-11) → `DA_XOA` (job xoá vĩnh viễn). Khoá đăng nhập BR-07 hết sau 15 phút hoặc khi đặt lại mật khẩu (UC-04).
 
 ### 4.2. Trạng thái onboarding và yêu cầu xuất
 
-Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Yêu cầu xuất dữ liệu: `DANG_XU_LY` → `SAN_SANG` (có link) → `HET_HAN` (sau 7 ngày); job lỗi → `LOI`, tự thử lại 3 lần `[giả định]` rồi báo người dùng tạo lại.
+Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Yêu cầu xuất dữ liệu: `DANG_XU_LY` → `SAN_SANG` (có link) → `HET_HAN` (sau 7 ngày); job lỗi → `LOI`, tự thử lại 3 lần `[giả định]` rồi báo người dùng tạo lại. Khi có yêu cầu `DANG_XU_LY`, tài khoản không xoá được (BR-20).
+
+Đồng ý xử lý dữ liệu (BR-23): `DA_DONG_Y` (phiên bản hiện hành) → `CAN_DONG_Y_LAI` (có phiên bản mới cần đồng ý lại) → `DA_DONG_Y` (UC-11). Rút lại đồng ý → tài khoản `CHO_XOA` `[giả định — chờ pháp chế]`.
 
 ## 5. Use Case
 
@@ -128,16 +134,19 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | 1 | Khách | Bấm "Tiếp tục với Google" / "Tiếp tục với Microsoft" trên SCR-01 hoặc SCR-03 |
 | 2 | Hệ thống | Gọi \[AuthOAuthStart\]; chuyển tới trang nhà cung cấp kèm `state` và PKCE |
 | 3 | Khách | Chọn tài khoản, đồng ý trên trang nhà cung cấp |
-| 4 | Hệ thống | \[AuthOAuthCallback\] kiểm tra `state`, lấy email đã xác minh |
-| 5 | Hệ thống | Email đã liên kết với tài khoản → cấp token (BR-08), mở Home hoặc bước onboarding dở |
+| 4 | Hệ thống | \[AuthOAuthCallback\] kiểm tra `state`, lấy `sub` và email đã xác minh |
+| 5 | Hệ thống | `provider + sub` đã liên kết với một tài khoản (BR-01) → cấp token (BR-08), mở Home hoặc bước onboarding dở |
 
 **Luồng thay thế**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | Email chưa có tài khoản | Hiện SCR-01 rút gọn chỉ có ô đồng ý (BR-06) → bấm "Tạo tài khoản" → khởi tạo BR-05 → SCR-05 bước 1 |
-| A2 | Email trùng tài khoản mật khẩu chưa liên kết phương thức này | Hỏi mật khẩu tài khoản hiện có (MSG-13) `[giả định]`; đúng → liên kết rồi đăng nhập |
+| A1 | `provider + sub` chưa liên kết, email chưa có tài khoản | Hiện SCR-01 rút gọn chỉ có ô đồng ý (BR-06) → bấm "Tạo tài khoản" → khởi tạo BR-05 → SCR-05 bước 1 |
+| A2 | `provider + sub` chưa liên kết, email trùng tài khoản `HOAT_DONG` có mật khẩu | Hỏi mật khẩu tài khoản hiện có (MSG-13); đúng → liên kết `provider + sub` rồi đăng nhập. Không tự liên kết theo email |
 | A3 | Từ link mời workspace (1.1) | Sau bước 5 gia nhập workspace mời (G12) |
+| A4 | `provider + sub` chưa liên kết, email trùng tài khoản `CHUA_XAC_MINH` | Thay thế bản ghi chưa xác minh (BR-03): huỷ mật khẩu, mã đang chờ, rồi tiếp tục như A1; ghi BR-21 |
+| A5 | Đã liên kết, email bên nhà cung cấp khác email chính trong app | Đăng nhập bình thường theo `provider + sub`; không đổi email chính |
+| A6 | `purpose=reauth` (xác nhận lại, BR-10) | Không cấp phiên mới; `provider + sub` phải khớp tài khoản đang đăng nhập → trả `reauthToken` về màn đang mở; không khớp → MSG-11 |
 
 **Luồng lỗi**
 
@@ -152,7 +161,7 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 
 | **Mục** | **Nội dung** |
 | --- | --- |
-| Tiền điều kiện | Tài khoản `HOAT_DONG` hoặc `TAM_KHOA` (chỉ OAuth) |
+| Tiền điều kiện | Tài khoản `HOAT_DONG` (đang bị khoá BR-07 thì chỉ OAuth / quên mật khẩu) |
 | Hậu điều kiện thành công | Có phiên hợp lệ (BR-08); mở Home hoặc bước onboarding dở |
 | Hậu điều kiện thất bại | Không có phiên; khách ở SCR-03 |
 
@@ -169,18 +178,19 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | Đăng xuất | Menu tài khoản → "Đăng xuất" → \[AuthLogout\]; xoá cookie và dữ liệu offline (BR-18); về SCR-03 |
+| A1 | Đăng xuất | Menu tài khoản → "Đăng xuất"; còn thay đổi chưa đồng bộ → MSG-40 ("Huỷ" giữ nguyên phiên); xác nhận → \[AuthLogout\]; xoá cookie, hàng đợi và dữ liệu offline (BR-18); về SCR-03 |
 | A2 | Tài khoản `CHUA_XAC_MINH` | Gửi mã mới (BR-03), mở SCR-02 với MSG-05 |
 | A3 | Tài khoản bật 2FA (1.1) | Sau mật khẩu đúng hỏi mã TOTP 6 số |
 | A4 | Mở từ link mời workspace (1.1) | Sau bước 3 gia nhập workspace mời (G12) |
-| A5 | Nhận `session.revoked` | Xoá token, dữ liệu offline; về SCR-03 với MSG-16 |
+| A5 | Nhận `session.revoked` | Xoá token; **giữ** hàng đợi offline đã mã hoá, gắn `userId` (BR-18); về SCR-03 với MSG-16 |
+| A6 | Đăng nhập lại sau A5 / E4 | Đúng tài khoản có hàng đợi → gửi hàng đợi lên theo QC-08 (lệnh sửa cụm vị trí trên phiên bản cũ bị từ chối như QC-08 mục 2); khác tài khoản → hàng đợi giữ nguyên, không gửi, không hiển thị |
 
 **Luồng lỗi**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | E1 | Sai email hoặc mật khẩu | MSG-14, không nói sai trường nào |
-| E2 | Sai lần thứ 5 trong 15 phút / đang `TAM_KHOA` | Chuyển `TAM_KHOA`, gửi email cảnh báo; MSG-15 |
+| E2 | Sai lần thứ 5 trong 15 phút từ cùng IP / cặp tài khoản + IP đang bị khoá | Khoá cặp tài khoản + IP (BR-07); email cảnh báo nếu 24 giờ qua chưa gửi; vẫn hiện MSG-14 (thông báo chung) |
 | E3 | 429 theo IP | MSG-09 |
 | E4 | \[AuthRefresh\] trả 401 (hết hạn / dùng lại token) | Thu hồi chuỗi (BR-08), về SCR-03 với MSG-16; thay đổi chưa đồng bộ giữ trong hàng đợi tới khi đăng nhập lại đúng tài khoản |
 | E5 | 5xx / mất mạng | MSG-10 |
@@ -207,7 +217,7 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | A1 | Tài khoản chỉ có Google / Microsoft | Link vẫn gửi; đặt mật khẩu xong thêm phương thức mật khẩu vào tài khoản |
-| A2 | Tài khoản đang `TAM_KHOA` | Đặt lại thành công → `HOAT_DONG` |
+| A2 | Tài khoản đang bị khoá đăng nhập (BR-07) | Đặt lại thành công gỡ mọi khoá của tài khoản trên mọi IP |
 
 **Luồng lỗi**
 
@@ -222,7 +232,7 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | **Mục** | **Nội dung** |
 | --- | --- |
 | Tiền điều kiện | Đã đăng nhập; onboarding `CHUA_BAT_DAU` hoặc `DANG_LAM` |
-| Hậu điều kiện thành công | Onboarding `HOAN_TAT`; cài đặt ngôn ngữ, timezone, giờ làm việc, giờ plan đã lưu; ≥ 1 task hôm nay; Daily planning (G08) đang mở |
+| Hậu điều kiện thành công | Onboarding `HOAN_TAT`; cài đặt ngôn ngữ, timezone, lịch làm việc, giờ plan đã lưu; ≥ 1 task hôm nay; Daily planning (G08) đang mở |
 | Hậu điều kiện thất bại | Onboarding giữ ở bước đang làm; dữ liệu bước trước đã lưu |
 
 **Luồng chính**
@@ -233,8 +243,8 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | 2 | Người dùng | Giữ hoặc sửa, bấm "Tiếp"; hệ thống gọi \[SettingsUpdate\] (giá trị + `onboardingStep`) |
 | 3 | Người dùng | Bước 2: chọn Google Calendar / Outlook → luồng kết nối của G05 → quay lại bước 2 có ✓ "Đã kết nối" → "Tiếp" |
 | 4 | Người dùng | Bước 3: chọn công cụ đang dùng (chọn nhiều) → "Tiếp"; lưu `workTools` để gợi ý tích hợp khi phát hành (G11) |
-| 5 | Người dùng | Bước 4: chỉnh giờ làm việc (mặc định 09:00–17:00 mọi ngày) và giờ plan ngày (mặc định 09:00) → "Tiếp" |
-| 6 | Người dùng | Bước 5: nhập 1–3 task cho hôm nay (thời lượng, channel gợi ý theo G02) → "Bắt đầu ngày đầu tiên" |
+| 5 | Người dùng | Bước 4: chỉnh lịch làm việc (BR-22; mặc định Thứ Hai–Thứ Sáu, 09:00–17:00) và giờ plan ngày (mặc định 09:00) → "Tiếp" |
+| 6 | Người dùng | Bước 5: nhập 1–3 task cho hôm nay (thời lượng, channel gợi ý theo G02; không có gợi ý → channel "Chưa phân loại") → "Bắt đầu ngày đầu tiên" |
 | 7 | Hệ thống | Tạo task (G02); gọi \[OnboardingComplete\]; mở Daily planning hôm nay ở chế độ có hướng dẫn (G08) |
 
 **Luồng thay thế**
@@ -252,7 +262,7 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | E1 | Kết nối lịch lỗi / bị từ chối quyền | Quay lại bước 2, thông báo của G05; vẫn "Tiếp" hoặc "Bỏ qua" được |
-| E2 | Giờ kết thúc ≤ giờ bắt đầu | MSG-20, chặn "Tiếp" |
+| E2 | Giờ kết thúc ≤ giờ bắt đầu / không chọn ngày làm việc nào | MSG-20 / MSG-46, chặn "Tiếp" |
 | E3 | Bước 5 chưa có task nào | Nút disabled, MSG-21 `[giả định]` |
 | E4 | Lưu bước / tạo task lỗi | MSG-10, giữ ở bước hiện tại, giữ nội dung |
 
@@ -270,7 +280,7 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | --- | --- | --- |
 | 1 | Người dùng | Menu tài khoản → "Cài đặt" (hoặc command menu "Mở cài đặt") |
 | 2 | Hệ thống | Gọi \[SettingsGet\]; mở **SCR-06**, chọn sẵn nhóm Chung (**SCR-07**) |
-| 3 | Người dùng | Chọn nhóm (Chung / Hiển thị **SCR-08** / Phím tắt **SCR-09**), đổi một giá trị |
+| 3 | Người dùng | Chọn nhóm (Chung / Hiển thị **SCR-08** / Phím tắt **SCR-09**; Lịch làm việc theo UC-10), đổi một giá trị |
 | 4 | Hệ thống | Kiểm tra giới hạn; gọi \[SettingsUpdate\] chỉ với trường đổi; áp dụng ngay; MSG-22 cạnh trường |
 | 5 | Hệ thống | Phát `settings.changed`; thiết bị khác cập nhật ≤ 5 giây |
 
@@ -278,11 +288,12 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | Chọn nhóm do nhóm khác sở hữu | Mở trang con của nhóm đó (G02, G04 / G05, G07, G08, G10, G11, G12) |
-| A2 | Mở app, timezone thiết bị khác cài đặt | Banner MSG-23: "Đổi sang…" → \[SettingsUpdate\]; "Giữ…" → lưu timezone thiết bị đã bỏ qua (BR-13) |
-| A3 | Đổi giờ bắt đầu ngày | Lưu; hiện MSG-24 (BR-14) |
+| A1 | Chọn nhóm do nhóm khác sở hữu | Mở trang con của nhóm đó (G02, G05, G07, G08, G10, G11, G12) |
+| A2 | Mở app, timezone thiết bị khác cài đặt | Banner MSG-23: "Đổi sang…" → \[SettingsUpdate\], hiện MSG-24 (có hiệu lực từ ngày làm việc kế tiếp); "Giữ…" → lưu timezone thiết bị đã bỏ qua (BR-13) |
+| A3 | Đổi mốc đầu ngày / timezone ở SCR-07 | Lưu; hiện MSG-24 (BR-13, BR-14) |
 | A4 | Đổi ngôn ngữ | Tải gói chuỗi mới, đổi giao diện không tải lại trang |
 | A5 | Thiết bị khác vừa đổi cùng trường | Nhận giá trị mới qua realtime; trường đang mở dropdown không bị đóng |
+| A6 | Lệnh đổi của thiết bị này tới server sau và bị từ chối do trường đã đổi ở thiết bị khác (412, BR-12) | Trường đó lấy giá trị server, hiện MSG-41; các trường khác trong lệnh vẫn lưu |
 
 **Luồng lỗi**
 
@@ -290,7 +301,7 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | --- | --- | --- |
 | E1 | Ngưỡng khối lượng ngoài 1–24 giờ | MSG-25, không gửi |
 | E2 | \[SettingsUpdate\] lỗi | Trả trường về giá trị cũ, MSG-26 |
-| E3 | Mất mạng | Áp dụng ngay trên máy, xếp hàng đợi, đồng bộ khi có mạng |
+| E3 | Mất mạng | Áp dụng ngay trên máy, xếp hàng đợi, đồng bộ khi có mạng; xung đột theo A6 |
 
 ### UC-07 Hồ sơ và bảo mật tài khoản
 
@@ -312,10 +323,11 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | Đổi mật khẩu | **SCR-11** → "Đổi mật khẩu" → nhập mật khẩu hiện tại + mới → \[MeUpdate\] (BR-02, BR-10); thu hồi phiên khác `[giả định]`; MSG-30 |
-| A2 | Đổi email | SCR-11 → "Đổi email" → nhập email mới + mật khẩu → \[MeUpdate\] → MSG-31, nhập mã → \[AuthVerifyEmail\] (`purpose=change_email`) → MSG-33 (BR-17) |
+| A1 | Đổi mật khẩu | **SCR-11** → "Đổi mật khẩu" → nhập mật khẩu hiện tại (hoặc "Xác nhận bằng Google / Microsoft" lấy `reauthToken`) + mật khẩu mới → \[MeUpdate\] (BR-02, BR-10); thu hồi phiên khác `[giả định]`; MSG-30 |
+| A2 | Đổi email | SCR-11 → "Đổi email" → nhập email mới + mật khẩu (hoặc `reauthToken`, BR-10) → \[MeUpdate\] → MSG-31, nhập mã → \[AuthVerifyEmail\] (`purpose=change_email`) → MSG-33; email cũ nhận thư có link "Không phải tôi" 72 giờ (BR-17) |
 | A3 | Đăng xuất mọi thiết bị khác | SCR-11 → nút → \[AuthLogout\] `?all=true` (giữ phiên hiện tại) → MSG-34 (BR-18) |
-| A4 | Tài khoản chỉ có Google / Microsoft | "Đổi mật khẩu" đổi thành "Tạo mật khẩu"; xác nhận lại qua nhà cung cấp (BR-10) |
+| A4 | Tài khoản chỉ có Google / Microsoft | "Đổi mật khẩu" đổi thành "Tạo mật khẩu"; xác nhận lại qua nhà cung cấp (`reauthToken`, BR-10, UC-02 A6) |
+| A5 | Chủ email cũ bấm "Không phải tôi" trong thư (≤ 72 giờ) | Mở trang không cần đăng nhập → \[EmailChangeRevert\]: email cũ trở lại là email chính, thu hồi mọi phiên, gửi link đặt lại mật khẩu tới email cũ (BR-17) → màn MSG-42 |
 
 **Luồng lỗi**
 
@@ -326,6 +338,8 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | E3 | Mật khẩu mới không đạt BR-02 | MSG-02 / MSG-03 |
 | E4 | Email mới không dùng được | MSG-32 ở bước nhập mã (BR-17) |
 | E5 | Lỗi 5xx | MSG-10, giữ giá trị cũ |
+| E6 | Link "Không phải tôi" quá 72 giờ / đã dùng | Màn MSG-43, không thay đổi gì |
+| E7 | `reauthToken` hết hạn / không khớp tài khoản | MSG-11, yêu cầu xác nhận lại |
 
 ### UC-08 Xuất dữ liệu
 
@@ -348,7 +362,7 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | Workspace chỉ đọc (G12) | Vẫn xuất được như luồng chính |
+| A1 | Workspace chỉ đọc (1.1, QC-09) | Vẫn xuất được như luồng chính |
 | A2 | Link quá 7 ngày | Trạng thái `HET_HAN`; nút "Tạo bản xuất mới" |
 
 **Luồng lỗi**
@@ -363,16 +377,16 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 
 | **Mục** | **Nội dung** |
 | --- | --- |
-| Tiền điều kiện | Đã đăng nhập; không phải chủ sở hữu duy nhất của workspace còn thành viên khác |
-| Hậu điều kiện thành công | Tài khoản `CHO_XOA`, áp BR-20; người dùng ở màn MSG-38 |
-| Hậu điều kiện thất bại | Tài khoản không đổi |
+| Tiền điều kiện | Đã đăng nhập; không có yêu cầu xuất `DANG_XU_LY`; không phải `OWNER` của workspace còn thành viên khác (BR-20) |
+| Hậu điều kiện thành công | Tài khoản `CHO_XOA`, áp BR-20 (1.1: đã rời workspace hoặc đã xoá workspace một người); người dùng ở màn MSG-38 |
+| Hậu điều kiện thất bại | Tài khoản không đổi, vẫn là thành viên workspace |
 
 **Luồng chính**
 
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
 | 1 | Người dùng | SCR-11 → "Xoá tài khoản" → **SCR-12** |
-| 2 | Hệ thống | Hiện hậu quả: số task, kết nối lịch / tích hợp sẽ bị thu hồi, gói sẽ bị huỷ (G12); gợi ý "Xuất dữ liệu trước" |
+| 2 | Hệ thống | Hiện hậu quả theo BR-20: số task, kết nối lịch / tích hợp sẽ bị thu hồi; 1.1 thêm gói bị huỷ (`OWNER` workspace một người) hoặc MSG-45 (không phải `OWNER`); gợi ý "Xuất dữ liệu trước" |
 | 3 | Người dùng | Nhập mật khẩu (hoặc xác nhận lại qua nhà cung cấp, BR-10), gõ "XOÁ", bấm "Xoá vĩnh viễn" |
 | 4 | Hệ thống | Gọi \[AccountDelete\]; áp BR-20; về màn MSG-38 |
 
@@ -381,15 +395,82 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | A1 | Bấm "Xuất dữ liệu trước" | Đóng SCR-12, chạy UC-08 |
-| A2 | Đang có timer chạy | Dừng và lưu time entry trước khi xoá (G07) |
+| A2 | Đang có timer chạy | Dừng và lưu bản ghi thời gian trước khi xoá (G07) |
+| A3 | Không phải `OWNER` (1.1) | Bước 4: server chạy rời workspace theo G12 BR-13 (task được giao chưa xong trả về người giao, giảm ghế từ kỳ sau) rồi mới chuyển `CHO_XOA`, trong một giao dịch; gói của nhóm giữ nguyên |
+| A4 | `OWNER` của workspace chỉ có mình (1.1) | Bước 4: xoá workspace và huỷ gói ngay (G12 BR-09, BR-14) cùng giao dịch |
 
 **Luồng lỗi**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| E1 | Chủ sở hữu duy nhất, workspace còn thành viên (1.1) | MSG-37 có link "Chuyển quyền sở hữu" (G12); nút xoá disabled |
+| E1 | `OWNER`, workspace còn thành viên khác (1.1) | MSG-37 có link "Chuyển quyền sở hữu" và "Xoá workspace" (G12); nút xoá disabled |
 | E2 | Mật khẩu sai / chưa gõ đúng "XOÁ" | MSG-29 / MSG-39 |
 | E3 | Lỗi 5xx | MSG-10, tài khoản giữ nguyên |
+| E4 | Có yêu cầu xuất `DANG_XU_LY` | MSG-44; nút xoá disabled tới khi yêu cầu `SAN_SANG` hoặc `LOI` |
+
+### UC-10 Cài đặt Lịch làm việc
+
+| **Mục** | **Nội dung** |
+| --- | --- |
+| Tiền điều kiện | Đã đăng nhập |
+| Hậu điều kiện thành công | `workSchedule` mới lưu theo BR-22, đồng bộ thiết bị khác (BR-12); G04, G05, G08, G09 đọc giá trị mới |
+| Hậu điều kiện thất bại | Giữ lịch làm việc cũ |
+
+**Luồng chính**
+
+| **Bước** | **Actor** | **Mô tả** |
+| --- | --- | --- |
+| 1 | Người dùng | Cài đặt → "Lịch làm việc" (**SCR-14**) |
+| 2 | Hệ thống | Gọi \[SettingsGet\]; hiện 7 ngày trong tuần, ngày làm việc bật kèm giờ bắt đầu / kết thúc |
+| 3 | Người dùng | Bật / tắt một ngày hoặc đổi giờ của một ngày |
+| 4 | Hệ thống | Kiểm tra BR-22; gọi \[SettingsUpdate\] (`workSchedule`); MSG-22 cạnh dòng; MSG-24 dưới bảng (có hiệu lực từ ngày làm việc kế tiếp `[giả định]`) |
+
+**Luồng thay thế**
+
+| **Mã** | **Điều kiện** | **Xử lý** |
+| --- | --- | --- |
+| A1 | Bật Thứ Bảy (hoặc ngày khác) | Ngày đó nhận giờ mặc định 09:00–17:00 `[giả định]`, sửa được |
+| A2 | Từ onboarding bước 4 | Cùng thành phần SCR-14, lưu theo UC-05 bước 2 |
+
+**Luồng lỗi**
+
+| **Mã** | **Điều kiện** | **Xử lý** |
+| --- | --- | --- |
+| E1 | Tắt ngày làm việc cuối cùng | MSG-46, không gửi |
+| E2 | Giờ kết thúc ≤ giờ bắt đầu | MSG-20, không gửi |
+| E3 | \[SettingsUpdate\] lỗi / xung đột | Như UC-06 E2 / A6 |
+
+### UC-11 Rút lại đồng ý và xin đồng ý lại
+
+| **Mục** | **Nội dung** |
+| --- | --- |
+| Tiền điều kiện | Đã đăng nhập |
+| Hậu điều kiện thành công | Đồng ý phiên bản mới được lưu (BR-06), hoặc đồng ý bị rút lại và tài khoản chuyển `CHO_XOA` `[giả định — chờ pháp chế]`; ghi BR-21 |
+| Hậu điều kiện thất bại | Trạng thái đồng ý không đổi |
+
+**Luồng chính** (xin đồng ý lại)
+
+| **Bước** | **Actor** | **Mô tả** |
+| --- | --- | --- |
+| 1 | Hệ thống | Mở app, \[ConsentGet\] trả `CAN_DONG_Y_LAI` (hoặc API bất kỳ trả `CONSENT_REQUIRED`) → mở **SCR-15** với MSG-47 |
+| 2 | Người dùng | Đọc tóm tắt thay đổi, tick đồng ý, bấm "Đồng ý và tiếp tục" |
+| 3 | Hệ thống | Gọi \[ConsentUpdate\] (phiên bản, thời điểm); về màn đang mở |
+
+**Luồng thay thế**
+
+| **Mã** | **Điều kiện** | **Xử lý** |
+| --- | --- | --- |
+| A1 | Rút lại đồng ý | SCR-11 → "Rút lại đồng ý xử lý dữ liệu" → MSG-48 → xác nhận lại (BR-10) → \[ConsentUpdate\] `withdraw=true` → chạy như UC-09 bước 4 (BR-20) `[giả định — chờ pháp chế]` |
+| A2 | Trên SCR-15 chọn "Xuất dữ liệu" / "Xoá tài khoản" / "Đăng xuất" | Chạy UC-08 / UC-09 / UC-03 A1 mà không cần đồng ý phiên bản mới (BR-23) |
+| A3 | Rút lại đồng ý Trợ lý AI / Product updates | Không ở đây: G10 / G12 |
+
+**Luồng lỗi**
+
+| **Mã** | **Điều kiện** | **Xử lý** |
+| --- | --- | --- |
+| E1 | Chưa tick đồng ý | MSG-04 |
+| E2 | Rút lại khi đang là `OWNER` workspace còn thành viên / đang xuất dữ liệu | Như UC-09 E1 / E4 |
+| E3 | Lỗi 5xx | MSG-10 |
 
 ## 6. Điểm vào
 
@@ -402,6 +483,9 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | Menu tài khoản → "Cài đặt" / command menu "Mở cài đặt" | ✓ | ✓ | SCR-06 |
 | Banner lệch timezone trên Home | ✓ | ✓ | SCR-13 |
 | Bảng phím tắt (phím ?) → "Cài đặt phím tắt" | ✓ | – | SCR-09 |
+| Cài đặt → "Lịch làm việc"; link từ G04 (sức chứa), G08 (cài đặt ritual) | ✓ | ✓ | SCR-14 |
+| Link "Không phải tôi" trong thư gửi email cũ | ✓ | ✓ (deep link) | UC-07 A5, MSG-42 / MSG-43 |
+| Mở app khi có phiên bản Điều khoản mới cần đồng ý lại | ✓ | ✓ | SCR-15 |
 
 ## 7. Mô tả màn hình
 
@@ -430,7 +514,7 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
 | 1 | "Tiếp tục với Google", "Tiếp tục với Microsoft" | Button | – | UC-02 |
-| 2 | Email, Mật khẩu | Text, Password | Có | Lỗi chung MSG-14; khoá MSG-15 |
+| 2 | Email, Mật khẩu | Text, Password | Có | Lỗi chung MSG-14, kể cả khi đang bị khoá (BR-07) |
 | 3 | "Đăng nhập" | Button | – | Loading khi gửi |
 | 4 | "Quên mật khẩu?" | Link | – | SCR-04 |
 | 5 | Vùng thông báo | Inline | – | MSG-11 / MSG-12 / MSG-16 khi được chuyển về từ luồng khác |
@@ -451,7 +535,7 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | 2 | Bước 1: Ngôn ngữ, Timezone | Dropdown, Dropdown có tìm | Có | Điền sẵn theo trình duyệt / thiết bị |
 | 3 | Bước 2: "Kết nối Google Calendar", "Kết nối Outlook", "Bỏ qua" | Button | Không | Luồng G05; đã kết nối hiện ✓ và email lịch |
 | 4 | Bước 3: Công cụ đang dùng | Lưới chọn nhiều (logo + tên) | Không | Gmail, Outlook, Jira, Notion, Asana, Trello, Linear, ClickUp, GitHub, Todoist, Slack, Teams, "Khác", "Không dùng công cụ nào" `[giả định danh sách]` |
-| 5 | Bước 4: Giờ làm việc | Chọn ngày + giờ bắt đầu / kết thúc | Có | Mặc định 09:00–17:00 mọi ngày; kết thúc ≤ bắt đầu → MSG-20 |
+| 5 | Bước 4: Lịch làm việc | Cùng thành phần SCR-14 | Có | Mặc định Thứ Hai–Thứ Sáu, 09:00–17:00; kết thúc ≤ bắt đầu → MSG-20; không ngày nào → MSG-46 |
 | 6 | Bước 4: Giờ plan ngày | Time picker (bước 5 phút) | Có | Mặc định 09:00 |
 | 7 | Bước 5: 3 ô task | Text ×3 | ≥ 1 ô `[giả định]` | Tiêu đề theo G02; thời lượng gợi ý có ✨; trống hết → MSG-21 |
 | 8 | "Tiếp" / "Bắt đầu ngày đầu tiên" | Button | – | Lưu bước; bước 5 → UC-05 bước 7 |
@@ -460,9 +544,9 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
-| 1 | Cột trái: nhóm "Cá nhân" | Nav list | Chung · Hiển thị · Ritual (G08) · Timebox (G05) · Lịch làm việc (G04 / G05) · Phím tắt · Focus (G07) · AI (G10) · Beta (G10, ẩn ở 1.0) · Thông báo (G12) |
+| 1 | Cột trái: nhóm "Cá nhân" | Nav list | Chung · Hiển thị · Lịch làm việc (G01, SCR-14) · Ritual (G08) · Timebox (G05) · Phím tắt · Focus (G07) · AI (G10; Trợ lý AI mặc định tắt, bật lần đầu qua màn đồng ý của G10) · Beta (G10, ẩn ở 1.0) · Thông báo (G12) |
 | 2 | Cột trái: nhóm "Tài khoản" | Nav list | Hồ sơ · Tài khoản |
-| 3 | Cột trái: nhóm "Workspace" | Nav list | Context & channel (G02) · Thành viên (G12, 1.1) · Privacy (G12, 1.1) · Billing (G12) · Tích hợp (G05 / G11) |
+| 3 | Cột trái: nhóm "Workspace" | Nav list | Context & channel (G02) · Thành viên (G12, 1.1) · Privacy (G12, 1.1) · Billing (G12, 1.1) · Tích hợp (G05 / G11) |
 | 4 | Vùng nội dung | Panel | Nội dung nhóm đang chọn; URL theo nhóm để mở thẳng (`/settings/{nhom}`) |
 | 5 | Ô tìm cài đặt | Search `[giả định]` | Lọc theo tên cài đặt, mở đúng nhóm và cuộn tới trường |
 | 6 | Đóng | Icon × / Esc | Về màn trước |
@@ -476,12 +560,12 @@ Mobile web: cột trái thành danh sách màn đầu, chọn nhóm mở màn n�
 | 1 | Ngôn ngữ | Dropdown | Có | A4 UC-06 |
 | 2 | Timezone | Dropdown có tìm | Có | Hiện "Theo thiết bị: {tz}" khi lệch |
 | 3 | Ngày đầu tuần | Dropdown | Có | Thứ Hai / Chủ Nhật |
-| 4 | Giờ bắt đầu ngày | Time picker | Có | 00:00–06:00; ghi chú MSG-24 |
+| 4 | Mốc đầu ngày | Time picker | Có | 00:00–06:00, mặc định 04:00 (BR-14); ghi chú MSG-24 |
 | 5 | Ngưỡng khối lượng ngày | Ô giờ | Có | 1–24 giờ (MSG-25) |
 | 6 | Tính planned là actual | Toggle | – | Mặc định bật |
 | 7 | Tự sắp task | Toggle | – | Mặc định bật |
 | 8 | Vị trí task mới · Vị trí task rollover | Segmented Đầu / Cuối | – | Mặc định Đầu · Đầu |
-| 9 | Giữ priority khi rollover | Dropdown | – | Không / từ Urgent / từ Priority `[giả định]` |
+| 9 | Giữ priority khi rollover | Chọn nhiều (Urgent, Priority, Normal, Low — G02 BR-06) | – | Mặc định không chọn mức nào; lưu `keepPriorityLevels`, áp theo G06 BR-08 |
 
 ### SCR-08 Cài đặt Hiển thị
 
@@ -519,24 +603,42 @@ Mobile web: cột trái thành danh sách màn đầu, chọn nhóm mở màn n�
 | 5 | "Đăng xuất mọi thiết bị khác" | Button | A3 UC-07 |
 | 6 | "Xuất dữ liệu" + trạng thái | Button + text | UC-08; hiện MSG-35 / "Tải xuống" / "Đã hết hạn" |
 | 7 | "Xoá tài khoản" | Button (nguy hiểm) | SCR-12 |
+| 8 | Đồng ý xử lý dữ liệu | Text + link | Phiên bản Điều khoản / Chính sách đã đồng ý, thời điểm; link "Rút lại đồng ý xử lý dữ liệu" (UC-11 A1); ghi chú "Đồng ý dùng Trợ lý AI: Cài đặt → AI (G10)" |
 
 ### SCR-12 Xoá tài khoản
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
-| 1 | Nội dung | Text | "Xoá tài khoản sẽ xoá {n} task, ngắt {m} kết nối và huỷ gói hiện tại. Dữ liệu bị xoá vĩnh viễn trong 30 ngày, không khôi phục được." |
+| 1 | Nội dung | Text | "Xoá tài khoản sẽ xoá {n} task, ngắt {m} kết nối{, xoá workspace và huỷ gói hiện tại — chỉ khi là `OWNER` workspace một người, 1.1}. Dữ liệu bị xoá vĩnh viễn trong 30 ngày, không khôi phục được. Hoá đơn được giữ theo quy định kế toán." Không phải `OWNER` (1.1): thêm MSG-45 |
 | 2 | "Xuất dữ liệu trước" | Link | A1 UC-09 |
 | 3 | Mật khẩu | Password | Sai → MSG-29 |
 | 4 | Ô gõ "XOÁ" | Text | Khác "XOÁ" → MSG-39 |
-| 5 | "Xoá vĩnh viễn" | Button (nguy hiểm) | Disabled tới khi 3, 4 hợp lệ; chủ sở hữu duy nhất → disabled + MSG-37 |
+| 5 | "Xoá vĩnh viễn" | Button (nguy hiểm) | Disabled tới khi 3, 4 hợp lệ; `OWNER` workspace còn thành viên → disabled + MSG-37; đang xuất dữ liệu → disabled + MSG-44 |
 | 6 | "Huỷ" | Button | Đóng |
 
 ### SCR-13 Banner timezone và tooltip theo ngữ cảnh
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
-| 1 | Banner lệch timezone | Banner đầu Home | MSG-23; hai nút "Đổi sang…", "Giữ…" (BR-13) |
+| 1 | Banner lệch timezone | Banner đầu Home | MSG-23; hai nút "Đổi sang…", "Giữ…" (BR-13); banner timezone duy nhất của app |
 | 2 | Tooltip theo ngữ cảnh | Popover neo vào thành phần | Tiêu đề + 1–2 câu + "Đã hiểu"; hiện 1 lần (BR-16) |
+
+### SCR-14 Lịch làm việc
+
+| **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
+| --- | --- | --- | --- | --- |
+| 1 | 7 dòng Thứ Hai … Chủ Nhật, thứ tự theo ngày đầu tuần (SCR-07 #3) | Toggle + 2 time picker (bước 15 phút `[giả định]`) | ≥ 1 ngày bật | Mặc định bật Thứ Hai–Thứ Sáu, 09:00–17:00; tắt ngày cuối cùng → MSG-46; kết thúc ≤ bắt đầu → MSG-20 |
+| 2 | Ghi chú | Text | – | MSG-24 sau khi đổi; "Ngày tắt không nhận task khi chọn 'Ngày mai', không nhắc ritual" (QC-02) |
+| 3 | Ghi chú ngày lễ | Text | – | "Chưa hỗ trợ ngày lễ. Dùng 'Bỏ qua hôm nay' trong ritual" |
+
+### SCR-15 Đồng ý phiên bản Điều khoản mới
+
+| **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
+| --- | --- | --- | --- | --- |
+| 1 | Tiêu đề, tóm tắt thay đổi | Text | – | MSG-47; link xem bản đầy đủ |
+| 2 | Đồng ý Điều khoản và Chính sách quyền riêng tư | Checkbox | Có | Không tick sẵn; thiếu → MSG-04 |
+| 3 | "Đồng ý và tiếp tục" | Button | – | \[ConsentUpdate\]; UC-11 bước 3 |
+| 4 | "Xuất dữ liệu" · "Xoá tài khoản" · "Đăng xuất" | Link | – | UC-11 A2 |
 
 ## 8. API
 
@@ -546,17 +648,19 @@ Mobile web: cột trái thành danh sách màn đầu, chọn nhóm mở màn n�
 | \[AuthVerifyEmail\] `POST /auth/verify-email` | verificationId, code, purpose (`signup` / `change_email`) | accessToken, user, onboardingState; cookie refresh | 5s / không retry |
 | \[AuthResendCode\] `POST /auth/verify-email/resend` `[giả định]` | verificationId | nextAllowedAt | 5s / không retry |
 | \[AuthLogin\] `POST /auth/login` | email, password, totp? (1.1), inviteToken? | accessToken, user, onboardingState; cookie refresh | 10s / không retry |
-| \[AuthOAuthStart\] `GET /auth/oauth/{provider}/start` | provider (`google` / `microsoft`), redirectUri, inviteToken? | 302 tới nhà cung cấp (state, PKCE) | 5s / 1 lần |
-| \[AuthOAuthCallback\] `GET /auth/oauth/{provider}/callback` | code, state | 302 về app; `needsConsent` / `needsLink` nếu A1 / A2 UC-02 | 10s / không retry |
+| \[AuthOAuthStart\] `GET /auth/oauth/{provider}/start` | provider (`google` / `microsoft`), redirectUri, inviteToken?, purpose (`login` / `reauth`) | 302 tới nhà cung cấp (state, PKCE) | 5s / 1 lần |
+| \[AuthOAuthCallback\] `GET /auth/oauth/{provider}/callback` | code, state | 302 về app; `needsConsent` / `needsLink` nếu A1 / A2 UC-02; `replacedUnverified` nếu A4; `reauthToken` nếu `purpose=reauth` | 10s / không retry |
 | \[AuthRefresh\] `POST /auth/refresh` | cookie refresh | accessToken; cookie refresh mới | 5s / 2 lần (lỗi mạng), 401 không retry |
 | \[AuthLogout\] `POST /auth/logout(?all=true)` | cookie refresh | 204; `revokedCount` khi all | 5s / 1 lần |
 | \[AuthPasswordForgot\] `POST /auth/password/forgot` | email | 202 (luôn) | 5s / 1 lần |
 | \[AuthPasswordReset\] `POST /auth/password/reset` | token, newPassword | accessToken; cookie refresh | 10s / không retry |
-| \[MeGet\] / \[MeUpdate\] `GET` / `PATCH /me` | displayName, avatar; currentPassword + newPassword; currentPassword + newEmail | User; `pendingEmailVerificationId` khi đổi email | 5s / 2 lần (GET), 1 lần (PATCH) |
-| \[SettingsGet\] / \[SettingsUpdate\] `GET` / `PATCH /me/settings` | Trường thay đổi (kể cả `onboardingStep`, `tipsSeen`, `workTools`), version | Settings, version | 5s / 2 lần |
+| \[MeGet\] / \[MeUpdate\] `GET` / `PATCH /me` | displayName, avatar; (currentPassword \| reauthToken) + newPassword; (currentPassword \| reauthToken) + newEmail | User; `pendingEmailVerificationId` khi đổi email | 5s / 2 lần (GET), 1 lần (PATCH) |
+| \[EmailChangeRevert\] `POST /auth/email-change/revert` `[giả định]` | token (từ link "Không phải tôi") | 200; email chính đã khôi phục | 5s / 1 lần |
+| \[SettingsGet\] / \[SettingsUpdate\] `GET` / `PATCH /me/settings` | Trường thay đổi (kể cả `onboardingStep`, `tipsSeen`, `workTools`, `workSchedule`, `dayStartTime`, `timezone`, `keepPriorityLevels`), version theo từng trường | Settings, version; 412 trả danh sách trường bị từ chối kèm giá trị server | 5s / 2 lần |
+| \[ConsentGet\] / \[ConsentUpdate\] `GET` / `POST /me/consents` `[giả định]` | documentVersion, accepted \| withdraw, (currentPassword \| reauthToken khi withdraw) | Trạng thái đồng ý (`DA_DONG_Y` / `CAN_DONG_Y_LAI`), acceptedAt | 5s / 1 lần |
 | \[OnboardingComplete\] `POST /me/onboarding/complete` | Idempotency-Key | onboardingState, dailyPlanningUrl | 5s / 2 lần cùng key |
 | \[DataExport\] `POST /me/export` · `GET /me/export/{id}` `[giả định]` | Idempotency-Key | exportId, status, downloadUrl?, expiresAt | 5s / 1 lần |
-| \[AccountDelete\] `DELETE /me` | currentPassword hoặc reauthToken, confirmText | 202, purgeBefore | 10s / không retry |
+| \[AccountDelete\] `DELETE /me` | currentPassword hoặc reauthToken, confirmText | 202, purgeBefore, `leftWorkspace` / `deletedWorkspace` (1.1) | 10s / không retry |
 | \[AppConfig\] | – | Giới hạn BR-02, BR-03, mặc định cài đặt | Cache 1h |
 
 **Map lỗi API → thông báo**
@@ -566,7 +670,7 @@ Mobile web: cột trái thành danh sách màn đầu, chọn nhóm mở màn n�
 | `VALIDATION_FAILED` · field email | MSG-01 |
 | `VALIDATION_FAILED` · field password | MSG-02 |
 | `PASSWORD_BREACHED` | MSG-03 |
-| `CONSENT_REQUIRED` | MSG-04 |
+| `CONSENT_REQUIRED` | MSG-04 (form đăng ký) / mở SCR-15 (đã đăng nhập, BR-23) |
 | `CODE_INVALID` | MSG-06 |
 | `CODE_EXPIRED` / `CODE_ATTEMPTS_EXCEEDED` | MSG-07 |
 | `RESEND_LIMITED` (429) | MSG-08 |
@@ -575,7 +679,7 @@ Mobile web: cột trái thành danh sách màn đầu, chọn nhóm mở màn n�
 | `OAUTH_EMAIL_UNVERIFIED` | MSG-12 |
 | `ACCOUNT_LINK_REQUIRED` (409) | MSG-13 |
 | `INVALID_CREDENTIALS` (401) | MSG-14 |
-| `ACCOUNT_LOCKED` (403) | MSG-15 |
+| `ACCOUNT_LOCKED` (403) | (Bỏ — cặp tài khoản + IP bị khoá vẫn trả `INVALID_CREDENTIALS`, MSG-14; BR-07) |
 | `EMAIL_NOT_VERIFIED` (403) | Mở SCR-02, MSG-05 |
 | `REFRESH_REUSED` / `SESSION_REVOKED` (401) | MSG-16 |
 | `RESET_TOKEN_INVALID` | MSG-18 |
@@ -584,9 +688,13 @@ Mobile web: cột trái thành danh sách màn đầu, chọn nhóm mở màn n�
 | `VALIDATION_FAILED` · field displayName / avatar | MSG-27 / MSG-28 |
 | `WRONG_PASSWORD` (403) | MSG-29 |
 | `EMAIL_CHANGE_REJECTED` (422) | MSG-32 |
-| `EXPORT_IN_PROGRESS` (409) | MSG-36 |
+| `EXPORT_IN_PROGRESS` (409) ở \[DataExport\] | MSG-36 |
+| `EXPORT_IN_PROGRESS` (409) ở \[AccountDelete\] / \[ConsentUpdate\] `withdraw` | MSG-44 |
 | `OWNER_MUST_TRANSFER` (409) | MSG-37 |
-| `VERSION_CONFLICT` (412) ở \[SettingsUpdate\] | Lấy giá trị server, không báo |
+| `VERSION_CONFLICT` (412) ở \[SettingsUpdate\] | Lấy giá trị server của trường bị từ chối, MSG-41 (BR-12) |
+| `REAUTH_INVALID` (401) | MSG-11 |
+| `EMAIL_REVERT_INVALID` (404 / 410) | MSG-43 |
+| `VALIDATION_FAILED` · field workSchedule (không có ngày nào) | MSG-46 |
 | 5xx / timeout | MSG-10 (xác thực, tài khoản) / MSG-26 (cài đặt) |
 
 ## 9. Danh sách thông báo
@@ -606,8 +714,8 @@ Mobile web: cột trái thành danh sách màn đầu, chọn nhóm mở màn n�
 | MSG-11 | SCR-03 | Đăng nhập bằng {Google / Microsoft} chưa thành công. Thử lại |
 | MSG-12 | SCR-03 | Tài khoản {Google / Microsoft} chưa xác minh email. Hãy đăng nhập bằng email và mật khẩu |
 | MSG-13 | Dialog | {email} đã có tài khoản. Nhập mật khẩu để liên kết với {Google / Microsoft} |
-| MSG-14 | SCR-03 | Email hoặc mật khẩu chưa đúng |
-| MSG-15 | SCR-03 | Đăng nhập bằng mật khẩu tạm khoá do nhập sai nhiều lần. Thử lại sau {m} phút hoặc dùng "Quên mật khẩu" |
+| MSG-14 | SCR-03 | Email hoặc mật khẩu chưa đúng, hoặc đăng nhập tạm bị chặn. Thử lại sau ít phút hoặc dùng "Quên mật khẩu" |
+| MSG-15 | – | (Bỏ — gộp vào MSG-14 để không lộ email đã đăng ký; BR-07) |
 | MSG-16 | SCR-03 | Phiên đăng nhập đã kết thúc. Hãy đăng nhập lại |
 | MSG-17 | SCR-04 | Nếu {email} có tài khoản, chúng tôi đã gửi link đặt lại mật khẩu. Link có hiệu lực 30 phút |
 | MSG-18 | SCR-04 | Link đã hết hạn hoặc đã được dùng · Gửi link mới |
@@ -629,9 +737,18 @@ Mobile web: cột trái thành danh sách màn đầu, chọn nhóm mở màn n�
 | MSG-34 | Toast | Đã đăng xuất {n} thiết bị khác |
 | MSG-35 | Inline | Đang chuẩn bị dữ liệu. Chúng tôi sẽ gửi email khi xong (tối đa 24 giờ) |
 | MSG-36 | Inline | Đã có một yêu cầu xuất dữ liệu đang xử lý |
-| MSG-37 | Inline | Bạn là chủ sở hữu duy nhất của workspace còn thành viên khác. Hãy chuyển quyền sở hữu trước · Chuyển quyền sở hữu |
+| MSG-37 | Inline | Bạn là chủ sở hữu của workspace còn thành viên khác. Hãy chuyển quyền sở hữu hoặc xoá workspace trước · Chuyển quyền sở hữu · Xoá workspace |
 | MSG-38 | Màn hình | Tài khoản đã được xoá. Dữ liệu sẽ bị xoá vĩnh viễn trong vòng 30 ngày |
 | MSG-39 | Inline | Gõ "XOÁ" để xác nhận |
+| MSG-40 | Dialog | Còn {n} thay đổi chưa đồng bộ trên thiết bị này. Đăng xuất bây giờ sẽ xoá các thay đổi đó · Huỷ · Vẫn đăng xuất |
+| MSG-41 | Toast | "{tên cài đặt}" vừa được đổi trên thiết bị khác thành {giá trị}. Thay đổi của bạn ở mục này chưa được lưu |
+| MSG-42 | Màn hình | Đã huỷ việc đổi email. Mọi thiết bị đã được đăng xuất. Chúng tôi đã gửi link đặt lại mật khẩu tới {email cũ} |
+| MSG-43 | Màn hình | Link đã hết hạn hoặc đã được dùng. Nếu bạn không yêu cầu đổi email, hãy liên hệ hỗ trợ |
+| MSG-44 | Inline | Đang chuẩn bị bản xuất dữ liệu. Bạn có thể xoá tài khoản sau khi bản xuất sẵn sàng |
+| MSG-45 | Inline | Bạn sẽ rời {workspace}. {n} task được giao cho bạn chưa xong sẽ trả về người giao. Gói của workspace không bị huỷ |
+| MSG-46 | Inline | Chọn ít nhất 1 ngày làm việc |
+| MSG-47 | Màn hình | Điều khoản sử dụng / Chính sách quyền riêng tư đã cập nhật ngày {ngày}. Đọc và đồng ý để tiếp tục dùng app |
+| MSG-48 | Dialog | Rút lại đồng ý xử lý dữ liệu đồng nghĩa với việc chúng tôi không thể tiếp tục cung cấp dịch vụ. Tài khoản và dữ liệu sẽ bị xoá trong 30 ngày · Xuất dữ liệu trước · Huỷ · Rút lại đồng ý |
 
 Bản EN: `[chờ bổ sung]`.
 
@@ -640,10 +757,10 @@ Bản EN: `[chờ bổ sung]`.
 | **Mục** | **Yêu cầu** `[giả định]` |
 | --- | --- |
 | Hiệu năng | \[AuthLogin\] / \[AuthSignup\] p95 ≤ 800 ms (gồm băm Argon2id); \[SettingsUpdate\] p95 ≤ 300 ms; cài đặt áp dụng trên giao diện ≤ 100 ms; mỗi bước onboarding chuyển ≤ 500 ms; email mã / link tới hộp thư ≤ 1 phút (p95) |
-| Offline | Đăng ký, đăng nhập, đổi mật khẩu / email, xuất, xoá cần mạng. Cài đặt nhóm Chung / Hiển thị / Phím tắt đổi được khi mất mạng, đồng bộ sau. Đăng xuất xoá dữ liệu offline (BR-18) |
-| Đồng bộ | `settings.changed`, `session.revoked` tới thiết bị khác ≤ 5 giây |
+| Offline | Đăng ký, đăng nhập, đổi mật khẩu / email, xuất, xoá, đồng ý cần mạng. Cài đặt nhóm Chung / Hiển thị / Lịch làm việc / Phím tắt đổi được khi mất mạng, đồng bộ sau. Chủ động đăng xuất xoá dữ liệu offline sau cảnh báo; bị đăng xuất từ xa giữ hàng đợi đã mã hoá (BR-18, QC-08 mục 6) |
+| Đồng bộ | `settings.changed`, `session.revoked` tới thiết bị khác ≤ 5 giây; xung đột cài đặt theo từng trường (BR-12, QC-08) |
 | Bảo mật | HTTPS bắt buộc; Argon2id cho mật khẩu; PKCE + `state` cho OAuth; refresh token xoay vòng, phát hiện dùng lại (BR-08); chống CSRF cho endpoint dùng cookie; rate limit 10 lần đăng nhập / phút / IP, 600 req / phút / user; mã và token chỉ lưu dạng băm; phản hồi đăng ký / quên mật khẩu không lộ email (BR-04) |
-| Quyền riêng tư, tuân thủ | Lưu bản đồng ý (BR-06); xuất ≤ 24 giờ, xoá ≤ 30 ngày gồm cả bản sao lưu theo chu kỳ; Nghị định 13/2023/NĐ-CP và GDPR chờ pháp chế xác nhận; nơi lưu dữ liệu (Việt Nam hay không) — câu hỏi mở |
-| Log / audit | Nhật ký bảo mật theo BR-21, giữ 1 năm; log hệ thống không chứa mật khẩu, mã, token, nội dung task |
-| Tracking | Sự kiện: `signup_started`, `signup_completed` (phương thức), `email_verified`, `login_succeeded` / `login_failed`, `account_locked`, `password_reset_requested` / `_completed`, `onboarding_step_completed` (bước, bỏ qua?), `onboarding_completed`, `tip_shown` / `tip_dismissed`, `setting_changed` (tên cài đặt, không ghi giá trị cá nhân), `timezone_banner_action`, `data_export_requested`, `account_deleted` |
+| Quyền riêng tư, tuân thủ | Lưu bản đồng ý, rút lại và xin lại đồng ý (BR-06, BR-23); xuất ≤ 24 giờ, xoá ≤ 30 ngày gồm cả bản sao lưu theo chu kỳ, trừ ngoại lệ lưu giữ BR-20 (hoá đơn, chứng từ 10 năm; nhật ký bảo mật 1 năm, ẩn danh); Nghị định 13/2023/NĐ-CP và GDPR chờ pháp chế xác nhận. Nơi lưu dữ liệu: bản 1.0 dùng máy chủ khu vực châu Á, không bắt buộc lưu tại Việt Nam; cần hồ sơ đánh giá tác động chuyển dữ liệu cá nhân ra nước ngoài (NĐ 13/2023); pháp chế xác nhận trước phát hành |
+| Log / audit | Nhật ký bảo mật theo BR-21, giữ 1 năm, ẩn danh khi tài khoản bị xoá; log hệ thống không chứa mật khẩu, mã, token, nội dung task |
+| Tracking | Sự kiện: `signup_started`, `signup_completed` (phương thức), `email_verified`, `unverified_account_replaced`, `login_succeeded` / `login_failed`, `account_locked`, `password_reset_requested` / `_completed`, `email_change_reverted`, `onboarding_step_completed` (bước, bỏ qua?), `onboarding_completed`, `tip_shown` / `tip_dismissed`, `setting_changed` (tên cài đặt, không ghi giá trị cá nhân), `setting_conflict_overwritten`, `work_schedule_changed` (số ngày làm việc), `timezone_banner_action`, `data_export_requested`, `consent_accepted` / `consent_withdrawn`, `account_deleted` (vai trò, có rời / xoá workspace) |
 | Accessibility | Form có nhãn, lỗi đọc được bằng trình đọc màn hình (aria-live); ô mã 6 số hỗ trợ dán và tự điền OTP; điều hướng toàn bộ bằng bàn phím; tương phản đạt WCAG 2.1 AA ở cả giao diện sáng / tối |
