@@ -352,9 +352,9 @@ MSG-xx chép nguyên văn từ SRS G02 mục 9; nguồn vẫn là SRS. UI-xx là
 
 | Mã | Câu hỏi | Ảnh hưởng tới | Đề xuất của brief | Ai chốt |
 |---|---|---|---|---|
-| O-01 | Chi tiết task mở ở panel phải, dialog hay cửa sổ riêng? | SCR-03 toàn bộ bố cục | Panel phải, để vẫn thấy board | #7 |
-| O-02 | Cột ngày đã qua có nút "Thêm task" không? | SCR-01, CASE-05 | Không có nút; phím A trên cột đã qua mở ô soạn ở hôm nay | #7 / brief G04 |
-| O-03 | Ô thêm nhanh toàn cục: hình thức cửa sổ; sau Enter đóng hay giữ để gõ tiếp? | SCR-N01 | Cửa sổ nổi nhỏ giữa màn hình; đóng sau Enter, Shift+Enter để gõ tiếp | #7 |
+| O-01 | Chi tiết task mở ở panel phải, dialog hay cửa sổ riêng? | SCR-03 toàn bộ bố cục | **Đã chốt (IA-06):** dialog giữa màn, có "mở rộng" chiếm vùng chính | [IA](00-kien-truc-thong-tin.md) |
+| O-02 | Cột ngày đã qua có nút "Thêm task" không? | SCR-01, CASE-05 | **Đã chốt (IA-20):** không có nút; phím A trên cột đã qua mở ô soạn ở hôm nay | [IA](00-kien-truc-thong-tin.md) |
+| O-03 | Ô thêm nhanh toàn cục: hình thức cửa sổ; sau Enter đóng hay giữ để gõ tiếp? | SCR-N01 | **Đã chốt (IA-19):** cửa sổ nổi nhỏ giữa màn hình, luôn ở trên; đóng sau Enter, Shift+Enter để gõ tiếp | [IA](00-kien-truc-thong-tin.md) |
 | O-04 | Bản nháp sau Esc: giữ theo từng cột, và mất khi nào (đóng app, sang ngày mới)? | SCR-01.S12 | Mỗi cột một bản nháp, giữ tới khi tạo task hoặc xoá hết chữ | PO, ghi vào SRS G02 |
 | O-05 | Claude Code hết hạn mức khi đang gợi ý trong ô soạn: im lặng hay báo? | CASE-10 | Im lặng ở ô soạn; báo một lần ở khu trợ lý AI (brief G10) | PO / brief G10 |
 | O-06 | Danh sách channel không có kết quả: có lối "Tạo channel {từ khoá}" không? | SCR-01.S08 | Có, tạo trong context đầu tiên, vì đỡ phải vào Cài đặt | PO, ghi vào SRS G02 |
