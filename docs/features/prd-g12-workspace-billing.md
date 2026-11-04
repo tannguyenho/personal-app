@@ -101,7 +101,7 @@ Gộp thông báo trùng, tắt được từng loại theo từng kênh, email 
 | Trial | 14 ngày, không cần thẻ, mỗi email 1 lần | Tài khoản mới: bắt đầu khi tạo workspace (G01). Tài khoản có từ 1.0: bắt đầu ngày phát hành 1.1 | Nhắc trước 3 ngày và 1 ngày (email + banner) |
 | Nâng cấp trong trial | Không mất ngày trial | — | Kỳ trả phí đầu tiên bắt đầu khi trial kết thúc |
 | Chu kỳ thanh toán | Tháng / năm | — | Giá: câu hỏi mở |
-| Số ghế | Mua trước, ≥ số thành viên | 1 | Bản 1 luôn 1 ghế. (Bản sau) Không tự cộng; lời mời đang chờ không chiếm ghế; trong trial không giới hạn ghế `[giả định]` |
+| Số ghế | Mua trước, ≥ số thành viên | 1 | Bản 1 luôn 1 ghế `[giả định — chờ PO, mục 10]`. (Bản sau) Không tự cộng; lời mời đang chờ không chiếm ghế; trong trial không giới hạn ghế `[giả định]` |
 | Hết ghế (bản sau) | Người chấp nhận lời mời chờ tới khi chủ sở hữu mua thêm ghế | — | Chủ sở hữu được báo |
 | Thử lại khi gia hạn lỗi | Ngày 1, 3, 7 sau ngày đến hạn | — | Trong thời gian thử lại vẫn dùng đầy đủ |
 | Giữ dữ liệu khi chỉ đọc | 90 ngày | — | Vẫn xuất được (G01); hết 90 ngày chỉ xoá dữ liệu workspace, không xoá tài khoản; báo mọi thành viên, email bắt buộc |

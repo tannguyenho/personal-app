@@ -647,14 +647,14 @@ Cửa sổ app hẹp (và iOS / Android, 1.2): cột trái thành danh sách mà
 
 ### SCR-16 Trợ lý AI (điểm vào, nội dung do G10 sở hữu)
 
-G01 chỉ đặt nhóm này trong SCR-06 #1; bố cục chi tiết, giá trị mặc định, validate, API và thông báo theo SRS G10 (màn Cài đặt AI) và QC-12. Bảng dưới chỉ liệt kê các thành phần bắt buộc phải có để các nhóm khác tham chiếu (BR-24).
+G01 chỉ đặt nhóm này trong SCR-06 #1; bố cục chi tiết, giá trị mặc định, validate, API và thông báo theo SRS G10 SCR-09 (G10 đang gọi là "Cài đặt → AI"; tên nhóm cần thống nhất) và QC-12. Bảng dưới chỉ liệt kê các thành phần bắt buộc phải có để các nhóm khác tham chiếu (BR-24).
 
 | **#** | **Thành phần** | **Loại** | **Nhóm sở hữu** | **Hành vi (tóm tắt, chi tiết ở G10)** |
 | --- | --- | --- | --- | --- |
 | 1 | Trợ lý AI | Toggle | G10 | Mặc định tắt; bật lần đầu → màn đồng ý gọn (QC-12 mục 7); tắt → MCP local ngừng nhận kết nối |
 | 2 | Trạng thái Claude Code | Text + link | G10 | Đã cài / đã đăng nhập / phiên bản; chưa có → "Cài Claude Code để bật trợ lý AI" (QC-12 mục 2) |
 | 3 | Cho phép AI hoàn thành và xoá task | Toggle | G10 | Mặc định tắt; task có liên kết tích hợp không bao giờ được AI hoàn thành (QC-12 mục 4) |
-| 4 | Cho AI đọc dữ liệu tích hợp | Toggle | G10 | Mặc định tắt; bật thì thay đổi trong phiên AI đó chờ duyệt (QC-12 mục 6) |
+| 4 | Cho AI đọc dữ liệu tích hợp | Toggle | G10 | Mặc định tắt; bật thì thay đổi trong phiên AI đó chờ duyệt (QC-12 mục 6); ẩn khi chưa có tích hợp (G11, 1.1) theo G10 |
 | 5 | Đồng ý dùng AI | Text + link | G10 | Thời điểm đồng ý; "Rút lại đồng ý dùng AI" (BR-23 c) |
 
 ### SCR-15 Đồng ý phiên bản Điều khoản mới

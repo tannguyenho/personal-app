@@ -32,7 +32,7 @@
 
 | **Mã** | **Quy tắc** |
 | --- | --- |
-| BR-01 | **Vai trò.** `OWNER` (đúng 1 / workspace), `ADMIN`, `MEMBER`. Quyền theo ma trận PRD mục 5, kiểm tra ở server cho mọi API; client chỉ ẩn / disable nút. Bản 1 (1.0, cả khi có thanh toán ở 1.1): workspace chỉ có 1 người, là `OWNER` (BR-22, BR-28); `ADMIN`, `MEMBER` là bản sau. Mỗi người thuộc đúng 1 workspace; nhiều workspace cho một người để bản sau |
+| BR-01 | **Vai trò.** `OWNER` (đúng 1 / workspace), `ADMIN`, `MEMBER`. Quyền theo ma trận PRD mục 5, kiểm tra ở server cho mọi API; client chỉ ẩn / disable nút. Bản 1: workspace chỉ có 1 người, là `OWNER` (BR-22, BR-28); `ADMIN`, `MEMBER` là bản sau. Mỗi người thuộc đúng 1 workspace; nhiều workspace cho một người để bản sau |
 | BR-02 | **Trial (1.1).** Tài khoản đăng ký từ 1.1: trial bắt đầu khi tạo workspace (G01), kéo dài 14 ngày (kết thúc đúng 14 × 24 giờ sau khi tạo `[giả định]`), không cần thẻ, đủ tính năng của bản đang phát hành. **Mỗi email chỉ được trial 1 lần** (tính cả email của tài khoản đã xoá; lưu dạng băm); email đã dùng trial → workspace mới không có trial, ở `CHI_DOC` tới khi nâng cấp `[giả định]`. Tài khoản có từ 1.0: theo BR-23. Nhắc khi còn 3 ngày và 1 ngày: email + banner + thông báo trong app (MSG-42) |
 | BR-03 | **Checkout (1.1).** Chọn chu kỳ tháng / năm và số ghế (≥ số thành viên hiện tại; lời mời đang chờ không tính — BR-27). Thanh toán trên trang của cổng (hosted checkout); app không nhận, không lưu số thẻ (PCI DSS). Thu thông tin xuất hoá đơn theo BR-10. Gói chỉ chuyển `HOAT_DONG` khi webhook của cổng xác nhận, không theo trang chuyển hướng. Nâng cấp khi đang `DUNG_THU`: không mất ngày trial; **kỳ trả phí đầu tiên bắt đầu khi trial kết thúc** (`trialEndsAt`), lần thu đầu tại thời điểm đó `[giả định]`; MSG-53 |
 | BR-04 | **Webhook.** Xác thực chữ ký; idempotent theo ID giao dịch / ID sự kiện của cổng (EC-35); sự kiện có thời điểm cũ hơn trạng thái hiện tại thì ghi nhận nhưng không đổi trạng thái; mọi sự kiện lưu vào nhật ký thanh toán. Sự kiện `refund` và `dispute` xử lý theo BR-26 |
@@ -47,7 +47,7 @@
 | BR-13 | **Xoá / rời thành viên (bản sau — BR-28; EC-31).** Trong một giao dịch: dừng và lưu timer đang chạy; task được giao cho người rời chưa xong chuyển về người giao; gỡ người rời khỏi danh sách follow; thu hồi phiên vào workspace, phát `session.revoked`, đăng xuất ≤ 1 phút; ghế giảm từ kỳ sau. **Task cá nhân** (người rời tự tạo, không được giao) chuyển sang một **workspace cá nhân mới** của người đó, tạo ngay trong giao dịch, Privacy mặc định; gói của workspace mới: câu hỏi mở (email đã dùng trial thì không có trial — BR-02). Người rời nhận MSG-28. Xoá tài khoản khi không phải `OWNER` (G01 BR-20) chạy BR-13 trước rồi mới xoá |
 | BR-14 | **Chủ sở hữu (bản sau — BR-28; EC-36).** Workspace một người (bản 1): xoá workspace = xoá tài khoản theo G01 BR-20. `OWNER` không rời workspace, không xoá tài khoản (G01 BR-20) khi workspace còn thành viên khác: phải chuyển quyền sở hữu hoặc xoá workspace trước. **Chuyển quyền sở hữu:** chỉ `OWNER`, xác nhận lại theo G01 BR-10 (mật khẩu hoặc `reauthToken` Google / Microsoft); người nhận thành `OWNER`, người cũ thành `ADMIN`; cả hai nhận email. Thanh toán: **gỡ phương thức thanh toán của chủ cũ ngay**; khách hàng trên cổng, người nhận hoá đơn và email thanh toán chuyển sang chủ mới; chủ mới nhập phương thức thanh toán trước kỳ kế tiếp (MSG-50); tới kỳ chưa có → gói chuyển `THU_LAI` (BR-05). Gói đang `CHO_HUY` / `DUNG_THU` không cần thẻ, giữ trạng thái `[giả định]`. **Xoá workspace:** chỉ `OWNER`, gõ đúng tên workspace `[giả định]`; huỷ gói, đăng xuất mọi thành viên, dữ liệu xoá ≤ 30 ngày, hoá đơn giữ theo BR-10 |
 | BR-15 | **Privacy (bản sau — BR-28).** Mỗi người tự đặt cho dữ liệu của mình: 5 loại (Task, Highlights, Channel, Lịch, Tích hợp) × "Chỉ mình tôi" / "Thành viên"; mặc định "Chỉ mình tôi". Privacy **chỉ áp cho task tự tạo**: task được giao hoặc có người follow luôn hiển thị tiêu đề, trạng thái, comment với người giao, người được giao và người follow, bất kể Privacy. Channel private (G02) luôn ẩn với người khác. **Privacy "Lịch"** ở "Thành viên": người khác chỉ thấy bận / rảnh và timebox, không thấy chi tiết sự kiện của lịch ngoài (tiêu đề, người tham dự, mô tả) — khuyến nghị, chờ chốt khi làm (Q37; G05 đặc tả phần hiển thị). Quyền kiểm tra ở tầng truy vấn server. Đổi sang "Chỉ mình tôi" → người khác mất quyền ≤ 5 giây (EC-33), trừ ngoại lệ giao / follow ở trên |
-| BR-16 | **Giao task (bản sau — BR-28).** Chỉ giao cho thành viên cùng workspace; task trong channel private không giao được `[giả định]`. Người được giao nhận task vào backlog của họ ở bucket **"Tuần sau"**, đặt lên **đầu** bucket (Q36; G06 ghi `backlogBucket` theo QC-03 mục 2) + thông báo MSG-40 (trong app + email). Người giao tự động follow `[giả định]`. Giao lại → người mới nhận MSG-40, task rời backlog người cũ. Hiển thị theo ngoại lệ của BR-15. Ghi \[ActivityLog\] (G02) |
+| BR-16 | **Giao task (bản sau — BR-28).** Chỉ giao cho thành viên cùng workspace; task trong channel private không giao được `[giả định]`. Người được giao nhận task vào backlog của họ ở bucket **"Tuần sau"** (`next_week`, G06 BR-23), đặt lên **đầu** bucket (Q36; G06 ghi `backlogBucket` theo QC-03 mục 2) + thông báo MSG-40 (trong app + email). Người giao tự động follow `[giả định]`. Giao lại → người mới nhận MSG-40, task rời backlog người cũ. Hiển thị theo ngoại lệ của BR-15. Ghi \[ActivityLog\] (G02) |
 | BR-17 | **Follow (bản sau — BR-28).** Người follow nhận MSG-41 khi task được tạo (với task tạo sẵn người follow), giao lại, hoàn thành, có comment mới; không gửi cho chính người thực hiện hành động; chỉ gửi cho người còn là thành viên workspace (BR-13). Người follow luôn xem được task theo ngoại lệ của BR-15 |
 | BR-18 | **Cài đặt thông báo (1.0).** Bảng sự kiện × kênh (Trong app, Email, Desktop — thông báo hệ thống Windows từ 1.0 `[giả định]`, macOS từ 1.1; Mobile push từ 1.2) với mặc định theo PRD mục 5; lưu trong cài đặt người dùng (\[SettingsUpdate\] của G01, xung đột theo G01 BR-12). Email bắt buộc, không tắt được: "Sắp xoá dữ liệu workspace chỉ đọc" (BR-06); "Trial sắp hết" và "Gia hạn lỗi" `[giả định]` — đều từ 1.1. Product updates mặc định tắt `[giả định]`; bật là một đồng ý tiếp thị, lưu thời điểm, tắt (rút lại) được bất cứ lúc nào. Sự kiện / kênh chưa phát hành không hiện |
 | BR-19 | **Gửi thông báo.** Gộp mọi thông báo cùng task, cùng người nhận trong 5 phút thành 1 (MSG-43). Email (trừ bắt buộc) có link huỷ đăng ký 1 chạm không cần đăng nhập, tắt đúng sự kiện × email, kèm header List-Unsubscribe `[giả định]`. Email lỗi tạm thời thử lại 3 lần `[giả định]`; bị trả về (bounce) cứng → ngừng gửi email tới địa chỉ đó, báo trong app |
@@ -59,7 +59,7 @@
 | BR-25 | **Nhận lời mời khi đã có workspace (bản sau — BR-28).** (a) Workspace hiện tại chỉ có mình, gói `DUNG_THU`, `CHI_DOC` (chưa trả phí) hoặc Beta → hỏi MSG-48; đồng ý → trong một giao dịch: chuyển task cá nhân (series, channel đi kèm `[giả định]`) sang workspace mời với Privacy "Chỉ mình tôi", đóng (xoá) workspace cũ, rồi vào workspace mời theo BR-27. (b) Workspace hiện tại `HOAT_DONG` / `THU_LAI` (đang trả phí) hoặc có thành viên khác → chặn, MSG-47: phải huỷ gói hoặc chuyển quyền sở hữu trước. Gói `CHO_HUY` coi như đã huỷ, cho nhận theo (a) `[giả định]`, phần kỳ còn lại không hoàn |
 | BR-26 | **Hoàn tiền và tranh chấp (1.1).** Sự kiện từ cổng: `refund` toàn phần cho kỳ hiện tại → gói `CHI_DOC` `[giả định]`; `refund` một phần → giữ trạng thái; `dispute` mở → giữ trạng thái, cảnh báo nội bộ; `dispute` thua → `CHI_DOC` `[giả định]`. Mỗi sự kiện sinh chứng từ điều chỉnh (BR-10), email MSG-54 cho chủ sở hữu, ghi BR-21. Hoàn tiền phần còn lại khi xoá tài khoản `[giả định — chờ pháp chế]`; huỷ giữa kỳ, giảm ghế không hoàn `[giả định]` |
 | BR-27 | **Ghế mua trước (bản sau — BR-28).** Bản 1: gói luôn 1 ghế. Số ghế do `OWNER` mua (BR-03, BR-08); ghế trống = số ghế − số thành viên. Lời mời đang chờ **không** chiếm ghế. Lời mời email và link chung chỉ cho vào khi còn ghế trống; hết ghế → lời mời `CHO_GHE`, người được mời thấy MSG-46, `OWNER` nhận MSG-49. Không bao giờ tự cộng ghế hay trừ tiền khi `OWNER` không chủ động bấm. `OWNER` mua thêm ghế → người `CHO_GHE` được vào theo thứ tự chấp nhận sớm nhất `[giả định]`, mỗi ghế mới một người. Trong `DUNG_THU`: số ghế không giới hạn `[giả định]`; nâng cấp phải mua ≥ số thành viên |
-| BR-28 | **Phạm vi một người dùng** (Q35, Q36, Q37). Bản 1 chỉ cho một người dùng; workspace luôn có đúng 1 người là `OWNER`, gói (1.1) luôn 1 ghế. Các phần nhiều thành viên trong SRS này giữ nguyên đặc tả nhưng **chưa làm**, phát hành ở bản sau — xem [`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md): vai trò `ADMIN` / `MEMBER` (BR-01), mời và link mời (BR-11, BR-12, UC-04), xoá / rời thành viên (BR-13), chuyển quyền sở hữu, xoá workspace nhiều người (BR-14, UC-05 trừ A5), Privacy (BR-15, UC-06), giao / follow task (BR-16, BR-17, UC-07), Team changes (BR-21), nhận lời mời khi đã có workspace (BR-25), ghế mua trước (BR-27), các thông báo MSG-15 – MSG-29, MSG-31 – MSG-33, MSG-40, MSG-41, MSG-44 – MSG-50, MSG-52. Quyết định đã chốt cho bản sau: task được giao vào bucket "Tuần sau", lên đầu (Q36, BR-16); Privacy "Lịch" chỉ lộ bận / rảnh và timebox (Q37, khuyến nghị, BR-15); thành viên tạo channel riêng tư, channel chung chỉ `OWNER` / `ADMIN` (khuyến nghị, chờ chốt khi làm). Trước khi phát hành, API tương ứng trả 404 |
+| BR-28 | **Phạm vi một người dùng** (Q35, Q36, Q37). Bản 1 chỉ cho một người dùng; workspace luôn có đúng 1 người là `OWNER`; gói (1.1) luôn 1 ghế `[giả định — chờ PO: PRD mục 10]`. Các phần nhiều thành viên trong SRS này giữ nguyên đặc tả nhưng **chưa làm**, phát hành ở bản sau — xem [`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md): vai trò `ADMIN` / `MEMBER` (BR-01), mời và link mời (BR-11, BR-12, UC-04), xoá / rời thành viên (BR-13), chuyển quyền sở hữu, xoá workspace nhiều người (BR-14, UC-05 trừ A5), Privacy (BR-15, UC-06), giao / follow task (BR-16, BR-17, UC-07), Team changes (BR-21), nhận lời mời khi đã có workspace (BR-25), ghế mua trước (BR-27), các thông báo MSG-15 – MSG-29, MSG-31 – MSG-33, MSG-40, MSG-41, MSG-44 – MSG-50, MSG-52. Quyết định đã chốt cho bản sau: task được giao vào bucket "Tuần sau", lên đầu (Q36, BR-16); Privacy "Lịch" chỉ lộ bận / rảnh và timebox (Q37, khuyến nghị, BR-15); thành viên tạo channel riêng tư, channel chung chỉ `OWNER` / `ADMIN` (khuyến nghị, chờ chốt khi làm). Trước khi phát hành, API tương ứng trả 404 |
 
 ## 4. Trạng thái
 
@@ -80,7 +80,7 @@ Chuyển trạng thái: `DUNG_THU` → `HOAT_DONG` (UC-01, tại `trialEndsAt` n
 
 ### 4.2. Trạng thái lời mời và thông báo
 
-Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO_GHE` (chấp nhận khi hết ghế, BR-27) / `HET_HAN` (sau 7 ngày) / `DA_THU_HOI`. `CHO_GHE` → `DA_CHAP_NHAN` (OWNER mua thêm ghế; có thành viên rời làm trống ghế `[giả định]`) / `DA_THU_HOI`. "Gửi lại" đưa `HET_HAN` về `CHO_CHAP_NHAN` với hạn mới. Thông báo (1.0): `CHUA_DOC` → `DA_DOC` (UC-09).
+Lời mời (bản sau — BR-28): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO_GHE` (chấp nhận khi hết ghế, BR-27) / `HET_HAN` (sau 7 ngày) / `DA_THU_HOI`. `CHO_GHE` → `DA_CHAP_NHAN` (OWNER mua thêm ghế; có thành viên rời làm trống ghế `[giả định]`) / `DA_THU_HOI`. "Gửi lại" đưa `HET_HAN` về `CHO_CHAP_NHAN` với hạn mới. Thông báo (1.0): `CHUA_DOC` → `DA_DOC` (UC-09).
 
 ## 5. Use Case
 
@@ -89,7 +89,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | **Mục** | **Nội dung** |
 | --- | --- |
 | Tiền điều kiện | Người dùng là `OWNER`; gói `DUNG_THU` hoặc `CHI_DOC` |
-| Hậu điều kiện thành công | Gói `HOAT_DONG`; hoá đơn PDF; email xác nhận; banner gỡ, hết chỉ đọc; Team changes ghi |
+| Hậu điều kiện thành công | Gói `HOAT_DONG`; hoá đơn PDF; email xác nhận; banner gỡ, hết chỉ đọc; audit BR-21 ghi |
 | Hậu điều kiện thất bại | Gói giữ trạng thái cũ; không bị trừ tiền nếu cổng chưa xác nhận |
 
 **Luồng chính**
@@ -99,7 +99,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | 1 | Chủ sở hữu | Bấm "Nâng cấp" trên **SCR-01**, **SCR-02** hoặc link trong email nhắc |
 | 2 | Hệ thống | Gọi \[BillingGet\]; mở **SCR-03**: chu kỳ tháng / năm, số ghế (≥ số thành viên), thông tin xuất hoá đơn (BR-10), tổng tiền, ngày bắt đầu kỳ (đang `DUNG_THU`: `trialEndsAt`) |
 | 3 | Chủ sở hữu | Chọn chu kỳ, số ghế, nhập thông tin xuất hoá đơn, bấm "Thanh toán" |
-| 4 | Hệ thống | Gọi \[BillingCheckout\] (Idempotency-Key); chuyển tới `checkoutUrl` của cổng |
+| 4 | Hệ thống | Gọi \[BillingCheckout\] (Idempotency-Key); mở `checkoutUrl` của cổng (app desktop: trong trình duyệt hệ thống, cách quay về app như G01 BR-25 — tech chốt, `docs/tech/`) |
 | 5 | Chủ sở hữu | Thanh toán trên trang của cổng |
 | 6 | Cổng thanh toán | Gửi webhook → \[BillingWebhook\]: áp BR-04; gói `HOAT_DONG`; sinh hoá đơn (BR-10); gửi email; ghi BR-21 |
 | 7 | Hệ thống | Cổng chuyển về app → SCR-03 hiện MSG-04, gọi \[BillingGet\] mỗi 3 giây tối đa 60 giây `[giả định]`; thấy `HOAT_DONG` → toast MSG-06, gỡ banner, bỏ chỉ đọc |
@@ -110,7 +110,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | --- | --- | --- |
 | A1 | Quá 60 giây chưa có xác nhận | MSG-05; webhook đến sau → email + thông báo trong app, gói kích hoạt bình thường |
 | A2 | Webhook đến trước khi người dùng quay về app | Bước 7 thấy `HOAT_DONG` ngay ở lần gọi đầu |
-| A3 | `ADMIN` / `MEMBER` bấm "Nâng cấp" (1.1) | SCR-03 chỉ đọc, ghi "Chỉ chủ sở hữu thanh toán được", nút "Nhắc chủ sở hữu" gửi thông báo trong app `[giả định]` |
+| A3 | `ADMIN` / `MEMBER` bấm "Nâng cấp" (bản sau — BR-28) | SCR-03 chỉ đọc, ghi "Chỉ chủ sở hữu thanh toán được", nút "Nhắc chủ sở hữu" gửi thông báo trong app `[giả định]` |
 | A4 | Đang `CHI_DOC` | Thanh toán xong bỏ chỉ đọc ngay; dữ liệu giữ nguyên; rollover chạy bù một lần, không tính ngày đóng băng vào số ngày bị hoãn (QC-09) |
 | A5 | Đang `DUNG_THU` | Cổng lưu phương thức thanh toán, chưa thu; gói giữ `DUNG_THU` tới `trialEndsAt` rồi `HOAT_DONG` và thu kỳ đầu (BR-03); bước 7 hiện MSG-53 thay MSG-06; banner trial gỡ |
 
@@ -205,7 +205,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | E3 | Không phải `OWNER` | MSG-14 |
 | E4 | Lỗi 5xx | MSG-38 |
 
-### UC-04 Mời thành viên (1.1)
+### UC-04 Mời thành viên (bản sau — BR-28)
 
 | **Mục** | **Nội dung** |
 | --- | --- |
@@ -248,7 +248,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | E5 | Người gọi là `MEMBER` / workspace `CHI_DOC` | MSG-14 / MSG-03 |
 | E6 | Người được mời có workspace đang trả phí hoặc có thành viên khác (BR-25 b) | SCR-13 hiện MSG-47, không vào workspace mời; lời mời giữ `CHO_CHAP_NHAN` tới hạn |
 
-### UC-05 Quản lý thành viên và workspace (1.1)
+### UC-05 Quản lý thành viên và workspace (bản sau — BR-28; riêng A5 đổi tên workspace có từ 1.0)
 
 | **Mục** | **Nội dung** |
 | --- | --- |
@@ -284,7 +284,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | E3 | Tên workspace gõ không khớp / mật khẩu sai / `reauthToken` không hợp lệ | MSG-27 / thông báo của G01 (MSG-29 / MSG-11) |
 | E4 | Lỗi 5xx | MSG-38 |
 
-### UC-06 Cài đặt quyền riêng tư (1.1)
+### UC-06 Cài đặt quyền riêng tư (bản sau — BR-28)
 
 | **Mục** | **Nội dung** |
 | --- | --- |
@@ -317,7 +317,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | E1 | \[PrivacyUpdate\] lỗi | Trả về giá trị cũ, MSG-38 |
 | E2 | `MEMBER` đổi "Tắt mời qua link" | Toggle disabled; API trả MSG-14 |
 
-### UC-07 Giao task và follow task (1.1)
+### UC-07 Giao task và follow task (bản sau — BR-28)
 
 | **Mục** | **Nội dung** |
 | --- | --- |
@@ -330,7 +330,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
 | 1 | Người dùng | Chi tiết task (G02) → ô "Giao cho" (**SCR-09**) → chọn thành viên |
-| 2 | Hệ thống | Gọi \[TaskAssign\]; task vào backlog của người được giao (G06); người giao tự follow; task hiển thị với người giao / được giao / follow bất kể Privacy (BR-15) |
+| 2 | Hệ thống | Gọi \[TaskAssign\]; task vào backlog của người được giao ở bucket "Tuần sau", đầu bucket (BR-16, Q36, G06); người giao tự follow; task hiển thị với người giao / được giao / follow bất kể Privacy (BR-15) |
 | 3 | Hệ thống | Gửi MSG-40 cho người được giao (trong app + email theo cài đặt); \[ActivityLog\] ghi "giao cho {tên}"; toast MSG-31 |
 
 **Luồng thay thế**
@@ -375,7 +375,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | A1 | Ô bắt buộc | Khoá, tooltip MSG-34 |
 | A2 | Bấm link "Huỷ nhận loại email này" trong email | \[Unsubscribe\] với token → tắt đúng sự kiện × email → **SCR-14** MSG-35, nút "Bật lại" |
 | A3 | Recap tuần: thêm người nhận | Mở cài đặt của G09 |
-| A4 | Trình duyệt chưa cho phép thông báo (desktop / mobile, 1.1) | Hiện nút "Cho phép thông báo" gọi quyền của hệ điều hành |
+| A4 | Hệ điều hành chưa cho app gửi thông báo (Windows 1.0 `[giả định]`; macOS 1.1; iOS / Android 1.2) | Hiện nút "Cho phép thông báo" mở quyền thông báo của hệ điều hành |
 
 **Luồng lỗi**
 
@@ -419,20 +419,23 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 
 ## 6. Điểm vào
 
-| **Điểm vào** | **Web** | **App** (1.1) | **Ghi chú** |
+iOS / Android (1.2) dùng cùng điểm vào với cột Web / macOS.
+
+| **Điểm vào** | **App Windows** (1.0) | **Web / macOS** (1.1) | **Ghi chú** |
 | --- | --- | --- | --- |
-| Banner trial / gia hạn lỗi / chỉ đọc trên Home | ✓ (1.1) | ✓ | SCR-01 → SCR-03 |
-| Email nhắc trial, gia hạn lỗi, sắp xoá dữ liệu | ✓ (1.1) | ✓ (deep link) | SCR-03 / trang cổng / G01 xuất dữ liệu |
-| Cài đặt → Billing | ✓ (1.1) | ✓ | SCR-02 |
-| Thông báo "{email} đang chờ ghế" (MSG-49) | ✓ (1.1) | ✓ | SCR-03 chế độ đổi, tăng ghế |
-| Cài đặt → Workspace | ✓ | ✓ | SCR-12 (1.0: chỉ đổi tên) |
-| Cài đặt → Thành viên / menu workspace "Mời đồng nghiệp" | ✓ (1.1) | ✓ | SCR-05, SCR-06 |
-| Link mời trong email / link mời chung | ✓ (1.1) | ✓ | SCR-13 → G01 |
-| Cài đặt → Privacy | ✓ (1.1) | ✓ | SCR-08 |
-| Chi tiết task → "Giao cho" / "Theo dõi" | ✓ (1.1) | ✓ | SCR-09 |
+| Banner trial / gia hạn lỗi / chỉ đọc trên Home | ✓ (từ 1.1) | ✓ | SCR-01 → SCR-03 |
+| Email nhắc trial, gia hạn lỗi, sắp xoá dữ liệu | ✓ (từ 1.1, deep link) | ✓ | SCR-03 / trang cổng / G01 xuất dữ liệu |
+| Cài đặt → Billing | ✓ (từ 1.1) | ✓ | SCR-02 |
+| Thông báo "{email} đang chờ ghế" (MSG-49) | Bản sau | Bản sau | SCR-03 chế độ đổi, tăng ghế (BR-28) |
+| Cài đặt → Workspace | ✓ | ✓ | SCR-12 (bản 1: chỉ đổi tên) |
+| Cài đặt → Thành viên / menu workspace "Mời đồng nghiệp" | Bản sau | Bản sau | SCR-05, SCR-06 (BR-28) |
+| Link mời trong email / link mời chung | Bản sau | Bản sau | SCR-13 → G01 (BR-28) |
+| Cài đặt → Privacy | Bản sau | Bản sau | SCR-08 (BR-28) |
+| Chi tiết task → "Giao cho" / "Theo dõi" | Bản sau | Bản sau | SCR-09 (BR-28) |
 | Cài đặt → Thông báo | ✓ | ✓ | SCR-10 |
 | Chuông trên thanh điều hướng | ✓ | ✓ | SCR-11 |
-| Link "Huỷ nhận loại email này" | ✓ | – | SCR-14 |
+| Thông báo hệ thống Windows của app | ✓ `[giả định]` | macOS ✓ | Mở đúng đích như SCR-11 |
+| Link "Huỷ nhận loại email này" | Trình duyệt (trang web tối giản, không cần app) | ✓ | SCR-14 |
 
 ## 7. Mô tả màn hình
 
@@ -456,7 +459,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | 5 | Team changes | List | Nhật ký BR-21 mới nhất trước; chỉ `OWNER` / `ADMIN` |
 | 6 | "Huỷ gói" / "Tiếp tục gói" | Link | SCR-04 / A2 UC-03 |
 
-`ADMIN` / `MEMBER` chỉ thấy mục 1 và 5 (`ADMIN`).
+(Bản sau) `ADMIN` / `MEMBER` chỉ thấy mục 1 và 5 (`ADMIN`). Bản 1 không hiện mục 5 Team changes.
 
 ### SCR-03 Chọn / đổi gói (1.1)
 
@@ -478,7 +481,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | 3 | "Huỷ gói" | Button (nguy hiểm) | \[BillingCancel\]; MSG-12 |
 | 4 | "Giữ gói" | Button | Đóng |
 
-### SCR-05 Thành viên (1.1)
+### SCR-05 Thành viên (bản sau — BR-28)
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
@@ -491,7 +494,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | 7 | Ghế | Text + link | MSG-52; "Mua thêm ghế" (chỉ `OWNER`) → SCR-03 chế độ đổi |
 | 8 | Mục "Chờ ghế" | List | Email, thời điểm chấp nhận (lời mời `CHO_GHE`, BR-27); "Thu hồi" |
 
-### SCR-06 Mời đồng nghiệp (1.1)
+### SCR-06 Mời đồng nghiệp (bản sau — BR-28)
 
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
@@ -502,7 +505,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | 5 | Link đăng ký | Text chỉ đọc + "Sao chép link" + "Tạo link mới" | – | MSG-18 / MSG-19; ẩn khi bật "Tắt mời qua link" |
 | 6 | "Gửi lời mời" | Button | – | Disabled khi không có email hợp lệ |
 
-### SCR-07 Xoá thành viên / chuyển quyền sở hữu (1.1)
+### SCR-07 Xoá thành viên / chuyển quyền sở hữu (bản sau — BR-28)
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
@@ -513,7 +516,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | 5 | "Chuyển quyền" | Button | \[OwnershipTransfer\]; MSG-26 |
 | 6 | "Huỷ" | Button | Đóng |
 
-### SCR-08 Privacy (1.1)
+### SCR-08 Privacy (bản sau — BR-28)
 
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
@@ -521,7 +524,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | 2 | Task, Highlights, Channel, Lịch, Tích hợp | 5 dropdown "Chỉ mình tôi" / "Thành viên" | Có | Mặc định "Chỉ mình tôi"; lưu ngay (UC-06). Ghi chú dưới "Task": "Task bạn giao, được giao hoặc có người theo dõi luôn hiện với những người đó" (BR-15) |
 | 3 | Tắt mời qua link | Toggle (cấp workspace) | – | Chỉ `OWNER` / `ADMIN`; A1 UC-06 |
 
-### SCR-09 Giao task và theo dõi (thành phần trong chi tiết task G02, 1.1)
+### SCR-09 Giao task và theo dõi (thành phần trong chi tiết task G02, bản sau — BR-28)
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
@@ -534,9 +537,9 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
-| 1 | Bảng sự kiện × kênh | Ma trận toggle | – | Hàng: sự kiện PRD mục 5 (theo bản phát hành); cột: Trong app, Email, Mobile (1.1), Desktop (1.1) |
+| 1 | Bảng sự kiện × kênh | Ma trận toggle | – | Hàng: sự kiện PRD mục 5 (theo bản phát hành); cột: Trong app, Email, Desktop (thông báo hệ thống Windows, 1.0 `[giả định]`), Mobile (1.2) |
 | 2 | Ô bắt buộc | Toggle khoá | – | Tooltip MSG-34 |
-| 3 | "Cho phép thông báo trên trình duyệt / thiết bị" | Button | – | A4 UC-08; ẩn khi đã cho phép |
+| 3 | "Cho phép thông báo trên thiết bị" | Button | – | A4 UC-08; ẩn khi đã cho phép |
 | 4 | Product updates | Toggle | – | Mặc định tắt `[giả định]` |
 
 ### SCR-11 Trung tâm thông báo
@@ -556,7 +559,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | 1 | Tên workspace | Text | 1–80 ký tự `[giả định]`; `OWNER` / `ADMIN` sửa được; lưu ngay (1.0 và 1.1) |
 | 2 | "Xoá workspace" | Button (nguy hiểm) | 1.1, chỉ `OWNER`; mở dialog: hậu quả, ô gõ tên (MSG-27), "Xoá vĩnh viễn". Ẩn ở 1.0 (xoá workspace cá nhân = xoá tài khoản, G01) |
 
-### SCR-13 Trang lời mời (1.1)
+### SCR-13 Trang lời mời (bản sau — BR-28)
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
@@ -578,7 +581,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 
 | **API** | **Request chính** | **Response chính** | **Timeout / retry** `[giả định]` |
 | --- | --- | --- | --- |
-| \[BillingGet\] `GET /billing` (1.1) | – | status, plan, interval, seats, seatsUsed, pendingSeatInvites, trialEndsAt, firstPeriodStart, currentPeriodEnd, cancelAt, paymentMethodSummary, billingInfo, entitlements (QC-10) | 5s / 2 lần |
+| \[BillingGet\] `GET /billing` (1.1) | – | status, plan, interval, seats, seatsUsed, pendingSeatInvites (bản sau), trialEndsAt, firstPeriodStart, currentPeriodEnd, cancelAt, paymentMethodSummary, billingInfo, entitlements (QC-10: số tài khoản lịch, số tích hợp; không có hạn mức AI) | 5s / 2 lần |
 | \[BillingCheckout\] `POST /billing/checkout` (1.1) | interval, seats, billingInfo {name, taxId?, address, invoiceEmail}, returnUrl, Idempotency-Key | checkoutUrl, checkoutId | 10s / 1 lần cùng key |
 | \[BillingWebhook\] `POST /webhooks/billing` (1.1) | Payload + chữ ký của cổng, eventId; loại sự kiện gồm thanh toán, gia hạn, `refund`, `dispute` (BR-26) | 200 (kể cả trùng) / 400 (chữ ký sai) | Cổng tự retry; xử lý ≤ 10s |
 | \[BillingUpdate\] `PATCH /billing/subscription` `[giả định]` (1.1) | interval?, seats?, billingInfo?, preview | prorationAmount, nextAmount, effectiveAt | 10s / 1 lần |
@@ -601,7 +604,7 @@ Lời mời (1.1): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, còn ghế) / `CHO
 | \[NotificationRead\] `POST /notifications/read` | ids[] \| all | unreadCount | 5s / 2 lần |
 | \[Unsubscribe\] `POST /notifications/unsubscribe` `[giả định]` | token, undo? | eventType, channel, enabled | 5s / 1 lần |
 
-Path đánh dấu `[giả định]` chưa có trong danh sách API đã chốt; cần BE xác nhận. Mọi API ghi dữ liệu nghiệp vụ khi `CHI_DOC` trả 402 `WORKSPACE_READ_ONLY` (BR-06, QC-09). API Billing, ghế, trial chỉ có từ 1.1; ở 1.0 trả 404.
+Path đánh dấu `[giả định]` chưa có trong danh sách API đã chốt; cần BE xác nhận. Mọi API ghi dữ liệu nghiệp vụ khi `CHI_DOC` trả 402 `WORKSPACE_READ_ONLY` (BR-06, QC-09). API Billing, trial chỉ có từ 1.1; ở 1.0 trả 404. API thành viên, lời mời, ghế, Privacy, chuyển quyền sở hữu, giao / follow task (\[MemberList\], \[MemberUpdate\], \[MemberRemove\], \[MemberLeave\], \[Invite\*\], \[PrivacyGet\] / \[PrivacyUpdate\], \[OwnershipTransfer\], \[TeamChanges\], \[TaskAssign\], \[TaskFollow\] / \[TaskUnfollow\]) là bản sau (BR-28); trước đó trả 404.
 
 **Map lỗi API → thông báo**
 
@@ -700,6 +703,7 @@ Bản EN: `[chờ bổ sung]`.
 | --- | --- |
 | Hiệu năng | SCR-02 mở ≤ 1s; webhook xử lý xong ≤ 10s từ khi nhận; thông báo trong app tới người nhận ≤ 5s; email thông báo ≤ 2 phút (p95); \[InviteCreate\] 20 email ≤ 2s |
 | Độ tin cậy | Webhook idempotent (BR-04); đối soát trạng thái gói với cổng hằng ngày; job `billing.lifecycle` idempotent; job chuyển 1.0 → 1.1 (BR-23) idempotent theo workspace; không mất thông báo khi dịch vụ email lỗi (hàng đợi, thử lại BR-19); chế độ chỉ đọc đóng băng mọi job ghi theo QC-09 |
+| Nền tảng | 1.0: app Windows (Flutter), một người dùng (ADR-0005); thông báo hệ thống Windows `[giả định]`. Trang huỷ đăng ký email (SCR-14) và trang cổng thanh toán mở trong trình duyệt. Web, macOS (1.1), iOS / Android (1.2) dùng cùng quy tắc nghiệp vụ |
 | Offline | Billing, mời, thành viên, Privacy cần mạng; trung tâm thông báo xem bản cache, đánh dấu đã đọc xếp hàng đợi |
 | Bảo mật | Không chạm số thẻ (PCI DSS — chỉ hosted checkout của cổng); xác thực chữ ký webhook, chỉ nhận từ IP / secret của cổng; quyền vai trò (BR-01) và Privacy (BR-15) kiểm tra ở server, có kiểm thử tự động cho cả 5 loại dữ liệu và ngoại lệ giao / follow; token mời và token huỷ đăng ký ngẫu nhiên ≥ 128 bit, chỉ lưu dạng băm |
 | Quyền riêng tư, tuân thủ | Product updates cần đồng ý, rút lại được (BR-18); hoá đơn điện tử theo NĐ 123/2020/NĐ-CP, thu mã số thuế, giữ hoá đơn và chứng từ 10 năm (BR-10); hoàn tiền khi xoá tài khoản chờ pháp chế (Luật Bảo vệ quyền lợi người tiêu dùng 2023); nơi lưu dữ liệu: 1.0 máy chủ khu vực châu Á, cần hồ sơ đánh giá tác động chuyển dữ liệu ra nước ngoài (NĐ 13/2023), pháp chế xác nhận trước phát hành |
