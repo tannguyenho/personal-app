@@ -1,16 +1,18 @@
 > **Mã:** PLN-PRD-G11 · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **SRS:** srs-g11-tich-hop.md
 
-# PRD Tích hợp công cụ trên Web / App (ứng dụng lập kế hoạch ngày)
+# PRD Tích hợp công cụ (ứng dụng lập kế hoạch ngày)
 
 > **Bản nháp.** Con số và hành vi theo nhà cung cấp đánh dấu `[giả định]` dùng để dựng flow, cần PO và kỹ thuật xác nhận với tài liệu API của từng hãng trước khi dùng. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026: danh sách tích hợp (Gmail, Outlook, Asana, ClickUp, GitHub, Jira, Linear, Monday.com, Notion, Todoist, Trello, Google Tasks, Microsoft Planner, Microsoft To Do, Apple Reminders, Slack, Microsoft Teams, Zapier, Toggl Track, MCP), nút + trên panel phải hiện icon từng tích hợp, phím tắt mở panel (Shift+G Gmail, Shift+J Jira, Shift+N Notion…), lời mời "Reduce distractions in Slack/Teams when working?" khi bật timer. Chỗ khác Sunsama có chủ đích được ghi rõ.
 >
 > **Cập nhật 04/11/2026** theo [quyết định chốt mâu thuẫn](../review/quyet-dinh-chot-2026-11-04.md) (Q8, Q21, B14, B15, C27–C30, C34). Quy tắc dùng chung (ngày làm việc QC-01, đồng bộ QC-08, chế độ chỉ đọc QC-09, quyền theo gói QC-10) xem [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); PRD này chỉ tham chiếu, không định nghĩa lại. G11 phát hành 1.1 cùng lúc với chế độ chỉ đọc và quyền theo gói (Q10, ADR-0002).
+>
+> **Cập nhật vòng 5–6 (04/11/2026)** theo Q35, Q45, Q46, [ADR-0004](../adr/0004-ai-qua-claude-code-cli.md), [ADR-0005](../adr/0005-nen-tang-windows-truoc.md): nền tảng 1.0 là app Windows, 1.1 thêm web và macOS; G11 vẫn phát hành 1.1. Dữ liệu tích hợp chỉ đến được trợ lý AI qua công cụ MCP đọc dữ liệu tích hợp của G10, mặc định tắt, và phiên AI đã đọc dữ liệu đó thì mọi thay đổi chờ duyệt ([QC-12](../01-quy-tac-dung-chung.md) mục 6). Bản 1 chỉ cho một người dùng; Privacy và quản trị workspace để bản sau (Q35, [`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md)).
 
 # 1. Bối cảnh và vấn đề
 
 ## 1.1 Bối cảnh
 
-Việc cần làm của người dùng nằm rải ở email, công cụ quản lý công việc (Jira, Notion…) và nhắn tin nhóm. Nhóm G11 đưa các việc đó vào app: kết nối tài khoản, xem item trong panel phải, kéo item vào ngày thành task liên kết, và đồng bộ trạng thái hoàn thành hai chiều. Bản 1.1 làm Gmail, Jira, Notion; bản 1.2 thêm Slack / Teams để chia sẻ ritual và đổi status khi tập trung. Lịch (Google, Outlook) thuộc G05; task, board, ritual, AI dùng task liên kết nhưng đặc tả ở nhóm riêng (G02, G04, G08, G10).
+Việc cần làm của người dùng nằm rải ở email, công cụ quản lý công việc (Jira, Notion…) và nhắn tin nhóm. Nhóm G11 đưa các việc đó vào app: kết nối tài khoản, xem item trong panel phải, kéo item vào ngày thành task liên kết, và đồng bộ trạng thái hoàn thành hai chiều. Bản 1.1 làm Gmail, Jira, Notion; bản 1.2 thêm Slack / Teams để chia sẻ ritual và đổi status khi tập trung. Bản 1.1 chạy trên app Windows, web và macOS (ADR-0005). Lịch (Google, Outlook) thuộc G05; task, board, ritual, AI dùng task liên kết nhưng đặc tả ở nhóm riêng (G02, G04, G08, G10). Trợ lý AI (G10, Claude Code qua MCP local) chỉ đọc dữ liệu tích hợp khi người dùng bật công tắc riêng (QC-12 mục 6).
 
 ## 1.2 Vấn đề
 
@@ -41,13 +43,14 @@ Việc cần làm của người dùng nằm rải ở email, công cụ quản 
 | Minh — designer / dev | Kéo issue Jira vào khối thời gian dài; xong task thì issue tự chuyển trạng thái; Slack tự bật DND khi tập trung |
 | Hà — freelancer / founder, nhiều khách hàng | Biến email khách hàng thành task có link về thư; gửi Daily plan lên Slack của khách |
 | Người dùng thành thạo | Mở panel từng nguồn bằng phím tắt, xem trước (I), mở nguồn (G) |
-| Quản trị workspace | Biết dữ liệu tích hợp có hiện cho thành viên khác không (Privacy, G12) |
+| Người dùng thận trọng với AI | Tự quyết có cho trợ lý AI đọc email / issue không; nếu cho thì mọi thay đổi AI làm sau khi đọc đều chờ mình duyệt |
+| Quản trị workspace (bản sau, Q35) | Biết dữ liệu tích hợp có hiện cho thành viên khác không (Privacy, G12) |
 
 # 3. Phạm vi
 
 ## 3.1 Trong phạm vi (bản 1.1 Gmail, Jira, Notion; bản 1.2 Slack, Teams)
 
-- Nền tảng: Web (desktop, mobile web), App iOS / Android, desktop dùng cùng đặc tả.
+- Nền tảng: bản 1.1 trên app Windows (Flutter), web và macOS dùng cùng đặc tả; iOS / Android từ 1.2 (Q45, ADR-0005). OAuth trên app desktop mở trình duyệt hệ thống (luồng cụ thể: tech chốt).
 - Trang Cài đặt → Tích hợp: danh sách nhà cung cấp, trạng thái, kết nối OAuth, cấu hình, ngắt kết nối.
 - Panel tích hợp (panel phải, nút + và phím tắt): danh sách item, lọc, tìm, làm mới, xem trước (I), mở nguồn (G).
 - Kéo item vào cột ngày (G04), lịch (G05) hoặc Backlog (G06) → task liên kết; cách bàn phím tương đương.
@@ -57,17 +60,18 @@ Việc cần làm của người dùng nằm rải ở email, công cụ quản 
 - Đồng bộ hoàn thành hai chiều (mức C) với Jira, Notion; Gmail theo quy tắc riêng; nhãn "Lệch với nguồn" khi hai bên không khớp (C27).
 - Xử lý item bị xoá / mất quyền, giới hạn tần suất, token hết hạn, chế độ chỉ đọc (QC-09).
 - Cung cấp hoạt động công cụ trong ngày cho highlights AI (G10), chỉ hoạt động của chính tài khoản đã kết nối (C28).
+- Cung cấp dữ liệu cho công cụ MCP đọc dữ liệu tích hợp của G10 (danh sách item, hoạt động trong ngày): chỉ metadata, chỉ việc của tôi, chỉ khi người dùng bật công tắc của G10 (QC-12 mục 6).
 - Bản 1.2: Slack, Teams làm đích chia sẻ ritual (G08) và đổi status / DND khi timer chạy (G07).
 
 ## 3.2 Ngoài phạm vi
 
 - Lịch Google / Outlook / Apple → G05.
 - Outlook (mail), Asana, ClickUp, GitHub, Linear, Monday.com, Todoist, Trello, Google Tasks, Microsoft Planner, Microsoft To Do, Apple Reminders → sau 1.2, thứ tự chờ chốt (mục 10).
-- Zapier, Toggl Track, MCP / API công khai → sau 1.2.
+- Zapier, Toggl Track, MCP / API công khai cho agent bên ngoài (từ xa) → sau 1.2. (MCP local cho Claude Code trên chính máy người dùng thuộc G10, có từ 1.0 — QC-12.)
 - Tạo item mới ở nguồn từ app (ví dụ tạo issue Jira) → chưa làm `[giả định]`.
 - Đồng bộ notes, comment, subtask, người được giao giữa app và nguồn → không làm.
 - Đọc tin nhắn Slack / Teams thành task → sau 1.2 `[giả định]`.
-- Quản trị workspace chặn / cho phép từng tích hợp → sau 1.2.
+- Quản trị workspace chặn / cho phép từng tích hợp, Privacy "Tích hợp" → bản sau (Q35).
 
 # 4. Nguyên tắc sản phẩm
 
@@ -85,7 +89,11 @@ Lỗi, giới hạn tần suất, mất quyền ở nguồn không chặn thao t
 
 ## 4.4 Quyền tối thiểu, ngắt là sạch
 
-Chỉ xin scope cần cho tính năng đang bật; tính năng cần thêm quyền (ví dụ lưu trữ thư Gmail, đổi status Slack / Teams) xin thêm khi người dùng bật (C29). Ngắt kết nối thu hồi token, xoá cache trên server và mọi thiết bị, huỷ hàng đợi offline liên quan, xoá dữ liệu của tích hợp đó trong lịch sử AI (G10); task đã tạo ở lại (C30).
+Chỉ xin scope cần cho tính năng đang bật; tính năng cần thêm quyền (ví dụ lưu trữ thư Gmail, đổi status Slack / Teams) xin thêm khi người dùng bật (C29). Ngắt kết nối thu hồi token, xoá cache trên server và mọi thiết bị, huỷ hàng đợi offline liên quan, xoá dữ liệu của tích hợp đó trong lịch sử AI của app (G10); task đã tạo ở lại (C30).
+
+## 4.6 Dữ liệu tích hợp với trợ lý AI chỉ là dữ liệu
+
+Trợ lý AI (G10) chạy bằng Claude Code trên máy người dùng và chỉ thấy dữ liệu tích hợp qua công cụ MCP đọc dữ liệu tích hợp, mặc định tắt. Khi người dùng bật, công cụ chỉ trả metadata của việc giao cho mình (không nội dung thư, không đoạn trích Gmail); phiên AI đã đọc dữ liệu này thì mọi thay đổi sau đó chờ người dùng duyệt trong app (QC-12 mục 6). Task có liên kết tích hợp không bao giờ được AI hoàn thành, kể cả khi người dùng cho phép AI hoàn thành task (QC-12 mục 4), nên AI không bao giờ đẩy trạng thái ra nguồn.
 
 ## 4.5 Chỉ việc của tôi
 
@@ -116,7 +124,7 @@ Slack và Teams ở 1.2 dùng cho hai việc: đích chia sẻ Daily planning / 
 | Apple Reminders | Danh sách việc | — | Chỉ qua app iOS / macOS (không có API web) |
 | Zapier | Tự động hoá | — | Trigger / action trên task |
 | Toggl Track | Theo dõi thời gian | — | Đẩy bản ghi thời gian (G07) sang Toggl |
-| MCP | Giao thức cho agent ngoài | — | Cùng quyền với API công khai |
+| MCP / API công khai (từ xa) | Giao thức cho agent ngoài | — | Cùng quyền với API công khai. Khác MCP local của G10 (Claude Code trên chính máy, có từ 1.0, QC-12) |
 
 **5.3 Quy tắc chung mọi nhà cung cấp**
 
@@ -132,8 +140,10 @@ Slack và Teams ở 1.2 dùng cho hai việc: đích chia sẻ Daily planning / 
 | Token | Mã hoá AES-256-GCM, chỉ dùng ở server | Ngắt kết nối thu hồi token |
 | Số tích hợp được kết nối | Theo bảng quyền theo gói của G12 (QC-10) | Không viết cứng |
 | Chế độ chỉ đọc (QC-09, Q8) | Webhook / poll chỉ cập nhật cache panel; không tạo, hoàn thành hay sửa task; không đẩy trạng thái ra nguồn | Bản 1.1 |
+| Dữ liệu tích hợp với trợ lý AI (QC-12 mục 6) | Chỉ qua công cụ MCP đọc dữ liệu tích hợp của G10, mặc định tắt; trả metadata item (tiêu đề, trạng thái, hạn, nguồn phụ, URL) và hoạt động trong ngày của chính tài khoản; không nội dung thư, không đoạn trích Gmail, không nội dung xem trước; phiên AI đã đọc → mọi thay đổi chờ duyệt | Đoạn trích Gmail: `[giả định — không đưa]` |
+| AI và hoàn thành task liên kết | Task có liên kết tích hợp còn hiệu lực không bao giờ được AI hoàn thành (QC-12 mục 4); AI xoá task liên kết (khi người dùng cho phép) không đẩy gì ra nguồn `[giả định]` | — |
 
-Giá trị trong bảng 5.3 là `[giả định]` trừ các dòng ghi mã quyết định (C27, C30, QC-09, QC-10).
+Giá trị trong bảng 5.3 là `[giả định]` trừ các dòng ghi mã quyết định (C27, C30, QC-09, QC-10, QC-12).
 
 - Các giá trị là **cấu hình hệ thống**, không cố định trong code.
 - Tác nhân trong nhật ký task cho mọi thay đổi do tích hợp: `integration` (kèm tên nhà cung cấp).
@@ -225,7 +235,7 @@ AC03: Hai thiết bị kéo cùng item cùng lúc → chỉ một task được 
 
 AC04: Item được nhận ra bằng tài khoản / site và id bất biến ở nguồn; issue Jira chuyển project (đổi key) vẫn là cùng item, không tạo task thứ hai (B14).
 
-AC05: Planning Agent (G10) tạo task từ item cũng đi qua cùng cơ chế; item đã có task thì agent không tạo thêm (B14).
+AC05: Trợ lý AI (G10: Planning Agent, chat, Claude Code trong terminal) tạo task từ item cũng đi qua cùng cơ chế, và chỉ sau khi người dùng duyệt (QC-12 mục 6); item đã có task thì AI không tạo thêm (B14).
 
 ### US2.4 Lấy việc từ công cụ trong Daily planning (bản 1.1)
 
@@ -251,7 +261,7 @@ AC03: Hoàn tác trong toast → trả nguồn về trạng thái trước `[gi�
 
 AC04: Hai bên không còn khớp (bỏ hoàn thành sau thời hạn đẩy ngược, item mở lại ở nguồn, hàng đợi đẩy quá 7 ngày) → card và chi tiết task hiện nhãn "Lệch với nguồn" và nút "Đồng bộ lại" (C27).
 
-AC05: Task do AI tạo hay sửa không bao giờ bị AI hoàn thành, nên AI không đẩy trạng thái ra nguồn (Q20).
+AC05: Task có liên kết tích hợp không bao giờ được AI hoàn thành, kể cả khi người dùng bật "Cho phép AI hoàn thành và xoá task" của G10, nên AI không bao giờ đẩy trạng thái ra nguồn (QC-12 mục 4, Q46; thay Q20 ở phần này).
 
 ### US3.2 Đóng ở nguồn hoàn thành task
 
@@ -322,13 +332,14 @@ AC03: Mặc định không hiện tên task trên status `[giả định]`.
 | **Mục** | **Mô tả** | **Hướng xử lý** |
 |---|---|---|
 | Thẩm định Gmail | Scope Gmail là scope hạn chế, cần Google xác minh và đánh giá bảo mật; có thể chậm ra mắt Gmail | Nộp sớm cùng hồ sơ lịch (G05); mặc định chỉ đọc (`gmail.readonly`), `gmail.modify` chỉ xin khi bật lưu trữ thư (C29) |
-| Lệnh ẩn trong item | Tiêu đề email / issue do người lạ viết có thể chứa câu lệnh cho AI | Dữ liệu tích hợp mặc định không vào ngữ cảnh AI; khi bật thì mọi hành động AI chờ duyệt (G10, Q21) |
-| Dữ liệu của người khác | JQL tự do hoặc database Notion chung kéo việc của đồng nghiệp vào app và vào AI | Chỉ nhập item giao cho mình; đổi người giao → liên kết chỉ đọc (B15) |
+| Lệnh ẩn trong item | Tiêu đề email / issue do người lạ viết có thể chứa câu lệnh cho Claude Code | Công cụ MCP đọc dữ liệu tích hợp mặc định tắt; phiên AI đã đọc thì mọi thay đổi chờ duyệt trong app; AI không hoàn thành task liên kết (G10, Q21, QC-12 mục 4, 6) |
+| Dữ liệu của người khác | JQL tự do hoặc database Notion chung kéo việc của đồng nghiệp vào app và vào AI | Chỉ nhập item giao cho mình; đổi người giao → liên kết chỉ đọc (B15); công cụ MCP chỉ trả item giao cho mình |
 | Duyệt app của Atlassian / Notion / Slack / Microsoft | Thời gian duyệt chưa rõ | Đưa vào kế hoạch phát hành 1.1 / 1.2 |
 | Giới hạn tần suất của hãng | Nhiều người dùng chung một app OAuth | Backoff, cache, ưu tiên webhook; giám sát 429 theo hãng |
 | Webhook không ổn định / hết hạn | Mất sự kiện | Poll 15 phút dự phòng; gia hạn webhook định kỳ |
 | Vòng lặp đồng bộ | App đẩy trạng thái → nguồn bắn webhook → app xử lý lại | Đánh dấu thay đổi do app đẩy, bỏ qua sự kiện dội lại |
-| Dữ liệu email nhạy cảm | Nghị định 13/2023/NĐ-CP, GDPR | Chỉ lưu metadata, xem trước đọc trực tiếp, cần pháp chế xác nhận |
+| Dữ liệu email nhạy cảm | Nghị định 13/2023/NĐ-CP, GDPR; metadata có thể đi qua Claude Code của người dùng khi bật công cụ đọc | Chỉ lưu metadata, xem trước đọc trực tiếp; công cụ MCP không trả nội dung thư; cần pháp chế xác nhận |
+| App desktop (Windows, macOS) | OAuth từ app desktop; nhận realtime khi app đóng | Trình duyệt hệ thống + luồng loopback / PKCE, đồng bộ khi mở lại: tech chốt |
 | Workflow Jira đa dạng | Không có trạng thái "Done" chung | Cho chọn transition theo project; không có transition hợp lệ → chỉ cập nhật trong app, báo người dùng |
 | API hãng thay đổi | Adapter hỏng | Adapter chung, kiểm thử hợp đồng hằng ngày |
 
@@ -347,4 +358,7 @@ AC03: Mặc định không hiện tên task trên status `[giả định]`.
 - Kéo item vào Backlog: bucket mặc định khi thả vào tiêu đề panel (không vào bucket cụ thể)?
 - Status Slack / Teams có hiện tên task không?
 - Ai nộp hồ sơ xác minh Google cho Gmail, khi nào (chung với G05)?
-- Quản trị workspace có cần chặn / cho phép từng tích hợp không?
+- Quản trị workspace có cần chặn / cho phép từng tích hợp không? — Đã chốt 04/11/2026: bản 1 chỉ một người dùng; quản trị workspace và Privacy để bản sau (Q35).
+- Dữ liệu tích hợp có được gửi cho AI không? — Đã chốt 04/11/2026: chỉ qua công cụ MCP đọc dữ liệu tích hợp của G10, mặc định tắt; phiên AI đã đọc thì mọi thay đổi chờ duyệt (Q21, Q46, QC-12 mục 6).
+- Công cụ MCP đọc dữ liệu tích hợp có trả đoạn trích Gmail (≤ 200 ký tự) không, hay chỉ chủ đề thư (đang giả định: chỉ chủ đề)?
+- AI (khi người dùng cho phép xoá) có được xoá task có liên kết tích hợp không (đang giả định: được, không đẩy gì ra nguồn)?

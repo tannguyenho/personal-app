@@ -166,7 +166,7 @@ Bước 2 và 4 chạy bên trong ritual của G08; PRD này chỉ mô tả ph�
 
 AC01: Lần đầu bấm "Plan my day" khi chưa thiết lập → mở màn thiết lập 3 phần: kết nối công cụ (trỏ G05, G11) kèm công tắc "Cho AI đọc dữ liệu từ công cụ đã kết nối" (mặc định tắt, US6.2), "Kể về bạn" (vai trò, giờ làm việc ưa thích, việc cần tránh), theme days (mỗi thứ trong tuần một chủ đề tuỳ chọn).
 
-AC02: Phần nào cũng bỏ qua được; sửa lại sau trong Cài đặt → AI.
+AC02: Phần nào cũng bỏ qua được; sửa lại sau trong Cài đặt → Trợ lý AI.
 
 AC03: Chỉ hiện khi bật Beta "Agentic Daily Planning".
 
@@ -228,7 +228,7 @@ AC01: Hành động thực hiện xong hiện chip task trong câu trả lời: 
 
 AC02: Bấm "Hoàn tác" → chip gạch ngang "Đã hoàn tác"; task do AI tạo vào Thùng rác (G02).
 
-AC03: Yêu cầu hành động không có công cụ (ví dụ "gửi kế hoạch cho sếp", "bật chế độ tối", "ngắt Jira"), hoặc "xoá task X" / "đánh dấu xong task Y" khi công tắc hoàn thành / xoá đang tắt, hoặc hoàn thành task có liên kết tích hợp → trợ lý từ chối, nói cách tự làm (Ctrl+Backspace, tích ✓ / phím C, Chia sẻ trong G08, Cài đặt) và, với hoàn thành / xoá, nhắc có công tắc trong Cài đặt → AI.
+AC03: Yêu cầu hành động không có công cụ (ví dụ "gửi kế hoạch cho sếp", "bật chế độ tối", "ngắt Jira"), hoặc "xoá task X" / "đánh dấu xong task Y" khi công tắc hoàn thành / xoá đang tắt, hoặc hoàn thành task có liên kết tích hợp → trợ lý từ chối, nói cách tự làm (Ctrl+Backspace, tích ✓ / phím C, Chia sẻ trong G08, Cài đặt) và, với hoàn thành / xoá, nhắc có công tắc trong Cài đặt → Trợ lý AI.
 
 AC04: Yêu cầu dời ngày áp dụng như người dùng kéo task sang ngày khác (QC-05 dòng "AI dời ngày"): timebox giữ giờ và dời theo, timer không dừng, số ngày bị hoãn reset; không đặt task chưa xong vào ngày đã qua.
 
@@ -314,7 +314,7 @@ AC06: Hoàn tác "hoàn thành" của AI = bỏ hoàn thành theo QC-03 mục 4 
 
 ### US5.1 Kiểm soát AI trong Cài đặt
 
-AC01: Cài đặt → AI: trạng thái Claude Code (Sẵn sàng · phiên bản / Chưa cài / Chưa đăng nhập / Phiên bản cũ, nút "Kiểm tra lại"), Trợ lý (bật / tắt, mặc định tắt), Cho AI đọc dữ liệu từ công cụ đã kết nối (mặc định tắt), Cho phép AI hoàn thành và xoá task (mặc định tắt), Dùng Claude Code trong terminal (hướng dẫn), Gợi ý channel, Gợi ý thời lượng (G02), Ngôn ngữ tóm tắt, Tóm tắt tự động, thời điểm đã đồng ý; Cài đặt → Beta: Agentic Daily Planning. G01 đặt lối vào nhóm AI và Beta trong khung trang Cài đặt.
+AC01: Cài đặt → Trợ lý AI: trạng thái Claude Code (Sẵn sàng · phiên bản / Chưa cài / Chưa đăng nhập / Phiên bản cũ, nút "Kiểm tra lại"), Trợ lý (bật / tắt, mặc định tắt), Cho AI đọc dữ liệu từ công cụ đã kết nối (mặc định tắt), Cho phép AI hoàn thành và xoá task (mặc định tắt), Dùng Claude Code trong terminal (hướng dẫn), Gợi ý channel, Gợi ý thời lượng (G02), Ngôn ngữ tóm tắt, Tóm tắt tự động, thời điểm đã đồng ý; Cài đặt → Beta: Agentic Daily Planning. G01 đặt lối vào nhóm AI và Beta trong khung trang Cài đặt.
 
 AC02: Tắt trợ lý → ẩn nút ✨, không gọi Claude Code cho chat, Planning Agent, highlights và gợi ý task; MCP local ngừng nhận kết nối, phiên terminal đang mở nhận lỗi "Trợ lý AI đang tắt trong app" (QC-12 mục 7).
 
@@ -346,15 +346,15 @@ AC03: "Đồng ý và bật" → lưu thời điểm đồng ý, bật trợ lý
 
 AC04: Trước khi có thời điểm đồng ý, app không gọi Claude Code và MCP local không nhận kết nối, kể cả nháp highlights (Q21, QC-12 mục 7).
 
-AC05: Cài đặt → AI hiện "Bạn đã đồng ý lúc {ngày giờ}". Tắt trợ lý sau đó → ngừng mọi lời gọi Claude Code, MCP local ngừng nhận kết nối; bật lại không hỏi lại `[giả định]`.
+AC05: Cài đặt → Trợ lý AI hiện "Bạn đã đồng ý lúc {ngày giờ}". Tắt trợ lý sau đó → ngừng mọi lời gọi Claude Code, MCP local ngừng nhận kết nối; bật lại không hỏi lại `[giả định]`.
 
-AC06: Cài đặt → AI có "Rút lại đồng ý dùng AI": xác nhận → xoá thời điểm đồng ý, tắt trợ lý, đóng MCP local, huỷ lượt đang chạy và thay đổi chờ duyệt; thay đổi AI đã áp dụng giữ nguyên; lần bật sau phải đồng ý lại (C5, G01 giao phần đồng ý AI cho G10).
+AC06: Cài đặt → Trợ lý AI có "Rút lại đồng ý dùng AI": xác nhận → xoá thời điểm đồng ý, tắt trợ lý, đóng MCP local, huỷ lượt đang chạy và thay đổi chờ duyệt; thay đổi AI đã áp dụng giữ nguyên; lần bật sau phải đồng ý lại (C5, G01 giao phần đồng ý AI cho G10).
 
 ### US6.2 Bật riêng dữ liệu từ công cụ đã kết nối
 
 User Story: Là Linh, tôi muốn tự quyết có cho AI đọc issue Jira và email hay không, và nếu cho thì tự duyệt mọi thay đổi AI làm sau khi đọc dữ liệu đó, để một email lạ không điều khiển được kế hoạch của tôi.
 
-AC01: Công tắc "Cho AI đọc dữ liệu từ công cụ đã kết nối" trong Cài đặt → AI và màn thiết lập agent, mặc định tắt (Q21, QC-12 mục 6). Bản 1.0 chưa có G11 nên công tắc ẩn tới 1.1 `[giả định]`.
+AC01: Công tắc "Cho AI đọc dữ liệu từ công cụ đã kết nối" trong Cài đặt → Trợ lý AI và màn thiết lập agent, mặc định tắt (Q21, QC-12 mục 6). Bản 1.0 chưa có G11 nên công tắc ẩn tới 1.1 `[giả định]`.
 
 AC02: Tắt → MCP local không có công cụ đọc dữ liệu tích hợp: AI không đọc item G11 (chat, Planning Agent, terminal) và highlights không dùng hoạt động công cụ.
 
@@ -368,11 +368,11 @@ AC04: Dữ liệu công cụ chỉ là dữ liệu: câu lệnh nằm trong tiê
 
 User Story: Là người dùng đã cài Claude Code, tôi muốn app tự nhận ra Claude Code trên máy, để bật trợ lý AI mà không phải cấu hình gì.
 
-AC01: Khi app khởi động, khi mở Cài đặt → AI và khi bấm "Kiểm tra lại", app kiểm tra Claude Code: đã cài chưa, đã đăng nhập chưa, phiên bản có ≥ phiên bản tối thiểu được hỗ trợ không. Cách kiểm tra: tech chốt.
+AC01: Khi app khởi động, khi mở Cài đặt → Trợ lý AI và khi bấm "Kiểm tra lại", app kiểm tra Claude Code: đã cài chưa, đã đăng nhập chưa, phiên bản có ≥ phiên bản tối thiểu được hỗ trợ không. Cách kiểm tra: tech chốt.
 
-AC02: Sẵn sàng → Cài đặt → AI hiện "Claude Code · phiên bản {x} · Sẵn sàng"; tính năng AI hiện (vẫn cần bật trợ lý và đồng ý).
+AC02: Sẵn sàng → Cài đặt → Trợ lý AI hiện "Claude Code · phiên bản {x} · Sẵn sàng"; tính năng AI hiện (vẫn cần bật trợ lý và đồng ý).
 
-AC03: Chưa cài → mọi điểm vào AI (✨, "Plan my day", "Soạn bằng AI", gợi ý task) bị ẩn; Cài đặt → AI và chỗ của "Plan my day" hiện thẻ "Cài Claude Code để bật trợ lý AI" kèm link hướng dẫn và nút "Kiểm tra lại" (QC-12 mục 2).
+AC03: Chưa cài → mọi điểm vào AI (✨, "Plan my day", "Soạn bằng AI", gợi ý task) bị ẩn; Cài đặt → Trợ lý AI và chỗ của "Plan my day" hiện thẻ "Cài Claude Code để bật trợ lý AI" kèm link hướng dẫn và nút "Kiểm tra lại" (QC-12 mục 2).
 
 AC04: Đã cài nhưng chưa đăng nhập → thẻ "Đăng nhập Claude Code để bật trợ lý AI" kèm hướng dẫn đăng nhập. Phiên bản cũ → thẻ "Cập nhật Claude Code lên phiên bản {tối thiểu} trở lên".
 
@@ -392,7 +392,7 @@ AC03: Mất mạng (Claude Code không tới được dịch vụ của Anthropi
 
 User Story: Là Minh, tôi đang làm việc trong terminal với Claude Code và muốn nói "dời hết việc review sang chiều mai" mà không phải mở khung chat của app.
 
-AC01: Cài đặt → AI có mục "Dùng Claude Code trong terminal" với hướng dẫn kết nối Claude Code tới MCP local của app (lệnh / cấu hình: tech chốt). Chỉ dùng được khi app đang mở, đã đăng nhập, trợ lý bật và đã đồng ý; ngược lại Claude Code nhận lỗi "Trợ lý AI đang tắt trong app" hoặc không thấy công cụ của app.
+AC01: Cài đặt → Trợ lý AI có mục "Dùng Claude Code trong terminal" với hướng dẫn kết nối Claude Code tới MCP local của app (lệnh / cấu hình: tech chốt). Chỉ dùng được khi app đang mở, đã đăng nhập, trợ lý bật và đã đồng ý; ngược lại Claude Code nhận lỗi "Trợ lý AI đang tắt trong app" hoặc không thấy công cụ của app.
 
 AC02: Phiên terminal dùng đúng bộ công cụ và rào chắn như khung chat (mục 5): mặc định không hoàn thành / xoá, chỉ đọc dữ liệu tích hợp khi bật.
 
@@ -408,13 +408,13 @@ AC05: Khung chat của app và phiên terminal chạy cùng lúc → mỗi bên 
 
 User Story: Là Hà, tôi tin trợ lý đủ để nói "đánh dấu xong 3 việc gửi báo giá", nhưng vẫn muốn AI không đụng vào việc đồng bộ với Jira.
 
-AC01: Cài đặt → AI có "Cho phép AI hoàn thành và xoá task", mặc định tắt; bật hiện xác nhận nói rõ: AI sẽ hoàn thành và đưa task vào Thùng rác, mọi thay đổi vẫn hoàn tác được, task có liên kết tích hợp không bao giờ được AI hoàn thành (QC-12 mục 4).
+AC01: Cài đặt → Trợ lý AI có "Cho phép AI hoàn thành và xoá task", mặc định tắt; bật hiện xác nhận nói rõ: AI sẽ hoàn thành và đưa task vào Thùng rác, mọi thay đổi vẫn hoàn tác được, task có liên kết tích hợp không bao giờ được AI hoàn thành (QC-12 mục 4).
 
 AC02: Bật → MCP local có thêm công cụ hoàn thành task và xoá task (vào Thùng rác); tắt → hai công cụ biến mất từ lượt kế tiếp.
 
 AC03: AI hoàn thành task theo đúng quy tắc hoàn thành của G02 (QC-05 dòng "Hoàn thành": dừng timer, rút ngắn timebox; task tương lai về hôm nay, instance lặp giữ ngày), có chip "AI" và Hoàn tác (US4.1 AC06).
 
-AC04: Task có liên kết tích hợp còn hiệu lực → công cụ hoàn thành từ chối; trợ lý nói người dùng tự hoàn thành (vì sẽ đẩy trạng thái ra Jira / Notion / Gmail). Xoá task có liên kết được phép (không đẩy gì ra nguồn) `[giả định]`.
+AC04: Task có liên kết tích hợp còn hiệu lực → công cụ hoàn thành từ chối; trợ lý nói người dùng tự hoàn thành (vì sẽ đẩy trạng thái ra Jira / Notion / Gmail). Xoá task có liên kết được phép (không đẩy gì ra nguồn) `[giả định]`. Bỏ hoàn thành không có trong MCP (G02 BR-21) `[giả định]`.
 
 AC05: AI không xoá vĩnh viễn, không dọn Thùng rác.
 

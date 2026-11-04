@@ -40,7 +40,7 @@
 | **Mã** | **Quy tắc** |
 | --- | --- |
 | BR-01 | **Hành động được phép = công cụ ghi MCP đang bật (QC-12 mục 3).** AI chỉ thay đổi app qua công cụ ghi của \[McpServer\] (mục 3.1): tạo task, sửa tiêu đề / ghi chú / planned / channel, dời ngày, đưa vào backlog, timebox / gỡ timebox (G05); thêm subtask, sắp thứ tự, priority, gắn objective (G09) `[giả định — chưa có trong QC-12 mục 3]`; tạo task từ item tích hợp (BR-24, chỉ khi bật BR-20); hoàn thành / xoá task chỉ khi bật BR-26. Dời ngày và đưa vào backlog theo QC-05 (dòng "AI dời ngày" và "Đưa vào backlog", Q14). \[AiActionExecutor\] trong app kiểm danh sách này độc lập với model; server kiểm quy tắc nghiệp vụ như với thao tác của người dùng (`PAST_DATE`, `VERSION_CONFLICT`…) |
-| BR-02 | **Hành động bị cấm.** Luôn cấm (không có công cụ MCP): gửi tin ra ngoài (email, Slack, Teams, chia sẻ ritual), đổi cài đặt (kể cả cài đặt AI và công tắc của G10), kết nối / ngắt tích hợp, xoá vĩnh viễn / dọn Thùng rác, xuất dữ liệu, thao tác tài khoản, đọc token / mật khẩu, hoàn thành task có liên kết tích hợp còn hiệu lực. Cấm khi BR-26 tắt (mặc định): hoàn thành / bỏ hoàn thành, xoá task / subtask (thay một phần Q20, Q46). Yêu cầu loại này → trợ lý từ chối MSG-07 kèm cách tự làm; Claude Code vẫn gọi công cụ không có / không được phép → \[McpServer\] trả `AI_ACTION_FORBIDDEN` |
+| BR-02 | **Hành động bị cấm.** Luôn cấm (không có công cụ MCP): gửi tin ra ngoài (email, Slack, Teams, chia sẻ ritual), đổi cài đặt (kể cả cài đặt AI và công tắc của G10), kết nối / ngắt tích hợp, xoá vĩnh viễn / dọn Thùng rác, xuất dữ liệu, thao tác tài khoản, đọc token / mật khẩu, hoàn thành task có liên kết tích hợp còn hiệu lực. Cấm khi BR-26 tắt (mặc định): hoàn thành / bỏ hoàn thành, xoá task / subtask (thay một phần Q20, Q46). Yêu cầu loại này → trợ lý từ chối MSG-07 kèm cách tự làm; Claude Code vẫn gọi công cụ không có / không được phép → \[McpServer\] trả `AI_ACTION_FORBIDDEN` (reason `NO_TOOL` / `TOGGLE_OFF` / `LINKED_TASK`, dùng chung với G02 BR-21) |
 | BR-03 | **Ngữ cảnh thời gian bắt buộc.** Mọi lượt app gọi Claude Code kèm: `now` (ISO 8601 có offset), timezone IANA, `dayStartTime` (mốc đầu ngày), `currentWorkday` = `workday(now)` (QC-01), lịch làm việc và khung giờ channel (QC-02), locale. Thiếu trường nào → không gọi Claude Code, ghi lỗi `AI_CONTEXT_MISSING`. Phiên terminal (BR-28) lấy các giá trị này qua công cụ "Xem ngữ cảnh thời gian"; mô tả công cụ của \[McpServer\] yêu cầu Claude Code đọc ngữ cảnh trước khi ghi `[giả định — tech chốt cách đưa chỉ dẫn]` |
 | BR-04 | **Ngày tuyệt đối.** Hành động có ngày phải mang ngày `YYYY-MM-DD` và giờ tuyệt đối; server từ chối ngày ngoài ± 1 năm so với hôm nay `[giả định]` và từ chối đặt task chưa xong vào ngày < hôm nay (QC-05). Chip, thẻ xác nhận, Review Plan luôn hiện ngày cụ thể ("Thứ Năm, 5/11") |
 | BR-05 | **Ngày tương đối (EC-01, Q2, C33).** "Hôm nay / tối nay / today / tonight" = `workday(now)`; "ngày mai / sáng mai / tomorrow" = `workday(now)` + 1 ngày (QC-01). **Khung mơ hồ:** khi ngày lịch của `now` khác `workday(now)` (từ 00:00 tới mốc đầu ngày) và yêu cầu chứa "ngày mai / sáng mai / tomorrow" → không thực hiện, hỏi lại MSG-08 bằng 2 lựa chọn: `workday(now)` + 1 và `workday(now)` + 2. Mốc đầu ngày = 00:00 thì không có khung mơ hồ. Bảng ví dụ của QC-01 là ca chuẩn (ví dụ mốc 04:00, 02:10 ngày 4/11: "hôm nay" = Thứ Ba 3/11; "ngày mai" → hỏi "Thứ Tư, 4/11" / "Thứ Năm, 5/11") |
@@ -64,7 +64,7 @@
 | BR-23 | **Ngắt tích hợp (C30).** Nhận sự kiện ngắt tích hợp từ G11 (`integration.disconnected`) → job `ai.history.purgeIntegration` xoá dữ liệu của tích hợp đó trong lịch sử AI của app: kết quả công cụ lưu kèm đề xuất, `itemRef` và nội dung item trong câu trả lời, nháp highlights; chỗ bị xoá hiện MSG-21. Tin nhắn người dùng tự gõ giữ nguyên `[giả định]`. Task đã tạo và \[ActivityLog\] giữ nguyên. Bản ghi phiên do Claude Code tự lưu trên máy nằm ngoài phạm vi xoá của app; SCR-10 nói rõ điều này. Từ lúc ngắt, công cụ đọc dữ liệu tích hợp không trả dữ liệu của tích hợp đó nữa |
 | BR-24 | **Task từ item tích hợp (B14).** Công cụ "Tạo task từ item" chỉ có khi bật BR-20; vì phiên đã đọc dữ liệu tích hợp nên thay đổi luôn `CHO_DUYET` (BR-06); khi người dùng duyệt, \[ProposalApply\] gọi G11 \[TaskFromItem\] với `actor = ai`, `source = ai`, không tạo task thường. G11 trả `ALREADY_LINKED` → bỏ dòng "Thêm", thay bằng dòng "Đã có trong {ngày}" (không tính là thay đổi). Task có liên kết tích hợp không bao giờ được AI hoàn thành (BR-26) nên AI không bao giờ đẩy trạng thái ra nguồn |
 | BR-25 | **Phát hiện Claude Code (QC-12 mục 1–2).** App kiểm tra Claude Code khi khởi động, khi mở SCR-09, khi bấm "Kiểm tra lại", và khi một lời gọi lỗi vì CLI. Kết quả theo mục 4.3: `CHUA_CAI`, `CHUA_DANG_NHAP`, `PHIEN_BAN_CU` (< phiên bản tối thiểu được hỗ trợ, `[giả định — tech chốt con số]`), `SAN_SANG`. Khác `SAN_SANG` → ẩn mọi điểm vào AI (✨, "Plan my day", "Soạn bằng AI", gợi ý task, công cụ MCP), hiện **SCR-11** đúng trạng thái (MSG-24 / MSG-25 / MSG-26); mọi chức năng lõi vẫn chạy đủ. Trạng thái Claude Code là của từng máy, không đồng bộ giữa thiết bị. Cách phát hiện, đọc phiên bản, trạng thái đăng nhập: tech chốt |
-| BR-26 | **Cho phép AI hoàn thành và xoá task (QC-12 mục 4, Q46).** Cài đặt `ai.allowCompleteDelete` mặc định `false`; bật cần xác nhận MSG-32. `true` → \[McpServer\] có thêm công cụ "Hoàn thành task" và "Xoá task" (vào Thùng rác). Hoàn thành theo G02 (QC-05 dòng "Hoàn thành": dừng timer, rút ngắn timebox; task tương lai về hôm nay, instance lặp giữ ngày). **Task có liên kết tích hợp còn hiệu lực** (G11 \[TaskLink\] khác `DA_NGAT_LIEN_KET`) → công cụ hoàn thành trả `AI_COMPLETE_LINKED_FORBIDDEN`, trợ lý nói người dùng tự hoàn thành (MSG-07). Xoá task có liên kết được phép, không đẩy gì ra nguồn `[giả định]`. Bỏ hoàn thành, hoàn thành / xoá subtask theo cùng công tắc `[giả định]`. Không có xoá vĩnh viễn. Tắt công tắc → hai công cụ biến mất từ lượt kế tiếp; thay đổi đã áp dụng vẫn hoàn tác được |
+| BR-26 | **Cho phép AI hoàn thành và xoá task (QC-12 mục 4, Q46).** Cài đặt `ai.allowCompleteDelete` mặc định `false`; bật cần xác nhận MSG-32. `true` → \[McpServer\] có thêm công cụ "Hoàn thành task" và "Xoá task" (vào Thùng rác). Hoàn thành theo G02 (QC-05 dòng "Hoàn thành": dừng timer, rút ngắn timebox; task tương lai về hôm nay, instance lặp giữ ngày). Công tắc tắt → `AI_ACTION_FORBIDDEN` · reason `TOGGLE_OFF`. **Task có liên kết tích hợp còn hiệu lực** (G11 \[TaskLink\] khác `DA_NGAT_LIEN_KET`) → công cụ hoàn thành trả `AI_ACTION_FORBIDDEN` · reason `LINKED_TASK` (mã dùng chung với G02 BR-21), trợ lý nói người dùng tự hoàn thành (MSG-07). Xoá task có liên kết được phép, không đẩy gì ra nguồn `[giả định]`. Bỏ hoàn thành không có trong MCP (G02 BR-21) `[giả định]`; hoàn thành / xoá subtask theo cùng công tắc `[giả định]`. Không có xoá vĩnh viễn. Tắt công tắc → hai công cụ biến mất từ lượt kế tiếp; thay đổi đã áp dụng vẫn hoàn tác được |
 | BR-27 | **MCP server local (QC-12 mục 3, 7).** App chạy \[McpServer\] trên máy, chỉ nhận kết nối từ chính máy đó, chỉ khi: người dùng đã đăng nhập app, trợ lý bật và đã đồng ý (BR-19). Phiên terminal không cần app phát hiện được Claude Code (BR-25) `[giả định]`. Mỗi kết nối là một **phiên AI** (mục 4.4). Bộ công cụ theo mục 3.1, lọc theo BR-20, BR-26. Công cụ ghi cần app đang kết nối được server (để kiểm phiên bản và ghi Hoàn tác); mất kết nối server → trả `AI_OFFLINE` `[giả định]`. Kiểu kết nối (stdio / HTTP cục bộ), đăng ký với Claude Code, xác thực tiến trình hợp lệ: tech chốt |
 | BR-28 | **Phiên từ terminal (QC-12 mục 3).** Người dùng tự mở Claude Code trong terminal và kết nối tới \[McpServer\] theo hướng dẫn ở SCR-09 #13 khi app đang mở. Phiên terminal dùng cùng bộ công cụ, rào chắn, nhật ký (`aiAgent = terminal`), chip "AI" và Hoàn tác. Thay đổi áp dụng ngay → toast MSG-29 (gộp theo phiên, tối đa 1 toast / 10 giây `[giả định]`); thay đổi chờ duyệt (BR-06) → MSG-31 và hiện ở **SCR-12**. Một phiên terminal kết thúc khi Claude Code ngắt kết nối hoặc app đóng; "Hoàn tác tất cả" của phiên làm ở SCR-12. Thao tác song song với khung chat hoặc người dùng trên cùng task theo QC-08 (thứ tự server nhận; cụm vị trí trên phiên bản cũ bị từ chối, công cụ trả `VERSION_CONFLICT` để Claude Code đọc lại). App đóng / đăng xuất → \[McpServer\] tắt, Claude Code không còn thấy công cụ của app |
 | BR-29 | **Lỗi phía Claude Code (EC-39, QC-12 mục 8).** (a) Hết hạn mức gói Claude: app hiện nguyên văn thông báo của Claude Code (MSG-28), không tự đếm hay chặn lượt; chat giữ tin nhắn để gửi lại; Planning Agent / highlights chuyển luồng thủ công. (b) Claude Code bị đóng / dừng giữa lượt (tiến trình thoát, bị tắt, máy treo): lượt → `LOI` theo BR-09, MSG-27; app kiểm tra lại BR-25. (c) Chưa đăng nhập / phiên đăng nhập Claude hết hạn giữa chừng: `LOI`, trạng thái → `CHUA_DANG_NHAP`, SCR-11. (d) Mất mạng phía Claude Code: MSG-06. Mọi trường hợp: thay đổi đã áp dụng giữ nguyên, vẫn hoàn tác được |
@@ -95,8 +95,8 @@ Tên nghiệp vụ dưới đây là hợp đồng giữa sản phẩm và tech;
 | Xem việc từ công cụ đã kết nối | Đọc dữ liệu tích hợp | BR-20 bật | Metadata item (G11 BR-26); gọi → `hasExternalData = true` |
 | Xem hoạt động trên công cụ trong ngày | Đọc dữ liệu tích hợp | BR-20 bật | \[IntegrationActivity\] (G11 BR-19); gọi → `hasExternalData = true` |
 | Tạo task từ item | Ghi | BR-20 bật | Luôn `CHO_DUYET`; qua G11 \[TaskFromItem\] (BR-24) |
-| Hoàn thành task | Ghi | BR-26 bật | Từ chối task có liên kết tích hợp (`AI_COMPLETE_LINKED_FORBIDDEN`) |
-| Xoá task | Ghi | BR-26 bật | Vào Thùng rác (QC-03); không xoá vĩnh viễn |
+| Hoàn thành task | Ghi | BR-26 bật | Từ chối task có liên kết tích hợp (`AI_ACTION_FORBIDDEN` · `LINKED_TASK`); qua G02 \[TaskComplete\] tác nhân `ai` (G02 BR-21) |
+| Xoá task | Ghi | BR-26 bật | Vào Thùng rác (QC-03); không xoá vĩnh viễn; qua G02 \[TaskDelete\] tác nhân `ai` (G02 BR-21) |
 | (Không có) Gửi tin / chia sẻ, đổi cài đặt, kết nối / ngắt tích hợp, xoá vĩnh viễn, xuất dữ liệu, tài khoản | — | Không bao giờ | BR-02 |
 
 ## 4. Trạng thái
@@ -149,7 +149,7 @@ Một **phiên AI** là một kết nối của Claude Code tới \[McpServer\]:
 
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
-| 1 | Người dùng | Bấm "Plan my day" lần đầu, hoặc Cài đặt → AI → "Thiết lập Planning Agent" |
+| 1 | Người dùng | Bấm "Plan my day" lần đầu, hoặc Cài đặt → Trợ lý AI → "Thiết lập Planning Agent" |
 | 2 | Hệ thống | Mở **SCR-01** phần 1 "Công cụ": liệt kê lịch (G05) và công cụ (G11) với trạng thái kết nối; nút "Kết nối" trỏ luồng của nhóm sở hữu; công tắc "Cho AI đọc dữ liệu từ công cụ đã kết nối" (BR-20, mặc định tắt; ẩn ở 1.0) kèm MSG-20 |
 | 3 | Người dùng | Phần 2 "Kể về bạn": vai trò, giờ làm việc ưa thích, việc cần tránh (≤ 1.000 ký tự `[giả định]`) |
 | 4 | Người dùng | Phần 3 "Theme days": mỗi thứ T2–CN một chủ đề tuỳ chọn (ví dụ "Thứ Sáu: không họp, deep work") |
@@ -243,7 +243,7 @@ Một **phiên AI** là một kết nối của Claude Code tới \[McpServer\]:
 | A1 | Câu hỏi không cần hành động ("chiều nay còn trống bao lâu?") | Chỉ trả lời, có số liệu từ G04 (thời gian trống, tổng planned); không tạo đề xuất |
 | A2 | Phiên đã gọi công cụ đọc dữ liệu tích hợp (`hasExternalData = true`, Q21, QC-12 mục 6), dù chỉ 1 task | Mọi lời gọi ghi sau đó → `CHUA_AP_DUNG`, đề xuất `CHO_DUYET`; công cụ trả cho Claude Code "đang chờ người dùng duyệt"; hiện **SCR-05** trong khung chat kèm MSG-22; "Áp dụng" → \[ProposalApply\] các dòng được chọn theo BR-21; "Huỷ" → \[ProposalReject\]; không duyệt tới cuối ngày làm việc → hết hạn (BR-21) |
 | A3 | Khung mơ hồ BR-05 (EC-01: mốc 04:00, 02:10 ngày 4/11 — ngày làm việc Thứ Ba 3/11 — "tạo task gọi khách ngày mai") | Không tạo; trợ lý hỏi MSG-08 với 2 nút "Thứ Tư, 4/11" (ngày làm việc + 1) / "Thứ Năm, 5/11" (ngày làm việc + 2); chọn → tiếp bước 3 với ngày đã chọn |
-| A4 | Yêu cầu hành động bị cấm (BR-02), gồm "đánh dấu xong" / "xoá" khi BR-26 tắt, hoặc hoàn thành task có liên kết tích hợp | Trả lời MSG-07 kèm cách tự làm (ví dụ "Xoá: chọn task, Ctrl+Backspace"; "Hoàn thành: tích ✓ hoặc phím C"); với hoàn thành / xoá khi BR-26 tắt, nhắc công tắc ở Cài đặt → AI; không tạo đề xuất |
+| A4 | Yêu cầu hành động bị cấm (BR-02), gồm "đánh dấu xong" / "xoá" khi BR-26 tắt, hoặc hoàn thành task có liên kết tích hợp | Trả lời MSG-07 kèm cách tự làm (ví dụ "Xoá: chọn task, Ctrl+Backspace"; "Hoàn thành: tích ✓ hoặc phím C"); với hoàn thành / xoá khi BR-26 tắt, nhắc công tắc ở Cài đặt → Trợ lý AI; không tạo đề xuất |
 | A5 | Bấm "Hoàn tác" trên chip | → UC-04 |
 | A6 | "Lịch sử" | Danh sách cuộc trò chuyện (\[ChatThreadList\]) mới nhất trước; mở lại cuộc cũ, chip vẫn hoàn tác được trong thời hạn BR-08 |
 | A7 | "Cuộc trò chuyện mới" | \[ChatThreadCreate\]; ngữ cảnh cuộc cũ không gửi kèm |
@@ -292,10 +292,12 @@ Một **phiên AI** là một kết nối của Claude Code tới \[McpServer\]:
 | A1 | Người dùng đã sửa trường khác của task (ví dụ AI dời ngày, người dùng đổi priority) | Chỉ trả ngày; priority của người dùng giữ (EC-38) |
 | A2 | Người dùng đã sửa chính trường AI đổi, hoặc thêm nội dung vào task AI tạo (EC-38) | Thay đổi → `XUNG_DOT`; mở **SCR-06** liệt kê trường xung đột: "Giữ bản của tôi" / "Trả về trước khi AI sửa" (áp cho từng dòng hoặc tất cả) |
 | A3 | Task đã bị người dùng xoá | Bỏ qua thay đổi đó, ghi "không còn task" |
-| A4 | (Bỏ — AI không đánh dấu xong, xem BR-02 / Q20) | — |
+| A4 | (Bỏ — AI không đánh dấu xong, xem BR-02 / Q20.) Thay bằng A8 khi BR-26 bật (Q46) | — |
 | A5 | Hoàn tác timebox | Gỡ timebox, xoá sự kiện ngoài (G05) |
 | A6 | Hoàn tác dời ngày / vào backlog | Trả ngày dự định / bucket cũ, khôi phục liên kết timebox; sự kiện ngoài đã bị xoá thì tạo lại với giờ cũ (QC-05). Ngày cũ < hôm nay → về hôm nay `[giả định]` |
-| A7 | "Hoàn tác kế hoạch AI" | `changeIds` = mọi thay đổi `DA_AP_DUNG` của đề xuất Planning Agent; áp bước 3 và A1–A6 cho từng thay đổi; các dòng `XUNG_DOT` gom vào một SCR-06 |
+| A7 | "Hoàn tác kế hoạch AI" / "Hoàn tác tất cả" | `changeIds` = mọi thay đổi `DA_AP_DUNG` của đề xuất Planning Agent / lượt chat / phiên terminal; áp bước 3 và A1–A9 cho từng thay đổi; các dòng `XUNG_DOT` gom vào một SCR-06 |
+| A8 | Hoàn tác "hoàn thành" của AI (BR-26) | Bỏ hoàn thành theo QC-03 mục 4: cùng ngày làm việc với lúc hoàn thành → trả lại mọi tác dụng phụ; sang ngày khác → chỉ xoá `completedAt`, task ở hôm nay. Timer đã dừng không chạy lại. Người dùng đã sửa task sau đó → `XUNG_DOT` (A2) |
+| A9 | Hoàn tác "xoá" của AI (BR-26) | Khôi phục từ Thùng rác theo QC-03 mục 3 (instance lặp áp QC-06). Task đã bị xoá vĩnh viễn (quá 30 ngày) → bỏ qua, như A3 |
 
 **Luồng lỗi**
 
@@ -308,17 +310,17 @@ Một **phiên AI** là một kết nối của Claude Code tới \[McpServer\]:
 
 | **Mục** | **Nội dung** |
 | --- | --- |
-| Tiền điều kiện | Trợ lý bật và đã đồng ý (BR-19); workspace không chỉ đọc (QC-09); ngày làm việc D có ≥ 1 task `HOAN_THANH` |
+| Tiền điều kiện | Claude Code `SAN_SANG` (BR-25); trợ lý bật và đã đồng ý (BR-19); workspace không chỉ đọc (QC-09, 1.1); ngày làm việc D có ≥ 1 task `HOAN_THANH` |
 | Hậu điều kiện thành công | Highlights người dùng đã duyệt lưu vào ritual Daily shutdown ngày D (G08); đề xuất `DA_AP_DUNG` |
-| Hậu điều kiện thất bại | Bước highlights dùng danh sách việc đã xong biên tập tay như bản 1.0 (G08) |
+| Hậu điều kiện thất bại | Bước highlights dùng danh sách việc đã xong biên tập tay (G08 BR-17) |
 
 **Luồng chính**
 
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
-| 1 | Hệ thống | Job `ai.highlights.draft` chạy 17:00 T2–T6 theo timezone người dùng (BR-13); bỏ qua người dùng chưa có `aiConsentAt`, đã tắt trợ lý, hoặc workspace chỉ đọc |
-| 2 | Hệ thống | Gọi \[HighlightsDraft\]: task xong trong ngày D, thời gian theo channel, \[IntegrationActivity\] (G11) chỉ khi bật BR-20; ngôn ngữ theo BR-12 |
-| 3 | Hệ thống | Lưu nháp `CHO_DUYET`; không gửi thông báo riêng (lời nhắc shutdown thuộc G08) |
+| 1 | App | Job `ai.highlights.draft` trên máy: ngày D có trong lịch làm việc (lịch chung) và tới giờ kết thúc làm việc của D theo timezone người dùng (BR-13, Q39); bỏ qua khi chưa có `aiConsentAt`, đã tắt trợ lý hoặc "Tóm tắt tự động", Claude Code không `SAN_SANG`, workspace chỉ đọc, hoặc server báo ngày D đã có nháp tự động |
+| 2 | App | Tạo phiên AI `highlights`; gọi Claude Code (\[HighlightsDraft\]) với chỉ dẫn soạn highlights, ngôn ngữ theo BR-12; Claude Code đọc task xong trong ngày D, thời gian theo channel, và \[IntegrationActivity\] (G11) chỉ khi bật BR-20, rồi gọi công cụ "Ghi nháp highlights" |
+| 3 | Hệ thống | Lưu nháp `CHO_DUYET` trên server (đồng bộ mọi thiết bị); không gửi thông báo riêng (lời nhắc shutdown thuộc G08) |
 | 4 | Người dùng | Mở Daily shutdown (G08) → bước highlights → **SCR-07** hiện nháp có ✨, mỗi ý có link về task / item nguồn |
 | 5 | Người dùng | Sửa, xoá ý, thêm ý; bấm "Tiếp" của bước |
 | 6 | Hệ thống | Lưu highlights vào ritual (G08 \[RitualUpdate\]); đề xuất → `DA_AP_DUNG` |
@@ -327,27 +329,29 @@ Một **phiên AI** là một kết nối của Claude Code tới \[McpServer\]:
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | Mở shutdown trước 17:00 hoặc tắt "Tóm tắt tự động" | Nút "Soạn bằng AI" trên SCR-07 → bước 2 ngay |
+| A1 | Mở shutdown trước giờ kết thúc làm việc, ngày không có trong lịch làm việc, app không mở lúc giờ kết thúc làm việc, hoặc tắt "Tóm tắt tự động" | Nút "Soạn bằng AI" trên SCR-07 → bước 2 ngay |
 | A2 | Task xong thêm sau khi có nháp | Người dùng chưa sửa → soạn lại khi mở bước. Đã sửa → giữ bản sửa, hiện MSG-13 "Thêm vào" |
-| A3 | "Soạn lại" | Kiểm hạn mức BR-22; tạo nháp mới; người dùng đã sửa → hỏi xác nhận ghi đè. Hết lượt → MSG-11, nút disabled |
+| A3 | "Soạn lại" | Tạo nháp mới (không giới hạn lượt phía app); người dùng đã sửa → hỏi xác nhận ghi đè |
 | A4 | Ngày không có task xong | Không soạn; SCR-07 hiện trạng thái rỗng của G08 |
 | A5 | Công cụ G11 lỗi / chưa kết nối | Soạn chỉ từ task trong app, ghi chú nhỏ "Chưa gồm hoạt động từ {công cụ}" |
-| A6 | Tắt "Dùng dữ liệu từ công cụ đã kết nối" (BR-20) | Soạn chỉ từ task trong app; không có ghi chú lỗi |
+| A6 | Tắt "Cho AI đọc dữ liệu từ công cụ đã kết nối" (BR-20) | Soạn chỉ từ task trong app; không có ghi chú lỗi |
 | A7 | Chưa có đồng ý, bấm "Soạn bằng AI" | Mở UC-09; đồng ý xong → bước 2 |
+| A8 | Claude Code không `SAN_SANG` | Nút "Soạn bằng AI" ẩn; bước highlights dùng danh sách sinh sẵn (G08 BR-17) |
 
 **Luồng lỗi**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| E1 | LLM lỗi / > 10 giây khi người dùng đang mở bước | MSG-05; hiện danh sách việc đã xong để biên tập tay (G08); "Thử lại" |
-| E2 | Job 17:00 lỗi | Thử lại 2 lần cách 5 phút `[giả định]`; vẫn lỗi → không có nháp, A1 dùng được |
+| E1 | Claude Code lỗi / bị đóng giữa chừng / > 10 giây khi người dùng đang mở bước | MSG-05 (bị đóng: MSG-27); hiện danh sách việc đã xong để biên tập tay (G08); "Thử lại" |
+| E2 | Job tự soạn lỗi | Thử lại 2 lần cách 5 phút `[giả định]`; vẫn lỗi → không có nháp, A1 dùng được |
+| E3 | Claude Code báo hết hạn mức gói Claude (BR-29a) | Job: bỏ qua, không thử lại. Người dùng đang mở bước: MSG-28, dùng danh sách sinh sẵn để biên tập tay |
 
 ### UC-06 Gửi phản hồi về AI
 
 | **Mục** | **Nội dung** |
 | --- | --- |
-| Tiền điều kiện | Có câu trả lời Sunny, Review Plan hoặc nháp highlights |
-| Hậu điều kiện thành công | \[AiFeedback\] lưu: đánh giá, nội dung tuỳ chọn, `proposalId`, phiên bản model / prompt |
+| Tiền điều kiện | Có câu trả lời của trợ lý, Review Plan hoặc nháp highlights |
+| Hậu điều kiện thành công | \[AiFeedback\] lưu: đánh giá, nội dung tuỳ chọn, `proposalId`, phiên bản prompt / bộ công cụ MCP, phiên bản Claude Code |
 | Hậu điều kiện thất bại | Không lưu; không ảnh hưởng thao tác khác |
 
 **Luồng chính**
@@ -382,35 +386,37 @@ Một **phiên AI** là một kết nối của Claude Code tới \[McpServer\]:
 
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
-| 1 | Người dùng | Cài đặt → AI (**SCR-09**) hoặc Cài đặt → Beta |
+| 1 | Người dùng | Cài đặt → Trợ lý AI (**SCR-09**) hoặc Cài đặt → Beta |
 | 2 | Người dùng | Đổi một cài đặt |
-| 3 | Hệ thống | Gọi \[SettingsUpdate\] (G01 `PATCH /me/settings`); áp BR-16, BR-20 |
+| 3 | Hệ thống | Gọi \[SettingsUpdate\] (G01 `PATCH /me/settings`); áp BR-16, BR-20, BR-26 |
 
 **Luồng thay thế**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | Tắt "Trợ lý" khi khung chat đang mở | Đóng khung chat; lượt đang `DANG_XU_LY` bị huỷ |
+| A1 | Tắt "Trợ lý" khi khung chat đang mở hoặc có phiên terminal | Đóng khung chat; lượt đang `DANG_XU_LY` bị huỷ (thay đổi đã áp dụng giữ nguyên); \[McpServer\] cắt mọi phiên, phiên terminal nhận MSG-30 (BR-16) |
 | A2 | Tắt Beta "Agentic Daily Planning" khi có đề xuất `CHO_DUYET` | Đề xuất → `DA_HOAN_TAC`; Daily planning dùng luồng thủ công. Đề xuất đã `DA_AP_DUNG` giữ nguyên, vẫn hoàn tác được từ nhật ký task |
 | A3 | "Xoá lịch sử trò chuyện" | Xác nhận MSG-17 → xoá mọi cuộc trò chuyện; chip cũ mất nút Hoàn tác, hoàn tác vẫn làm được từ nhật ký task |
 | A4 | Bật "Trợ lý" khi `aiConsentAt` trống | Toggle chưa đổi; mở UC-09; đồng ý → toggle bật |
-| A5 | Bật / tắt "Dùng dữ liệu từ công cụ đã kết nối" | Lưu `ai.useIntegrationData`; áp dụng từ lượt AI kế tiếp. Tắt khi có đề xuất `CHO_DUYET` có `hasExternalData` → đề xuất giữ nguyên, người dùng vẫn duyệt / huỷ được `[giả định]` |
-| A6 | "Rút lại đồng ý dùng AI" (SCR-09 #11) | Xác nhận MSG-23 → \[AiConsent\] `DELETE`; xoá `aiConsentAt`, `ai.assistantEnabled = false`; huỷ lượt `DANG_XU_LY`, đề xuất `CHO_DUYET` → `DA_HOAN_TAC`; thay đổi đã áp dụng giữ nguyên, vẫn hoàn tác được từ nhật ký task (BR-19) |
+| A5 | Bật / tắt "Cho AI đọc dữ liệu từ công cụ đã kết nối" | Lưu `ai.useIntegrationData`; bộ công cụ đổi từ phiên AI kế tiếp (phiên terminal đang mở: từ lời gọi kế tiếp `[giả định]`). Tắt khi có đề xuất `CHO_DUYET` có `hasExternalData` → đề xuất giữ nguyên, người dùng vẫn duyệt / huỷ được `[giả định]` |
+| A6 | "Rút lại đồng ý dùng AI" (SCR-09 #11) | Xác nhận MSG-23 → \[AiConsent\] `DELETE`; xoá `aiConsentAt`, `ai.assistantEnabled = false`; đóng \[McpServer\]; huỷ lượt `DANG_XU_LY`, đề xuất `CHO_DUYET` → `DA_HOAN_TAC`; thay đổi đã áp dụng giữ nguyên, vẫn hoàn tác được từ nhật ký task (BR-19) |
+| A7 | Bật "Cho phép AI hoàn thành và xoá task" (SCR-09 #14) | Dialog MSG-32; "Bật" → lưu `ai.allowCompleteDelete = true`; \[McpServer\] thêm hai công cụ từ phiên kế tiếp (BR-26). Tắt → lưu ngay, không hỏi; hai công cụ biến mất từ lời gọi kế tiếp |
+| A8 | "Kiểm tra lại" Claude Code (SCR-09 #12) | → UC-10 |
 
-### UC-08 Chạy bộ đánh giá trước khi đổi model / prompt
+### UC-08 Chạy bộ đánh giá trước khi đổi prompt, công cụ MCP hoặc phiên bản Claude Code
 
 | **Mục** | **Nội dung** |
 | --- | --- |
-| Tiền điều kiện | Có cấu hình AI mới (model, prompt, tham số) ở môi trường kiểm thử |
+| Tiền điều kiện | Có cấu hình AI mới (prompt / chỉ dẫn, bộ công cụ hoặc mô tả công cụ MCP, phiên bản Claude Code tối thiểu được hỗ trợ) ở môi trường kiểm thử |
 | Hậu điều kiện thành công | Báo cáo đạt BR-18; cấu hình được đánh dấu "được phép phát hành" |
-| Hậu điều kiện thất bại | Cấu hình bị chặn; production giữ cấu hình cũ |
+| Hậu điều kiện thất bại | Cấu hình bị chặn; bản phát hành giữ cấu hình cũ |
 
 **Luồng chính**
 
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
-| 1 | Kỹ sư AI | Tạo pull request đổi model / prompt |
-| 2 | Hệ thống (CI) | Chạy \[EvalRun\] trên bộ ≥ 200 câu Việt / Anh, nhóm: ngày giờ (gồm EC-01 lúc 02:10 và mọi dòng của bảng ví dụ QC-01), thao tác task, ngưỡng > 3 task (EC-37) và áp dụng ngay / chờ duyệt (BR-06), hoàn tác (EC-38), hành động bị cấm (gồm đánh dấu xong), lệnh ẩn trong dữ liệu (câu lệnh trong tiêu đề email / issue / trang Notion), ngôn ngữ, highlights |
+| 1 | Kỹ sư AI | Tạo pull request đổi prompt / công cụ MCP, hoặc đổi phiên bản Claude Code tối thiểu |
+| 2 | Hệ thống (CI) | Chạy \[EvalRun\] qua Claude Code với \[McpServer\] thật trên dữ liệu thử, bộ ≥ 200 câu Việt / Anh, nhóm: ngày giờ (gồm EC-01 lúc 02:10 và mọi dòng của bảng ví dụ QC-01; cả phiên kiểu terminal không có ngữ cảnh do app đưa vào), thao tác task, áp dụng ngay / chờ duyệt khi phiên đọc dữ liệu tích hợp (BR-06), hoàn tác cả lượt (EC-37, EC-38), hành động bị cấm (gồm đánh dấu xong khi BR-26 tắt, hoàn thành task có liên kết khi BR-26 bật), lệnh ẩn trong dữ liệu (câu lệnh trong tiêu đề email / issue / trang Notion), ngôn ngữ, highlights, gợi ý task |
 | 3 | Hệ thống | Mỗi câu chạy với `now` cố định; chấm theo hành động mong đợi (đúng loại, đúng task, đúng ngày) và tiêu chí chữ |
 | 4 | Hệ thống | Đạt BR-18 → gắn nhãn phát hành; lưu kết quả theo phiên bản |
 
@@ -419,25 +425,25 @@ Một **phiên AI** là một kết nối của Claude Code tới \[McpServer\]:
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | E1 | < 95% tổng hoặc < 100% nhóm rào chắn / ngày giờ / lệnh ẩn trong dữ liệu | Chặn merge; báo cáo liệt kê câu sai |
-| E2 | Nhà cung cấp LLM lỗi khi chạy | Chạy lại câu lỗi tối đa 2 lần; vẫn lỗi → coi là sai |
+| E2 | Claude Code lỗi / hết hạn mức khi chạy | Chạy lại câu lỗi tối đa 2 lần; vẫn lỗi → coi là sai |
 
 ### UC-09 Đồng ý dùng AI lần đầu
 
 | **Mục** | **Nội dung** |
 | --- | --- |
-| Tiền điều kiện | Người dùng đã đăng nhập; `aiConsentAt` trống; người dùng bấm ✨, "Plan my day", "Soạn bằng AI", hoặc bật toggle "Trợ lý" (SCR-09) |
-| Hậu điều kiện thành công | `aiConsentAt`, `aiConsentVersion` lưu; `ai.assistantEnabled = true`; thao tác ban đầu tiếp tục |
-| Hậu điều kiện thất bại | Không lưu gì; `ai.assistantEnabled = false`; không có lời gọi AI nào |
+| Tiền điều kiện | Người dùng đã đăng nhập; Claude Code `SAN_SANG` (BR-25) `[giả định — có cho đồng ý trước khi cài Claude Code không: câu hỏi mở]`; `aiConsentAt` trống; người dùng bấm ✨, "Plan my day", "Soạn bằng AI", hoặc bật toggle "Trợ lý" (SCR-09) |
+| Hậu điều kiện thành công | `aiConsentAt`, `aiConsentVersion` lưu; `ai.assistantEnabled = true`; \[McpServer\] nhận kết nối; thao tác ban đầu tiếp tục |
+| Hậu điều kiện thất bại | Không lưu gì; `ai.assistantEnabled = false`; không có lời gọi Claude Code nào; \[McpServer\] không nhận kết nối |
 
 **Luồng chính**
 
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
 | 1 | Người dùng | Bấm một điểm vào AI khi chưa đồng ý |
-| 2 | Hệ thống | Mở **SCR-10**: dữ liệu được gửi, nhà cung cấp AI, cam kết không lưu / không huấn luyện, dữ liệu công cụ tích hợp không gửi trừ khi bật riêng, link chính sách quyền riêng tư |
+| 2 | Hệ thống | Mở **SCR-10** (màn gọn, QC-12 mục 7): dữ liệu nào được đưa cho Claude Code, Claude Code chạy bằng tài khoản Claude của người dùng, app không gửi cho nhà cung cấp AI nào khác, Claude Code có thể tự lưu bản ghi phiên trên máy, Claude Code trong terminal cũng điều khiển được app, dữ liệu công cụ tích hợp không đưa trừ khi bật riêng, AI không hoàn thành / xoá task trừ khi bật riêng, link chính sách quyền riêng tư |
 | 3 | Người dùng | Bấm "Đồng ý và bật" |
-| 4 | Hệ thống | Gọi \[AiConsent\]; lưu `aiConsentAt` (thời điểm server nhận), `aiConsentVersion`; bật `ai.assistantEnabled`; phát `settings.changed` |
-| 5 | Hệ thống | Đóng SCR-10, tiếp tục thao tác ở bước 1 (mở khung chat, chạy UC-02, soạn highlights, hoặc giữ toggle bật) |
+| 4 | Hệ thống | Gọi \[AiConsent\]; lưu `aiConsentAt` (thời điểm server nhận), `aiConsentVersion`; bật `ai.assistantEnabled`; phát `settings.changed`; app mở \[McpServer\] (BR-27) |
+| 5 | App | Đóng SCR-10, tiếp tục thao tác ở bước 1 (mở khung chat, chạy UC-02, soạn highlights, hoặc giữ toggle bật) |
 
 **Luồng thay thế**
 
@@ -445,7 +451,7 @@ Một **phiên AI** là một kết nối của Claude Code tới \[McpServer\]:
 | --- | --- | --- |
 | A1 | "Để sau" / đóng SCR-10 | Không lưu; toggle giữ tắt; Daily planning dùng luồng thủ công; bước highlights dùng danh sách sinh sẵn (G08 BR-17) |
 | A2 | Đã đồng ý trên thiết bị khác | `settings.changed` cập nhật; không hiện SCR-10 lần nữa |
-| A3 | Workspace chỉ đọc (QC-09) | Vẫn lưu được đồng ý (cài đặt tài khoản); AI vẫn không chạy tới khi thoát chỉ đọc (BR-17) |
+| A3 | Workspace chỉ đọc (QC-09, 1.1) | Vẫn lưu được đồng ý (cài đặt tài khoản); AI vẫn không chạy tới khi thoát chỉ đọc (BR-17) |
 
 **Luồng lỗi**
 
@@ -453,17 +459,117 @@ Một **phiên AI** là một kết nối của Claude Code tới \[McpServer\]:
 | --- | --- | --- |
 | E1 | \[AiConsent\] lỗi / mất mạng | Không bật trợ lý; MSG-14 |
 
+### UC-10 Phát hiện và kết nối Claude Code
+
+| **Mục** | **Nội dung** |
+| --- | --- |
+| Tiền điều kiện | Người dùng đã đăng nhập app trên Windows |
+| Hậu điều kiện thành công | Trạng thái Claude Code `SAN_SANG` (mục 4.3); điểm vào AI hiện (khi trợ lý bật và đã đồng ý) |
+| Hậu điều kiện thất bại | Trạng thái `CHUA_CAI` / `CHUA_DANG_NHAP` / `PHIEN_BAN_CU`; điểm vào AI ẩn; SCR-11 hiện hướng dẫn; chức năng lõi không bị ảnh hưởng |
+
+**Luồng chính**
+
+| **Bước** | **Actor** | **Mô tả** |
+| --- | --- | --- |
+| 1 | App | Khởi động, người dùng mở SCR-09, bấm "Kiểm tra lại", hoặc một lời gọi lỗi vì CLI (BR-29) → trạng thái `DANG_KIEM_TRA` |
+| 2 | App | Tìm Claude Code CLI trên máy, đọc phiên bản, kiểm tra trạng thái đăng nhập (\[ClaudeCodeDetect\], tech chốt) |
+| 3 | App | Có CLI, đã đăng nhập, phiên bản ≥ tối thiểu → `SAN_SANG`; SCR-09 #12 "Claude Code · {phiên bản} · Sẵn sàng" |
+| 4 | App | Trợ lý bật và đã đồng ý → hiện điểm vào AI, mở \[McpServer\] (BR-27); chưa → toggle "Trợ lý" dùng được, bật thì vào UC-09 |
+
+**Luồng thay thế**
+
+| **Mã** | **Điều kiện** | **Xử lý** |
+| --- | --- | --- |
+| A1 | Không tìm thấy CLI | `CHUA_CAI`; ẩn điểm vào AI; SCR-11 với MSG-24, link hướng dẫn cài (trang của Anthropic), "Kiểm tra lại" |
+| A2 | Có CLI, chưa đăng nhập | `CHUA_DANG_NHAP`; SCR-11 với MSG-25 và hướng dẫn đăng nhập |
+| A3 | Phiên bản < tối thiểu | `PHIEN_BAN_CU`; SCR-11 với MSG-26 và hướng dẫn cập nhật |
+| A4 | Trạng thái xấu đi trong lúc dùng (gỡ, đăng xuất, phiên Claude hết hạn) | Lượt đang chạy lỗi theo BR-29; chuyển trạng thái tương ứng; ẩn điểm vào AI; thay đổi đã áp dụng vẫn hoàn tác được từ nhật ký task và SCR-12 |
+| A5 | Người dùng cài / đăng nhập xong rồi quay lại app | Bấm "Kiểm tra lại", hoặc app tự kiểm tra khi được focus lại `[giả định]` → bước 2 |
+
+**Luồng lỗi**
+
+| **Mã** | **Điều kiện** | **Xử lý** |
+| --- | --- | --- |
+| E1 | Kiểm tra quá 10 giây `[giả định]` hoặc lỗi không rõ | Coi như không `SAN_SANG` với trạng thái gần nhất đã biết (lần đầu: `CHUA_CAI`); SCR-11 kèm "Kiểm tra lại"; ghi log |
+
+### UC-11 Điều khiển app từ Claude Code trong terminal
+
+| **Mục** | **Nội dung** |
+| --- | --- |
+| Tiền điều kiện | App đang mở và đã đăng nhập; trợ lý bật và đã đồng ý (BR-19); người dùng đã cấu hình Claude Code kết nối tới \[McpServer\] theo SCR-09 #13 |
+| Hậu điều kiện thành công | Thay đổi áp dụng ngay (hoặc chờ duyệt khi phiên đã đọc dữ liệu tích hợp); chip "AI", nhật ký `terminal`, hoàn tác được ở SCR-12 |
+| Hậu điều kiện thất bại | Không thay đổi task; Claude Code nhận lỗi từ công cụ |
+
+**Luồng chính**
+
+| **Bước** | **Actor** | **Mô tả** |
+| --- | --- | --- |
+| 1 | Người dùng | Mở Claude Code trong terminal, ra lệnh ("dời các task review sang chiều mai") |
+| 2 | Claude Code | Kết nối \[McpServer\]; \[McpServer\] kiểm BR-27, tạo phiên AI `terminal` và đề xuất `DANG_XU_LY` |
+| 3 | Claude Code | Gọi "Xem ngữ cảnh thời gian" và công cụ đọc cần thiết; gọi công cụ ghi với ngày tuyệt đối (BR-03, BR-04) |
+| 4 | \[McpServer\] | Kiểm BR-01, BR-02, BR-04, BR-26; `hasExternalData = false` → áp dụng ngay (BR-06, BR-21), chip "AI", nhật ký "Claude Code (terminal) đã …"; trả kết quả cho Claude Code |
+| 5 | App | Toast MSG-29 "Claude Code (terminal) đã thay đổi {n} task · Xem · Hoàn tác" (gộp theo phiên); board, lịch cập nhật; phiên hiện ở SCR-12 |
+| 6 | Claude Code | Ngắt kết nối / người dùng thoát → phiên kết thúc; đề xuất `DA_AP_DUNG` (hoặc không lưu nếu không có thay đổi) |
+
+**Luồng thay thế**
+
+| **Mã** | **Điều kiện** | **Xử lý** |
+| --- | --- | --- |
+| A1 | Phiên gọi công cụ đọc dữ liệu tích hợp (BR-20) | `hasExternalData = true`; lời gọi ghi sau đó → `CHO_DUYET`, công cụ trả "đang chờ người dùng duyệt trong app"; app hiện MSG-31 → SCR-12 để duyệt (BR-06, QC-12 mục 6) |
+| A2 | "Hoàn tác" trên toast / "Hoàn tác tất cả" trong SCR-12 | → UC-04 với các thay đổi của phiên |
+| A3 | Khung chat của app cũng đang chạy | Hai phiên độc lập; xung đột theo QC-08 (BR-28) |
+| A4 | Yêu cầu hành động bị cấm / công cụ không có | \[McpServer\] trả `AI_ACTION_FORBIDDEN` kèm MSG-07 dạng chữ để Claude Code báo lại người dùng |
+| A5 | Ngày tương đối trong khung mơ hồ (BR-05) | Công cụ ghi chỉ nhận ngày tuyệt đối; mô tả công cụ yêu cầu Claude Code hỏi lại người dùng `[giả định — không kiểm soát được hoàn toàn với phiên terminal]`; server vẫn chặn `PAST_DATE` |
+
+**Luồng lỗi**
+
+| **Mã** | **Điều kiện** | **Xử lý** |
+| --- | --- | --- |
+| E1 | App không mở / chưa đăng nhập | Claude Code không kết nối được \[McpServer\]; không có thay đổi |
+| E2 | Trợ lý tắt hoặc chưa đồng ý | \[McpServer\] từ chối kết nối, trả MSG-30 (`AI_ASSISTANT_DISABLED` / `AI_CONSENT_REQUIRED`) |
+| E3 | Người dùng tắt trợ lý / rút lại đồng ý / đóng app giữa phiên | \[McpServer\] cắt phiên; thay đổi đã áp dụng giữ nguyên, hoàn tác được; thay đổi `CHO_DUYET` của phiên → `DA_HOAN_TAC` khi rút lại đồng ý, giữ để duyệt khi chỉ tắt trợ lý hoặc đóng app `[giả định]` |
+| E4 | Ghi trên phiên bản cũ (`VERSION_CONFLICT`) / `PAST_DATE` / workspace chỉ đọc (1.1) | Công cụ trả lỗi; không thay đổi task |
+| E5 | App mất kết nối server | Công cụ ghi trả `AI_OFFLINE` (BR-27); công cụ đọc trả dữ liệu trên máy kèm thời điểm `[giả định]` |
+
+### UC-12 Gợi ý thời lượng và channel qua Claude Code (cho G02)
+
+| **Mục** | **Nội dung** |
+| --- | --- |
+| Tiền điều kiện | G02 gọi \[TaskSuggest\] khi người dùng tạo task (G02 UC tạo task bước 4); BR-30 thoả |
+| Hậu điều kiện thành công | Trả `plannedMin`, `channelId`, `confidence` cho G02 trong ngưỡng thời gian của G02 |
+| Hậu điều kiện thất bại | Không trả gợi ý; G02 bỏ qua (G02 A4) |
+
+**Luồng chính**
+
+| **Bước** | **Actor** | **Mô tả** |
+| --- | --- | --- |
+| 1 | App (G02) | Gọi \[TaskSuggest\] với tiêu đề, ngày dự định |
+| 2 | App (G10) | Kiểm BR-30; gọi Claude Code một lượt ngắn, chỉ đọc (danh sách channel, thời lượng các task tương tự) |
+| 3 | App (G10) | Trả gợi ý cho G02; G02 hiển thị với nguồn `ai` (G02 BR-04) |
+
+**Luồng lỗi**
+
+| **Mã** | **Điều kiện** | **Xử lý** |
+| --- | --- | --- |
+| E1 | Không thoả BR-30, Claude Code lỗi / chậm hơn ngưỡng G02 / hết hạn mức | Không trả gợi ý, không báo lỗi; không chuyển trạng thái Claude Code trừ khi lỗi vì CLI (BR-25) |
+
 ## 6. Điểm vào
 
-| **Điểm vào** | **Web** | **App** | **Ghi chú** |
-| --- | --- | --- | --- |
-| Nút ✨ góc dưới mọi màn hình | ✓ | ✓ | Mở SCR-04; chưa đồng ý → SCR-10 (UC-09) |
-| Command menu (Ctrl/Cmd+K) "Hỏi Sunny" | ✓ | ✓ (desktop) | Phím tắt riêng `[giả định: Ctrl+J]` |
-| Daily planning (G08) → "Plan my day" | ✓ | ✓ | Chỉ khi bật Beta; SCR-02 |
-| Daily shutdown (G08) → bước highlights | ✓ | ✓ | SCR-07 |
-| Nhật ký AI trong chi tiết task (G02 SCR-03) | ✓ | ✓ | Hoàn tác thay đổi AI (UC-04) |
-| Daily planning (G08) → bước Daily plan → "Hoàn tác kế hoạch AI" | ✓ | ✓ | UC-02 A4, UC-04 A7; G08 đặt nút, hiện khi ngày D có đề xuất Planning Agent `DA_AP_DUNG` còn trong thời hạn hoàn tác |
-| Cài đặt → AI / Beta | ✓ | ✓ | SCR-09 |
+Mọi điểm vào AI chỉ hiện khi Claude Code `SAN_SANG` (BR-25); ngược lại thay bằng SCR-11 hoặc ẩn.
+
+| **Điểm vào** | **App Windows (1.0)** | **Ghi chú** |
+| --- | --- | --- |
+| Nút ✨ góc dưới mọi màn hình | ✓ | Mở SCR-04; chưa đồng ý → SCR-10 (UC-09) |
+| Command menu (Ctrl+K) "Hỏi trợ lý" | ✓ | Phím tắt riêng `[giả định: Ctrl+J]`; Claude Code không sẵn sàng → SCR-11 |
+| Daily planning (G08) → "Plan my day" | ✓ | Chỉ khi bật Beta; SCR-02; không sẵn sàng → SCR-11 ở cùng chỗ |
+| Daily shutdown (G08) → bước highlights | ✓ | SCR-07 |
+| Nhật ký AI và chip "AI" trong chi tiết task (G02 SCR-03) | ✓ | Hoàn tác thay đổi AI (UC-04) |
+| Daily planning (G08) → bước Daily plan → "Hoàn tác kế hoạch AI" | ✓ | UC-02 A4, UC-04 A7; G08 đặt nút, hiện khi ngày D có đề xuất Planning Agent `DA_AP_DUNG` còn trong thời hạn hoàn tác |
+| Toast MSG-29 / MSG-31 khi Claude Code trong terminal thay đổi app | ✓ | SCR-12 (UC-11) |
+| Cài đặt → Trợ lý AI → "Hoạt động AI" | ✓ | SCR-12 |
+| Tạo task (G02) — gợi ý thời lượng / channel | ✓ | UC-12, không có giao diện riêng của G10 |
+| Claude Code trong terminal (ngoài app) | ✓ (app phải đang mở) | UC-11 |
+| Cài đặt → Trợ lý AI / Beta | ✓ | SCR-09 |
 
 ## 7. Mô tả màn hình
 
@@ -476,7 +582,7 @@ Một **phiên AI** là một kết nối của Claude Code tới \[McpServer\]:
 | 3 | Kể về bạn | Text nhiều dòng | Không | ≤ 1.000 ký tự `[giả định]`; quá → MSG-02 |
 | 4 | Theme days | 7 ô text | Không | Mỗi ô ≤ 100 ký tự `[giả định]` |
 | 5 | "Bỏ qua" / "Tiếp" / "Xong" | Button | – | Xong → \[AgentProfileSave\] |
-| 6 | Dùng dữ liệu từ công cụ đã kết nối | Toggle | – | Phần "Công cụ"; mặc định tắt (BR-20); bên dưới MSG-20; cùng giá trị với SCR-09 #9 |
+| 6 | Cho AI đọc dữ liệu từ công cụ đã kết nối | Toggle | – | Phần "Công cụ"; mặc định tắt (BR-20); ẩn ở 1.0; bên dưới MSG-20; cùng giá trị với SCR-09 #9 |
 
 ### SCR-02 Planning Agent — nhập và chạy
 
@@ -484,10 +590,10 @@ Một **phiên AI** là một kết nối của Claude Code tới \[McpServer\]:
 | --- | --- | --- | --- | --- |
 | 1 | Nhãn Beta | Badge | – | "Beta" |
 | 2 | "Điều quan trọng nhất hôm nay là gì?" | Text | Không | ≤ 500 ký tự `[giả định]` |
-| 3 | "Plan my day" | Button chính | – | Disabled khi hết lượt (MSG-11), offline, hoặc workspace chỉ đọc (MSG-12); chưa đồng ý → SCR-10 |
+| 3 | "Plan my day" | Button chính | – | Disabled khi offline hoặc workspace chỉ đọc (MSG-12, 1.1); chưa đồng ý → SCR-10; Claude Code không `SAN_SANG` → thay bằng SCR-11 |
 | 4 | "Tự lập kế hoạch" | Link | – | Sang Daily planning thủ công (G08) |
 | 5 | Tiến độ | List bước | – | Hiện khi `DANG_XU_LY`: "Đọc lịch", "Đọc việc từ công cụ", "Xếp khối thời gian"; bộ đếm thời gian; "Thường mất 2–4 phút" |
-| 6 | "Dừng" | Button | – | Huỷ lượt → luồng thủ công, không áp dụng gì |
+| 6 | "Dừng" | Button | – | Dừng Claude Code → luồng thủ công; thay đổi đã áp dụng giữ, có "Hoàn tác kế hoạch AI" (BR-09) |
 
 ### SCR-03 Review Plan
 
@@ -503,25 +609,29 @@ Hai chế độ (BR-06): **Đã áp dụng** (mặc định, Q31) và **Chờ du
 | 6 | "Gửi phản hồi" | Link | SCR-08 |
 | 7 | "Tiếp" / "Áp dụng và tiếp" | Button chính | Đã áp dụng: "Tiếp" sang Daily plan (G08). Chờ duyệt: "Áp dụng và tiếp" → \[ProposalApply\] các dòng được chọn (BR-21); disabled khi không chọn dòng nào (khi đó dùng "Huỷ tất cả") hoặc khi đề xuất hết hạn |
 
-### SCR-04 Khung chat Sunny
+### SCR-04 Khung chat trợ lý
+
+Giao diện như chat thường (Q39); tên hiển thị trợ lý `[chờ chốt]`.
 
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
-| 1 | Header | Toolbar | – | "Lịch sử" · "Cuộc trò chuyện mới" · đóng |
+| 1 | Header | Toolbar | – | "Lịch sử" · "Cuộc trò chuyện mới" · đóng; dòng nhỏ "Chạy bằng Claude Code" |
 | 2 | Ô nhập | Text nhiều dòng | Có | Placeholder "Mô tả một task hoặc đặt câu hỏi"; 1–2.000 ký tự (MSG-02); Enter gửi, Shift+Enter xuống dòng |
 | 3 | Tin nhắn người dùng | Bubble | – | Nguyên văn |
 | 4 | Trạng thái xử lý | Text | – | "Đang nghĩ…" + giây; > 10 giây "Vẫn đang xử lý…" + "Dừng"; xong "Đã nghĩ {n}s" (Sunsama "Thought 8s") |
 | 5 | Câu trả lời | Bubble (stream) | – | Ngôn ngữ theo BR-12; mọi ngày ghi cụ thể |
-| 6 | Chip task | Card nhỏ | – | Tiêu đề, ngày giờ, channel, "Hoàn tác"; bấm tiêu đề mở chi tiết task (G02); đã hoàn tác → gạch ngang "Đã hoàn tác" |
+| 6 | Chip task | Card nhỏ | – | Tiêu đề, ngày giờ, channel, loại thay đổi (gồm "Đã hoàn thành" / "Đã chuyển vào Thùng rác" khi BR-26 bật), "Hoàn tác"; bấm tiêu đề mở chi tiết task (G02); đã hoàn tác → gạch ngang "Đã hoàn tác" |
 | 7 | Nút chọn ngày (BR-05) | 2 button | – | Hiện khi khung mơ hồ; chọn → tiếp tục hành động |
-| 8 | Thẻ xác nhận | SCR-05 | – | Khi > 3 task hoặc có dữ liệu ngoài (BR-06) |
+| 8 | Thẻ chờ duyệt | SCR-05 | – | Khi phiên đã đọc dữ liệu tích hợp (BR-06) |
 | 9 | "Hữu ích" / "Chưa tốt" | Icon button | – | UC-06 |
+| 10 | Tóm tắt lượt | Text + button | – | Lượt chạm > 3 task: "Đã thay đổi {n} task · Hoàn tác tất cả" (EC-37) |
+| 11 | Thông báo lỗi Claude Code | Inline | – | MSG-27 / MSG-28 (nguyên văn thông báo của Claude Code) kèm "Gửi lại" |
 
-### SCR-05 Thẻ xác nhận thay đổi nhiều task
+### SCR-05 Thẻ chờ duyệt (phiên có dữ liệu tích hợp)
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
-| 1 | Tiêu đề | Text | "Sunny sẽ thay đổi {n} task"; có `hasExternalData` → thêm MSG-22 |
+| 1 | Tiêu đề | Text | "Trợ lý muốn thay đổi {n} task" + MSG-22 |
 | 2 | Danh sách | List có checkbox | Mỗi dòng: tiêu đề task, trường đổi, trước → sau (ngày cụ thể); tối đa hiện 10 dòng, "Xem thêm" |
 | 3 | "Áp dụng" | Button chính | \[ProposalApply\] dòng được chọn (BR-21); disabled khi đề xuất hết hạn |
 | 4 | "Huỷ" | Button | \[ProposalReject\]; thẻ xám "Đã huỷ" |
@@ -540,7 +650,7 @@ Hai chế độ (BR-06): **Đã áp dụng** (mặc định, Q31) và **Chờ du
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
-| 1 | Nhãn nguồn | Badge | "✨ Nháp AI lúc 17:00"; mất khi người dùng sửa |
+| 1 | Nhãn nguồn | Badge | "✨ Nháp AI lúc {giờ soạn}"; mất khi người dùng sửa |
 | 2 | Danh sách ý | Rich text bullet | Sửa tại chỗ; mỗi ý có link về task / item nguồn |
 | 3 | Thông báo việc mới | Inline | MSG-13 + "Thêm vào" (UC-05 A2) |
 | 4 | "Soạn bằng AI" / "Soạn lại" | Button | UC-05 A1 / A3 |
@@ -556,56 +666,93 @@ Hai chế độ (BR-06): **Đã áp dụng** (mặc định, Q31) và **Chờ du
 | 3 | Đính kèm cuộc trò chuyện | Checkbox | Không | Mặc định tắt |
 | 4 | "Gửi" | Button | – | \[AiFeedback\]; MSG-16 |
 
-### SCR-09 Cài đặt → AI
+### SCR-09 Cài đặt → Trợ lý AI
 
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
-| 1 | Trợ lý | Toggle | – | Mặc định tắt (Q21); bật lần đầu khi chưa đồng ý → SCR-10 (UC-07 A4); BR-16 |
-| 2 | Gợi ý channel | Toggle | – | Mặc định bật (hành vi G02) |
-| 3 | Gợi ý thời lượng (task, subtask) | Toggle | – | Mặc định bật (hành vi G02) |
+| 1 | Trợ lý | Toggle | – | Mặc định tắt (Q21); disabled khi #12 khác `SAN_SANG`; bật lần đầu khi chưa đồng ý → SCR-10 (UC-07 A4); BR-16 |
+| 2 | Gợi ý channel | Toggle | – | Mặc định bật (hành vi G02); chỉ có tác dụng khi #1 bật (BR-30) |
+| 3 | Gợi ý thời lượng (task, subtask) | Toggle | – | Mặc định bật (hành vi G02); chỉ có tác dụng khi #1 bật (BR-30) |
 | 4 | Ngôn ngữ tóm tắt | Dropdown | – | Auto / Tiếng Việt / English; mặc định Auto |
-| 5 | Tóm tắt tự động | Toggle | – | Mặc định bật; nháp T2–T6 17:00; chỉ chạy khi #1 bật và đã đồng ý |
+| 5 | Tóm tắt tự động | Toggle | – | Mặc định bật; nháp tại giờ kết thúc làm việc của các ngày có trong lịch làm việc (BR-13, Q39); chỉ chạy khi #1 bật và đã đồng ý |
 | 6 | Thiết lập Planning Agent | Link | – | Mở SCR-01; ẩn khi Beta tắt |
 | 7 | Xoá lịch sử trò chuyện | Button nguy hiểm | – | UC-07 A3 |
-| 8 | Beta → Agentic Daily Planning | Toggle | – | Ở nhóm Beta; mặc định tắt `[giả định]` |
-| 9 | Dùng dữ liệu từ công cụ đã kết nối | Toggle | – | Mặc định tắt (BR-20); disabled khi #1 tắt; mô tả MSG-20 |
+| 8 | Beta → Agentic Daily Planning | Toggle | – | Ở nhóm Beta (hiện từ 1.0); mặc định tắt `[giả định]` |
+| 9 | Cho AI đọc dữ liệu từ công cụ đã kết nối | Toggle | – | Mặc định tắt (BR-20); disabled khi #1 tắt; ẩn ở 1.0 (chưa có G11); mô tả MSG-20 |
 | 10 | Thời điểm đồng ý | Text | – | "Bạn đã đồng ý dùng AI lúc {ngày giờ}"; ẩn khi chưa đồng ý |
 | 11 | Rút lại đồng ý dùng AI | Button nguy hiểm | – | Hiện khi đã đồng ý; xác nhận MSG-23 → UC-07 A6 |
+| 12 | Trạng thái Claude Code | Text + button | – | Theo mục 4.3: "Claude Code · {phiên bản} · Sẵn sàng" / "Chưa cài" / "Chưa đăng nhập" / "Phiên bản cũ"; nút "Kiểm tra lại" (UC-10); khác `SAN_SANG` → kèm SCR-11 |
+| 13 | Dùng Claude Code trong terminal | Mục mở rộng | – | Hướng dẫn kết nối Claude Code tới MCP local của app (lệnh / cấu hình có nút sao chép: tech chốt); ghi chú "App phải đang mở"; hiện khi #1 bật |
+| 14 | Cho phép AI hoàn thành và xoá task | Toggle | – | Mặc định tắt (BR-26); disabled khi #1 tắt; bật → MSG-32 (UC-07 A7); mô tả "Task đồng bộ với Jira / Notion / Gmail không bao giờ được AI hoàn thành" |
+| 15 | Hoạt động AI | Link | – | Mở SCR-12 |
 
-### SCR-10 Đồng ý dùng AI (dialog)
+### SCR-10 Đồng ý dùng AI (dialog gọn)
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
-| 1 | Tiêu đề | Text | "Bật trợ lý AI" |
-| 2 | Dữ liệu được gửi | Text + danh sách | Tiêu đề, thời lượng, ngày, trạng thái task; channel; sự kiện lịch (tiêu đề, giờ); nội dung bạn gõ cho trợ lý. Không gửi nội dung email, token. Dữ liệu công cụ tích hợp chỉ gửi khi bạn bật riêng (BR-10, BR-20) |
-| 3 | Nhà cung cấp và cam kết | Text | Tên nhà cung cấp AI `[chờ chốt]`; không lưu, không dùng để huấn luyện |
-| 4 | Link chính sách quyền riêng tư | Link | Tab mới |
-| 5 | "Đồng ý và bật" | Button chính | \[AiConsent\] (UC-09 bước 4) |
-| 6 | "Để sau" | Button | UC-09 A1 |
+| 1 | Tiêu đề | Text | "Bật trợ lý AI với Claude Code" |
+| 2 | Dữ liệu đưa cho Claude Code | Text + danh sách | Tiêu đề, ghi chú, thời lượng, ngày, trạng thái task; channel; sự kiện lịch (tiêu đề, giờ); objective; nội dung bạn gõ cho trợ lý. Không đưa nội dung email, token. Dữ liệu công cụ tích hợp chỉ khi bạn bật riêng (BR-10, BR-20) |
+| 3 | Claude Code và tài khoản của bạn | Text | Claude Code chạy trên máy này bằng tài khoản Claude của bạn và xử lý dữ liệu theo điều khoản của Anthropic; app không gửi dữ liệu cho nhà cung cấp AI nào khác; Claude Code có thể tự lưu bản ghi phiên trên máy |
+| 4 | Quyền của AI | Text | AI thay đổi task ngay, có chip "AI" và Hoàn tác; không hoàn thành / xoá task trừ khi bạn bật riêng; Claude Code mở trong terminal cũng điều khiển được app khi app đang mở |
+| 5 | Link chính sách quyền riêng tư | Link | Mở trình duyệt |
+| 6 | "Đồng ý và bật" | Button chính | \[AiConsent\] (UC-09 bước 4) |
+| 7 | "Để sau" | Button | UC-09 A1 |
+
+### SCR-11 Hướng dẫn cài Claude Code (thẻ thay điểm vào AI)
+
+Hiện ở SCR-09, chỗ của "Plan my day" (SCR-02), khi mở khung chat từ Command menu, và chỗ "Soạn bằng AI" (SCR-07) khi Claude Code khác `SAN_SANG` (BR-25).
+
+| **#** | **Thành phần** | **Loại** | **Hành vi** |
+| --- | --- | --- | --- |
+| 1 | Nội dung | Text | MSG-24 / MSG-25 / MSG-26 theo trạng thái (mục 4.3) |
+| 2 | "Xem hướng dẫn" | Link | Mở trang hướng dẫn cài / đăng nhập / cập nhật của Anthropic trong trình duyệt |
+| 3 | "Kiểm tra lại" | Button | UC-10 |
+| 4 | Ghi chú | Text nhỏ | "Bạn vẫn dùng đầy đủ app khi chưa có trợ lý AI" |
+| 5 | "Ẩn" | Link | Ẩn thẻ ở board / ritual (vẫn hiện ở SCR-09) `[giả định]` |
+
+### SCR-12 Hoạt động AI
+
+Danh sách phiên AI có thay đổi (mục 4.4), mới nhất trước, trong thời hạn hoàn tác (BR-08).
+
+| **#** | **Thành phần** | **Loại** | **Hành vi** |
+| --- | --- | --- | --- |
+| 1 | Bộ lọc | Chip | Tất cả · Chờ duyệt · Terminal · Chat · Planning Agent |
+| 2 | Dòng phiên | List item | Nguồn ("Claude Code (terminal)", "Trợ lý", "Planning Agent"), thời điểm, số thay đổi đã áp dụng / chờ duyệt, nhãn "Đang hoạt động" khi phiên còn mở; có `hasExternalData` → MSG-22 |
+| 3 | Danh sách thay đổi | List | Như SCR-03 #2: loại, tiêu đề task, trước → sau, ngày giờ cụ thể; dòng đã áp dụng có "Hoàn tác"; dòng chờ duyệt có checkbox |
+| 4 | "Hoàn tác tất cả" | Button | UC-04 A7 cho phiên |
+| 5 | "Áp dụng" / "Huỷ" | Button | Cho dòng chờ duyệt: \[ProposalApply\] / \[ProposalReject\] (BR-21) |
 
 ## 8. API
 
+Hợp đồng nghiệp vụ tham khảo. Đường dẫn, kiểu API, cách gọi CLI và kiểu kết nối MCP: tech chốt (`docs/tech/00` mục 4–5). Nhóm \[ClaudeCode…\] và \[McpServer\] chạy trong app trên máy; các API còn lại ở server (lưu đề xuất, nhật ký, hoàn tác, đồng ý, để đồng bộ giữa thiết bị).
+
 | **API** | **Request chính** | **Response chính** | **Timeout / retry** `[giả định]` |
 | --- | --- | --- | --- |
+| \[ClaudeCodeDetect\] (trong app) | – | status (mục 4.3), version, minSupportedVersion | 10s / không retry (UC-10) |
+| \[ClaudeCodeRun\] (trong app) | aiAgent, chỉ dẫn, context (BR-03), tin nhắn / lịch sử, aiSessionId | Luồng chữ, bước tiến độ, kết thúc / lỗi (`CLAUDE_CODE_EXITED`, `CLAUDE_CODE_USAGE_LIMIT` kèm nguyên văn thông báo, `CLAUDE_CODE_NOT_LOGGED_IN`) | Theo BR-09; tech chốt cách gọi (không tương tác, streaming) |
+| \[McpServer\] (trong app) | Công cụ mục 3.1 | Kết quả công cụ / lỗi (`AI_ACTION_FORBIDDEN` kèm reason `TOGGLE_OFF` / `LINKED_TASK` / `NO_TOOL`, `VERSION_CONFLICT`, `PAST_DATE`, `AI_CONSENT_REQUIRED`, `AI_ASSISTANT_DISABLED`, `AI_OFFLINE`, `WORKSPACE_READ_ONLY`), trạng thái `applied` / `pending_review` | BR-27; schema: tech chốt |
 | \[AgentProfileGet\] / \[AgentProfileSave\] `GET/PUT /ai/agent-profile` | about, themeDays[7], sources[] | AgentProfile | 5s / 1 lần |
-| \[AgentPlanStart\] `POST /ai/planning/{date}/runs` | focusText, context (BR-03), Idempotency-Key | proposalId, status `DANG_XU_LY` | 5s nhận yêu cầu / không retry; bước đầu ≤ 10s, tổng ≤ 5 phút (BR-09) |
-| \[ProposalGet\] `GET /ai/proposals/{id}` | id | Proposal: status, hasExternalData, expiresAt, steps[], changes[] (type, taskId, field, before, after, baseVersion, status), modelVersion | 5s / 2 lần; realtime `ai.proposal.updated` là kênh chính |
-| \[ProposalApply\] `POST /ai/proposals/{id}/apply` | changeIds[], Idempotency-Key | Proposal, tasks[], skipped[] {changeId, reason: `SKIPPED_STALE` \| `SKIPPED_PAST`} | 10s / 2 lần cùng key; kiểm `baseVersion` từng task, chỉ loại dòng lỗi thời (BR-21); dùng chung cho áp dụng ngay (server tự gọi) và áp dụng sau duyệt |
+| \[AgentPlanStart\] `POST /ai/planning/{date}/runs` | focusText, aiSessionId, Idempotency-Key | proposalId, status `DANG_XU_LY` | 5s / không retry; bước đầu ≤ 10s, tổng ≤ 5 phút (BR-09) |
+| \[AiSessionStart\] / \[AiSessionEnd\] `POST /ai/sessions` · `POST /ai/sessions/{id}/end` | aiAgent, hasExternalData | aiSessionId, proposalId | 5s / 2 lần (mục 4.4) |
+| \[ProposalGet\] `GET /ai/proposals/{id}` | id | Proposal: status, aiAgent, aiSessionId, hasExternalData, expiresAt, steps[], changes[] (type, taskId, field, before, after, baseVersion, status), promptVersion, claudeCodeVersion | 5s / 2 lần; realtime `ai.proposal.updated` là kênh chính |
+| \[ProposalApply\] `POST /ai/proposals/{id}/apply` | changeIds[] (hoặc change mới từ \[McpServer\]), Idempotency-Key | Proposal, tasks[], skipped[] {changeId, reason: `SKIPPED_STALE` \| `SKIPPED_PAST`} | 10s / 2 lần cùng key; kiểm `baseVersion` từng task, chỉ loại dòng lỗi thời (BR-21); dùng chung cho áp dụng ngay (\[McpServer\] gọi) và áp dụng sau duyệt |
 | \[AiConsent\] `POST /ai/consent` · `DELETE /ai/consent` (rút lại) | consentVersion | aiConsentAt, aiConsentVersion, Settings | 5s / 2 lần |
 | \[ProposalReject\] `POST /ai/proposals/{id}/reject` | id, reason? | Proposal `DA_HOAN_TAC` | 5s / 2 lần |
 | \[ProposalUndo\] `POST /ai/proposals/{id}/undo` | changeIds[], resolutions[] {changeId, keep: user\|before} | Proposal, tasks[], conflicts[] (nếu chưa có resolutions) | 5s / 2 lần |
 | \[ChatThreadList\] / \[ChatThreadCreate\] / \[ChatThreadDelete\] `GET/POST/DELETE /ai/chat/threads` | cursor, limit / – / id | Thread[] / Thread | 5s / 1 lần |
-| \[ChatSend\] `POST /ai/chat/threads/{id}/messages` (SSE) | text, context (BR-03), viewDate, selectedTaskId | Stream: delta chữ, `thinkingMs`, proposal (nếu có) | Chữ đầu ≤ 10s; tổng ≤ 60s; không tự retry (nút "Gửi lại") |
-| \[HighlightsDraft\] `POST /ai/highlights/{date}/draft` · `GET /ai/highlights/{date}` | date, language | Proposal (bullets[] {text, taskId?, itemRef?}) | 10s / 1 lần (người dùng mở); job: 2 lần cách 5 phút |
+| \[ChatSend\] (app → \[ClaudeCodeRun\]; lưu tin nhắn `POST /ai/chat/threads/{id}/messages`) | text, context (BR-03), viewDate, selectedTaskId | Stream: delta chữ, `thinkingMs`, proposal (nếu có) | Chữ đầu ≤ 10s; tổng ≤ 60s; không tự retry (nút "Gửi lại") |
+| \[HighlightsDraft\] (app → \[ClaudeCodeRun\]) · `PUT/GET /ai/highlights/{date}` (lưu nháp, khoá user + ngày) | date, language | Proposal (bullets[] {text, taskId?, itemRef?}) | 10s chữ đầu (người dùng mở); job: 2 lần cách 5 phút |
+| \[TaskSuggest\] (G02 gọi; G10 thực hiện qua \[ClaudeCodeRun\], BR-30) | title, startDate | plannedMin, channelId, confidence | Theo G02 (2s, không retry) |
 | \[AiFeedback\] `POST /ai/feedback` | proposalId?, rating, reasons[], text, attachConversation | 204 | 5s / 3 lần nền |
-| \[SettingsUpdate\] `PATCH /me/settings` (G01) | ai.assistantEnabled (bật khi `aiConsentAt` trống → 409 `AI_CONSENT_REQUIRED`), ai.useIntegrationData, ai.summaryLanguage, ai.autoSummary, beta.agenticPlanning | Settings | 5s / 2 lần |
-| \[IntegrationActivity\] (G11) | date | Hoạt động do tài khoản đã kết nối thực hiện (G11 BR-19) | 5s / 1 lần; chỉ gọi khi bật BR-20; lỗi → bỏ qua (UC-05 A5) |
-| \[TaskFromItem\] (G11) | integrationId, externalId, startDate, actor = `ai`, proposalId | Task + TaskLink, hoặc 409 `ALREADY_LINKED` {taskId} | Theo G11 (BR-24) |
-| \[EvalRun\] (nội bộ CI) | configVersion, datasetVersion | passRate, theo nhóm, câu sai[] | 30 phút / chạy lại câu lỗi 2 lần |
-| \[AppConfig\] | – | Ngưỡng BR-06, BR-09 | Cache 1h |
-| \[BillingGet\] `entitlements` (G12 BR-24, QC-10) | – | Hạn mức chat / agent / soạn lại highlights theo gói (BR-22) | Cache theo G12 |
+| \[SettingsUpdate\] `PATCH /me/settings` (G01) | ai.assistantEnabled (bật khi `aiConsentAt` trống → 409 `AI_CONSENT_REQUIRED`), ai.useIntegrationData, ai.allowCompleteDelete, ai.summaryLanguage, ai.autoSummary, beta.agenticPlanning | Settings | 5s / 2 lần |
+| \[IntegrationActivity\] (G11, 1.1) | date | Hoạt động do tài khoản đã kết nối thực hiện (G11 BR-19) | 5s / 1 lần; chỉ qua công cụ MCP khi bật BR-20; lỗi → bỏ qua (UC-05 A5) |
+| \[IntegrationItems\] (G11, 1.1) | integrationId, q | Metadata item (G11 BR-26) | Theo G11; chỉ qua công cụ MCP khi bật BR-20 |
+| \[TaskFromItem\] (G11, 1.1) | integrationId, externalId, startDate \| backlogBucket, actor = `ai`, source = `ai`, proposalId | Task + TaskLink, hoặc 409 `ALREADY_LINKED` {taskId} | Theo G11 (BR-24) |
+| \[EvalRun\] (nội bộ CI) | promptVersion, toolsetVersion, claudeCodeVersion, datasetVersion | passRate, theo nhóm, câu sai[] | 30 phút / chạy lại câu lỗi 2 lần |
+| \[AppConfig\] | – | Ngưỡng BR-09, phiên bản Claude Code tối thiểu (BR-25) | Cache 1h |
+| \[BillingGet\] `entitlements` (G12 BR-24, QC-10) | (Bỏ — AI không còn hạn mức theo gói, BR-22) | — | — |
 
-Job: `ai.highlights.draft` (mỗi 15 phút quét người dùng vừa tới 17:00 T2–T6, chỉ người dùng có `aiConsentAt`, trợ lý bật, workspace không chỉ đọc; idempotent theo user + ngày), `ai.proposal.expire` (đóng `CHO_DUYET` khi tới mốc đầu ngày của ngày làm việc kế tiếp, BR-21), `ai.history.purgeIntegration` (theo `integration.disconnected` của G11, BR-23). Realtime mới: `ai.proposal.updated` `[giả định]`.
+Job: `ai.highlights.draft` (chạy trong app trên máy: kiểm mỗi 15 phút ngày làm việc hiện tại có trong lịch làm việc và đã tới giờ kết thúc làm việc; chỉ khi có `aiConsentAt`, trợ lý bật, "Tóm tắt tự động" bật, Claude Code `SAN_SANG`, workspace không chỉ đọc; idempotent theo user + ngày ở server, BR-13), `ai.proposal.expire` (server: đóng `CHO_DUYET` khi tới mốc đầu ngày của ngày làm việc kế tiếp, BR-21), `ai.history.purgeIntegration` (server: theo `integration.disconnected` của G11, BR-23). Realtime mới: `ai.proposal.updated` `[giả định]`.
 
 **Map lỗi API → thông báo**
 
@@ -614,11 +761,16 @@ Job: `ai.highlights.draft` (mỗi 15 phút quét người dùng vừa tới 17:0
 | `VALIDATION_FAILED` · field text / about · TOO_LONG | MSG-02 |
 | `AI_TIMEOUT` / `AI_UNAVAILABLE` (chat) | MSG-04 |
 | `AI_TIMEOUT` / `AI_UNAVAILABLE` / `AI_CONTEXT_MISSING` (planning, highlights) | MSG-05 |
-| `AI_ACTION_FORBIDDEN` | MSG-07 |
+| `AI_ACTION_FORBIDDEN` (reason `TOGGLE_OFF` / `LINKED_TASK` / `NO_TOOL`) | MSG-07 |
 | `AI_DATE_AMBIGUOUS` | MSG-08 |
 | `AI_UNDO_EXPIRED` | MSG-10 |
 | `AI_UNDO_CONFLICT` (409) | SCR-06 / MSG-18 |
-| `AI_QUOTA_EXCEEDED` (429, kèm `quotaType`: chat / agent / highlights) | MSG-11 |
+| `AI_QUOTA_EXCEEDED` | (Bỏ — BR-22) |
+| `CLAUDE_CODE_USAGE_LIMIT` | MSG-28 |
+| `CLAUDE_CODE_EXITED` | MSG-27 |
+| `CLAUDE_CODE_NOT_INSTALLED` / `CLAUDE_CODE_NOT_LOGGED_IN` / `CLAUDE_CODE_OUTDATED` | SCR-11 với MSG-24 / MSG-25 / MSG-26 |
+| `AI_ASSISTANT_DISABLED` (trả cho Claude Code trong terminal) | MSG-30 |
+| `AI_OFFLINE` | MSG-06 |
 | `PROPOSAL_STALE` (412, mọi dòng bị loại) | MSG-15 |
 | `skipped[]` không rỗng trong response \[ProposalApply\] | MSG-19 |
 | `PROPOSAL_EXPIRED` (410) | Thẻ "Đã hết hạn" (SCR-03 / SCR-05) |
@@ -634,14 +786,14 @@ Job: `ai.highlights.draft` (mỗi 15 phút quét người dùng vừa tới 17:0
 | MSG-01 | Inline SCR-01 | Kết nối lịch và công cụ để agent thấy đủ việc của bạn. Có thể làm sau |
 | MSG-02 | Inline | Nội dung quá dài (tối đa {n} ký tự) |
 | MSG-03 | SCR-03 | Kế hoạch hôm nay đã ổn, agent không đề xuất thay đổi |
-| MSG-04 | Khung chat | Sunny chưa trả lời được. Gửi lại |
+| MSG-04 | Khung chat | Trợ lý chưa trả lời được. Gửi lại |
 | MSG-05 | Banner | AI đang gặp sự cố. Bạn tiếp tục lập kế hoạch thủ công, nội dung đã nhập vẫn được giữ |
 | MSG-06 | Banner | Mất kết nối. AI cần mạng để hoạt động |
 | MSG-07 | Khung chat | Mình không thể {xoá task / đánh dấu xong task / gửi tin ra ngoài / đổi cài đặt}. Bạn có thể tự làm: {cách làm} |
 | MSG-08 | Khung chat | Bây giờ là {giờ} ngày {ngày}. "{cụm từ}" là ngày nào? |
 | MSG-09 | Toast | Đã hoàn tác {n} thay đổi của AI |
 | MSG-10 | Toast | Thay đổi này đã quá 7 ngày, không hoàn tác bằng AI được. Hãy sửa trực tiếp task |
-| MSG-11 | Inline | Bạn đã dùng hết {lượt trò chuyện / lượt Planning Agent / lượt soạn highlights} hôm nay. Lượt mới có từ {giờ} ngày {ngày} |
+| MSG-11 | (Bỏ — không còn hạn mức AI theo gói, BR-22; xem MSG-28) | — |
 | MSG-12 | Khung chat / SCR-02 | Workspace đang ở chế độ chỉ đọc nên trợ lý AI tạm ngừng |
 | MSG-13 | Inline SCR-07 | Có {n} việc mới xong sau khi soạn nháp · Thêm vào |
 | MSG-14 | Toast | Chưa lưu được thay đổi. Thử lại |
@@ -650,10 +802,19 @@ Job: `ai.highlights.draft` (mỗi 15 phút quét người dùng vừa tới 17:0
 | MSG-17 | Dialog | Xoá toàn bộ lịch sử trò chuyện? Task đã tạo không bị ảnh hưởng |
 | MSG-18 | Dialog SCR-06 | Bạn đã sửa {n} chỗ sau khi AI thay đổi. Chọn giữ bản nào |
 | MSG-19 | Inline SCR-03 / SCR-05 / khung chat | Đã bỏ qua {n} thay đổi vì task vừa đổi ở nơi khác hoặc giờ đã qua. Các thay đổi còn lại đã áp dụng |
-| MSG-20 | Inline SCR-01 / SCR-09 | Khi bật, AI đọc tiêu đề việc từ Gmail, Jira, Notion. Mọi thay đổi AI đề xuất từ dữ liệu này đều chờ bạn duyệt |
+| MSG-20 | Inline SCR-01 / SCR-09 | Khi bật, AI đọc được tiêu đề việc từ Gmail, Jira, Notion. Sau khi AI đọc dữ liệu này, mọi thay đổi AI muốn làm trong lượt đó đều chờ bạn duyệt |
 | MSG-21 | Khung chat / lịch sử | Nội dung từ {công cụ} đã được xoá khi bạn ngắt kết nối |
-| MSG-22 | SCR-03 / SCR-05 | Cần bạn duyệt vì {kế hoạch / yêu cầu} dùng dữ liệu từ {công cụ} |
-| MSG-23 | Dialog SCR-09 | Rút lại đồng ý? Trợ lý AI sẽ tắt và không gửi dữ liệu cho nhà cung cấp AI nữa. Thay đổi AI đã làm vẫn giữ nguyên |
+| MSG-22 | SCR-03 / SCR-05 / SCR-12 | Cần bạn duyệt vì {kế hoạch / yêu cầu / phiên Claude Code} dùng dữ liệu từ {công cụ} |
+| MSG-23 | Dialog SCR-09 | Rút lại đồng ý? Trợ lý AI sẽ tắt và Claude Code không còn truy cập app nữa. Thay đổi AI đã làm vẫn giữ nguyên |
+| MSG-24 | SCR-11 | Cài Claude Code để bật trợ lý AI. Bạn vẫn dùng đầy đủ app khi chưa có trợ lý · Xem hướng dẫn · Kiểm tra lại |
+| MSG-25 | SCR-11 | Đã tìm thấy Claude Code nhưng chưa đăng nhập. Đăng nhập tài khoản Claude rồi bấm Kiểm tra lại |
+| MSG-26 | SCR-11 | Claude Code phiên bản {x} chưa được hỗ trợ. Cập nhật lên {tối thiểu} trở lên rồi bấm Kiểm tra lại |
+| MSG-27 | Khung chat / banner | Claude Code đã dừng giữa chừng. {n} thay đổi đã áp dụng vẫn được giữ · Hoàn tác · Gửi lại |
+| MSG-28 | Khung chat / banner | Claude Code báo: "{thông báo của Claude Code}". Bạn tiếp tục thủ công, nội dung đã nhập vẫn được giữ |
+| MSG-29 | Toast | Claude Code (terminal) đã thay đổi {n} task · Xem · Hoàn tác |
+| MSG-30 | Trả cho Claude Code (terminal) | Trợ lý AI đang tắt trong app {tên app}. Bật trong Cài đặt → Trợ lý AI để tiếp tục |
+| MSG-31 | Toast / badge SCR-12 | Có {n} thay đổi từ Claude Code đang chờ bạn duyệt · Xem |
+| MSG-32 | Dialog SCR-09 | Cho phép AI hoàn thành và chuyển task vào Thùng rác? Mọi thay đổi vẫn hoàn tác được. Task đồng bộ với Jira, Notion, Gmail không bao giờ được AI hoàn thành · Bật · Huỷ |
 
 Bản EN: `[chờ bổ sung]`.
 
@@ -661,13 +822,14 @@ Bản EN: `[chờ bổ sung]`.
 
 | **Mục** | **Yêu cầu** `[giả định]` |
 | --- | --- |
-| Hiệu năng | Kết quả đầu tiên ≤ 10 giây (p95), luôn có trạng thái đang xử lý; Planning Agent 2–4 phút, tối đa 5 phút; \[ProposalApply\] p95 ≤ 1 giây cho ≤ 30 thay đổi; chip / board cập nhật ≤ 100 ms sau khi áp dụng |
-| Offline | AI không chạy offline (MSG-06); Daily planning / shutdown thủ công vẫn chạy (G08); hoàn tác AI cần mạng |
-| Đồng bộ | Thay đổi AI hiện trên thiết bị khác ≤ 5 giây (`task.upserted`, `ai.proposal.updated`) |
-| Bảo mật | BR-01, BR-02, BR-11 kiểm ở server; `hasExternalData` gắn ở \[AiGateway\], không do model khai báo (BR-06, BR-20); dữ liệu gửi LLM theo BR-10; khoá API nhà cung cấp chỉ ở server; mỗi lượt chỉ đọc dữ liệu của người dùng đang gọi |
-| Quyền riêng tư | Không gọi AI trước `aiConsentAt` (BR-19); dữ liệu tích hợp mặc định không gửi (BR-20); nhà cung cấp LLM không lưu, không huấn luyện (hợp đồng); Nghị định 13/2023/NĐ-CP, GDPR, hồ sơ đánh giá tác động chuyển dữ liệu ra nước ngoài (Q29; cần pháp chế xác nhận); lịch sử chat giữ 90 ngày, xoá được; ngắt tích hợp xoá dữ liệu của tích hợp đó khỏi lịch sử AI (BR-23); xuất dữ liệu (G01) gồm lịch sử chat và thời điểm đồng ý |
-| Log / audit | \[ActivityLog\] tác nhân `ai` (BR-07); log lượt AI: proposalId, modelVersion, promptVersion, số token, độ trễ, kết quả \[AiActionExecutor\]; không ghi nội dung tin nhắn vào log hệ thống |
-| Chất lượng | Bộ đánh giá BR-18; theo dõi hằng tuần tỉ lệ hoàn tác, "Chưa tốt", chuyển luồng thủ công |
-| Chi phí | Hạn mức BR-22 (bảng quyền G12, QC-10); cảnh báo khi chi phí LLM / người dùng / ngày vượt ngưỡng cấu hình |
-| Tracking | Sự kiện: `ai_consent_shown`, `ai_consent_given`, `ai_integration_data_toggled`, `ai_plan_undone` (toàn bộ kế hoạch), `ai_proposal_expired`, `ai_change_skipped_stale`, `ai_chat_opened`, `ai_message_sent`, `ai_proposal_created` (loại, số task), `ai_proposal_applied`, `ai_proposal_rejected`, `ai_change_undone`, `ai_undo_conflict`, `ai_date_clarify_shown`, `ai_action_forbidden`, `planning_agent_started`, `planning_agent_fallback`, `highlights_draft_created`, `highlights_saved` (tỉ lệ sửa), `ai_feedback_sent` |
-| Accessibility | Khung chat đọc được bằng trình đọc màn hình (vùng `aria-live` cho câu trả lời stream); chip, checkbox, radio dùng được bằng bàn phím; ✨ có nhãn "Gợi ý của AI"; tương phản WCAG 2.1 AA sáng / tối |
+| Nền tảng | App Windows (Flutter) bản 1.0 (ADR-0005); cần Claude Code CLI trên cùng máy (QC-12); phiên bản Windows hỗ trợ: tech chốt |
+| Hiệu năng | Kết quả đầu tiên ≤ 10 giây (p95, gồm thời gian khởi động Claude Code), luôn có trạng thái đang xử lý; Planning Agent 2–4 phút, tối đa 5 phút; \[ProposalApply\] p95 ≤ 1 giây cho ≤ 30 thay đổi; mỗi lời gọi công cụ ghi MCP p95 ≤ 1 giây; chip / board cập nhật ≤ 100 ms sau khi áp dụng; phát hiện Claude Code ≤ 3 giây (p95), không chặn khởi động app |
+| Offline | AI không chạy khi mất mạng (MSG-06); công cụ ghi MCP trả `AI_OFFLINE` khi app mất kết nối server (BR-27); Daily planning / shutdown thủ công vẫn chạy (G08); hoàn tác AI cần mạng |
+| Đồng bộ | Thay đổi AI hiện trên thiết bị khác ≤ 5 giây (`task.upserted`, `ai.proposal.updated`); trạng thái Claude Code và \[McpServer\] là của từng máy |
+| Bảo mật | BR-01, BR-02, BR-11, BR-26 kiểm ở \[McpServer\] / \[AiActionExecutor\] trong app, không dựa vào model; server kiểm quy tắc nghiệp vụ như thao tác người dùng; `hasExternalData` do \[McpServer\] gắn, không do model khai báo (BR-06, BR-20); \[McpServer\] chỉ nhận kết nối trên máy, chỉ khi trợ lý bật và đã đồng ý, xác thực tiến trình hợp lệ (tech chốt); app không lưu thông tin đăng nhập Claude của người dùng; công cụ chỉ đọc / ghi dữ liệu của người dùng đang đăng nhập app |
+| Quyền riêng tư | Không gọi Claude Code, \[McpServer\] không nhận kết nối trước `aiConsentAt` (BR-19); dữ liệu tích hợp mặc định không đưa (BR-20); dữ liệu đưa cho Claude Code tối thiểu (BR-10); app không gửi dữ liệu cho nhà cung cấp AI nào; Claude Code xử lý theo tài khoản Claude của người dùng và có thể tự lưu bản ghi phiên trên máy (nói rõ ở SCR-10); Nghị định 13/2023/NĐ-CP, GDPR, hồ sơ Q29 (cần pháp chế xác nhận trách nhiệm của app); lịch sử chat trong app giữ 90 ngày, xoá được; ngắt tích hợp xoá dữ liệu của tích hợp đó khỏi lịch sử AI của app (BR-23); xuất dữ liệu (G01) gồm lịch sử chat, nhật ký thay đổi AI và thời điểm đồng ý |
+| Log / audit | \[ActivityLog\] tác nhân `ai`, `aiAgent`, `aiSessionId` (BR-07); log lượt AI: proposalId, promptVersion, toolsetVersion, claudeCodeVersion, độ trễ, mã lỗi Claude Code, kết quả \[AiActionExecutor\]; không ghi nội dung tin nhắn, kết quả công cụ vào log hệ thống |
+| Chất lượng | Bộ đánh giá BR-18; theo dõi hằng tuần tỉ lệ hoàn tác, "Chưa tốt", chuyển luồng thủ công (tách lý do hết hạn mức Claude, Claude Code bị đóng) |
+| Chi phí | App không chịu chi phí AI; không hạn mức theo gói (QC-10, QC-12 mục 8) |
+| Tracking | Sự kiện: `claude_code_detected` (status, version), `claude_code_install_guide_opened`, `ai_consent_shown`, `ai_consent_given`, `ai_integration_data_toggled`, `ai_complete_delete_toggled`, `ai_session_started` (aiAgent), `ai_terminal_session_started`, `ai_plan_undone` (toàn bộ kế hoạch), `ai_session_undone` (cả lượt / phiên), `ai_proposal_expired`, `ai_change_skipped_stale`, `ai_chat_opened`, `ai_message_sent`, `ai_proposal_created` (loại, số task), `ai_proposal_applied`, `ai_proposal_rejected`, `ai_change_undone`, `ai_undo_conflict`, `ai_date_clarify_shown`, `ai_action_forbidden`, `ai_claude_usage_limit`, `ai_claude_exited`, `planning_agent_started`, `planning_agent_fallback` (lý do), `highlights_draft_created`, `highlights_saved` (tỉ lệ sửa), `task_suggest_served` / `_skipped`, `ai_feedback_sent` |
+| Accessibility | Khung chat đọc được bằng trình đọc màn hình (Windows Narrator; vùng thông báo động cho câu trả lời stream); chip, checkbox, radio dùng được bằng bàn phím; ✨ và chip "AI" có nhãn "Thay đổi của AI"; tương phản WCAG 2.1 AA sáng / tối |
