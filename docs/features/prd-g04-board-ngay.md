@@ -194,7 +194,7 @@ AC04: Kéo sang ngày khác có toast "Đã chuyển sang {ngày} · Hoàn tác"
 
 AC05: Kéo task chưa xong vào ngày đã qua bị chặn; server cũng từ chối với mọi đường (QC-05, C15).
 
-AC06: Kéo instance lặp vào ngày đã có instance cùng series → vẫn đặt, kèm cảnh báo "Ngày này đã có {series}" (QC-06).
+AC06: Kéo instance lặp vào ngày đã có instance cùng series → vẫn đặt, kèm cảnh báo "Ngày này đã có {tên series}" (QC-06).
 
 AC07: Thay đổi đồng thời trên thiết bị khác (hoặc do rollover) → lệnh trên phiên bản cũ bị từ chối, người dùng thấy "Task đã thay đổi trên thiết bị khác" (QC-08).
 

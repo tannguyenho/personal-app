@@ -325,7 +325,7 @@ AC02: Hệ thống tạo timebox cho instance `KE_HOACH` có ngày dự định 
 
 AC03: Timebox lập lịch cứng là timebox thường: ghi ra lịch ngoài, có cờ xung đột nếu chồng sự kiện bận, không tự dời khi xung đột với sự kiện ngoài.
 
-AC04: Người dùng sửa giờ hoặc gỡ timebox của một instance → instance đó thành "sửa riêng", hệ thống không tạo lại hay ghi đè `[giả định]`.
+AC04: Người dùng sửa giờ hoặc gỡ timebox của một instance → instance đó thành "sửa riêng" (cờ `customized`, theo G03 BR-07), hệ thống không tạo lại hay ghi đè `[giả định]`.
 
 AC05: Đổi `approxTime` hoặc quy tắc lặp của series → timebox của instance chưa sửa riêng được dời theo giờ mới; instance bị G03 xoá khi đổi quy tắc thì timebox xử lý như dòng "Xoá" của QC-05; instance đã tách khỏi series (Q26) giữ timebox.
 

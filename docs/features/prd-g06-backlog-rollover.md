@@ -26,7 +26,7 @@ Không phải việc nào cũng làm hôm nay, và không phải việc nào lê
 
 - Hoãn một task vào backlog bằng 2 phím (Z + số bucket) hoặc 1 tổ hợp (Shift+Z).
 - 95% người dùng có task chưa xong của ngày cũ chuyển sang hôm nay trong ≤ 15 phút sau mốc đầu ngày (B6). Lượt lỗi được chạy bù ngay khi người dùng mở app.
-- Task bị hoãn ≥ 4 ngày làm việc `[giả định]` tự rời khỏi hôm nay (khi bật Auto-archive), khôi phục được bằng 1 thao tác.
+- Task bị hoãn ≥ 4 ngày làm việc `[giả định]` tự rời khỏi hôm nay (khi bật Tự lưu trữ), khôi phục được bằng 1 thao tác.
 - Bucket tới kỳ được nhắc lại trong Daily planning (G08) và Weekly planning (G09, bản 1.1).
 
 # 2. Người dùng
@@ -47,7 +47,7 @@ Không phải việc nào cũng làm hôm nay, và không phải việc nào lê
 - Chuyển task vào backlog: Z → chọn bucket (1, 2, 3, 4, 5, 0); Shift+Z lên đầu backlog; mục "Chuyển vào backlog" trong menu Ngày dự định; kéo thả vào panel.
 - Lấy task từ backlog ra ngày: kéo vào cột ngày, chọn ngày trong menu Ngày dự định, phím S về hôm nay.
 - Rollover tự động task chưa xong về hôm nay (job mỗi 15 phút `[giả định]`), có lease và trạng thái thất bại; API "đảm bảo rollover" chạy bù khi người dùng mở app, dùng chung với G08.
-- Lưu trữ (panel phải): Auto-archive, task bị hoãn ≥ 4 ngày làm việc `[giả định]`, instance lặp "bị bỏ qua", khôi phục về hôm nay, "Xoá tất cả" có xác nhận.
+- Lưu trữ (panel phải): Tự lưu trữ, task bị hoãn ≥ 4 ngày làm việc `[giả định]`, instance lặp "bị bỏ qua", khôi phục về hôm nay, "Xoá tất cả" có xác nhận.
 - Hai quy tắc dùng chung: số ngày bị hoãn (QC-04), bảng đổi ngày task (QC-05).
 
 ## 3.2 Ngoài phạm vi
@@ -91,8 +91,8 @@ Rollover idempotent theo người dùng + ngày: chạy lại không chuyển ha
 | Chờ phiên shutdown | Tối đa 2 giờ sau mốc đầu ngày | — | Rollover chờ phiên shutdown của ngày cũ hoàn tất hoặc bỏ dở (Q18) |
 | Vị trí task rollover | Đầu / cuối danh sách hôm nay, luôn sau instance lặp của hôm nay; trong khối: ngày cũ tăng dần, rồi vị trí cũ | Đầu | Cài đặt Chung (G01); thứ tự theo C16 |
 | Giữ priority khi rollover | Tập mức được giữ | Tập rỗng (không giữ) | Mức không giữ → về Normal (C16) |
-| Auto-archive | Bật / tắt | Bật `[giả định]` | Toggle trong panel Lưu trữ |
-| Ngưỡng Auto-archive | Số ngày bị hoãn (QC-04) | 4 `[giả định]` | Như Sunsama |
+| Tự lưu trữ | Bật / tắt | Bật `[giả định]` | Toggle trong panel Lưu trữ |
+| Ngưỡng Tự lưu trữ | Số ngày bị hoãn (QC-04) | 4 `[giả định]` | Như Sunsama |
 | Timebox ngày cũ khi rollover | Theo QC-05: timebox quá khứ gỡ liên kết, task về projection; timebox tương lai giữ | — | Sự kiện quá khứ trên lịch ngoài **giữ lại** làm lịch sử (Q6) |
 | Thời gian giữ trong Lưu trữ | Không giới hạn đến khi xoá `[giả định]` | — | "Xoá tất cả" đưa vào Thùng rác 30 ngày (G02, Q28) |
 
@@ -166,7 +166,7 @@ AC02: Bàn phím: S đưa về hôm nay; menu Ngày dự định chọn ngày b�
 
 AC03: Không đặt được vào ngày đã qua; server cũng từ chối (QC-05, C15).
 
-AC04: Instance lặp đưa vào ngày đã có instance cùng series → vẫn đặt, kèm cảnh báo "Ngày này đã có {series}" (QC-06).
+AC04: Instance lặp đưa vào ngày đã có instance cùng series → vẫn đặt, kèm cảnh báo "Ngày này đã có {tên series}" (QC-06).
 
 ## UC3. Rollover tự động
 
@@ -204,19 +204,19 @@ AC01: Workspace chỉ đọc → rollover dừng. Khi thoát chỉ đọc, rollo
 
 ### US4.1 Tự lưu trữ việc bị dời mãi
 
-AC01: Bật Auto-archive, task có số ngày bị hoãn ≥ 4 `[giả định]` → vào Lưu trữ (lý do `stale`) ngay trong lượt rollover, không còn trên hôm nay.
+AC01: Bật Tự lưu trữ, task có số ngày bị hoãn ≥ 4 `[giả định]` → vào Lưu trữ (lý do `stale`) ngay trong lượt rollover, không còn trên hôm nay.
 
 AC02: Lần mở app đầu tiên sau đó có toast nêu số task vừa lưu trữ, link "Xem Lưu trữ" `[giả định]`.
 
-AC03: Tắt Auto-archive → task tiếp tục chuyển ngày, nhãn "Dời {n} ngày" tăng dần, không bị lưu trữ.
+AC03: Tắt Tự lưu trữ → task tiếp tục chuyển ngày, nhãn "Dời {n} ngày" tăng dần, không bị lưu trữ.
 
 ### US4.2 Xem Lưu trữ và khôi phục
 
-AC01: Panel phải → Lưu trữ liệt kê task lưu trữ, mới nhất trước, mỗi dòng có lý do: "Bị hoãn ≥ 4 ngày" (`stale`), "Bị bỏ qua" (`skipped`) hoặc "Bạn đã lưu trữ" (`manual`).
+AC01: Panel phải → Lưu trữ liệt kê task lưu trữ, mới nhất trước, mỗi dòng có lý do theo SRS G06 MSG-12 / MSG-13 / MSG-22: "Bị hoãn từ 4 ngày làm việc trở lên" (`stale`), "Bị bỏ qua · đã có lần lặp hôm nay" (`skipped`) hoặc "Bạn đã lưu trữ" (`manual`).
 
 AC02: "Khôi phục" → task về đầu hôm nay, số ngày bị hoãn về 0; toast có Hoàn tác. Kéo task vào ngày cụ thể chỉ cho ngày từ hôm nay trở đi.
 
-AC03: Khôi phục instance lặp vào ngày đã có instance cùng series → vẫn khôi phục, kèm cảnh báo "Ngày này đã có {series}" (QC-06).
+AC03: Khôi phục instance lặp vào ngày đã có instance cùng series → vẫn khôi phục, kèm cảnh báo "Ngày này đã có {tên series}" (QC-06).
 
 AC04: Task trong Lưu trữ có trong kết quả tìm kiếm (G04), gắn nhãn "Lưu trữ" (C17).
 
@@ -257,7 +257,7 @@ AC03: Khôi phục một task như vậy từ Thùng rác đưa task về lại 
 # 10. Câu hỏi mở
 
 - Đã chốt 04/11/2026: mốc đầu ngày mặc định 04:00, chỉnh trong 00:00–06:00; đổi có hiệu lực từ ngày làm việc kế tiếp (Q2, Q3).
-- Auto-archive mặc định bật hay tắt (Sunsama chưa kiểm chứng mặc định)?
+- Tự lưu trữ mặc định bật hay tắt (Sunsama chưa kiểm chứng mặc định)?
 - Đã chốt 04/11/2026: số ngày bị hoãn = số ngày làm việc từ ngày dự định đầu tiên tới hôm nay, không phụ thuộc người dùng có mở app hay không (Q5, QC-04).
 - Shift+Z đưa lên đầu bucket nào: "Tuần tới" hay bucket hiện tại của task?
 - Đã chốt 04/11/2026: rollover giữ sự kiện quá khứ trên lịch ngoài làm lịch sử, chỉ gỡ liên kết trong app; Hoàn tác khôi phục liên kết (Q6, Q14).

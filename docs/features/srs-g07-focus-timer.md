@@ -61,8 +61,8 @@
 
 | **Trạng thái** | **Điều kiện** | **Hiển thị** |
 | --- | --- | --- |
-| `KHONG_CHAY` | Không có TimeEntry `endedAt` trống | Nút ▶ "Bắt đầu timer · Space"; thực tế dạng H:MM |
-| `DANG_CHAY` | Có TimeEntry `endedAt` trống, chạy ≤ 4 giờ | Nút dừng "Dừng timer · Space"; thực tế đếm giây màu xanh; badge ở mục Focus; Focus Bar (1.2) |
+| `KHONG_CHAY` | Không có bản ghi thời gian `endedAt` trống | Nút ▶ "Bắt đầu timer · Space"; thực tế dạng H:MM |
+| `DANG_CHAY` | Có bản ghi thời gian `endedAt` trống, chạy ≤ 4 giờ | Nút dừng "Dừng timer · Space"; thực tế đếm giây màu xanh; badge ở mục Focus; Focus Bar (1.2) |
 | `CHAY_LAU` | `DANG_CHAY` và chạy > 4 giờ | Như `DANG_CHAY` + MSG-11 đã gửi; đồng hồ màu cảnh báo |
 | `CHO_XAC_NHAN` | Bản ghi `auto_closed`, `needsReview = true` | SCR-06 khi mở app; bản ghi có nhãn "Tự dừng" |
 
@@ -125,7 +125,7 @@ Chuyển trạng thái: `KHONG_CHAY` → `DANG_CHAY` (UC-01) · `DANG_CHAY` → 
 | **Mục** | **Nội dung** |
 | --- | --- |
 | Tiền điều kiện | Timer `DANG_CHAY` hoặc `CHAY_LAU` |
-| Hậu điều kiện thành công | TimeEntry đóng (BR-04); thực tế cộng dồn; block thực tế hiện trên lịch (G05) |
+| Hậu điều kiện thành công | Bản ghi thời gian đóng (BR-04); thực tế cộng dồn; block thực tế hiện trên lịch (G05) |
 | Hậu điều kiện thất bại | Timer vẫn chạy |
 
 **Luồng chính**
@@ -233,8 +233,8 @@ Chuyển trạng thái: `KHONG_CHAY` → `DANG_CHAY` (UC-01) · `DANG_CHAY` → 
 | **Mục** | **Nội dung** |
 | --- | --- |
 | Tiền điều kiện | Đang ở Focus mode (SCR-03) với một task |
-| Hậu điều kiện thành công | Phiên Pomodoro tạo TimeEntry cho task; thời gian nghỉ không tạo TimeEntry |
-| Hậu điều kiện thất bại | Phiên dừng, TimeEntry đã chạy vẫn được lưu |
+| Hậu điều kiện thành công | Phiên Pomodoro tạo bản ghi thời gian cho task; thời gian nghỉ không tạo bản ghi thời gian |
+| Hậu điều kiện thất bại | Phiên dừng, bản ghi thời gian đã chạy vẫn được lưu |
 
 **Luồng chính**
 
@@ -268,7 +268,7 @@ Chuyển trạng thái: `KHONG_CHAY` → `DANG_CHAY` (UC-01) · `DANG_CHAY` → 
 
 | **Mục** | **Nội dung** |
 | --- | --- |
-| Tiền điều kiện | Có TimeEntry `endedAt` trống |
+| Tiền điều kiện | Có bản ghi thời gian `endedAt` trống |
 | Hậu điều kiện thành công | Timer > 4 giờ đã được nhắc đúng một lần; timer > 24 giờ đã tự đóng và chờ xác nhận |
 | Hậu điều kiện thất bại | Lượt sau xử lý lại (idempotent theo cờ đã nhắc / đã đóng) |
 
@@ -516,7 +516,7 @@ Bản EN: `[chờ bổ sung]`.
 | Toàn vẹn | Khoá duy nhất một timer chạy / người dùng (BR-01); start / stop idempotent theo key |
 | Offline | Bật / dừng / nhập tay chạy được khi mất mạng; đồng bộ theo UC-07; Pomodoro, nghỉ chạy hoàn toàn trên thiết bị (1.1) |
 | Đồng bộ | `timer.changed` tới thiết bị khác ≤ 5 giây |
-| Bảo mật | Chỉ chủ task đọc / sửa TimeEntry; kiểm tra `taskId` thuộc người dùng ở mọi API |
+| Bảo mật | Chỉ chủ task đọc / sửa bản ghi thời gian; kiểm tra `taskId` thuộc người dùng ở mọi API |
 | Log / audit | \[ActivityLog\] theo BR-18; log job watchdog: số nhắc, số tự đóng; không chứa tiêu đề |
 | Giám sát | Cảnh báo khi số timer tự đóng > 1% / ngày hoặc job watchdog trễ > 15 phút |
 | Tracking | Sự kiện: `timer_started` (nguồn: nút / Space / Focus / toàn cục — 1.1), `timer_stopped` (lý do: user / user_picked_time / replaced / complete / delete / auto_closed / read_only), `timer_discarded_short`, `time_entry_trimmed`, `time_entry_added` (chế độ: duration / range; nguồn: manual / ritual) / `_edited` / `_deleted`, `focus_opened`, `remaining_alert_shown`, `long_timer_notified`, `pomodoro_started` (1.1), `break_started` / `break_ended` (1.1), `focus_bar_action` (1.2) |

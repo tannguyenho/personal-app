@@ -567,7 +567,7 @@ Chuyển: `DANG_MO` ⇄ `DAT` (UC-03 A3, UC-01 bước 6, UC-02 A2) · `DANG_MO`
 | MSG-10 | Inline | Cập nhật lúc {giờ} |
 | MSG-11 | Toast | Đã tải xuống analytics-{tuần}.csv |
 | MSG-12 | Toast | Chưa lưu được thay đổi. Thử lại |
-| MSG-13 | Banner | Gói dùng thử đã hết. Nâng cấp để tiếp tục lên kế hoạch tuần |
+| MSG-13 | Banner | Workspace đang ở chế độ chỉ đọc. Nâng cấp để tiếp tục lên kế hoạch tuần (bản 1.1, QC-09) |
 | MSG-14 | Inline | Email không hợp lệ |
 | MSG-15 | Inline | Tối đa 5 người nhận recap |
 | MSG-16 | Toast | Đã gửi email thử tới {email} |

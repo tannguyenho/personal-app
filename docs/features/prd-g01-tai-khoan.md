@@ -135,7 +135,7 @@ Bước 3 dùng Daily planning của G08; PRD này chỉ đặc tả phần dẫ
 
 ### US1.1 Đăng ký bằng email và mật khẩu
 
-User Story: Là người dùng mới, tôi muốn đăng ký chỉ bằng email và mật khẩu, để bắt đầu dùng thử ngay.
+User Story: Là người dùng mới, tôi muốn đăng ký chỉ bằng email và mật khẩu, để bắt đầu dùng ngay.
 
 AC01: Màn đăng ký có email, mật khẩu, ô đồng ý Điều khoản sử dụng và Chính sách quyền riêng tư (không tick sẵn).
 

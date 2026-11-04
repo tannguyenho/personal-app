@@ -55,7 +55,7 @@ Nhiều việc lặp theo nhịp cố định: standup mỗi sáng, dọn hộp 
 ## 3.2 Ngoài phạm vi
 
 - Rollover, Lưu trữ → G06. Board, projection, sắp xếp → G04.
-- Timebox và "Lập lịch cứng cho task lặp" → G05, phát hành **bản 1.1** (Q7). Bản 1.0 chỉ lưu và hiện giờ "khoảng", không tạo timebox.
+- Timebox và "Lập lịch cứng cho task lặp" → G05 (SRS G05 BR-23 / UC-09, cửa sổ 7 ngày `[giả định]`), phát hành **bản 1.1** (Q7). Bản 1.0 chỉ lưu và hiện giờ "khoảng", không tạo timebox.
 - Chế độ chỉ đọc (dừng sinh instance) → bản 1.1 (QC-09).
 - Ngày kết thúc series / số lần lặp tối đa → chưa đưa vào (xem Câu hỏi mở).
 - Lặp theo ngày hoàn thành ("3 ngày sau khi xong") → sau 1.1.
@@ -210,7 +210,7 @@ AC03: Instance đã xong, trong Lưu trữ, Thùng rác không đổi; toast nê
 
 AC01: Đặt hoặc xoá giờ "khoảng" cho series; áp cho mọi instance chưa xong từ hôm nay.
 
-AC02: Bản 1.0 không tạo timebox. "Lập lịch cứng cho task lặp" do G05 đặc tả, phát hành bản 1.1 (Q7).
+AC02: Bản 1.0 không tạo timebox. "Lập lịch cứng cho task lặp" do G05 đặc tả (SRS G05 BR-23 / UC-09), phát hành bản 1.1 (Q7).
 
 ## UC4. Dừng lặp và xoá
 
@@ -272,7 +272,7 @@ AC03: Lọc "Đang lặp" / "Đã dừng".
 | Timezone, DST | Đổi timezone làm lệch ngày instance | Ngày instance lưu theo ngày (không giờ); đổi timezone không đổi ngày dự định, ngày gốc đã sinh (QC-01) |
 | Board quá tải | Nhiều series Daily làm cột ngày dài | Hiện tổng thời lượng và cảnh báo khối lượng (G04) |
 | Instance trùng ngày (G04, G06, G08) | Nhiều đường đổi ngày có thể dồn hai instance vào một ngày | G03 sở hữu QC-06; G06 (rollover), G04 (phím D, kéo thả), G08 (shutdown) thực thi theo QC-06 |
-| Lịch ngoài (G05) | Lập lịch cứng tạo nhiều sự kiện trên Google / Outlook | Lập lịch cứng thuộc G05, bản 1.1 (Q7); giới hạn số ngày tạo timebox do G05 chốt |
+| Lịch ngoài (G05) | Lập lịch cứng tạo nhiều sự kiện trên Google / Outlook | Lập lịch cứng thuộc G05, bản 1.1 (Q7); cửa sổ tạo timebox 7 ngày `[giả định]`, do G05 chốt (SRS G05 BR-23 b) |
 
 # 10. Câu hỏi mở
 

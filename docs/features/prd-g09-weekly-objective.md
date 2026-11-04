@@ -156,7 +156,7 @@ AC02: Bước 1 liệt kê objective tuần này, nút "Thêm objective"; object
 
 AC01: Bên trái bucket backlog "Tuần tới" (G06); bên phải một cột cho mỗi ngày làm việc trong tuần theo lịch làm việc (G01), kèm tổng thời lượng mỗi ngày.
 
-AC02: Kéo task vào ngày → task có ngày bắt đầu; ngày quá tải hiện đỏ (G04).
+AC02: Kéo task vào ngày → task có ngày dự định; ngày quá tải hiện đỏ (G04).
 
 AC03: Gắn task với objective ngay trên card (phím R / $).
 

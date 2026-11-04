@@ -479,7 +479,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | MSG-21 | Toast | Đã xoá subtask "{tiêu đề}" · Hoàn tác |
 | MSG-22 | Toast | Task này đã bị xoá trên thiết bị khác. Thay đổi chưa được lưu |
 | MSG-23 | Toast | Task đã thay đổi trên thiết bị khác |
-| MSG-24 | Toast | Ngày này đã có {tên series} |
+| MSG-24 | Toast | Ngày này đã có {tên series} (dùng G03 MSG-21, QC-06) |
 
 Bản EN: `[chờ bổ sung]`.
 

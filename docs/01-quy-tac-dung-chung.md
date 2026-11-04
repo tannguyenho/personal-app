@@ -116,8 +116,9 @@ Mọi đường làm thay đổi ngày dự định hoặc đưa task ra khỏi 
 | Xoá | Tương lai: gỡ. Quá khứ: gỡ liên kết | Tương lai: xoá. Quá khứ: giữ | **Dừng** | — | G02 |
 | AI dời ngày | Như "kéo sang ngày khác" | Như trên | Không dừng | Reset | G10 |
 
+- **Ngoại lệ: timebox liên kết sự kiện** (G05 BR-21, B8). Timebox gắn với sự kiện có sẵn trên lịch ngoài không theo các cột Timebox / Sự kiện ngoài ở trên: ở mọi đường (đổi ngày, rollover, đưa vào backlog, xoá) chỉ gỡ liên kết, **không** dời và **không** xoá sự kiện ngoài; timebox đi theo sự kiện gốc (sự kiện đổi giờ thì timebox đổi theo, sự kiện bị xoá hoặc đổi thành cả ngày thì gỡ timebox, task giữ nguyên). Các timebox thường khác của cùng task theo bảng trên.
 - **Hoàn tác** của mọi đường trên khôi phục cả liên kết timebox. Sự kiện ngoài đã bị xoá thì được tạo lại với giờ cũ.
-- **Chặn ngày quá khứ.** Server từ chối đặt task chưa xong vào ngày < hôm nay, với mọi đường. Phím D = ngày làm việc kế tiếp của max(ngày dự định, hôm nay).
+- **Chặn ngày quá khứ.** Server từ chối đặt task chưa xong vào ngày < hôm nay, với mọi đường, bằng mã lỗi chung `PAST_DATE` (G02 sở hữu; trả trong `VALIDATION_FAILED`). Không nhóm nào đặt mã riêng. Phím D = ngày làm việc kế tiếp của max(ngày dự định, hôm nay).
 - **Hoàn thành task của ngày tương lai:**
   - task thường: ngày dự định chuyển về hôm nay;
   - instance lặp: giữ nguyên ngày dự định.
@@ -126,12 +127,12 @@ Mọi đường làm thay đổi ngày dự định hoặc đưa task ra khỏi 
 
 1. Một ngày làm việc **đã có instance** của series S khi có instance của S mà ngày gốc hoặc ngày dự định bằng ngày đó, ở trạng thái `KE_HOACH` hoặc `HOAN_THANH`.
 2. **Đường tự động hoặc hàng loạt** đưa một instance của S vào ngày đã có instance của S: instance được đưa vào chuyển sang `LUU_TRU` với lý do `skipped`, kèm toast Hoàn tác (rollover thì không có toast, chỉ ghi nhật ký). Các đường này gồm: rollover, phím D, shutdown "Ngày mai".
-3. **Đường thủ công từng task** (kéo thả, chọn ngày, khôi phục): vẫn cho đặt, kèm cảnh báo "Ngày này đã có {tên series}".
+3. **Đường thủ công từng task** (kéo thả, chọn ngày, khôi phục): vẫn cho đặt, kèm cảnh báo "Ngày này đã có {tên series}". Thông báo gốc là **G03 MSG-21**; các nhóm khác (G02 MSG-24, G04 MSG-23, G06 MSG-21) giữ mã riêng nhưng dùng đúng nội dung này.
 
 ## QC-07. Bản ghi thời gian
 
 1. Bản ghi thời gian có `source` ∈ {`timer`, `manual`, `auto_closed`, `ritual`}. Bản ghi thuộc ngày làm việc của `startedAt`, **không chia** khi vắt qua mốc đầu ngày.
-2. **Ritual** (G08) chỉ tạo bản ghi `ritual` khi người dùng không có timer đang chạy.
+2. **Ritual** (G08) chỉ tạo bản ghi `ritual` khi người dùng không có timer đang chạy, xét **tại thời điểm hoàn tất ritual** (G07 BR-21, G08 BR-12). Có timer đang chạy lúc đó → không tạo bản ghi; task ghi chép vẫn được tạo. Ritual không dừng timer.
 3. **Nhập tay:**
    - Nhập theo **thời lượng**: không kiểm tra chồng lấn, không vẽ lên lịch.
    - Nhập theo **khoảng giờ**: kiểm tra chồng lấn, có vẽ lên lịch.

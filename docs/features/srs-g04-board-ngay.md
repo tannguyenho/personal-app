@@ -56,7 +56,7 @@
 | BR-20 | Người dùng chỉ thấy task của chính mình (G12 mở rộng ở 1.1). Workspace chỉ đọc (bản 1.1, QC-09): xem, lọc, tìm được; mọi thao tác di chuyển / sắp xếp bị chặn. Bản 1.0 không có chế độ chỉ đọc |
 | BR-21 | **Thứ tự ưu tiên trạng thái ngày** (B7): mỗi ngày có đúng một trạng thái chính, xét lần lượt `DA_QUA` > `TRONG` > `XONG_HET` > `QUA_TAI` > `BINH_THUONG`; điều kiện đầu tiên thoả thì dừng. `CHUA_TINH_LICH` và `VUOT_GIO_LAM` là cờ phụ |
 | BR-22 | **Cờ "Vượt giờ làm"** (B7). Ngày ≥ hôm nay, có projection (BR-06), và giờ dự kiến kết thúc của task chưa xong cuối cùng muộn hơn giờ kết thúc làm của D (QC-02) → ngày có cờ `VUOT_GIO_LAM`; các task có giờ dự kiến kết thúc sau giờ kết thúc làm có cờ cùng tên, tooltip MSG-25. Cờ độc lập với `QUA_TAI` (ví dụ 16:00 còn 4 giờ việc, giờ làm tới 17:00) |
-| BR-23 | **Instance lặp dự kiến ở ngày xa** (C17). Ngày nằm ngoài khoảng G03 đã sinh instance: board hiện instance dự kiến tính từ quy tắc series, dạng mờ, nhãn "Dự kiến". Instance dự kiến không tính vào tổng, khối lượng, projection và không thao tác được `[giả định]` |
+| BR-23 | **Instance lặp dự kiến ở ngày xa** (C17). Ngày nằm ngoài khoảng G03 đã sinh instance: board hiện instance dự kiến tính từ quy tắc series theo cách G03 tính ngày (G03 BR-03: tuần đếm theo `weekStart` lưu trên series, không theo cài đặt hiện tại), dạng mờ, nhãn "Dự kiến". Không hiện instance dự kiến cho: ngày thuộc danh sách ngày ngoại lệ của series (G03 BR-15), ngày < hôm nay, series đã dừng (khớp điều kiện không sinh của G03 BR-04). Instance dự kiến không tính vào tổng, khối lượng, projection và không thao tác được `[giả định]` |
 | BR-24 | **Cờ "Lệch ngày"** (QC-01 mục 4, Q4). Task có timebox mà ngày làm việc của thời điểm bắt đầu timebox ≠ ngày dự định → card hiện cờ "Lệch ngày", tooltip MSG-26. Hệ thống không tự sửa; người dùng tự dời task hoặc dời timebox. Banner đổi timezone chỉ do G01 hiển thị (MSG-23 của G01), G04 không có banner riêng |
 | BR-25 | **Đảm bảo rollover khi mở app** (B6). Lần mở app đầu tiên trong ngày làm việc, board gọi \[RolloverEnsure\] (G06 UC-07). Trong lúc chờ, hoặc khi kết quả là `DANG_CHAY`, board hiện rollover tạm trên máy (G06, chỉ hiển thị, QC-08 mục 5). Kết quả `CHO_SHUTDOWN`: task ngày cũ ở yên cột ngày cũ. Kết quả lỗi: banner MSG-27 có "Thử lại" |
 | BR-26 | **Nhãn "Dời {n} ngày"** trên card khi số ngày bị hoãn n ≥ 1 (QC-04 mục 4, G06 SCR-07) |
@@ -550,7 +550,7 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 | MSG-20 | Banner | (Bản 1.1) Gói dùng thử đã hết. Nâng cấp để tiếp tục sắp xếp task |
 | MSG-21 | Toast | Phím tắt đầu tiên của bạn! Nhấn ? để xem tất cả |
 | MSG-22 | Command menu | Không có lệnh phù hợp |
-| MSG-23 | Toast cảnh báo | Ngày này đã có {tên series} |
+| MSG-23 | Toast cảnh báo | Ngày này đã có {tên series} (dùng G03 MSG-21, QC-06) |
 | MSG-24 | Toast | {thứ, ngày} đã có {tên series}, bản này được chuyển vào Lưu trữ · Hoàn tác |
 | MSG-25 | Tooltip | Vượt giờ làm: việc cuối dự kiến xong lúc {giờ}, sau giờ kết thúc {giờ kết thúc} |
 | MSG-26 | Tooltip | Lệch ngày: timebox ở {ngày timebox}, task dự định {ngày dự định}. Dời task hoặc dời timebox |

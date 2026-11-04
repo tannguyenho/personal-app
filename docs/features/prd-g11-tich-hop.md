@@ -115,7 +115,7 @@ Slack và Teams ở 1.2 dùng cho hai việc: đích chia sẻ Daily planning / 
 | Google Tasks, Microsoft Planner, Microsoft To Do | Danh sách việc | — | Hoàn thành 2 chiều |
 | Apple Reminders | Danh sách việc | — | Chỉ qua app iOS / macOS (không có API web) |
 | Zapier | Tự động hoá | — | Trigger / action trên task |
-| Toggl Track | Theo dõi thời gian | — | Đẩy TimeEntry (G07) sang Toggl |
+| Toggl Track | Theo dõi thời gian | — | Đẩy bản ghi thời gian (G07) sang Toggl |
 | MCP | Giao thức cho agent ngoài | — | Cùng quyền với API công khai |
 
 **5.3 Quy tắc chung mọi nhà cung cấp**

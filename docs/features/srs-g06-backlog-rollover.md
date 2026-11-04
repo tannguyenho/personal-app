@@ -12,7 +12,7 @@
 | --- | --- |
 | Mục tiêu | Người dùng gạt việc chưa cần làm vào backlog bằng 1–2 phím; việc dở tự chuyển sang hôm nay; việc bị hoãn quá lâu hoặc bị bỏ qua được lưu trữ, khôi phục được |
 | Actor | Người dùng đã đăng nhập · Hệ thống (job `rollover`, API đảm bảo rollover) · G08 (gọi API đảm bảo rollover) |
-| Phạm vi | Trang / panel Backlog (6 bucket, folder, nhóm theo channel), chuyển task vào backlog (Z, Shift+Z, menu, kéo), lấy task ra ngày, rollover, đảm bảo rollover khi mở app, Auto-archive, panel Lưu trữ, khôi phục, "Xoá tất cả"; sở hữu QC-04, QC-05 |
+| Phạm vi | Trang / panel Backlog (6 bucket, folder, nhóm theo channel), chuyển task vào backlog (Z, Shift+Z, menu, kéo), lấy task ra ngày, rollover, đảm bảo rollover khi mở app, Tự lưu trữ, panel Lưu trữ, khôi phục, "Xoá tất cả"; sở hữu QC-04, QC-05 |
 | Ngoài phạm vi | Phím D, hoãn 1 tuần và kéo thả trên board (G04), Thùng rác (G02), sinh instance lặp và quy tắc QC-06 (G03), đồng bộ sự kiện trên lịch ngoài (G05), nhắc bucket trong ritual (G08, G09), backlog nhóm (G12, 1.1), chế độ chỉ đọc (G12, 1.1) |
 | Nền tảng | Web (desktop, mobile web) ở 1.0. App iOS / Android, desktop từ 1.1 dùng cùng đặc tả |
 | Figma | `[chưa có]` |
@@ -44,16 +44,16 @@
 | BR-08 | **Priority khi rollover** về Normal, trừ các mức có trong tập "Giữ priority khi rollover" (cấu hình theo tập mức, C16; mặc định tập rỗng) |
 | BR-09 | **Timebox khi rollover:** theo dòng "Rollover" của QC-05. Timebox quá khứ (`endsAt` ≤ thời điểm rollover) bị gỡ liên kết khỏi task, sự kiện trên lịch ngoài **giữ lại** làm lịch sử (G05 không xoá); task về projection (G04). Timebox tương lai giữ nguyên. Timer đang chạy không dừng. Bản ghi thời gian giữ ở ngày làm việc của `startedAt` (QC-07) |
 | BR-10 | **Số ngày bị hoãn** (thay `rolloverCount` trong toàn bộ SRS này): định nghĩa, các đường giữ hoặc reset theo QC-04. G06 lưu `firstPlannedDate` trong cụm vị trí (QC-03 mục 2); số ngày bị hoãn là giá trị suy ra (`postponedDays`), không lưu bộ đếm riêng |
-| BR-11 | **Instance lặp khi rollover** (đường tự động của QC-06, G03 định nghĩa): series đã có instance trong hôm nay (định nghĩa QC-06 mục 1) → instance quá khứ chưa xong không rollover mà chuyển `LUU_TRU`, `archiveReason = skipped`; không có toast, chỉ ghi nhật ký. Series chưa có instance hôm nay → chỉ instance quá khứ mới nhất rollover; instance cũ hơn → `skipped` (EC-30) |
-| BR-12 | **Auto-archive.** Sau BR-07, nếu bật Auto-archive (mặc định bật `[giả định]`) và số ngày bị hoãn ≥ 4 `[giả định]` (QC-04 mục 5) → `LUU_TRU`, `archiveReason = stale`; timebox quá khứ gỡ liên kết theo BR-09, timebox tương lai xử lý như dòng "Đưa vào backlog" của QC-05 `[giả định — QC-05 chưa có dòng cho lưu trữ]`; không tính vào khối lượng ngày |
+| BR-11 | **Instance lặp khi rollover** (đường tự động của QC-06, G03 định nghĩa): series đã có instance trong hôm nay (định nghĩa QC-06 mục 1) → instance quá khứ chưa xong không rollover mà chuyển `LUU_TRU`, `archiveReason = skipped`; không có toast, chỉ ghi nhật ký. Series chưa có instance hôm nay → instance quá khứ mới nhất (ngày gốc lớn nhất) rollover trước và trở thành instance đã có của hôm nay; các instance cũ hơn là instance được đưa vào ngày đã có instance nên chuyển `skipped` (QC-06 mục 2, G03 BR-10, EC-30). Không trường hợp nào instance đã có ở hôm nay bị lưu trữ |
+| BR-12 | **Tự lưu trữ.** Sau BR-07, nếu bật Tự lưu trữ (mặc định bật `[giả định]`) và số ngày bị hoãn ≥ 4 `[giả định]` (QC-04 mục 5) → `LUU_TRU`, `archiveReason = stale`; timebox quá khứ gỡ liên kết theo BR-09, timebox tương lai xử lý như dòng "Đưa vào backlog" của QC-05 `[giả định — QC-05 chưa có dòng cho lưu trữ]`; không tính vào khối lượng ngày |
 | BR-13 | **Idempotent.** Mỗi người dùng một bản ghi `rollover_runs(user_id, date)` UNIQUE; đã `XONG` thì bỏ qua (EC-06) |
 | BR-14 | **Khôi phục từ Lưu trữ.** `archivedAt`, `archiveReason` = null; `startDate` = hôm nay; số ngày bị hoãn reset (QC-04 mục 3); vào đầu danh sách hôm nay. Kéo vào ngày D: D ≥ hôm nay (QC-05). Instance lặp vào ngày đã có instance cùng series: cho phép, cảnh báo MSG-21 (QC-06 mục 3) |
-| BR-15 | **Xoá tất cả** trong Lưu trữ cần xác nhận; xoá mềm mọi task trong Lưu trữ (vào Thùng rác 30 ngày, G02, Q28); có Hoàn tác. Khôi phục từ Thùng rác đưa task về lại Lưu trữ với lý do cũ (QC-03 mục 3) |
+| BR-15 | **Xoá tất cả** trong Lưu trữ cần xác nhận; xoá mềm mọi task trong Lưu trữ (vào Thùng rác 30 ngày, G02, Q28); có Hoàn tác. Instance lặp bị xoá theo đường này là người dùng xoá: ngày gốc của instance thành ngày ngoại lệ vĩnh viễn của series (G03 BR-15, Q26); Hoàn tác hay khôi phục không gỡ ngày ngoại lệ. Khôi phục từ Thùng rác đưa task về lại Lưu trữ với lý do cũ (QC-03 mục 3) |
 | BR-16 | Mọi thay đổi ghi \[ActivityLog\] (G02): chuyển vào backlog / bucket, lấy ra ngày (tác nhân `user`); rollover, lưu trữ (tác nhân `system`, "Chuyển từ {ngày}", "Lưu trữ: bị hoãn {n} ngày" / "bị bỏ qua") |
 | BR-17 | Phím Z, Shift+Z, B, S và phím chọn bucket chỉ hoạt động khi không có ô nhập nào đang focus; Z, Shift+Z luôn có toast Hoàn tác. Hoàn tác khôi phục cả cụm vị trí và liên kết timebox; sự kiện ngoài đã bị xoá thì được tạo lại với giờ cũ (QC-05) |
 | BR-18 | **Lease và thất bại** (B6). Lượt nhận `DANG_CHAY` kèm `leaseUntil` = now + 5 phút; quá hạn mà chưa `XONG` coi như chưa chạy, lượt kế tiếp được nhận lại. Lỗi giao dịch → `LOI`, thử lại ở lượt job kế tiếp; sau 3 lần lỗi liên tiếp → `THAT_BAI`, job định kỳ ngừng thử, chờ chạy bù qua \[RolloverEnsure\] khi người dùng mở app (BR-19) |
 | BR-19 | **Đảm bảo rollover** (B6, dùng chung với G08). \[RolloverEnsure\] idempotent theo người dùng + ngày: `XONG` → trả kết quả đã có; `CHO`, `LOI`, `THAT_BAI` hoặc `DANG_CHAY` hết lease → chạy UC-04 bước 2–7 ngay trong request; `DANG_CHAY` còn lease → chờ tối đa 10 giây `[giả định]` rồi trả trạng thái hiện tại; `CHO_SHUTDOWN` → không ép chạy, trả trạng thái kèm `waitUntil` (BR-20). Client gọi khi mở app lần đầu trong ngày làm việc (G04) và trước khi tải bước "Xem lại hôm qua" (G08) |
-| BR-20 | **Chờ phiên shutdown** (Q18). Người dùng có phiên Daily shutdown của ngày cũ đang làm, mở trước mốc đầu ngày (G08) → lượt rollover ở `CHO_SHUTDOWN`; chạy khi phiên hoàn tất, bị bỏ dở, hoặc tới mốc đầu ngày + 2 giờ, tuỳ điều nào tới trước |
+| BR-20 | **Chờ phiên shutdown** (Q18, G08 BR-21). Người dùng có phiên Daily shutdown của ngày cũ đang làm, mở trước mốc đầu ngày (G08) → lượt rollover ở `CHO_SHUTDOWN`; chạy khi phiên hoàn tất, bị bỏ dở, hoặc tới mốc đầu ngày + 2 giờ, tuỳ điều nào tới trước. "Bỏ dở" theo định nghĩa của G08 BR-21. G06 nhận sự kiện `ritual.shutdown.closed` của G08 (phiên hoàn tất / bị bỏ dở) để chạy lượt đang `CHO_SHUTDOWN` ngay |
 | BR-21 | **Chế độ chỉ đọc (bản 1.1, QC-09).** Workspace chỉ đọc → không chạy rollover, không tạo lượt. Khi thoát chỉ đọc: rollover chạy bù một lần; các ngày làm việc bị đóng băng không tính vào số ngày bị hoãn (QC-04 mục 6). Bản 1.0 không có chế độ chỉ đọc |
 | BR-22 | **Đổi mốc đầu ngày hoặc timezone** (Q3, QC-01 mục 3): có hiệu lực từ ngày làm việc kế tiếp; ngày hiện tại kết thúc và rollover theo cài đặt cũ; không chạy lại rollover cho ngày đã có lượt `XONG` (EC-06) |
 
@@ -233,7 +233,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | A4 | Client offline qua mốc | Khi mở app hiển thị rollover tạm trên máy theo BR-06, BR-07, chỉ để hiển thị, không vào hàng đợi đồng bộ (QC-08 mục 5); có mạng thì gọi \[RolloverEnsure\] và lấy kết quả server làm chuẩn |
 | A5 | Task đang chạy timer | Rollover bình thường; timer không dừng (QC-05) |
 | A6 | Không có task thoả BR-06 | Ghi lượt `XONG` với số liệu 0 |
-| A7 | Phiên Daily shutdown của ngày cũ đang làm (Q18, BR-20) | `CHO_SHUTDOWN`; job các lượt sau kiểm lại; G08 báo phiên hoàn tất / bỏ dở thì chạy ngay; tới mốc + 2 giờ thì chạy dù phiên còn mở |
+| A7 | Phiên Daily shutdown của ngày cũ đang làm (Q18, BR-20, G08 BR-21) | `CHO_SHUTDOWN`; job các lượt sau kiểm lại; nhận sự kiện `ritual.shutdown.closed` (phiên hoàn tất / bỏ dở theo G08 BR-21) thì chạy ngay; tới mốc + 2 giờ thì chạy dù phiên còn mở |
 | A8 | Workspace chỉ đọc (bản 1.1, BR-21) | Không chạy. Khi thoát chỉ đọc: chạy bù một lần cho hôm nay; không tính các ngày bị đóng băng vào số ngày bị hoãn |
 | A9 | Lượt `DANG_CHAY` hết lease (worker chết) | Lượt job kế tiếp hoặc \[RolloverEnsure\] nhận lại, chạy từ bước 2 (BR-18) |
 
@@ -249,7 +249,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 
 | **Mục** | **Nội dung** |
 | --- | --- |
-| Tiền điều kiện | Sau UC-04 bước 4, task có số ngày bị hoãn ≥ 4 `[giả định]` (QC-04 mục 5); Auto-archive bật |
+| Tiền điều kiện | Sau UC-04 bước 4, task có số ngày bị hoãn ≥ 4 `[giả định]` (QC-04 mục 5); Tự lưu trữ bật |
 | Hậu điều kiện thành công | Task ở `LUU_TRU`; không còn trên hôm nay; không tính khối lượng ngày |
 | Hậu điều kiện thất bại | Như UC-04 (rollback cả lượt) |
 
@@ -266,7 +266,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | Auto-archive tắt | Bỏ qua UC-05; task ở `KE_HOACH` hôm nay, nhãn "Dời {n} ngày" |
+| A1 | Tự lưu trữ tắt | Bỏ qua UC-05; task ở `KE_HOACH` hôm nay, nhãn "Dời {n} ngày" |
 | A2 | Task đang chạy timer | Không lưu trữ ở lượt này `[giả định]`; xét lại ở lượt ngày sau |
 
 ### UC-06 Xem Lưu trữ, khôi phục và xoá tất cả
@@ -274,7 +274,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | **Mục** | **Nội dung** |
 | --- | --- |
 | Tiền điều kiện | Người dùng đã đăng nhập |
-| Hậu điều kiện thành công | Khôi phục: task về `KE_HOACH` hôm nay, số ngày bị hoãn = 0 (BR-14). Xoá tất cả: mọi task Lưu trữ ở `DA_XOA` (BR-15). Toggle: cài đặt Auto-archive lưu |
+| Hậu điều kiện thành công | Khôi phục: task về `KE_HOACH` hôm nay, số ngày bị hoãn = 0 (BR-14). Xoá tất cả: mọi task Lưu trữ ở `DA_XOA` (BR-15). Toggle: cài đặt Tự lưu trữ lưu |
 | Hậu điều kiện thất bại | Lưu trữ không đổi |
 
 **Luồng chính**
@@ -291,7 +291,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | A1 | Bấm "Xoá tất cả" | Mở **SCR-06** (MSG-15) → xác nhận → \[ArchiveDeleteAll\]; toast MSG-16 có Hoàn tác |
-| A2 | Bật / tắt "Auto-archive" | \[SettingsUpdate\] `autoArchive` (G01); áp từ lượt rollover kế tiếp |
+| A2 | Bật / tắt "Tự lưu trữ" | \[SettingsUpdate\] `autoArchive` (G01); áp từ lượt rollover kế tiếp |
 | A3 | Kéo task từ Lưu trữ vào cột ngày D | \[TaskRestore\] `{from: archive, startDate: D}`; D ≥ hôm nay (BR-14) |
 | A4 | Lưu trữ rỗng | Empty state MSG-19 |
 | A5 | Cuộn hết trang | Tải tiếp theo cursor, 50 dòng / lần |
@@ -350,6 +350,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | Phím Z / Shift+Z trên task | ✓ | – | UC-01 |
 | Menu Ngày dự định → "Chuyển vào backlog", "Lên đầu backlog" | ✓ | ✓ | SCR-03 |
 | Kéo task vào panel Backlog (panel phải) | ✓ | – | UC-01 A2 |
+| Kéo item tích hợp vào panel Backlog (bản 1.1) | ✓ | – | G11 UC-04 A7; SCR-01 #9 |
 | Panel phải → Lưu trữ / Shift+A | ✓ | ✓ | Mở SCR-05 |
 | Toast MSG-11 → "Xem Lưu trữ" | ✓ | ✓ | Mở SCR-05 |
 | Command menu Ctrl/Cmd+K | ✓ | – | "Chuyển vào backlog", "Mở Backlog", "Mở Lưu trữ" |
@@ -369,6 +370,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | 6 | Folder | Nhóm trong danh sách | Tên, số task; menu Đổi tên / Xoá |
 | 7 | Task card | Card (G02 SCR-02) | Kéo thả giữa bucket / folder / panel ngày; không có giờ projection |
 | 8 | Panel ngày | Cột ngày (G04) | Mặc định hôm nay, ‹ › đổi ngày; thả task → UC-03 |
+| 9 | Đích thả item tích hợp (bản 1.1) | Vùng thả (bucket) | Trang / panel Backlog nhận item kéo từ panel tích hợp; G11 tạo task qua \[TaskFromItem\] ở `BACKLOG` với `backlogBucket` = bucket thả (G11 BR-05, UC-04 A7, C34). Bucket và việc chống trùng theo G11 |
 
 ### SCR-02 Menu chọn bucket (phím Z)
 
@@ -399,7 +401,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
 | 1 | Tiêu đề + mô tả | Header | "Lưu trữ" · mô tả MSG-12 |
-| 2 | "Auto-archive" | Toggle | UC-06 A2 |
+| 2 | "Tự lưu trữ" | Toggle | UC-06 A2 |
 | 3 | "Xoá tất cả" | Button (nguy hiểm) | Mở SCR-06; disabled khi rỗng |
 | 4 | Danh sách task | List | Mỗi dòng: tiêu đề, #channel, thời lượng, ngày lưu trữ, nhãn lý do theo `archiveReason` (MSG-12 / MSG-13 / MSG-22) |
 | 5 | "Khôi phục" | Button (theo dòng) | UC-06 bước 3 |
@@ -418,7 +420,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
 | 1 | Nhãn "Dời {n} ngày" | Icon + số | Hiện khi số ngày bị hoãn n ≥ 1 (QC-04 mục 4); tooltip MSG-09 |
-| 2 | Màu | Trạng thái | n = ngưỡng Auto-archive − 1 đổi màu cảnh báo (lượt sau sẽ lưu trữ nếu bật) `[giả định]` |
+| 2 | Màu | Trạng thái | n = ngưỡng Tự lưu trữ − 1 đổi màu cảnh báo (lượt sau sẽ lưu trữ nếu bật) `[giả định]` |
 
 ## 8. API
 
@@ -475,7 +477,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | MSG-18 | Banner | (Bản 1.1) Gói dùng thử đã hết. Nâng cấp để tiếp tục thêm và sửa task |
 | MSG-19 | Empty state | Không có task nào được lưu trữ |
 | MSG-20 | Toast | Task này không còn tồn tại |
-| MSG-21 | Toast cảnh báo | Ngày này đã có {tên series} |
+| MSG-21 | Toast cảnh báo | Ngày này đã có {tên series} (dùng G03 MSG-21, QC-06) |
 | MSG-22 | Nhãn | Bạn đã lưu trữ |
 | MSG-23 | Toast | Task đã thay đổi trên thiết bị khác |
 | MSG-24 | Toast | Không thể đặt task chưa xong vào ngày đã qua |

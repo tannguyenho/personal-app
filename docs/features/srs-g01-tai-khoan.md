@@ -19,7 +19,7 @@
 
 | **ID** | **As a** | **I want** | **So that** |
 | --- | --- | --- | --- |
-| US-01 | Khách | Đăng ký bằng email + mật khẩu hoặc Google / Microsoft | Bắt đầu dùng thử ngay |
+| US-01 | Khách | Đăng ký bằng email + mật khẩu hoặc Google / Microsoft | Bắt đầu dùng ngay |
 | US-02 | Người dùng mới | Được dẫn qua 5 bước có sẵn giá trị gợi ý | App đúng giờ, đúng lịch, có task ngay ngày đầu |
 | US-03 | Người dùng | Đăng nhập một lần, phiên tự gia hạn | Không phải đăng nhập lại mỗi ngày |
 | US-04 | Người dùng | Đặt lại mật khẩu khi quên | Không mất tài khoản |
