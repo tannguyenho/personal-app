@@ -5,6 +5,8 @@
 > **Bản nháp.** Giá trị `[giả định]` cần BA / PO xác nhận. SRS này chỉ mô tả series lặp: bật lặp, sinh instance, sửa instance, sửa / dừng series, ngày ngoại lệ, quy tắc instance trùng series trong một ngày. Mô hình task và thao tác task thường (G02), board và projection (G04), timebox và lập lịch cứng (G05, bản 1.1), rollover và Lưu trữ (G06) đặc tả ở SRS riêng của từng nhóm. Mã API, CSDL tham chiếu tài liệu "Thiết kế kỹ thuật & đặc tả API — MVP 1.0".
 >
 > Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). Quy tắc `QC-xx` ở [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md). G03 sở hữu **QC-06** (instance trùng series trong một ngày); trạng thái instance theo QC-03 (G02); "hôm nay" là ngày làm việc (QC-01).
+>
+> Cập nhật thêm theo vòng 5–6: nhãn `WEEKDAYS` là "Thứ Hai–Thứ Sáu" và quy tắc lặp không theo lịch làm việc (Q43, BR-01, BR-03); sửa giờ timebox của instance là sửa riêng `customized` (Q44, BR-07, bảng phạm vi); bản 1.0 là app Windows cho một người dùng (Q35, Q45, [ADR-0005](../adr/0005-nen-tang-windows-truoc.md)).
 
 ## 1. Tổng quan
 
@@ -13,15 +15,15 @@
 | Mục tiêu | Người dùng biến task thành series lặp trong vài giây; instance có sẵn 60 ngày tới; sửa một instance không hỏi phạm vi; thao tác cả series qua một menu; không có hai instance cùng series do hệ thống đặt trong một ngày |
 | Actor | Người dùng đã đăng nhập · Hệ thống (job `recurrence.generate`, job `rollover` của G06) |
 | Phạm vi | Picker lặp (6 quy tắc, khoảng lặp, giờ "khoảng"), tạo series, sinh instance, ngày ngoại lệ, banner series, Trước / Sau, menu "Sửa series" (6 thao tác) và bảng phạm vi, danh sách series, quy tắc instance trùng series trong một ngày (QC-06) |
-| Ngoài phạm vi | Rollover và Lưu trữ (G06), projection (G04), timebox và lập lịch cứng (G05, bản 1.1, Q7), ngày kết thúc series, lặp theo ngày hoàn thành, objective (G09), giao task (G12), chế độ chỉ đọc (1.1, QC-09) |
-| Nền tảng | Web (desktop, mobile web) ở 1.0. App iOS / Android, desktop từ 1.1 dùng cùng đặc tả |
+| Ngoài phạm vi | Rollover và Lưu trữ (G06), projection (G04), timebox và lập lịch cứng (G05, bản 1.1, Q7), ngày kết thúc series, lặp theo ngày hoàn thành, lặp theo lịch làm việc / khung giờ channel (Q43), objective (G09), giao task (bản sau, Q35), chế độ chỉ đọc (1.1, QC-09) |
+| Nền tảng | App **Windows** (Flutter) ở 1.0, một người dùng, dữ liệu trên cloud gắn tài khoản (Q45, ADR-0005). Web, macOS từ 1.1; iOS / Android từ 1.2, dùng cùng đặc tả |
 | Figma | `[chưa có]` |
 
 ## 2. User Story
 
 | **ID** | **As a** | **I want** | **So that** |
 | --- | --- | --- | --- |
-| US-01 | Người dùng | Đặt task lặp theo ngày, ngày làm việc, tuần, tháng, năm | Không tạo lại việc định kỳ bằng tay |
+| US-01 | Người dùng | Đặt task lặp theo ngày, Thứ Hai–Thứ Sáu, tuần, tháng, năm | Không tạo lại việc định kỳ bằng tay |
 | US-02 | Người dùng | Thấy instance trên các ngày tới | Plan ngày / tuần đủ việc, thấy khối lượng |
 | US-03 | Người dùng | Sửa riêng một lần mà không bị hỏi | Thao tác nhanh, không làm hỏng các lần khác |
 | US-04 | Người dùng | Đổi tần suất, đặt giờ cho cả series | Điều chỉnh khi nhịp làm việc thay đổi |
@@ -34,37 +36,39 @@
 
 | **Mã** | **Quy tắc** |
 | --- | --- |
-| BR-01 | **Quy tắc lặp.** `DAILY`, `WEEKDAYS`, `WEEKLY` (1–7 thứ), `MONTHLY_DAY` (ngày 1–31), `MONTHLY_NTH` (thứ 1–4 / cuối cùng `[giả định]` + thứ trong tuần), `YEARLY` (ngày / tháng). Khoảng lặp `interval` 1–99 (trừ `WEEKDAYS`). Giới hạn lấy từ \[AppConfig\] |
+| BR-01 | **Quy tắc lặp.** `DAILY`, `WEEKDAYS` (nhãn hiển thị "Thứ Hai–Thứ Sáu", **không** gọi "Ngày làm việc"; luôn là Thứ Hai đến Thứ Sáu, Q43), `WEEKLY` (1–7 thứ), `MONTHLY_DAY` (ngày 1–31), `MONTHLY_NTH` (thứ 1–4 / cuối cùng `[giả định]` + thứ trong tuần), `YEARLY` (ngày / tháng). Khoảng lặp `interval` 1–99 (trừ `WEEKDAYS`). Giới hạn lấy từ \[AppConfig\] |
 | BR-02 | **Bật lặp** (C14). Chỉ cho task `KE_HOACH` hoặc `BACKLOG`; task `HOAN_THANH` → không bật lặp được (409 `TASK_COMPLETED`, MSG-22). Task không có ngày (backlog) → coi ngày dự định là hôm nay `[giả định]`. Tạo Series với `weekStart` (BR-03) và `anchorDate` = ngày khớp quy tắc **đầu tiên** ≥ max(ngày dự định của task, hôm nay). Task trở thành instance đầu: `seriesDate` = `startDate` = `anchorDate`; nếu ngày dự định đã khớp quy tắc thì giữ nguyên ngày, ngược lại task được dời theo đường "chọn ngày" của QC-05 `[giả định]`. Task đã thuộc series `DANG_LAP` → mở "Đổi tần suất" thay vì tạo series mới; lệnh bật lặp tới sau cho cùng task (hai thiết bị offline) → 409 `ALREADY_REPEATING`, MSG-23 (QC-08 mục 4) |
-| BR-03 | **Tính ngày.** Ngày khớp quy tắc tính từ `anchorDate`, chỉ theo ngày (không giờ). `MONTHLY_DAY` 29–31 → ngày cuối tháng ở tháng ngắn hơn, tháng sau dùng lại ngày đã chọn. `YEARLY` 29/2 → 28/2 năm không nhuận. **Ngày đầu tuần** lấy từ cài đặt của người dùng (G01) lúc tạo series, lưu cố định trên series (`weekStart`); đổi cài đặt sau này không đổi lịch của series đã có (C14). "Mỗi N tuần" đếm tuần theo `weekStart` tính từ tuần chứa `anchorDate` |
+| BR-03 | **Tính ngày.** Ngày khớp quy tắc tính từ `anchorDate`, chỉ theo ngày (không giờ). `MONTHLY_DAY` 29–31 → ngày cuối tháng ở tháng ngắn hơn, tháng sau dùng lại ngày đã chọn. `YEARLY` 29/2 → 28/2 năm không nhuận. **Ngày đầu tuần** lấy từ cài đặt của người dùng (G01) lúc tạo series, lưu cố định trên series (`weekStart`); đổi cài đặt sau này không đổi lịch của series đã có (C14). "Mỗi N tuần" đếm tuần theo `weekStart` tính từ tuần chứa `anchorDate`. **Không theo lịch làm việc** (Q43): ngày khớp quy tắc chỉ phụ thuộc quy tắc, không đọc lịch làm việc chung (G01) hay khung giờ channel (G02 BR-22); ví dụ lịch làm việc có Thứ Bảy thì `WEEKDAYS` vẫn không sinh Thứ Bảy, lịch làm việc bỏ Thứ Tư thì `DAILY` vẫn sinh Thứ Tư. Lịch làm việc của task (QC-02 mục 6) chỉ áp cho instance như task thường: projection, sức chứa (G04), số ngày bị hoãn (QC-04), "ngày làm việc kế tiếp" khi dời |
 | BR-04 | **Sinh instance.** Job `recurrence.generate` sinh mọi ngày khớp quy tắc trong khoảng (max(`generatedUntil`, hôm qua), hôm nay + 60 ngày]; `generatedUntil` khởi tạo = `anchorDate`. **Không sinh**: ngày < hôm nay (C14); ngày thuộc danh sách ngày ngoại lệ (BR-15); ngày gốc đã có instance còn gắn series. Khoá duy nhất `(series_id, series_date)` chỉ áp trên instance còn gắn series và chưa bị xoá vĩnh viễn; ngày người dùng đã bỏ được chặn bằng ngày ngoại lệ, không bằng khoá (Q26). Job idempotent. (1.1) Workspace chỉ đọc → dừng sinh; khi thoát chỉ sinh ngày ≥ hôm nay (QC-09) |
 | BR-05 | **Trường sao chép.** Instance mới lấy từ mẫu của series: tiêu đề, notes, channel, `plannedMin`, `approxTime`; priority và subtask (chưa xong) `[giả định]`. Không sao chép comment, objective, timebox, thời gian thực tế, nhật ký; ngoại lệ: series đã được "Gắn cho cả series" với một objective thì instance sinh ra có ngày dự định trong tuần của objective đó được chép `objectiveId` (G09 BR-25). Mẫu = ảnh chụp task lúc bật lặp, chỉ đổi qua BR-08 (c) và khi channel của mẫu bị xoá (G02 BR-14, C10) |
 | BR-06 | **Giờ.** Instance không cố định giờ, hiện projection (G04). `approxTime` chỉ hiện trên card. **Bản 1.0 không tạo timebox cho instance.** Lập lịch cứng cho task lặp (cửa sổ 7 ngày `[giả định]`) do G05 sở hữu, phát hành bản 1.1 (Q7), đặc tả ở G05 BR-23 / UC-09; G03 chỉ lưu `approxTime` làm đầu vào |
-| BR-07 | **Sửa một instance** chỉ đổi instance đó, không hỏi phạm vi, không đổi mẫu. Dời ngày instance giữ ngày gốc (`seriesDate`); mọi đường đổi ngày áp QC-06 (BR-16). Hoàn thành / xoá instance theo G02; hoàn thành giữ nguyên ngày dự định (G02 BR-08 d, Q12); xoá → ngày gốc thành ngày ngoại lệ (BR-15). Không ảnh hưởng instance khác. Xoá instance đầu không dừng series. Sửa riêng một trường thuộc BR-05 (trừ tích / bỏ tích subtask) đặt cờ `customized = true` `[giả định]`; từ bản 1.1, kéo / đổi thời lượng / gỡ timebox lập lịch cứng của instance cũng đặt cờ này (G05 BR-23 e); dời ngày được nhận biết qua `startDate` ≠ `seriesDate` |
+| BR-07 | **Sửa một instance** chỉ đổi instance đó, không hỏi phạm vi, không đổi mẫu. Dời ngày instance giữ ngày gốc (`seriesDate`); mọi đường đổi ngày áp QC-06 (BR-16). Hoàn thành / xoá instance theo G02; hoàn thành giữ nguyên ngày dự định (G02 BR-08 d, Q12); xoá → ngày gốc thành ngày ngoại lệ (BR-15). Không ảnh hưởng instance khác. Xoá instance đầu không dừng series. Sửa riêng một trường thuộc BR-05 (trừ tích / bỏ tích subtask) đặt cờ `customized = true` `[giả định]`. **Sửa giờ timebox** của instance (đổi giờ bắt đầu / kết thúc hoặc thời lượng của timebox, kể cả kéo trên lịch; đổi giờ sự kiện ở lịch ngoài được đồng bộ về theo G05 cũng tính `[giả định]`) đặt `customized = true` (Q44), ở 1.0 với timebox người dùng tự tạo và từ 1.1 với timebox lập lịch cứng (G05 BR-23 e). Đặt mới hoặc gỡ timebox cũng đặt cờ này `[giả định]`. Cờ chỉ bật, không tự tắt. Dời ngày được nhận biết qua `startDate` ≠ `seriesDate`. Hệ quả với bảng phạm vi: instance `customized` (kể cả chỉ vì sửa giờ timebox) nằm ở cột "đã dời / sửa riêng" |
 | BR-08 | **Sửa series** (menu "Sửa series"), phạm vi từng thao tác theo **bảng phạm vi** dưới đây (C12). (a) **Dừng lặp**: `stoppedAt` = now, không sinh thêm. (b) **Đổi tần suất**: cập nhật quy tắc, so khớp theo **ngày gốc** (Q26), rồi chạy UC-02 sinh ngày mới. (c) **Cập nhật mọi instance chưa xong theo task này**: chép trường BR-05 của instance đang mở vào mẫu và các instance trong phạm vi; subtask gộp theo tiêu đề để giữ tiến độ (C12). (d) **Xoá mọi instance chưa xong và dừng lặp**: xoá mềm các instance trong phạm vi, dừng series; cần xác nhận `[giả định]`. (e) **Đặt giờ bắt đầu**: đặt / xoá `approxTime` cho mẫu và các instance trong phạm vi. (f) **Quản lý mọi task lặp**: mở SCR-05. Mọi thao tác (a)–(e) không đụng instance `LUU_TRU`, `DA_XOA` (C12) và áp BR-17 cho instance có timer hoặc thời gian thực tế (C13) |
 | BR-09 | Mọi thao tác BR-08 (a)–(e) có Hoàn tác trong toast ≥ 5 giây; Hoàn tác trả quy tắc, mẫu và các instance bị ảnh hưởng về như trước: instance bị xoá hẳn được tạo lại, instance bị tách được gắn lại series, liên kết timebox và sự kiện ngoài khôi phục theo QC-05. Hoàn tác **không** chạy lại timer đã bị dừng (BR-17) |
 | BR-10 | **Instance bị bỏ lỡ**: theo QC-06 (BR-16), G06 thực thi trong rollover. Series đã có instance hôm nay (QC-06 mục 1, B5) → instance quá khứ chưa xong chuyển `LUU_TRU`, `archiveReason = skipped`, chỉ ghi nhật ký (EC-30). Series chưa có instance hôm nay → chỉ instance quá khứ mới nhất (ngày gốc lớn nhất) rollover, các instance cũ hơn → `skipped` `[giả định]`. Instance được rollover tính số ngày bị hoãn như task thường (QC-04) |
 | BR-11 | "Hôm nay" là ngày làm việc theo QC-01. Đổi timezone không đổi ngày dự định và ngày gốc đã sinh (QC-01 mục 4) |
 | BR-12 | Tối đa 200 series `DANG_LAP` / người dùng `[giả định]`. Series đã dừng không bật lại; bật Lặp lại trên một instance của series đã dừng → tạo series mới từ instance đó |
 | BR-13 | Nhật ký (\[ActivityLog\], G02): bật lặp, đổi quy tắc, áp mẫu, dừng ghi trên instance thực hiện; instance do job sinh ghi tác nhân `system` "Tạo từ series {tiêu đề}"; instance bị tách ghi "Tách khỏi series do đổi tần suất"; thêm ngày ngoại lệ ghi trên series |
-| BR-14 | Series thuộc người dùng tạo; chỉ người đó xem và sửa (đến khi có workspace nhiều thành viên, G12, bản 1.1) |
+| BR-14 | Series thuộc người dùng tạo; chỉ người đó xem và sửa. Bản 1 chỉ một người dùng; workspace nhiều thành viên và giao task để bản sau (Q35, G12) |
 | BR-15 | **Ngày ngoại lệ** (Q26). Series lưu danh sách `exceptionDates`. Người dùng xoá một instance (G02 UC-04, BR-08 d) → ngày gốc của instance đó thêm vào danh sách, **vĩnh viễn**: khôi phục instance từ Thùng rác, Hoàn tác, hay Thùng rác xoá vĩnh viễn sau 30 ngày đều không gỡ ngày ngoại lệ. Instance do hệ thống xoá hẳn khi đổi quy tắc (BR-08 b) không tạo ngày ngoại lệ. Job không bao giờ sinh instance cho ngày ngoại lệ (BR-04). Instance đã tách khỏi series bị xoá không tạo ngày ngoại lệ |
 | BR-16 | **Instance trùng series trong một ngày**: G03 sở hữu quy tắc **QC-06**. "Ngày đã có instance" theo QC-06 mục 1 (B5). Đường tự động / hàng loạt (rollover G06, phím D G04, shutdown "Ngày mai" G08) → instance được đưa vào chuyển `LUU_TRU` lý do `skipped`, toast Hoàn tác (rollover chỉ ghi nhật ký). Đường thủ công từng task (kéo thả, chọn ngày G04; khôi phục G02, G06) → cho phép, cảnh báo "Ngày này đã có {tên series}" — thông báo gốc là G03 MSG-21; G02 MSG-24, G04 MSG-23, G06 MSG-21 dùng lại nội dung này. Nhóm sở hữu từng đường thực thi, G03 không tự chặn |
 | BR-17 | **Timer và thời gian thực tế khi đổi hoặc dừng series** (C13). Instance trong phạm vi BR-08 (a), (b), (d) đang chạy timer → dừng timer (G07) trước khi áp thao tác. Instance có bản ghi thời gian (kể cả vừa dừng timer) → **không xoá**: giữ lại; với (b) nếu ngày gốc không khớp quy tắc mới thì tách khỏi series như instance đã dời / sửa riêng. Toast nêu số instance được giữ (MSG-24) |
 
 **Bảng phạm vi sửa series** (BR-08; C12, C13, Q26). "Gắn series" = instance còn `seriesId` của series này. "Hôm nay", "tương lai" so theo ngày dự định của instance.
 
-| **Thao tác** | **`KE_HOACH` tương lai, chưa dời, chưa sửa riêng, không có thời gian thực tế** | **`KE_HOACH` tương lai đã dời / sửa riêng / có thời gian thực tế** | **`KE_HOACH` hôm nay** | **`KE_HOACH` quá khứ (chưa rollover)** | **`HOAN_THANH`** | **`LUU_TRU`, `DA_XOA`** | **Mẫu** |
+| **Thao tác** | **`KE_HOACH` tương lai, chưa dời, chưa sửa riêng (kể cả chưa sửa giờ timebox), không có thời gian thực tế** | **`KE_HOACH` tương lai đã dời / sửa riêng (gồm sửa giờ timebox, Q44) / có thời gian thực tế** | **`KE_HOACH` hôm nay** | **`KE_HOACH` quá khứ (chưa rollover)** | **`HOAN_THANH`** | **`LUU_TRU`, `DA_XOA`** | **Mẫu** |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | (a) Dừng lặp | Xoá mềm `[giả định]` | Đã dời / sửa riêng: xoá mềm `[giả định]`. Có thời gian thực tế: giữ (BR-17) | Giữ | Giữ | Giữ | Không đụng | Giữ, series `DA_DUNG` |
 | (b) Đổi tần suất | Ngày gốc khớp quy tắc mới → giữ; không khớp → **xoá hẳn**, không tạo ngày ngoại lệ (BR-15) | Ngày gốc khớp → giữ; không khớp → giữ và **tách khỏi series** (Q26, BR-17), banner MSG-25 | Giữ (EC-29) | Giữ (EC-29) | Giữ | Không đụng | Quy tắc mới |
-| (c) Cập nhật theo task này | Chép trường BR-05; subtask gộp theo tiêu đề | Như cột trước (ghi đè cả phần sửa riêng) | Như cột trước | Giữ | Giữ | Không đụng | Chép trường BR-05 |
+| (c) Cập nhật theo task này | Chép trường BR-05; subtask gộp theo tiêu đề | Như cột trước (ghi đè cả phần sửa riêng); timebox giữ nguyên vì không thuộc BR-05; cờ `customized` giữ | Như cột trước | Giữ | Giữ | Không đụng | Chép trường BR-05 |
 | (d) Xoá mọi instance chưa xong và dừng | Xoá mềm, tạo ngày ngoại lệ (BR-15) | Xoá mềm; có thời gian thực tế → giữ (BR-17) | Như cột trước | Như cột trước | Giữ | Không đụng | Giữ, series `DA_DUNG` |
-| (e) Đặt giờ bắt đầu | Đặt / xoá `approxTime` | Như cột trước | Như cột trước | Giữ | Giữ | Không đụng | Đặt / xoá `approxTime` |
+| (e) Đặt giờ bắt đầu | Đặt / xoá `approxTime` | Như cột trước; instance có timebox giữ nguyên timebox, không dời theo `approxTime` | Như cột trước | Giữ | Giữ | Không đụng | Đặt / xoá `approxTime` |
 
 **Gộp subtask theo tiêu đề** ở (c) (C12): subtask trên instance có cùng tiêu đề với subtask của mẫu mới → giữ trạng thái xong và thời gian thực tế, cập nhật thời lượng và thứ tự; subtask mới trong mẫu → thêm ở `CHUA_XONG`; subtask không còn trong mẫu → gỡ nếu chưa xong và chưa có thời gian thực tế, ngược lại giữ `[giả định]`.
 
 Instance bị xoá mềm, xoá hẳn hay tách có timebox → xử lý timebox theo QC-05 dòng "Xoá" (tách: giữ timebox như task thường).
+
+**Hệ quả của Q44 (sửa giờ timebox = sửa riêng).** Instance chỉ khác mẫu ở giờ timebox vẫn thuộc cột "đã dời / sửa riêng": (a) Dừng lặp → xoá mềm `[giả định]`, timebox theo QC-05 dòng "Xoá"; (b) Đổi tần suất, ngày gốc không khớp → **không** bị xoá hẳn mà được giữ, tách khỏi series cùng timebox (MSG-24, MSG-25); (c) Cập nhật theo task này → nội dung bị ghi đè, timebox giữ; (d) Xoá mọi instance chưa xong → xoá mềm, timebox theo QC-05 dòng "Xoá"; (e) Đặt giờ bắt đầu → chỉ đổi `approxTime`. Từ bản 1.1, lập lịch cứng (G05 BR-23) không ghi đè timebox của instance `customized`.
 
 ## 4. Trạng thái
 
@@ -200,6 +204,7 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | A6 | Hoàn thành instance ở ngày tương lai | Giữ nguyên ngày dự định (G02 BR-08 d, Q12) |
 | A7 | Xoá instance | Theo G02 UC-04 A4; ngày gốc thành ngày ngoại lệ (BR-15) |
 | A8 | Instance đã tách khỏi series | Banner MSG-25 thay SCR-02; không có "Sửa series", Trước / Sau |
+| A9 | Đổi giờ / thời lượng timebox của instance (G05: kéo trên lịch, sửa giờ) | Áp theo G05; instance đặt `customized = true` (BR-07, Q44); không hỏi phạm vi, mẫu series không đổi. Đặt mới / gỡ timebox: cũng đặt cờ `[giả định]` |
 
 **Luồng lỗi**
 
@@ -235,7 +240,7 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | A3 | Bấm Hoàn tác | Gọi \[SeriesUpdate\] / \[SeriesApplyFrom\] với `undoToken`; khôi phục theo BR-09 |
 | A4 | Quy tắc mới giống quy tắc cũ | Đóng SCR-01, không gọi API |
 | A5 | Có instance quá khứ, hôm nay, đã xong, `LUU_TRU` hoặc `DA_XOA` (EC-29, C12) | Giữ nguyên |
-| A6 | Có instance tương lai đã dời, sửa riêng, đang chạy timer hoặc có thời gian thực tế mà ngày gốc không khớp quy tắc mới | Dừng timer nếu đang chạy; giữ instance và tách khỏi series (BR-08 b, BR-17); toast MSG-07 kèm MSG-24 |
+| A6 | Có instance tương lai đã dời, sửa riêng (gồm sửa giờ timebox, Q44), đang chạy timer hoặc có thời gian thực tế mà ngày gốc không khớp quy tắc mới | Dừng timer nếu đang chạy; giữ instance và tách khỏi series (BR-08 b, BR-17); toast MSG-07 kèm MSG-24 |
 
 **Luồng lỗi**
 
@@ -341,10 +346,10 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 
 ## 6. Điểm vào
 
-| **Điểm vào** | **Web** | **App** (1.1) | **Ghi chú** |
+| **Điểm vào** | **App Windows** (1.0) | **Web, macOS** (1.1) | **Ghi chú** |
 | --- | --- | --- | --- |
 | Menu … của task → "Lặp lại" | ✓ | ✓ | Mở SCR-01 (UC-01, hoặc UC-04 nếu đã lặp) |
-| Command menu Ctrl/Cmd+K → "Lặp lại" | ✓ | – | Task đang chọn / hover |
+| Command menu Ctrl/Cmd+K → "Lặp lại" | ✓ | ✓ | Task đang chọn / hover |
 | Banner series → "Sửa series" | ✓ | ✓ | Mở SCR-03 |
 | Banner series → Trước / Sau | ✓ | ✓ | UC-03 A1 |
 | Cài đặt → "Task lặp lại" | ✓ | ✓ | Mở SCR-05 |
@@ -355,9 +360,9 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
-| 1 | Lặp | Dropdown | Có | Hằng ngày · Ngày làm việc (T2–T6) · Hằng tuần · Hằng tháng vào ngày {D} · Hằng tháng vào {thứ N} {thứ} · Hằng năm vào {ngày/tháng} |
+| 1 | Lặp | Dropdown | Có | Hằng ngày · Thứ Hai–Thứ Sáu (`WEEKDAYS`; không dùng nhãn "Ngày làm việc", Q43) · Hằng tuần · Hằng tháng vào ngày {D} · Hằng tháng vào {thứ N} {thứ} · Hằng năm vào {ngày/tháng} |
 | 2 | Vào (thứ) | Nhóm 7 nút | Có khi Hằng tuần | Thứ tự bắt đầu từ ngày đầu tuần (BR-03); mặc định thứ của `startDate`; bỏ hết → MSG-03 |
-| 3 | Mỗi N | Số + đơn vị | Có (trừ Ngày làm việc) | 1–99; sai → MSG-02 |
+| 3 | Mỗi N | Số + đơn vị | Có (trừ Thứ Hai–Thứ Sáu) | 1–99; sai → MSG-02 |
 | 4 | Vào khoảng | Time picker | Không | Bước 15 phút; có "Không đặt giờ"; chỉ hiện trên card, không tạo timebox ở 1.0 (BR-06) |
 | 5 | Ghi chú ngày đặc biệt | Hint | – | MSG-04 / MSG-05 khi chọn 29–31 hoặc 29/2 |
 | 6 | Mô tả quy tắc | Text | – | Câu đọc được, ví dụ "Mỗi 2 tuần vào Thứ Ba, Thứ Năm" |
@@ -473,6 +478,7 @@ Bản EN: `[chờ bổ sung]`.
 
 | **Mục** | **Yêu cầu** `[giả định]` |
 | --- | --- |
+| Nền tảng | App Windows (Flutter) ở 1.0 (Q45, ADR-0005); job sinh instance chạy trên server (dữ liệu trên cloud), không phụ thuộc app đang mở. Kiến trúc cụ thể do tech chốt (`docs/tech/`) |
 | Hiệu năng | \[SeriesCreate\] p95 ≤ 500 ms (gồm sinh 14 ngày đầu); instance 60 ngày hiện đủ trên board ≤ 5 giây; job sinh ≤ 50 ms / series |
 | Toàn vẹn | Khoá duy nhất `(series_id, series_date)` trên instance còn gắn series (BR-04); ngày ngoại lệ lưu trên series, độc lập vòng đời task (BR-15); job idempotent, chạy lại không tạo trùng; thao tác series trong một giao dịch |
 | Offline | Bật lặp, sửa instance chạy được khi mất mạng (hàng đợi, QC-08); hai thiết bị cùng bật lặp một task → lệnh tới sau bị từ chối `ALREADY_REPEATING`; thao tác series (BR-08) cần mạng, nút disabled kèm tooltip khi offline |
@@ -480,5 +486,5 @@ Bản EN: `[chờ bổ sung]`.
 | Bảo mật | Chỉ chủ series đọc / sửa (BR-14); kiểm tra quyền trên cả series và task trong mọi API |
 | Log / audit | \[ActivityLog\] theo BR-13; log job: số series, số instance tạo, lỗi; không chứa tiêu đề / notes |
 | Giám sát | Cảnh báo khi tỉ lệ lỗi job > 0,1% / ngày hoặc có series `generatedUntil` < hôm nay + 53 ngày |
-| Tracking | Sự kiện: `repeat_picker_opened`, `series_created` (rule type), `series_frequency_changed`, `series_applied_from_task`, `series_time_set`, `series_stopped` (deleteIncomplete), `series_instance_skipped` (đường: rollover / phím D / shutdown), `series_same_day_warning`, `series_instance_detached`, `series_exception_added`, `series_list_opened` |
-| Accessibility | SCR-01 điều khiển hoàn toàn bằng bàn phím; nút thứ có nhãn đọc màn hình đầy đủ ("Thứ Hai"); biểu tượng lặp có nhãn "Task lặp lại: {quy tắc}" |
+| Tracking | Sự kiện: `repeat_picker_opened`, `series_created` (rule type), `series_frequency_changed`, `series_applied_from_task`, `series_time_set`, `series_stopped` (deleteIncomplete), `series_instance_skipped` (đường: rollover / phím D / shutdown), `series_same_day_warning`, `series_instance_detached`, `series_instance_customized` (nguồn: trường nội dung / giờ timebox), `series_exception_added`, `series_list_opened` |
+| Accessibility | SCR-01 điều khiển hoàn toàn bằng bàn phím; nút thứ có nhãn đọc màn hình đầy đủ ("Thứ Hai"); lựa chọn `WEEKDAYS` đọc là "Thứ Hai đến Thứ Sáu"; biểu tượng lặp có nhãn "Task lặp lại: {quy tắc}" |

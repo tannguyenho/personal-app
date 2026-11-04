@@ -1,10 +1,10 @@
 > **Mã:** PLN-SRS-G04-WEB · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g04-board-ngay.md
 
-# UC-G04 - Board ngày, projection, khối lượng, tìm kiếm & phím tắt trên Web / App (ứng dụng lập kế hoạch ngày)
+# UC-G04 - Board ngày, projection, khối lượng, tìm kiếm & phím tắt trên app Windows (ứng dụng lập kế hoạch ngày)
 
 > **Bản nháp.** Giá trị `[giả định]` cần BA / PO xác nhận. SRS này chỉ mô tả cách hiển thị và di chuyển task trên board: chế độ xem, điều hướng ngày, kéo thả và sắp xếp, projection, cảnh báo khối lượng, bộ lọc channel, tìm kiếm, command menu và phím tắt. Nội dung task (G02), lặp lại (G03), timebox và lịch (G05), backlog / rollover / lưu trữ (G06), timer và Focus (G07), Daily planning / shutdown (G08), objective (G09), tích hợp (G11) đặc tả ở SRS riêng của từng nhóm. Mã API, CSDL tham chiếu tài liệu "Thiết kế kỹ thuật & đặc tả API — MVP 1.0".
 >
-> **Quy tắc dùng chung** ([`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md)): ngày làm việc QC-01, lịch làm việc QC-02, trạng thái task QC-03, số ngày bị hoãn QC-04, đổi ngày task QC-05, instance trùng series QC-06, đồng bộ QC-08, chế độ chỉ đọc QC-09 (bản 1.1). SRS này chỉ tham chiếu, không định nghĩa lại. Thuật ngữ theo [`CONTEXT.md`](../../CONTEXT.md). Chốt theo [quyết định 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md).
+> **Quy tắc dùng chung** ([`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md)): ngày làm việc QC-01, lịch làm việc và khung giờ channel QC-02, trạng thái task QC-03, số ngày bị hoãn QC-04, đổi ngày task QC-05, instance trùng series QC-06, đồng bộ QC-08, chế độ chỉ đọc QC-09 (bản 1.1). SRS này chỉ tham chiếu, không định nghĩa lại. Thuật ngữ theo [`CONTEXT.md`](../../CONTEXT.md). Chốt theo [quyết định 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md).
 
 ## 1. Tổng quan
 
@@ -13,8 +13,8 @@
 | Mục tiêu | Người dùng thấy task theo ngày, biết giờ dự kiến làm từng task và ngày nào quá tải; di chuyển, sắp xếp, lọc, tìm task và gọi mọi lệnh bằng bàn phím |
 | Actor | Người dùng đã đăng nhập · Hệ thống (tính projection / khối lượng) · Dịch vụ lịch (G05, cung cấp sự kiện bận) · Dịch vụ tìm kiếm |
 | Phạm vi | Home board, Today view, 6 chế độ xem, điều hướng ngày, kéo thả, phím di chuyển, sắp xếp lại, projection, cảnh báo khối lượng, bộ lọc channel, tìm kiếm, command menu, bảng phím tắt, khung panel phải |
-| Ngoài phạm vi | Tạo / sửa task, timebox và đồng bộ lịch, nội dung panel Backlog / Lưu trữ / Objectives / tích hợp, timer, ritual, chọn nhiều task (sau 1.1), banner đổi timezone (G01 MSG-23), màn Lịch làm việc (G01), "Latest updates" (bỏ khỏi phạm vi, C36) |
-| Nền tảng | Web (desktop, mobile web) ở 1.0. App iOS / Android, desktop từ 1.1 dùng cùng đặc tả |
+| Ngoài phạm vi | Tạo / sửa task, timebox và đồng bộ lịch, nội dung panel Backlog / Lưu trữ / Objectives / tích hợp, timer, ritual, chọn nhiều task (sau 1.1), banner đổi timezone (G01 MSG-23), màn Lịch làm việc (G01), cài đặt khung giờ channel (G02, QC-02 mục 5), "Latest updates" (bỏ khỏi phạm vi, C36) |
+| Nền tảng | App Windows (Flutter) ở 1.0 (Q45, ADR-0005). Web, macOS từ 1.1; iOS / Android từ 1.2 dùng cùng đặc tả. Lưu dữ liệu trên máy, tính nền, kiến trúc: tech chốt — `docs/tech/` |
 | Figma | `[chưa có]` |
 
 ## 2. User Story
@@ -37,13 +37,13 @@
 | BR-01 | **Ngày làm việc.** "Hôm nay", "ngày mai" và ngày của mỗi cột tính bằng `workday(t)` theo QC-01 (mốc đầu ngày mặc định 04:00, chỉnh 00:00–06:00). Đổi mốc đầu ngày hoặc timezone có hiệu lực từ ngày làm việc kế tiếp (QC-01 mục 3) |
 | BR-02 | **Tổng thời lượng ngày D** = Σ `plannedMin` của task `KE_HOACH` hoặc `HOAN_THANH` (QC-03) có `startDate = D`, gồm cả task đã xong; không cộng riêng planned của subtask; task chưa có thời lượng tính 0 `[giả định]`. Hiển thị H:MM |
 | BR-03 | **Thanh tiến độ** = Σ planned task xong / tổng thời lượng (BR-02). Tổng = 0 → tính theo số task xong / số task `[giả định]` |
-| BR-04 | **Sức chứa còn lại của ngày D** = min(ngưỡng khối lượng, thời gian trống còn lại) `[giả định — cách kết hợp ngưỡng với B7]`. Thời gian trống còn lại = phần giờ làm của D theo Lịch làm việc (QC-02, G01 sở hữu) tính từ điểm bắt đầu (ngày tương lai: giờ bắt đầu làm; hôm nay: max(giờ bắt đầu làm, hiện tại)) tới giờ kết thúc làm, trừ hợp các khoảng sự kiện chặn thời gian (busy, tentative; G05). Không trừ: sự kiện đã từ chối, free, cả ngày (EC-17), sự kiện do app tạo từ timebox (có `appTaskId`), sự kiện ở lịch đang ẩn. Sự kiện gốc của timebox liên kết sự kiện được trừ đúng một lần (B8, BR-05). Ngày không có trong Lịch làm việc: giờ làm = 0 `[giả định]`. Ghi đè giờ làm việc theo channel không áp cho sức chứa ngày `[giả định]` |
+| BR-04 | **Sức chứa còn lại của ngày D** = min(ngưỡng khối lượng, thời gian trống còn lại) `[giả định — cách kết hợp ngưỡng với B7]`. **Giờ làm của D** = **hợp** các khoảng giờ làm của D theo lịch chung (G01) và theo mọi khung giờ channel có ngày D (G02) (QC-02 mục 7); khoảng chồng nhau chỉ tính một lần. Thời gian trống còn lại = phần giờ làm của D từ điểm bắt đầu (ngày tương lai: đầu khoảng sớm nhất; hôm nay: hiện tại) trở đi, trừ hợp các khoảng sự kiện chặn thời gian (busy, tentative; G05). Không trừ: sự kiện đã từ chối, free, cả ngày (EC-17), sự kiện do app tạo từ timebox (có `appTaskId`), sự kiện ở lịch đang ẩn. Sự kiện gốc của timebox liên kết sự kiện được trừ đúng một lần (B8, BR-05). D không có trong lịch chung và không có khung channel nào: giờ làm = 0 `[giả định]`. Ví dụ ở mục 3.1 |
 | BR-05 | **Quá tải** (B7). Khối lượng còn lại = Σ planned của task chưa xong ngày D, không tính task có timebox liên kết sự kiện (thời gian của sự kiện gốc đã trừ ở BR-04, B8). Khối lượng còn lại > sức chứa còn lại → ngày `QUA_TAI`. Cộng dồn planned theo thứ tự hiển thị, **chỉ trên task chưa xong**; task làm tổng cộng dồn vượt sức chứa còn lại và mọi task chưa xong sau nó có cờ `VUOT_NGUONG`, tooltip MSG-03 với X = sức chứa còn lại |
-| BR-06 | **Projection.** Áp cho hôm nay và ngày tương lai, khi bật "Hiện projection". Lấy task chưa xong, chưa timebox, có planned, theo thứ tự hiển thị; đặt liên tiếp từ điểm bắt đầu (giờ bắt đầu làm việc; với hôm nay = max(giờ bắt đầu làm việc, hiện tại làm tròn lên 5 phút) `[giả định]`); gặp sự kiện bận hoặc timebox thì nhảy qua; giữa hai task cộng khoảng đệm (mặc định 0). Task không có planned: không có giờ dự kiến, không chiếm khe `[giả định]`. Projection chỉ hiển thị (mờ), không ghi ra lịch ngoài |
+| BR-06 | **Projection.** Áp cho hôm nay và ngày tương lai, khi bật "Hiện projection". Lấy task chưa xong, chưa timebox, có planned, theo thứ tự hiển thị. **Lịch của task** = khung giờ channel của task nếu channel có khung, ngược lại lịch chung (QC-02 mục 6). Mỗi task đặt vào khe trống sớm nhất **trong giờ làm của D theo lịch của task**, không sớm hơn điểm bắt đầu (hôm nay: hiện tại làm tròn lên 5 phút `[giả định]`), không chồng sự kiện bận, timebox và task đã xếp trước nó `[giả định — cách xếp khi có nhiều lịch]`; giữa hai task liền nhau cộng khoảng đệm (mặc định 0). Hết giờ làm của lịch của task thì xếp tiếp sau giờ kết thúc của lịch đó (cờ `VUOT_GIO_LAM`, BR-22). D không có trong lịch của task: xếp từ giờ bắt đầu mặc định 09:00 `[giả định]`, task mang cờ `VUOT_GIO_LAM`. Chỉ có lịch chung (không channel nào đặt khung) thì kết quả là xếp liên tiếp từ giờ bắt đầu làm việc như Sunsama. Task không có planned: không có giờ dự kiến, không chiếm khe `[giả định]`. Projection chỉ hiển thị (mờ), không ghi ra lịch ngoài |
 | BR-07 | **Tự sắp** (khi bật): task đã timebox theo giờ bắt đầu → priority (1→4) → vị trí tuỳ chỉnh; task xong xuống cuối. Tắt → chỉ theo vị trí tuỳ chỉnh, task xong vẫn xuống cuối |
 | BR-08 | **Đổi ngày bằng kéo thả / chọn ngày.** `startDate = D` mới, vị trí theo `afterId` / `beforeId`; timebox, sự kiện ngoài, timer và số ngày bị hoãn theo dòng "Kéo sang ngày khác, chọn ngày" của QC-05 (số ngày bị hoãn reset, QC-04); nhật ký ghi "đặt ngày dự định thành {ngày}" (BR-13 G02). Task chưa xong không được chuyển vào ngày < hôm nay; server kiểm và từ chối `PAST_DATE` (QC-05, C15). Ngày đích trong ± 5 năm so với hôm nay. Instance lặp vào ngày đã có instance cùng series: cho phép, toast cảnh báo MSG-23 (đường thủ công, QC-06 mục 3) |
 | BR-09 | **Task đã timebox đổi ngày trên board:** theo QC-05 (giữ giờ, dời timebox sang ngày mới; G05 cập nhật sự kiện ngoài). Timebox liên kết sự kiện (B8) đi theo sự kiện gốc, không đẩy ra lịch nên không dời theo task; hành vi khi kéo task loại này sang ngày khác chờ chốt (câu hỏi mở PRD) `[giả định: timebox liên kết giữ nguyên, task hiện cờ "Lệch ngày" theo BR-24]` |
-| BR-10 | **Phím di chuyển.** D: ngày dự định = ngày làm việc kế tiếp (QC-02) của max(ngày dự định, hôm nay); task backlog: ngày làm việc kế tiếp của hôm nay (C15, QC-05). D không reset số ngày bị hoãn (QC-04 mục 2). D đưa instance lặp vào ngày đã có instance cùng series → instance được dời chuyển `LUU_TRU` lý do `skipped`, toast MSG-24 có Hoàn tác (đường tự động, QC-06 mục 2). "Hoãn 1 tuần": max(ngày dự định, hôm nay) + 7 ngày, số ngày bị hoãn reset `[giả định — chưa có trong QC-04 / QC-05]`. S: về hôm nay, số ngày bị hoãn reset `[giả định — chưa có trong QC-04 / QC-05]`. Ctrl+↑/↓: đổi chỗ với task kề trên / dưới. Ctrl+Shift+↑/↓: lên đầu / xuống cuối nhóm chưa xong. Lệnh áp cho task đang chọn, không có thì task đang hover |
+| BR-10 | **Phím di chuyển.** D: ngày dự định = ngày làm việc kế tiếp **theo lịch của task** (QC-02 mục 2, 6) của max(ngày dự định, hôm nay); task backlog: ngày làm việc kế tiếp theo lịch của task của hôm nay (C15, QC-05). D không reset số ngày bị hoãn (QC-04 mục 2). D đưa instance lặp vào ngày đã có instance cùng series → instance được dời chuyển `LUU_TRU` lý do `skipped`, toast MSG-24 có Hoàn tác (đường tự động, QC-06 mục 2). "Hoãn 1 tuần": max(ngày dự định, hôm nay) + 7 ngày `[giả định]`, số ngày bị hoãn reset. S: về hôm nay, số ngày bị hoãn reset. Timebox, sự kiện ngoài, timer của "Hoãn 1 tuần" và S theo dòng "Hoãn 1 tuần, phím S" của QC-05 (QC-04 mục 3, Q40). Ctrl+↑/↓: đổi chỗ với task kề trên / dưới. Ctrl+Shift+↑/↓: lên đầu / xuống cuối nhóm chưa xong. Lệnh áp cho task đang chọn, không có thì task đang hover |
 | BR-11 | **Sắp xếp lại** một ngày theo 1 trong 7 tiêu chí: giờ bắt đầu (timebox, rồi projection), priority, ngắn nhất, dài nhất, mới nhất (`createdAt`), cũ nhất, channel (theo tên A→Z). Ghi lại vị trí tuỳ chỉnh của task chưa xong trong ngày; task xong không đổi. Khi bật tự sắp, BR-07 vẫn áp lên trên kết quả |
 | BR-12 | Mọi thao tác ở BR-08, BR-10, BR-11 có Hoàn tác (toast hoặc Ctrl+Z) trả cả cụm vị trí (QC-03 mục 2: trạng thái, ngày dự định, `firstPlannedDate`, `archiveReason`) và vị trí về như trước, khôi phục liên kết timebox (QC-05) |
 | BR-13 | **Chế độ xem**: Board, Calendar 1 ngày, 3 ngày, Weekdays, Week, Month; Tab xoay vòng theo thứ tự này. View và bộ lọc cuối cùng lưu trên thiết bị `[giả định]` |
@@ -53,13 +53,32 @@
 | BR-17 | **Phím tắt.** Phím một ký tự chỉ chạy khi không có ô nhập focus và cài đặt "Phím tắt" bật. Gõ ≥ 4 ký tự trong 1 giây ngoài ô nhập → khoá phím một ký tự 1 giây (EC-25). Ctrl/Cmd+K, Ctrl+F luôn chạy |
 | BR-18 | **Command menu.** Gồm mọi lệnh có phím tắt và lệnh không có phím (ví dụ "Hoãn 1 tuần"). Lọc theo tên lệnh, không phân biệt dấu. Lệnh cần task chỉ hiện khi có task đang chọn / hover. Lệnh thuộc phiên bản sau (Objectives, tích hợp) ẩn ở 1.0 |
 | BR-19 | **Ngày nhiều task** (EC-40): cột > 100 task dùng danh sách ảo hoá; projection và tổng vẫn tính trên toàn bộ task |
-| BR-20 | Người dùng chỉ thấy task của chính mình (G12 mở rộng ở 1.1). Workspace chỉ đọc (bản 1.1, QC-09): xem, lọc, tìm được; mọi thao tác di chuyển / sắp xếp bị chặn. Bản 1.0 không có chế độ chỉ đọc |
+| BR-20 | Người dùng chỉ thấy task của chính mình (bản 1 chỉ cho một người dùng; nhiều thành viên để bản sau, Q35, `docs/02-tinh-nang-ban-sau.md`). Workspace chỉ đọc (bản 1.1, QC-09): xem, lọc, tìm được; mọi thao tác di chuyển / sắp xếp bị chặn. Bản 1.0 không có chế độ chỉ đọc |
 | BR-21 | **Thứ tự ưu tiên trạng thái ngày** (B7): mỗi ngày có đúng một trạng thái chính, xét lần lượt `DA_QUA` > `TRONG` > `XONG_HET` > `QUA_TAI` > `BINH_THUONG`; điều kiện đầu tiên thoả thì dừng. `CHUA_TINH_LICH` và `VUOT_GIO_LAM` là cờ phụ |
-| BR-22 | **Cờ "Vượt giờ làm"** (B7). Ngày ≥ hôm nay, có projection (BR-06), và giờ dự kiến kết thúc của task chưa xong cuối cùng muộn hơn giờ kết thúc làm của D (QC-02) → ngày có cờ `VUOT_GIO_LAM`; các task có giờ dự kiến kết thúc sau giờ kết thúc làm có cờ cùng tên, tooltip MSG-25. Cờ độc lập với `QUA_TAI` (ví dụ 16:00 còn 4 giờ việc, giờ làm tới 17:00) |
+| BR-22 | **Cờ "Vượt giờ làm"** (B7). Xét theo **lịch của task** (QC-02 mục 6). Ngày ≥ hôm nay, có projection (BR-06): task chưa xong có giờ dự kiến kết thúc muộn hơn giờ kết thúc làm của D theo lịch của task, hoặc D không có trong lịch của task → task có cờ `VUOT_GIO_LAM`, tooltip MSG-25; ngày có cờ cùng tên khi có ít nhất một task mang cờ. Giờ làm thuộc lịch khác (ví dụ khung `#Cá nhân` buổi tối) không làm mất cờ của task `#Công ty`. Cờ độc lập với `QUA_TAI` (ví dụ 16:00 còn 4 giờ việc, lịch chung tới 17:00). Ví dụ ở mục 3.1 |
 | BR-23 | **Instance lặp dự kiến ở ngày xa** (C17). Ngày nằm ngoài khoảng G03 đã sinh instance: board hiện instance dự kiến tính từ quy tắc series theo cách G03 tính ngày (G03 BR-03: tuần đếm theo `weekStart` lưu trên series, không theo cài đặt hiện tại), dạng mờ, nhãn "Dự kiến". Không hiện instance dự kiến cho: ngày thuộc danh sách ngày ngoại lệ của series (G03 BR-15), ngày < hôm nay, series đã dừng (khớp điều kiện không sinh của G03 BR-04). Instance dự kiến không tính vào tổng, khối lượng, projection và không thao tác được `[giả định]` |
 | BR-24 | **Cờ "Lệch ngày"** (QC-01 mục 4, Q4). Task có timebox mà ngày làm việc của thời điểm bắt đầu timebox ≠ ngày dự định → card hiện cờ "Lệch ngày", tooltip MSG-26. Hệ thống không tự sửa; người dùng tự dời task hoặc dời timebox. Banner đổi timezone chỉ do G01 hiển thị (MSG-23 của G01), G04 không có banner riêng |
 | BR-25 | **Đảm bảo rollover khi mở app** (B6). Lần mở app đầu tiên trong ngày làm việc, board gọi \[RolloverEnsure\] (G06 UC-07). Trong lúc chờ, hoặc khi kết quả là `DANG_CHAY`, board hiện rollover tạm trên máy (G06, chỉ hiển thị, QC-08 mục 5). Kết quả `CHO_SHUTDOWN`: task ngày cũ ở yên cột ngày cũ. Kết quả lỗi: banner MSG-27 có "Thử lại" |
-| BR-26 | **Nhãn "Dời {n} ngày"** trên card khi số ngày bị hoãn n ≥ 1 (QC-04 mục 4, G06 SCR-07) |
+| BR-26 | **Nhãn "Dời {n} ngày"** trên card khi số ngày bị hoãn n ≥ 1 (QC-04 mục 4, G06 SCR-07); n chỉ đếm ngày có trong lịch của task (QC-04 mục 1, Q32) |
+| BR-27 | **Đổi lịch.** Đổi lịch chung (G01), thêm / sửa / xoá khung giờ channel (G02) hoặc đổi channel của task → tính lại (UC-05) mọi ngày ≥ hôm nay đang hiển thị có task hoặc khung bị ảnh hưởng. Ngày dự định của task không tự đổi (QC-02 mục 6 chỉ đổi cách tính, không dời task) |
+
+### 3.1. Ví dụ kiểm thử khung giờ channel (QC-02 mục 5–7)
+
+Giả thiết chung: mốc đầu ngày 04:00; lịch chung Thứ Hai–Thứ Sáu 09:00–17:00; `#Cá nhân` có khung Thứ Hai–Chủ Nhật 19:00–22:00; `#Công ty` không đặt khung (dùng lịch chung); ngưỡng khối lượng đủ lớn để không chặn; không có sự kiện lịch trừ khi ghi rõ. Thứ Năm 05/11, Thứ Sáu 06/11, Thứ Bảy 07/11, Thứ Hai 09/11/2026.
+
+| # | Tình huống | Kết quả mong đợi | Quy tắc |
+| --- | --- | --- | --- |
+| 1 | Thứ Năm 05/11 (tương lai) | Giờ làm 09:00–17:00 ∪ 19:00–22:00 = 11:00 | BR-04 |
+| 2 | Thứ Bảy 07/11 | Giờ làm 19:00–22:00 = 3:00 (lịch chung không có Thứ Bảy) | BR-04 |
+| 3 | Như 1, thêm `#Dự án` khung Thứ Hai–Thứ Sáu 08:00–12:00 | Giờ làm 08:00–17:00 ∪ 19:00–22:00 = 12:00; 09:00–12:00 không cộng hai lần | BR-04 |
+| 4 | Như 1, có cuộc họp busy 20:00–21:00 | Thời gian trống 10:00 | BR-04 |
+| 5 | Thứ Năm 05/11, thứ tự hiển thị: "Đọc sách" `#Cá nhân` 1:00, "Báo cáo" `#Công ty` 2:00 | "Đọc sách" 19:00–20:00; "Báo cáo" 09:00–11:00 | BR-06 |
+| 6 | Thứ Năm 05/11, việc `#Công ty` tổng 9:00 | Task cuối dự kiến xong 18:00 > 17:00 → task và ngày có `VUOT_GIO_LAM`, dù 19:00–22:00 còn trống | BR-06, BR-22 |
+| 7 | Thứ Năm 05/11, "Chạy bộ" `#Cá nhân` 4:00 | Dự kiến 19:00–23:00 > 22:00 → `VUOT_GIO_LAM` | BR-22 |
+| 8 | Thứ Bảy 07/11, "Báo cáo" `#Công ty` 1:00 và "Đọc sách" `#Cá nhân` 1:00 | "Đọc sách" 19:00–20:00, không cờ; "Báo cáo" từ 09:00 `[giả định]`, có `VUOT_GIO_LAM` (Thứ Bảy không có trong lịch chung) | BR-06, BR-22 |
+| 9 | Thứ Sáu 06/11, phím D trên task `#Công ty` / `#Cá nhân` | Thứ Hai 09/11 / Thứ Bảy 07/11; số ngày bị hoãn không reset | BR-10 |
+| 10 | Thứ Năm 05/11 lúc 18:00 (hôm nay), "Đọc sách" `#Cá nhân` 1:00 | Thời gian trống còn lại 3:00 (19:00–22:00); "Đọc sách" dự kiến 19:00 | BR-04, BR-06 |
+| 11 | Xoá khung của `#Cá nhân` khi đang mở board | Thứ Bảy 07/11 giờ làm = 0; task `#Cá nhân` ở Thứ Bảy có `VUOT_GIO_LAM`; ngày dự định không đổi | BR-27 |
 
 ## 4. Trạng thái
 
@@ -75,7 +94,7 @@
 | `CHUA_TINH_LICH` | Cờ phụ: lịch chưa kết nối hoặc kết nối lỗi (G05) | Sức chứa = ngưỡng; tooltip tổng thêm dòng MSG-18 |
 | `VUOT_GIO_LAM` | Cờ phụ theo BR-22 | Biểu tượng đồng hồ cạnh tổng, tooltip MSG-25 |
 
-Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của ngày, sự kiện lịch, Lịch làm việc / ngưỡng hoặc mốc "hôm nay" thay đổi, và mỗi khi qua mốc phút làm tròn ở hôm nay (thời gian trống còn lại giảm dần). Khi nhiều điều kiện cùng đúng, trạng thái chính chọn theo thứ tự BR-21. `CHUA_TINH_LICH`, `VUOT_GIO_LAM` là cờ phụ, đi kèm `BINH_THUONG` hoặc `QUA_TAI`.
+Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của ngày, sự kiện lịch, lịch chung / khung giờ channel / ngưỡng (BR-27) hoặc mốc "hôm nay" thay đổi, và mỗi khi qua mốc phút làm tròn ở hôm nay (thời gian trống còn lại giảm dần). Khi nhiều điều kiện cùng đúng, trạng thái chính chọn theo thứ tự BR-21. `CHUA_TINH_LICH`, `VUOT_GIO_LAM` là cờ phụ, đi kèm `BINH_THUONG` hoặc `QUA_TAI`.
 
 ### 4.2. Trạng thái giờ trên card
 
@@ -123,14 +142,14 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 | A6 | Ngày có > 100 task (EC-40) | Danh sách ảo hoá (BR-19); cuộn trong cột giữ ≥ 50 fps `[giả định]` |
 | A7 | Qua mốc đầu ngày khi đang mở app (QC-01) | "Hôm nay" chuyển sang ngày mới; cột cũ thành `DA_QUA`; nhận kết quả rollover qua realtime (G06); chưa nhận được thì xử lý như BR-25 |
 | A8 | Timezone thiết bị khác timezone người dùng (EC-02) | Banner do G01 hiển thị (MSG-23 của G01), G04 không có banner riêng. Đổi timezone có hiệu lực từ ngày làm việc kế tiếp; task giữ ngày dự định; timebox giữ thời điểm tuyệt đối, hiển thị theo giờ mới (QC-01 mục 3–4). Task có timebox rơi khác ngày dự định → cờ "Lệch ngày" (BR-24) |
-| A9 | Mobile web (< 768 px) | Board hiện 1 cột, vuốt ngang đổi ngày `[giả định]` |
+| A9 | Cửa sổ app thu hẹp (< 768 px `[giả định]`) | Board hiện 1 cột, cuộn ngang / Shift+→/← đổi ngày `[giả định]`. Giao diện web hẹp và di động đặc tả lại ở 1.1 / 1.2 (ADR-0005) |
 | A10 | Ngày ngoài khoảng instance lặp đã sinh (C17) | Hiện instance dự kiến theo BR-23 |
 
 **Luồng lỗi**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| E1 | Mất mạng | Hiện dữ liệu IndexedDB (4 tuần + backlog); banner "Đang offline"; tính projection trên máy; qua mốc đầu ngày thì hiện rollover tạm trên máy (G06) |
+| E1 | Mất mạng | Hiện dữ liệu lưu trên máy (4 tuần + backlog; cơ chế lưu: tech chốt — `docs/tech/`); banner "Đang offline"; tính projection trên máy; qua mốc đầu ngày thì hiện rollover tạm trên máy (G06) |
 | E2 | \[DayList\] lỗi / timeout | Giữ dữ liệu đã có, MSG-15 có "Thử lại" |
 | E3 | \[CalendarEvents\] lỗi hoặc chưa kết nối lịch | Ngày gắn cờ `CHUA_TINH_LICH`, sức chứa = ngưỡng |
 | E4 | \[RolloverEnsure\] lỗi (`ROLLOVER_FAILED`) | Giữ rollover tạm trên máy; banner MSG-27 có "Thử lại" (BR-25) |
@@ -253,7 +272,7 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
-| 1 | Hệ thống | Nhận thay đổi: task tạo / sửa planned / di chuyển / xong / xoá; sự kiện lịch đổi (`calendar.changed`, G05); đổi Lịch làm việc (G01), ngưỡng, khoảng đệm; qua mốc phút làm tròn |
+| 1 | Hệ thống | Nhận thay đổi: task tạo / sửa planned / di chuyển / xong / xoá / đổi channel; sự kiện lịch đổi (`calendar.changed`, G05); đổi lịch chung (G01), khung giờ channel (G02), ngưỡng, khoảng đệm (BR-27); qua mốc phút làm tròn |
 | 2 | Hệ thống (client) | Tính ngay trên máy cho ngày bị ảnh hưởng: BR-02 → BR-06, BR-21, BR-22; vẽ lại ≤ 200 ms với ngày 50 task |
 | 3 | Hệ thống (server) | Tính lại cùng công thức, phát `day.recomputed {date, status, totalPlannedMin, remainingPlannedMin, availableMin, overloaded, overWorkHours, projections[]}` |
 | 4 | Hệ thống (client) | Kết quả server khác máy → vẽ theo server |
@@ -263,22 +282,23 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | A1 | Sự kiện đã từ chối, free hoặc cả ngày (EC-17) | Không trừ thời gian trống, không chặn projection |
-| A2 | Projection vượt giờ kết thúc làm việc | Vẫn xếp tiếp sau giờ kết thúc; ngày và task đó có cờ `VUOT_GIO_LAM` (BR-22); task có thêm `VUOT_NGUONG` nếu khối lượng còn lại vượt sức chứa còn lại |
+| A2 | Projection vượt giờ kết thúc làm của lịch của task | Vẫn xếp tiếp sau giờ kết thúc của lịch đó (BR-06); ngày và task đó có cờ `VUOT_GIO_LAM` (BR-22); task có thêm `VUOT_NGUONG` nếu khối lượng còn lại vượt sức chứa còn lại |
 | A3 | Không còn thời gian trống (họp kín giờ làm việc, EC-18; hoặc hôm nay đã qua giờ kết thúc làm) | Sức chứa còn lại = 0; mọi task chưa xong có planned đều `VUOT_NGUONG`, MSG-03 "Chỉ còn 0:00 trống" |
 | A4 | Timebox vắt qua mốc đầu ngày (EC-04) | Timebox thuộc ngày làm việc của thời điểm bắt đầu (QC-01 mục 5): toàn bộ thời lượng tính cho ngày đó; phần sau mốc đầu ngày chặn projection ngày hôm sau |
 | A5 | Ngày chuyển giờ mùa hè / đông (EC-03) | Giờ làm việc theo giờ địa phương; thời gian trống tính bằng phút thực (ngày 23 hoặc 25 giờ); giờ projection rơi vào giờ không tồn tại → nhảy tới giờ hợp lệ kế tiếp |
 | A6 | Sự kiện lịch bị dời / xoá ở lịch ngoài (EC-13, EC-14, G05) | Nhận `calendar.changed`, tính lại ngày cũ và ngày mới |
 | A7 | Tắt "Hiện projection" | Bỏ bước projection và cờ `VUOT_GIO_LAM`; tổng và cảnh báo quá tải vẫn tính |
 | A8 | Task có timebox liên kết sự kiện (B8) | Sự kiện gốc trừ vào thời gian trống và chặn projection; planned của task không cộng vào khối lượng còn lại; không tính xung đột với chính sự kiện đó |
-| A9 | Ngày không có trong Lịch làm việc (QC-02) | Giờ làm = 0, sức chứa còn lại = 0 `[giả định]`; projection bắt đầu từ giờ bắt đầu làm mặc định `[giả định]` |
+| A9 | Ngày không có trong lịch chung (QC-02) | Giờ làm chỉ gồm các khung channel có ngày đó (BR-04); không có khung nào → giờ làm = 0, sức chứa còn lại = 0 `[giả định]`. Task mà ngày đó không có trong lịch của task: projection từ giờ bắt đầu mặc định 09:00 `[giả định]`, cờ `VUOT_GIO_LAM` (BR-06, BR-22) |
 | A10 | Hôm nay, thời gian trôi qua | Mỗi mốc phút làm tròn, thời gian trống còn lại giảm; ngày có thể chuyển `BINH_THUONG` → `QUA_TAI` mà không có thao tác nào |
+| A11 | Có khung giờ channel (QC-02 mục 5–7) | Sức chứa theo hợp các lịch (BR-04); projection và `VUOT_GIO_LAM` theo lịch của từng task (BR-06, BR-22); ví dụ mục 3.1 |
 
 **Luồng lỗi**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | E1 | Không lấy được sự kiện lịch (E3 UC-01) | Cờ `CHUA_TINH_LICH`; sức chứa = ngưỡng |
-| E2 | Tính toán > 200 ms (ngày rất nhiều task, EC-40) | Chạy trong web worker; giữ kết quả cũ tới khi xong |
+| E2 | Tính toán > 200 ms (ngày rất nhiều task, EC-40) | Tính nền, không chặn giao diện (cơ chế: tech chốt — `docs/tech/`); giữ kết quả cũ tới khi xong |
 
 ### UC-06 Lọc theo channel
 
@@ -336,7 +356,7 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 | --- | --- | --- |
 | A1 | Truy vấn < 2 ký tự | Không gọi API; hiện MSG-11 |
 | A2 | Cuộn tới cuối danh sách | Tải trang kế (cursor) |
-| A3 | Mất mạng | Tìm trên dữ liệu IndexedDB (4 tuần + backlog); ghi chú "Kết quả trên máy" |
+| A3 | Mất mạng | Tìm trên dữ liệu lưu trên máy (4 tuần + backlog); ghi chú "Kết quả trên máy" |
 | A4 | Kết quả là task lưu trữ | Mở chi tiết ở chế độ xem, có nút khôi phục (G06 UC-06 A7) |
 
 **Luồng lỗi**
@@ -373,7 +393,7 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 | A3 | Phím ? | Mở bảng phím tắt **SCR-09** |
 | A4 | Gõ ≥ 4 ký tự trong 1 giây ngoài ô nhập (EC-25) | Khoá phím một ký tự 1 giây; ký tự gõ trong lúc khoá bị bỏ qua, không chạy lệnh |
 | A5 | Lệnh thuộc nhóm khác (P, O → G08; F, K, Space → G07; Shift+R → G09 bản 1.1) | Chuyển cho nhóm sở hữu; lệnh chưa có ở 1.0 không hiện |
-| A6 | Phím trùng trình duyệt (Ctrl+F, Tab) khi đang trong ô nhập | Giữ hành vi chuẩn của trình duyệt |
+| A6 | Phím có hành vi chuẩn trong ô nhập (Ctrl+F, Tab) khi đang trong ô nhập | Giữ hành vi chuẩn của ô nhập trên Windows. Phím trùng trình duyệt xử lý khi có bản web (1.1) |
 
 **Luồng lỗi**
 
@@ -385,18 +405,18 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 
 ## 6. Điểm vào
 
-| **Điểm vào** | **Web** | **App** (1.1) | **Ghi chú** |
-| --- | --- | --- | --- |
-| Mở app / phím H / sidebar "Home" | ✓ | ✓ | SCR-01 |
-| Phím T / sidebar "Today" | ✓ | ✓ | Today view |
-| Phím Tab / bộ chọn view | ✓ | – | Đổi view (BR-13); app dùng bộ chọn |
-| Chip ngày / Shift+Space / Shift+→ / Shift+← | ✓ | ✓ (vuốt) | SCR-04 |
-| Kéo thả card / phím D, S, Ctrl+↑/↓ | ✓ | ✓ (nhấn giữ để kéo) | UC-03, UC-04 |
-| Menu … header cột → "Sắp xếp lại" | ✓ | ✓ | SCR-05 |
-| Nút lọc / Shift+F | ✓ | ✓ | SCR-06 |
-| Ctrl+F / Search ở panel phải | ✓ | ✓ | SCR-07 |
-| Ctrl/Cmd+K | ✓ | ✓ (desktop) | SCR-08 |
-| Phím ? | ✓ | ✓ (desktop) | SCR-09 |
+| **Điểm vào** | **App Windows** (1.0) | **Web, macOS** (1.1) | **iOS / Android** (1.2) | **Ghi chú** |
+| --- | --- | --- | --- | --- |
+| Mở app / phím H / sidebar "Home" | ✓ | ✓ | ✓ | SCR-01 |
+| Phím T / sidebar "Today" | ✓ | ✓ | ✓ | Today view |
+| Phím Tab / bộ chọn view | ✓ | ✓ | ✓ (bộ chọn) | Đổi view (BR-13) |
+| Chip ngày / Shift+Space / Shift+→ / Shift+← | ✓ | ✓ | ✓ (vuốt) | SCR-04 |
+| Kéo thả card / phím D, S, Ctrl+↑/↓ | ✓ | ✓ | ✓ (nhấn giữ để kéo) | UC-03, UC-04 |
+| Menu … header cột → "Sắp xếp lại" | ✓ | ✓ | ✓ | SCR-05 |
+| Nút lọc / Shift+F | ✓ | ✓ | ✓ | SCR-06 |
+| Ctrl+F / Search ở panel phải | ✓ | ✓ | ✓ (Search) | SCR-07 |
+| Ctrl+K (⌘K trên macOS) | ✓ | ✓ | – | SCR-08 |
+| Phím ? | ✓ | ✓ | – | SCR-09 |
 
 ## 7. Mô tả màn hình
 
@@ -496,6 +516,8 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 
 ## 8. API
 
+API dưới đây là hợp đồng nghiệp vụ tham khảo; kiểu API, tên, mã lỗi: tech chốt — `docs/tech/` (Q45).
+
 | **API** | **Request chính** | **Response chính** | **Timeout / retry** `[giả định]` |
 | --- | --- | --- | --- |
 | \[DayList\] `GET /days?from&to` | from, to (≤ 42 ngày), X-Client-Timezone | Day[] {date, status, tasks[], totalPlannedMin, remainingPlannedMin, availableMin, overloaded, overWorkHours, projections[], expectedInstances[]} | 5s / 2 lần |
@@ -505,7 +527,7 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 | \[TaskSearch\] `GET /tasks/search?q&from&channelId` | q, from, to, channelId, cursor, limit ≤ 50 | Task[] + `highlights`, nextCursor | 3s / 1 lần |
 | \[CalendarEvents\] `GET /calendar/events?from&to` | from, to | Event[] (busy / free, allDay, appTaskId) — G05 | 5s / 1 lần |
 | \[SyncBatch\] `POST /sync/batch` | Hàng đợi thao tác offline | Kết quả từng thao tác | 10s / backoff |
-| \[SettingsUpdate\] `PATCH /me/settings` | Ngưỡng, tự sắp, hiện projection… (G01). Lịch làm việc do G01 sở hữu (QC-02) | Settings | 5s / 2 lần |
+| \[SettingsUpdate\] `PATCH /me/settings` | Ngưỡng, tự sắp, hiện projection… (G01). Lịch làm việc do G01 sở hữu, khung giờ channel do G02 sở hữu (QC-02); G04 chỉ đọc | Settings | 5s / 2 lần |
 | Realtime `day.recomputed` | – | {date, status, totalPlannedMin, remainingPlannedMin, availableMin, overloaded, overWorkHours, projections[]} | Tự kết nối lại; mất > 30s → gọi \[DayList\] |
 
 **Map lỗi API → thông báo**
@@ -562,7 +584,7 @@ Bản EN: `[chờ bổ sung]`.
 
 | **Mục** | **Yêu cầu** `[giả định]` |
 | --- | --- |
-| Hiệu năng | \[DayList\] 1 tuần p95 ≤ 500 ms; Home ≤ 2,5 s trên 4G; kéo thả phản hồi ≤ 100 ms (lạc quan); projection tính lại ≤ 200 ms cho ngày 50 task; ngày 500 task (EC-40) cuộn ≥ 50 fps nhờ ảo hoá; tìm kiếm p95 ≤ 300 ms |
+| Hiệu năng | \[DayList\] 1 tuần p95 ≤ 500 ms; Home hiện ≤ 2,5 s sau khi mở app trên máy Windows cấu hình tham chiếu (cấu hình: tech chốt — `docs/tech/`); kéo thả phản hồi ≤ 100 ms (lạc quan); projection tính lại ≤ 200 ms cho ngày 50 task; ngày 500 task (EC-40) cuộn ≥ 50 fps nhờ ảo hoá; tìm kiếm p95 ≤ 300 ms |
 | Offline | Xem board 4 tuần + backlog, kéo thả, sắp xếp, tìm kiếm trên máy khi mất mạng; đồng bộ qua \[SyncBatch\] theo QC-08: thứ tự theo server nhận, cụm vị trí ghi nguyên khối và lệnh trên phiên bản cũ bị từ chối (MSG-17), trường khác gộp theo từng trường; rollover tạm trên máy không vào hàng đợi |
 | Đồng bộ | `day.recomputed`, `task.upserted` tới thiết bị khác ≤ 5 giây; chỉ mục tìm kiếm cập nhật ≤ 5 giây |
 | Bảo mật | Chỉ trả task của người dùng (BR-20); truy vấn tìm kiếm không ghi vào log hệ thống |

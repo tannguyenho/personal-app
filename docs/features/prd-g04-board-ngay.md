@@ -1,10 +1,10 @@
 > **Mã:** PLN-PRD-G04 · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **SRS:** srs-g04-board-ngay.md
 
-# PRD Board ngày, projection, khối lượng, tìm kiếm & phím tắt trên Web / App (ứng dụng lập kế hoạch ngày)
+# PRD Board ngày, projection, khối lượng, tìm kiếm & phím tắt trên app Windows (ứng dụng lập kế hoạch ngày)
 
 > **Bản nháp.** Con số đánh dấu `[giả định]` dùng để dựng flow, cần PO xác nhận trước khi dùng. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026 (tooltip "Total: Time planned", nút "Plan" khi hover cột, projection lùi "My job" 9:00 → 9:45 khi thêm task 0:45 lên đầu, cảnh báo "Only 8:00 available" khi đặt task 9 giờ, popover ngày, thông báo tìm kiếm rỗng, toast "Your first keyboard shortcut!"); chỗ khác Sunsama có chủ đích được ghi rõ.
 >
-> **Quy tắc dùng chung:** PRD này tham chiếu [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md) (QC-01 ngày làm việc, QC-02 lịch làm việc, QC-03 trạng thái task, QC-04 số ngày bị hoãn, QC-05 đổi ngày task, QC-06 instance trùng series, QC-08 đồng bộ, QC-09 chỉ đọc bản 1.1), không định nghĩa lại. Thuật ngữ theo [`CONTEXT.md`](../../CONTEXT.md).
+> **Quy tắc dùng chung:** PRD này tham chiếu [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md) (QC-01 ngày làm việc, QC-02 lịch làm việc và khung giờ channel, QC-03 trạng thái task, QC-04 số ngày bị hoãn, QC-05 đổi ngày task, QC-06 instance trùng series, QC-08 đồng bộ, QC-09 chỉ đọc bản 1.1), không định nghĩa lại. Thuật ngữ theo [`CONTEXT.md`](../../CONTEXT.md).
 
 # 1. Bối cảnh và vấn đề
 
@@ -43,14 +43,14 @@ Board ngày (Home) là màn hình người dùng mở nhiều nhất: mỗi cộ
 
 ## 3.1 Trong phạm vi (MVP)
 
-- Nền tảng: Web (desktop, mobile web). App iOS / Android và desktop dùng cùng đặc tả từ bản 1.1.
+- Nền tảng: app Windows (Flutter) ở 1.0 (Q45, ADR-0005). Web và macOS từ 1.1, iOS / Android từ 1.2 dùng cùng đặc tả. Chi tiết kỹ thuật (lưu trên máy, tính nền): tech chốt — `docs/tech/`.
 - Home board: cột ngày cuộn ngang vô hạn; header cột có thứ, ngày, thanh tiến độ, "Thêm task", tổng thời lượng, nút "Plan" khi hover.
 - Today view: một ngày + lịch của ngày đó.
 - Chế độ xem (phím Tab): Board, Calendar 1 ngày, 3 ngày, Weekdays, Week, Month.
 - Điều hướng ngày: popover chọn ngày, Hôm nay / Ngày sau / Ngày trước, chip ngày đang xem có × để về hôm nay.
 - Di chuyển task: kéo thả giữa cột và trong cột; phím D (sang ngày làm việc kế tiếp), hoãn 1 tuần, S (về hôm nay), Ctrl+↑/↓, Ctrl+Shift+↑/↓. Timebox, timer, số ngày bị hoãn khi đổi ngày theo QC-05.
 - Sắp xếp lại một ngày theo 7 tiêu chí; tự sắp task theo cài đặt.
-- Projection và giờ dự kiến trên card; cảnh báo khối lượng, cờ "Vượt giờ làm", cờ "Lệch ngày".
+- Projection và giờ dự kiến trên card theo lịch của task (khung giờ channel hoặc lịch chung, QC-02 mục 6); cảnh báo khối lượng trên sức chứa ngày (QC-02 mục 7), cờ "Vượt giờ làm", cờ "Lệch ngày".
 - Bộ lọc channel (Shift+F), tìm kiếm (Ctrl+F, gồm cả task Lưu trữ), command menu (Ctrl/Cmd+K), bảng phím tắt (?).
 - Khung panel phải: Calendar, Tasks, Backlog, Lưu trữ, Search, tích hợp (1.1+), nút +.
 - Gọi "đảm bảo rollover" (G06) khi mở app lần đầu trong ngày làm việc.
@@ -63,11 +63,11 @@ Board ngày (Home) là màn hình người dùng mở nhiều nhất: mỗi cộ
 - Nội dung Daily planning / Daily shutdown (nút "Plan", phím P, O) → G08. Panel Objectives (Shift+R) → G09 (bản 1.1).
 - Panel từng tích hợp (Gmail, Jira, Notion…) → G11 (bản 1.1+).
 - "Latest updates": bỏ khỏi phạm vi (C36).
-- Màn Lịch làm việc (ngày làm việc trong tuần, giờ làm từng ngày) → G01 (QC-02); G04 chỉ đọc để tính sức chứa.
+- Màn Lịch làm việc (ngày làm việc trong tuần, giờ làm từng ngày) → G01 (QC-02). Cài đặt khung giờ channel → G02 (QC-02 mục 5). G04 chỉ đọc cả hai để tính sức chứa, projection, cờ "Vượt giờ làm" và phím D.
 - Banner đổi timezone → G01 (MSG-23 là banner duy nhất, QC-01).
 - Chế độ chỉ đọc → bản 1.1 (QC-09, ADR-0002).
 - Chọn nhiều task để di chuyển cùng lúc → sau 1.1 `[giả định]`.
-- Tìm kiếm trong comment, tìm kiếm toàn workspace của người khác → sau 1.1.
+- Tìm kiếm trong comment → sau 1.1. Tìm kiếm task của người khác trong workspace → bản sau (nhiều thành viên, Q35, `docs/02-tinh-nang-ban-sau.md`).
 
 # 4. Nguyên tắc sản phẩm
 
@@ -92,7 +92,7 @@ Phím một ký tự không chạy khi đang gõ; lệnh có tác dụng phụ l
 | **Cấu hình** | **Giá trị / giới hạn** | **Mặc định** | **Ghi chú** |
 |---|---|---|---|
 | Ngưỡng khối lượng | 1–24 giờ, bước 30 phút `[giả định]` | 8 giờ `[giả định]` | Cài đặt người dùng (G01) |
-| Lịch làm việc | Ngày làm việc trong tuần và giờ làm từng ngày (QC-02, G01 sở hữu); ghi đè theo channel `[giả định]` | Thứ Hai–Thứ Sáu, 09:00–17:00 `[giả định]` cho giờ | Dùng tính sức chứa, điểm bắt đầu projection, cờ "Vượt giờ làm" và "ngày làm việc kế tiếp" của phím D |
+| Lịch làm việc | Lịch chung: ngày làm việc trong tuần và giờ làm từng ngày (QC-02 mục 1, G01 sở hữu). Khung giờ channel: ngày và giờ riêng của từng channel (QC-02 mục 5–7, G02 sở hữu) | Lịch chung Thứ Hai–Thứ Sáu, 09:00–17:00 `[giả định]` cho giờ; channel mặc định không có khung riêng | Sức chứa ngày = thời gian trống trong **hợp** của lịch chung và mọi khung channel có trong ngày (QC-02 mục 7). Projection, cờ "Vượt giờ làm" và "ngày làm việc kế tiếp" của phím D theo **lịch của task**: khung channel của task nếu có, ngược lại lịch chung (QC-02 mục 6) |
 | Mốc đầu ngày | 00:00–06:00 (QC-01) | 04:00 | Quyết định "hôm nay" là ngày nào; đổi có hiệu lực từ ngày làm việc kế tiếp |
 | Hiện projection | Bật / tắt | Bật | Tắt thì card không hiện giờ dự kiến |
 | Projection mờ hơn sự kiện thật | Bật / tắt | Bật | Áp trên Calendar views |
@@ -142,7 +142,7 @@ AC06: Lần mở app đầu tiên trong ngày làm việc, board gọi "đảm b
 
 AC07: Ngày ở xa, ngoài khoảng instance lặp đã sinh, hiện instance lặp dự kiến dạng mờ, nhãn "Dự kiến" (C17); không tính vào tổng `[giả định]`.
 
-AC08: Card có số ngày bị hoãn ≥ 1 hiện nhãn "Dời {n} ngày" (QC-04).
+AC08: Card có số ngày bị hoãn ≥ 1 hiện nhãn "Dời {n} ngày" (QC-04); n chỉ đếm ngày có trong lịch của task (QC-04 mục 1, Q32).
 
 ### US1.4 Đổi timezone
 
@@ -200,7 +200,9 @@ AC07: Thay đổi đồng thời trên thiết bị khác (hoặc do rollover) �
 
 ### US3.2 Di chuyển bằng phím
 
-AC01: D chuyển task sang ngày làm việc kế tiếp (QC-02) của max(ngày dự định, hôm nay) (C15), không đặt lại số ngày bị hoãn (QC-04); lệnh "Hoãn 1 tuần" (command menu / menu Ngày dự định) hoãn 7 ngày `[giả định]`; S đưa về hôm nay; mỗi lệnh có toast Hoàn tác.
+AC01: D chuyển task sang ngày làm việc kế tiếp **theo lịch của task** (QC-02 mục 2, 6) của max(ngày dự định, hôm nay) (C15), không đặt lại số ngày bị hoãn (QC-04); lệnh "Hoãn 1 tuần" (command menu / menu Ngày dự định) hoãn 7 ngày `[giả định]`; S đưa về hôm nay; "Hoãn 1 tuần" và S đặt lại số ngày bị hoãn về 0 (QC-04 mục 3, dòng "Hoãn 1 tuần, phím S" của QC-05, Q40); mỗi lệnh có toast Hoàn tác.
+
+AC05: Ví dụ phím D (lịch chung Thứ Hai–Thứ Sáu; `#Cá nhân` có khung Thứ Hai–Chủ Nhật 19:00–22:00; `#Công ty` không đặt khung): Thứ Sáu 06/11 nhấn D trên task `#Công ty` → Thứ Hai 09/11; trên task `#Cá nhân` → Thứ Bảy 07/11.
 
 AC02: Ctrl+↑/↓ lên / xuống một vị trí; Ctrl+Shift+↑/↓ lên đầu / xuống cuối ngày.
 
@@ -222,7 +224,7 @@ AC03: Khi bật "Tự sắp task", task đã timebox và priority vẫn được
 
 User Story: Là người dùng, tôi muốn thấy mỗi việc dự kiến làm lúc mấy giờ, để biết việc cuối cùng sẽ xong khi nào.
 
-AC01: Task chưa timebox, chưa xong, có thời lượng được xếp liên tiếp từ giờ bắt đầu làm việc theo thứ tự hiển thị, bỏ qua sự kiện bận và timebox, cộng khoảng đệm.
+AC01: Task chưa timebox, chưa xong, có thời lượng được xếp lần lượt theo thứ tự hiển thị, mỗi task vào khe trống sớm nhất **trong lịch của task** (khung giờ channel của task nếu có, ngược lại lịch chung — QC-02 mục 6), bỏ qua sự kiện bận, timebox và task đã xếp trước, cộng khoảng đệm. Chỉ có một lịch (không channel nào đặt khung) thì kết quả là xếp liên tiếp từ giờ bắt đầu làm việc.
 
 AC02: Thêm task 0:45 lên đầu ngày có task "My job" dự kiến 9:00 → "My job" lùi thành 9:45 (đã kiểm chứng trên Sunsama).
 
@@ -232,11 +234,13 @@ AC04: Giờ dự kiến hiện mờ; task đã timebox hiện badge giờ màu c
 
 AC05: Projection không ghi ra lịch ngoài.
 
+AC06: Ví dụ khung giờ channel (Thứ Năm 05/11, lịch chung 09:00–17:00, `#Cá nhân` 19:00–22:00, không có sự kiện): thứ tự hiển thị "Đọc sách" (`#Cá nhân`, 1:00) rồi "Báo cáo" (`#Công ty`, 2:00) → "Đọc sách" dự kiến 19:00, "Báo cáo" dự kiến 9:00.
+
 ### US4.2 Cảnh báo quá tải
 
 User Story: Là người dùng, tôi muốn được báo khi tổng việc vượt thời gian trống, để bớt việc trước khi bắt đầu ngày.
 
-AC01: Sức chứa còn lại = min(ngưỡng khối lượng, thời gian trống còn lại) `[giả định — cách kết hợp ngưỡng]`. Thời gian trống còn lại = giờ làm của ngày theo Lịch làm việc (QC-02), với hôm nay chỉ tính từ bây giờ, trừ sự kiện bận (busy, tentative).
+AC01: Sức chứa còn lại = min(ngưỡng khối lượng, thời gian trống còn lại) `[giả định — cách kết hợp ngưỡng]`. Thời gian trống còn lại = thời gian trong **hợp** của lịch chung và mọi khung giờ channel có trong ngày (QC-02 mục 7; khoảng chồng nhau chỉ tính một lần), với hôm nay chỉ tính từ bây giờ, trừ sự kiện bận (busy, tentative).
 
 AC02: Quá tải khi planned của task **chưa xong** > sức chứa còn lại (B7) → tổng ở header chuyển đỏ; task chưa xong làm tổng cộng dồn vượt sức chứa (và các task chưa xong sau nó) hiện chấm cảnh báo "Chỉ còn X giờ trống". Task đã xong không bao giờ mang chấm cảnh báo.
 
@@ -248,9 +252,11 @@ AC05: Dời bớt task / xoá cuộc họp → cảnh báo tự mất ngay khi k
 
 AC06: Mỗi ngày chỉ hiện một trạng thái, theo thứ tự ưu tiên: Đã qua > Trống > Xong hết > Quá tải > Bình thường (B7).
 
-AC07: Cờ "Vượt giờ làm": 16:00, giờ làm tới 17:00, còn 4 giờ việc chưa timebox → ngày có cờ "Vượt giờ làm", tooltip nêu giờ dự kiến xong việc cuối (B7).
+AC07: Cờ "Vượt giờ làm" xét theo lịch của task (QC-02 mục 6): task có giờ dự kiến kết thúc sau giờ kết thúc làm của lịch của task, hoặc nằm ở ngày không có trong lịch của task, mang cờ; ngày có cờ khi có ít nhất một task mang cờ. Ví dụ: 16:00, lịch chung tới 17:00, còn 4 giờ việc `#Công ty` chưa timebox → task cuối và ngày có cờ "Vượt giờ làm", tooltip nêu giờ dự kiến xong việc cuối (B7); khung 19:00–22:00 của `#Cá nhân` không cứu task `#Công ty`.
 
-AC08: Ngày không có trong Lịch làm việc (ví dụ Thứ Bảy với lịch mặc định) có sức chứa 0 `[giả định]`.
+AC08: Ngày không có trong lịch chung và không có khung channel nào (ví dụ Thứ Bảy với lịch mặc định, không channel nào đặt khung) có sức chứa 0 `[giả định]`.
+
+AC09: Ví dụ sức chứa theo khung giờ channel (QC-02 mục 7), không có sự kiện: lịch chung Thứ Hai–Thứ Sáu 09:00–17:00, `#Cá nhân` Thứ Hai–Chủ Nhật 19:00–22:00 → Thứ Năm 05/11 thời gian trống 11:00; Thứ Bảy 07/11 thời gian trống 3:00. Thêm channel `#Dự án` khung Thứ Hai–Thứ Sáu 08:00–12:00 → Thứ Năm thời gian trống 12:00 (08:00–17:00 và 19:00–22:00; phần 09:00–12:00 không cộng hai lần).
 
 ## UC5. Lọc và tìm kiếm
 
@@ -323,11 +329,11 @@ AC03: Lệnh có tác dụng phụ (D, S, Ctrl+↑/↓, sắp lại) có toast H
 |---|---|---|
 | Sự kiện lịch (G05) | Sức chứa và projection cần sự kiện bận; lịch chưa đồng bộ thì số sai | Khi lịch lỗi / chưa kết nối, tính sức chứa = ngưỡng và hiện ghi chú "chưa tính lịch" |
 | Mốc đầu ngày | Đã chốt 04:00, chỉnh 00:00–06:00 (Q2) | Dùng `workday(t)` của QC-01; không tự tính ngày ở board |
-| Lịch làm việc (G01) | Sức chứa và phím D phụ thuộc màn Lịch làm việc của G01 | G01 sở hữu (QC-02); G04 chỉ đọc |
+| Lịch làm việc (G01) và khung giờ channel (G02) | Sức chứa, projection, cờ "Vượt giờ làm" và phím D phụ thuộc lịch chung (G01) và khung giờ channel (G02) | G01, G02 sở hữu (QC-02 mục 1, 5); G04 chỉ đọc. Đổi lịch chung, khung channel hoặc channel của task → tính lại các ngày bị ảnh hưởng |
 | Rollover (G06) | Job rollover lỗi làm hôm nay thiếu việc dở | Gọi "đảm bảo rollover" khi mở app (B6) |
-| Ngày rất nhiều task (EC-40) | 500 task / ngày làm board giật, projection chậm | Ảo hoá danh sách; projection chạy ở worker, chỉ tính lại ngày bị đổi |
+| Ngày rất nhiều task (EC-40) | 500 task / ngày làm board giật, projection chậm | Ảo hoá danh sách; projection tính nền, không chặn giao diện (cơ chế: tech chốt — `docs/tech/`), chỉ tính lại ngày bị đổi |
 | Đồng bộ nhiều thiết bị | Hai máy kéo cùng task, hoặc máy offline kéo task mà server đã rollover | Theo QC-08: thứ tự server nhận, cụm vị trí ghi nguyên khối, lệnh trên phiên bản cũ bị từ chối; thiết bị thua nhận realtime và vẽ lại |
-| Phím tắt trùng trình duyệt / hệ điều hành | Ctrl+F, Tab, Ctrl+K có nghĩa sẵn | Chỉ chặn mặc định khi board focus; Tab trong ô nhập giữ hành vi chuẩn |
+| Phím tắt trùng hệ điều hành / ô nhập | Trên Windows, Tab và Ctrl+F có nghĩa sẵn trong ô nhập và khi chuyển focus | Chỉ xử lý khi board focus; Tab trong ô nhập giữ hành vi chuẩn. Phím trùng trình duyệt xử lý khi có bản web (1.1) |
 | Tìm kiếm không dấu | Chuẩn hoá tiếng Việt (đ/Đ, tổ hợp dấu) | Chỉ mục lưu bản bỏ dấu; bộ test tiếng Việt |
 | Đổi timezone (EC-02) | "Hôm nay" đổi khi người dùng bay sang múi giờ khác | Theo QC-01: có hiệu lực từ ngày làm việc kế tiếp; banner duy nhất là G01 MSG-23; task giữ ngày dự định, timebox giữ thời điểm tuyệt đối; lệch thì gắn cờ "Lệch ngày" |
 
@@ -341,8 +347,12 @@ AC03: Lệnh có tác dụng phụ (D, S, Ctrl+↑/↓, sắp lại) có toast H
 - Đã chốt 04/11/2026: không đặt task chưa xong vào ngày đã qua, server kiểm với mọi đường (C15).
 - "Sắp xếp lại" khi đang bật tự sắp: tạm tắt tự sắp cho ngày đó hay chỉ đổi vị trí tuỳ chỉnh?
 - Phím hoãn 1 tuần là gì (Shift+D đã dùng cho Todoist ở G11)?
-- "Hoãn 1 tuần" và phím S có đặt lại số ngày bị hoãn không? QC-04 và QC-05 chưa liệt kê hai đường này; SRS tạm coi là có chủ đích (đặt lại). "Hoãn 1 tuần" tính từ max(ngày dự định, hôm nay) như phím D không?
+- Đã chốt 04/11/2026: "Hoãn 1 tuần" và phím S đặt lại số ngày bị hoãn; đã thêm dòng "Hoãn 1 tuần, phím S" vào QC-05 và QC-04 mục 3 (Q40).
+- "Hoãn 1 tuần" tính từ max(ngày dự định, hôm nay) như phím D không? Ngày đích không có trong lịch của task thì có lùi tới ngày làm việc kế tiếp không? SRS tạm: max(ngày dự định, hôm nay) + 7 ngày, không lùi.
+- Đã chốt 04/11/2026: bỏ "ghi đè giờ làm việc theo channel `[giả định]`", thay bằng khung giờ channel do G02 sở hữu. Sức chứa ngày = thời gian trống trong hợp lịch chung và mọi khung channel có trong ngày; projection, cờ "Vượt giờ làm" và "ngày làm việc kế tiếp" của phím D theo lịch của task (Q38a, QC-02 mục 5–7).
+- Đã chốt 04/11/2026: số ngày bị hoãn chỉ đếm ngày có trong lịch làm việc của task; rollover vẫn chạy mọi ngày (Q32, QC-04 mục 1).
 - Kéo task có timebox liên kết sự kiện (B8) sang ngày khác: sự kiện gốc không dời được, vậy gỡ liên kết hay giữ và gắn cờ "Lệch ngày"? SRS tạm giữ liên kết và gắn cờ.
-- Ngày không có trong Lịch làm việc (cuối tuần): sức chứa = 0 (mọi task đều quá tải) hay dùng ngưỡng khối lượng? SRS tạm dùng 0.
-- Sức chứa còn lại kết hợp ngưỡng khối lượng thế nào sau B7: min(ngưỡng, thời gian trống còn lại) hay ngưỡng chỉ áp cho ngày tương lai?
+- Một phần đã chốt 04/11/2026: thời gian trống của ngày tính trên hợp lịch chung và mọi khung channel (Q38a), nên Thứ Bảy có khung `#Cá nhân` thì có sức chứa. Còn mở: ngày không có trong lịch chung lẫn khung channel nào có sức chứa 0 (mọi task đều quá tải) hay dùng ngưỡng khối lượng? SRS tạm dùng 0.
+- Sức chứa còn lại kết hợp ngưỡng khối lượng thế nào sau B7: min(ngưỡng, thời gian trống còn lại) hay ngưỡng chỉ áp cho ngày tương lai? Câu hỏi nặng hơn sau Q38a: với min(), ngưỡng mặc định 8 giờ làm khung channel ngoài giờ (ví dụ 19:00–22:00) gần như không tăng sức chứa của ngày thường.
+- Projection khi có nhiều lịch: SRS tạm xếp mỗi task vào khe trống sớm nhất trong lịch của task theo thứ tự hiển thị; task ở ngày không có trong lịch của task tạm xếp từ giờ bắt đầu mặc định 09:00 và mang cờ "Vượt giờ làm". Cần PO xác nhận.
 - Instance lặp dự kiến ở ngày xa (C17) có tính vào tổng thời lượng và cảnh báo quá tải không? SRS tạm không tính.
