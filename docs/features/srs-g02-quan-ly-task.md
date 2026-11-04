@@ -252,7 +252,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | Khôi phục sau khi toast đã tắt | Người dùng mở **SCR-05** Thùng rác (panel phải hoặc lệnh "Task đã xoá gần đây") → "Khôi phục" → \[TaskRestore\] áp BR-12, toast MSG-13 |
+| A1 | Khôi phục sau khi toast đã tắt | Người dùng mở **SCR-05** Thùng rác (tab Thùng rác của panel "Lưu trữ · Thùng rác" ở panel phải, hoặc lệnh "Task đã xoá gần đây", IA-09) → "Khôi phục" → \[TaskRestore\] áp BR-12, toast MSG-13 |
 | A2 | Task có timebox | Xoá: theo QC-05 dòng "Xoá" (timebox tương lai gỡ, sự kiện ngoài bị xoá; timebox quá khứ chỉ gỡ liên kết). Hoàn tác (bước 4): khôi phục liên kết. Khôi phục từ Thùng rác (A1): không tạo lại timebox, task về projection |
 | A3 | Task do AI tạo, người dùng bấm Hoàn tác trong khung chat (G10) | Task vào Thùng rác như xoá thường |
 | A4 | Xoá instance lặp | Như luồng chính; thêm ngày gốc vào danh sách ngày ngoại lệ của series (G03 BR-15). Hoàn tác / khôi phục không gỡ ngày ngoại lệ |
@@ -346,10 +346,10 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | --- | --- | --- | --- |
 | Nút "Thêm task" trên cột ngày | ✓ | ✓ | Ngày = cột đó |
 | Phím A / command menu "Thêm task" | ✓ | ✓ | Cột ngày đang chọn, mặc định hôm nay |
-| Phím tắt toàn cục Ctrl+Shift+A | ✓ (có từ 1.0, D11) | macOS ✓, web – | Ngày = hôm nay; chạy cả khi cửa sổ app không ở trước; tắt phím tắt (G01 BR-15) thì ngừng |
+| Phím tắt toàn cục Ctrl+Shift+A | ✓ (có từ 1.0, D11) | macOS ✓, web – | Ngày = hôm nay; chạy cả khi cửa sổ app không ở trước; tắt phím tắt (G01 BR-15) thì ngừng. Cửa sổ nổi nhỏ, không viền, giữa màn hình đang dùng, luôn ở trên; click ra ngoài đóng, giữ bản nháp; Enter thêm, hiện "Đã thêm vào Hôm nay" ~1 giây rồi đóng, trả focus về app trước; Shift+Enter thêm và giữ ô mở; cửa sổ chính ở khay thì vẫn ở khay (IA-19) |
 | Dán URL vào ô soạn | ✓ | ✓ | A1 UC-01 |
-| Bấm tiêu đề card / Ctrl+Enter | ✓ | ✓ | Mở SCR-03 |
-| Panel phải → Thùng rác / lệnh "Task đã xoá gần đây" | ✓ | ✓ | Mở SCR-05 |
+| Bấm tiêu đề card / Ctrl+Enter | ✓ | ✓ | Mở SCR-03 dạng dialog giữa màn, có "mở rộng" chiếm vùng chính; Esc đóng, focus về card (IA-06) |
+| Panel phải → "Lưu trữ · Thùng rác" → tab Thùng rác / lệnh "Task đã xoá gần đây" | ✓ | ✓ | Mở SCR-05 (tab Thùng rác trong panel chung với Lưu trữ của G06, IA-09) |
 | Cài đặt → Context & channel / bộ lọc → "Quản lý channel" | ✓ | ✓ | Mở SCR-06 |
 | Dòng channel trong SCR-06 → "Khung giờ" | ✓ | ✓ | UC-06 A5–A7; không có ở channel "Chưa phân loại" (D3) |
 | Claude Code qua MCP local (hoàn thành, xoá task và subtask) | ✓ khi bật trợ lý AI và công tắc (BR-21) | Cách cung cấp AI trên web để tech chốt (ADR-0004) | UC-03 A7, UC-04 A7 |

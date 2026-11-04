@@ -214,7 +214,7 @@ AC03: Agent lỗi giữa chừng → các thay đổi đã áp dụng trước �
 
 ### US2.1 Hỏi về kế hoạch
 
-AC01: Nút ✨ góc dưới mở khung chat, giao diện như chat thường (Q39); ô nhập "Mô tả một task hoặc đặt câu hỏi"; có "Lịch sử" và "Cuộc trò chuyện mới". Câu trả lời đến từ Claude Code do app gọi. Tên hiển thị của trợ lý chưa đặt, quyết định khi làm thiết kế Figma; không dùng "Sunny" (tên trợ lý của Sunsama) (D16).
+AC01: Nút ✨ "Trợ lý" ở cụm dưới sidebar (hoặc Ctrl+J) mở khung chat ở panel phải (IA-08), giao diện như chat thường (Q39); ô nhập "Mô tả một task hoặc đặt câu hỏi"; có "Lịch sử" và "Cuộc trò chuyện mới". Câu trả lời đến từ Claude Code do app gọi. Tên hiển thị của trợ lý chưa đặt, quyết định khi làm thiết kế Figma; không dùng "Sunny" (tên trợ lý của Sunsama) (D16).
 
 AC02: Trong lúc xử lý hiện trạng thái "Đang nghĩ…", xong hiện thời gian đã nghĩ ("Đã nghĩ 8s").
 

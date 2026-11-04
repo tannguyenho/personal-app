@@ -1,6 +1,6 @@
 # Kiến trúc thông tin và điều hướng — app Windows bản 1.0
 
-> **Mã:** PLN-IA · **Trạng thái:** chờ PO duyệt · **Ticket:** [#7](https://github.com/tannguyenho/personal-app/issues/7) · **Bản đồ:** [#2](https://github.com/tannguyenho/personal-app/issues/2)
+> **Mã:** PLN-IA · **Trạng thái:** đã duyệt 04/11/2026 · **Ticket:** [#7](https://github.com/tannguyenho/personal-app/issues/7) · **Bản đồ:** [#2](https://github.com/tannguyenho/personal-app/issues/2)
 >
 > Chốt qua buổi grilling ngày 04/11/2026, gồm 20 quyết định đánh mã **IA-01 … IA-20** (mục 12). Mã IA thay cho số câu hỏi Q1–Q20 của buổi grilling, để không trùng với các mã Q01–Q48 trong [quyết định chốt](../review/quyet-dinh-chot-2026-11-04.md).
 >
@@ -221,9 +221,9 @@ Chỉ ghi điểm vào cấp app (từ khung, phím, khay, thông báo). Điểm
 | IA-19 | Ô thêm nhanh toàn cục như mục 6 | Q19 |
 | IA-20 | Cột ngày đã qua không có "+ Thêm task" / "Plan"; A trên cột đã qua mở ô soạn ở hôm nay | Q20 |
 
-## 13. Cần sửa ngược vào PRD / SRS
+## 13. Đã sửa ngược vào PRD / SRS
 
-Làm sau khi PO duyệt tài liệu này.
+Đã áp ngày 04/11/2026 sau khi PO duyệt.
 
 | Tài liệu | Sửa | Theo |
 |---|---|---|

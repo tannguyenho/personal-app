@@ -559,8 +559,8 @@ Mọi điểm vào AI chỉ hiện khi Claude Code `SAN_SANG` (BR-25); ngược 
 
 | **Điểm vào** | **App Windows (1.0)** | **Ghi chú** |
 | --- | --- | --- |
-| Nút ✨ góc dưới mọi màn hình | ✓ | Mở SCR-04; chưa đồng ý → SCR-10 (UC-09) |
-| Command menu (Ctrl+K) "Hỏi trợ lý" | ✓ | Phím tắt riêng `[giả định: Ctrl+J]`; Claude Code không sẵn sàng → SCR-11 |
+| Nút ✨ "Trợ lý" ở cụm dưới sidebar (không nổi ở góc màn hình) | ✓ | Mở SCR-04 ở mục "Trợ lý" của panel phải (IA-01, IA-08); chưa đồng ý → SCR-10 (UC-09); Claude Code không sẵn sàng → SCR-11 ngay trong mục này |
+| Command menu (Ctrl+K) "Hỏi trợ lý" / phím Ctrl+J | ✓ | Ctrl+J mở / đóng mục Trợ lý (IA-15); Claude Code không sẵn sàng → SCR-11 |
 | Daily planning (G08) → "Plan my day" | ✓ | Chỉ khi bật Beta; SCR-02; không sẵn sàng → SCR-11 ở cùng chỗ |
 | Daily shutdown (G08) → bước highlights | ✓ | SCR-07 |
 | Nhật ký AI và chip "AI" trong chi tiết task (G02 SCR-03) | ✓ | Hoàn tác thay đổi AI (UC-04) |
@@ -611,7 +611,7 @@ Hai chế độ (BR-06): **Đã áp dụng** (mặc định, Q31) và **Chờ du
 
 ### SCR-04 Khung chat trợ lý
 
-Giao diện như chat thường (Q39). Tên hiển thị trợ lý chưa đặt, quyết định khi làm thiết kế Figma (D16); không dùng "Sunny" (tên trợ lý của Sunsama).
+Giao diện như chat thường (Q39). Nằm ở mục "Trợ lý" của panel phải, để vừa chat vừa thấy board; bấm chip task mở dialog chi tiết task (IA-08, [IA](../design-brief/00-kien-truc-thong-tin.md)). Tên hiển thị trợ lý chưa đặt, quyết định khi làm thiết kế Figma (D16); không dùng "Sunny" (tên trợ lý của Sunsama).
 
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
