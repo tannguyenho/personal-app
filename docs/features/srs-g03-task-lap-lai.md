@@ -2,7 +2,9 @@
 
 # UC-G03 - Task lặp lại trên Web / App (ứng dụng lập kế hoạch ngày)
 
-> **Bản nháp.** Giá trị `[giả định]` cần BA / PO xác nhận. SRS này chỉ mô tả series lặp: bật lặp, sinh instance, sửa instance, sửa / dừng series, quy tắc instance bị bỏ lỡ. Mô hình task và thao tác task thường (G02), board và projection (G04), timebox và lập lịch cứng (G05), rollover và Archive (G06) đặc tả ở SRS riêng của từng nhóm. Mã API, CSDL tham chiếu tài liệu "Thiết kế kỹ thuật & đặc tả API — MVP 1.0".
+> **Bản nháp.** Giá trị `[giả định]` cần BA / PO xác nhận. SRS này chỉ mô tả series lặp: bật lặp, sinh instance, sửa instance, sửa / dừng series, ngày ngoại lệ, quy tắc instance trùng series trong một ngày. Mô hình task và thao tác task thường (G02), board và projection (G04), timebox và lập lịch cứng (G05, bản 1.1), rollover và Lưu trữ (G06) đặc tả ở SRS riêng của từng nhóm. Mã API, CSDL tham chiếu tài liệu "Thiết kế kỹ thuật & đặc tả API — MVP 1.0".
+>
+> Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). Quy tắc `QC-xx` ở [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md). G03 sở hữu **QC-06** (instance trùng series trong một ngày); trạng thái instance theo QC-03 (G02); "hôm nay" là ngày làm việc (QC-01).
 
 ## 1. Tổng quan
 
@@ -10,8 +12,8 @@
 | --- | --- |
 | Mục tiêu | Người dùng biến task thành series lặp trong vài giây; instance có sẵn 60 ngày tới; sửa một instance không hỏi phạm vi; thao tác cả series qua một menu; không có hai instance cùng series do hệ thống đặt trong một ngày |
 | Actor | Người dùng đã đăng nhập · Hệ thống (job `recurrence.generate`, job `rollover` của G06) |
-| Phạm vi | Picker lặp (6 quy tắc, khoảng lặp, giờ "khoảng"), tạo series, sinh instance, banner series, Trước / Sau, menu "Sửa series" (6 thao tác), danh sách series, quy tắc instance bị bỏ qua |
-| Ngoài phạm vi | Rollover và Archive (G06), projection (G04), timebox và lập lịch cứng (G05), ngày kết thúc series, lặp theo ngày hoàn thành, objective (G09), giao task (G12) |
+| Phạm vi | Picker lặp (6 quy tắc, khoảng lặp, giờ "khoảng"), tạo series, sinh instance, ngày ngoại lệ, banner series, Trước / Sau, menu "Sửa series" (6 thao tác) và bảng phạm vi, danh sách series, quy tắc instance trùng series trong một ngày (QC-06) |
+| Ngoài phạm vi | Rollover và Lưu trữ (G06), projection (G04), timebox và lập lịch cứng (G05, bản 1.1, Q7), ngày kết thúc series, lặp theo ngày hoàn thành, objective (G09), giao task (G12), chế độ chỉ đọc (1.1, QC-09) |
 | Nền tảng | Web (desktop, mobile web) ở 1.0. App iOS / Android, desktop từ 1.1 dùng cùng đặc tả |
 | Figma | `[chưa có]` |
 
@@ -33,19 +35,36 @@
 | **Mã** | **Quy tắc** |
 | --- | --- |
 | BR-01 | **Quy tắc lặp.** `DAILY`, `WEEKDAYS`, `WEEKLY` (1–7 thứ), `MONTHLY_DAY` (ngày 1–31), `MONTHLY_NTH` (thứ 1–4 / cuối cùng `[giả định]` + thứ trong tuần), `YEARLY` (ngày / tháng). Khoảng lặp `interval` 1–99 (trừ `WEEKDAYS`). Giới hạn lấy từ \[AppConfig\] |
-| BR-02 | **Bật lặp.** Tạo Series với `anchorDate` = `startDate` của task; task trở thành instance đầu (`seriesDate = anchorDate`), giữ nguyên ngày. Task không có ngày (backlog) → `startDate` = hôm nay `[giả định]`. Task đã thuộc series đang lặp → mở "Đổi tần suất" thay vì tạo series mới |
-| BR-03 | **Tính ngày.** Ngày khớp quy tắc tính từ `anchorDate` theo lịch của timezone người dùng, chỉ theo ngày (không giờ). `MONTHLY_DAY` 29–31 → ngày cuối tháng ở tháng ngắn hơn, tháng sau dùng lại ngày gốc. `YEARLY` 29/2 → 28/2 năm không nhuận. Tuần bắt đầu Thứ Hai |
-| BR-04 | **Sinh instance.** Job `recurrence.generate` sinh mọi ngày khớp quy tắc trong khoảng (`generatedUntil`, hôm nay + 60 ngày]; khoá duy nhất `UNIQUE(series_id, series_date)` tính cả instance đã xoá / lưu trữ; job idempotent. Ngày đã có instance (kể cả đã xoá) không sinh lại |
-| BR-05 | **Trường sao chép.** Instance mới lấy từ mẫu của series: tiêu đề, notes, channel, `plannedMin`, `approxTime`; priority và subtask (chưa xong) `[giả định]`. Không sao chép comment, objective, timebox, thời gian thực tế, nhật ký. Mẫu = ảnh chụp task lúc bật lặp, chỉ đổi qua BR-08 (c) |
-| BR-06 | **Giờ.** Instance không cố định giờ, hiện projection (G04). `approxTime` hiện trên card. Bật "Lập lịch cứng cho task lặp" (cài đặt Timebox, G05) và series có `approxTime` → G05 tạo timebox tại giờ đó |
-| BR-07 | **Sửa một instance** chỉ đổi instance đó, không hỏi phạm vi, không đổi mẫu. Dời ngày instance giữ `seriesDate` gốc. Hoàn thành / xoá instance theo G02, không ảnh hưởng instance khác. Xoá instance đầu không dừng series |
-| BR-08 | **Sửa series** (menu "Sửa series"): (a) **Dừng lặp**: `stoppedAt` = now, không sinh thêm; instance chưa xong có `startDate` > hôm nay → xoá mềm `[giả định]`. (b) **Đổi tần suất**: cập nhật quy tắc; instance chưa xong có `startDate` > hôm nay mà không khớp quy tắc mới → xoá mềm, sinh ngày mới; instance hôm nay, quá khứ, đã xong giữ nguyên (EC-29). (c) **Cập nhật mọi instance chưa xong theo task này**: chép trường BR-05 của instance đang mở vào mẫu và mọi instance chưa xong. (d) **Xoá mọi instance chưa xong và dừng lặp**: xoá mềm mọi instance chưa xong (kể cả quá khứ), dừng series; cần xác nhận `[giả định]`. (e) **Đặt giờ bắt đầu**: đặt / xoá `approxTime` cho mẫu và instance chưa xong từ hôm nay. (f) **Quản lý mọi task lặp**: mở SCR-05 |
-| BR-09 | Mọi thao tác BR-08 (a)–(e) có Hoàn tác trong toast ≥ 5 giây; Hoàn tác trả quy tắc, mẫu và các instance bị ảnh hưởng về như trước |
-| BR-10 | **Instance bị bỏ lỡ** (G06 thực thi khi rollover): instance chưa xong có `startDate` < hôm nay; series đã có instance `startDate` = hôm nay → không rollover, `archivedAt` = now, `archiveReason = skipped` (nhãn "bị bỏ qua", EC-30). Series chưa có instance hôm nay → chỉ instance cũ mới nhất rollover; instance cũ hơn → `skipped` `[giả định]` |
-| BR-11 | "Hôm nay" tính theo `day_start_time` (04:00 `[giả định]`) và timezone người dùng. Đổi timezone không đổi `seriesDate` đã sinh |
+| BR-02 | **Bật lặp** (C14). Chỉ cho task `KE_HOACH` hoặc `BACKLOG`; task `HOAN_THANH` → không bật lặp được (409 `TASK_COMPLETED`, MSG-22). Task không có ngày (backlog) → coi ngày dự định là hôm nay `[giả định]`. Tạo Series với `weekStart` (BR-03) và `anchorDate` = ngày khớp quy tắc **đầu tiên** ≥ max(ngày dự định của task, hôm nay). Task trở thành instance đầu: `seriesDate` = `startDate` = `anchorDate`; nếu ngày dự định đã khớp quy tắc thì giữ nguyên ngày, ngược lại task được dời theo đường "chọn ngày" của QC-05 `[giả định]`. Task đã thuộc series `DANG_LAP` → mở "Đổi tần suất" thay vì tạo series mới; lệnh bật lặp tới sau cho cùng task (hai thiết bị offline) → 409 `ALREADY_REPEATING`, MSG-23 (QC-08 mục 4) |
+| BR-03 | **Tính ngày.** Ngày khớp quy tắc tính từ `anchorDate`, chỉ theo ngày (không giờ). `MONTHLY_DAY` 29–31 → ngày cuối tháng ở tháng ngắn hơn, tháng sau dùng lại ngày đã chọn. `YEARLY` 29/2 → 28/2 năm không nhuận. **Ngày đầu tuần** lấy từ cài đặt của người dùng (G01) lúc tạo series, lưu cố định trên series (`weekStart`); đổi cài đặt sau này không đổi lịch của series đã có (C14). "Mỗi N tuần" đếm tuần theo `weekStart` tính từ tuần chứa `anchorDate` |
+| BR-04 | **Sinh instance.** Job `recurrence.generate` sinh mọi ngày khớp quy tắc trong khoảng (max(`generatedUntil`, hôm qua), hôm nay + 60 ngày]; `generatedUntil` khởi tạo = `anchorDate`. **Không sinh**: ngày < hôm nay (C14); ngày thuộc danh sách ngày ngoại lệ (BR-15); ngày gốc đã có instance còn gắn series. Khoá duy nhất `(series_id, series_date)` chỉ áp trên instance còn gắn series và chưa bị xoá vĩnh viễn; ngày người dùng đã bỏ được chặn bằng ngày ngoại lệ, không bằng khoá (Q26). Job idempotent. (1.1) Workspace chỉ đọc → dừng sinh; khi thoát chỉ sinh ngày ≥ hôm nay (QC-09) |
+| BR-05 | **Trường sao chép.** Instance mới lấy từ mẫu của series: tiêu đề, notes, channel, `plannedMin`, `approxTime`; priority và subtask (chưa xong) `[giả định]`. Không sao chép comment, objective, timebox, thời gian thực tế, nhật ký. Mẫu = ảnh chụp task lúc bật lặp, chỉ đổi qua BR-08 (c) và khi channel của mẫu bị xoá (G02 BR-14, C10) |
+| BR-06 | **Giờ.** Instance không cố định giờ, hiện projection (G04). `approxTime` chỉ hiện trên card. **Bản 1.0 không tạo timebox cho instance.** Lập lịch cứng cho task lặp do G05 sở hữu, phát hành bản 1.1 (Q7); G03 chỉ lưu `approxTime` làm đầu vào |
+| BR-07 | **Sửa một instance** chỉ đổi instance đó, không hỏi phạm vi, không đổi mẫu. Dời ngày instance giữ ngày gốc (`seriesDate`); mọi đường đổi ngày áp QC-06 (BR-16). Hoàn thành / xoá instance theo G02; hoàn thành giữ nguyên ngày dự định (G02 BR-08 d, Q12); xoá → ngày gốc thành ngày ngoại lệ (BR-15). Không ảnh hưởng instance khác. Xoá instance đầu không dừng series. Sửa riêng một trường thuộc BR-05 (trừ tích / bỏ tích subtask) đặt cờ `customized = true` `[giả định]`; dời ngày được nhận biết qua `startDate` ≠ `seriesDate` |
+| BR-08 | **Sửa series** (menu "Sửa series"), phạm vi từng thao tác theo **bảng phạm vi** dưới đây (C12). (a) **Dừng lặp**: `stoppedAt` = now, không sinh thêm. (b) **Đổi tần suất**: cập nhật quy tắc, so khớp theo **ngày gốc** (Q26), rồi chạy UC-02 sinh ngày mới. (c) **Cập nhật mọi instance chưa xong theo task này**: chép trường BR-05 của instance đang mở vào mẫu và các instance trong phạm vi; subtask gộp theo tiêu đề để giữ tiến độ (C12). (d) **Xoá mọi instance chưa xong và dừng lặp**: xoá mềm các instance trong phạm vi, dừng series; cần xác nhận `[giả định]`. (e) **Đặt giờ bắt đầu**: đặt / xoá `approxTime` cho mẫu và các instance trong phạm vi. (f) **Quản lý mọi task lặp**: mở SCR-05. Mọi thao tác (a)–(e) không đụng instance `LUU_TRU`, `DA_XOA` (C12) và áp BR-17 cho instance có timer hoặc thời gian thực tế (C13) |
+| BR-09 | Mọi thao tác BR-08 (a)–(e) có Hoàn tác trong toast ≥ 5 giây; Hoàn tác trả quy tắc, mẫu và các instance bị ảnh hưởng về như trước: instance bị xoá hẳn được tạo lại, instance bị tách được gắn lại series, liên kết timebox và sự kiện ngoài khôi phục theo QC-05. Hoàn tác **không** chạy lại timer đã bị dừng (BR-17) |
+| BR-10 | **Instance bị bỏ lỡ**: theo QC-06 (BR-16), G06 thực thi trong rollover. Series đã có instance hôm nay (QC-06 mục 1, B5) → instance quá khứ chưa xong chuyển `LUU_TRU`, `archiveReason = skipped`, chỉ ghi nhật ký (EC-30). Series chưa có instance hôm nay → chỉ instance quá khứ mới nhất (ngày gốc lớn nhất) rollover, các instance cũ hơn → `skipped` `[giả định]`. Instance được rollover tính số ngày bị hoãn như task thường (QC-04) |
+| BR-11 | "Hôm nay" là ngày làm việc theo QC-01. Đổi timezone không đổi ngày dự định và ngày gốc đã sinh (QC-01 mục 4) |
 | BR-12 | Tối đa 200 series `DANG_LAP` / người dùng `[giả định]`. Series đã dừng không bật lại; bật Lặp lại trên một instance của series đã dừng → tạo series mới từ instance đó |
-| BR-13 | Nhật ký (\[ActivityLog\], G02): bật lặp, đổi quy tắc, áp mẫu, dừng ghi trên instance thực hiện; instance do job sinh ghi tác nhân `system` "Tạo từ series {tiêu đề}" |
-| BR-14 | Series thuộc người dùng tạo; chỉ người đó xem và sửa (đến khi có workspace nhiều thành viên, G12) |
+| BR-13 | Nhật ký (\[ActivityLog\], G02): bật lặp, đổi quy tắc, áp mẫu, dừng ghi trên instance thực hiện; instance do job sinh ghi tác nhân `system` "Tạo từ series {tiêu đề}"; instance bị tách ghi "Tách khỏi series do đổi tần suất"; thêm ngày ngoại lệ ghi trên series |
+| BR-14 | Series thuộc người dùng tạo; chỉ người đó xem và sửa (đến khi có workspace nhiều thành viên, G12, bản 1.1) |
+| BR-15 | **Ngày ngoại lệ** (Q26). Series lưu danh sách `exceptionDates`. Người dùng xoá một instance (G02 UC-04, BR-08 d) → ngày gốc của instance đó thêm vào danh sách, **vĩnh viễn**: khôi phục instance từ Thùng rác, Hoàn tác, hay Thùng rác xoá vĩnh viễn sau 30 ngày đều không gỡ ngày ngoại lệ. Instance do hệ thống xoá hẳn khi đổi quy tắc (BR-08 b) không tạo ngày ngoại lệ. Job không bao giờ sinh instance cho ngày ngoại lệ (BR-04). Instance đã tách khỏi series bị xoá không tạo ngày ngoại lệ |
+| BR-16 | **Instance trùng series trong một ngày**: G03 sở hữu quy tắc **QC-06**. "Ngày đã có instance" theo QC-06 mục 1 (B5). Đường tự động / hàng loạt (rollover G06, phím D G04, shutdown "Ngày mai" G08) → instance được đưa vào chuyển `LUU_TRU` lý do `skipped`, toast Hoàn tác (rollover chỉ ghi nhật ký). Đường thủ công từng task (kéo thả, chọn ngày G04; khôi phục G02, G06) → cho phép, cảnh báo "Ngày này đã có {tên series}" (G02 MSG-24 / MSG-21 của G03). Nhóm sở hữu từng đường thực thi, G03 không tự chặn |
+| BR-17 | **Timer và thời gian thực tế khi đổi hoặc dừng series** (C13). Instance trong phạm vi BR-08 (a), (b), (d) đang chạy timer → dừng timer (G07) trước khi áp thao tác. Instance có bản ghi thời gian (kể cả vừa dừng timer) → **không xoá**: giữ lại; với (b) nếu ngày gốc không khớp quy tắc mới thì tách khỏi series như instance đã dời / sửa riêng. Toast nêu số instance được giữ (MSG-24) |
+
+**Bảng phạm vi sửa series** (BR-08; C12, C13, Q26). "Gắn series" = instance còn `seriesId` của series này. "Hôm nay", "tương lai" so theo ngày dự định của instance.
+
+| **Thao tác** | **`KE_HOACH` tương lai, chưa dời, chưa sửa riêng, không có thời gian thực tế** | **`KE_HOACH` tương lai đã dời / sửa riêng / có thời gian thực tế** | **`KE_HOACH` hôm nay** | **`KE_HOACH` quá khứ (chưa rollover)** | **`HOAN_THANH`** | **`LUU_TRU`, `DA_XOA`** | **Mẫu** |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| (a) Dừng lặp | Xoá mềm `[giả định]` | Đã dời / sửa riêng: xoá mềm `[giả định]`. Có thời gian thực tế: giữ (BR-17) | Giữ | Giữ | Giữ | Không đụng | Giữ, series `DA_DUNG` |
+| (b) Đổi tần suất | Ngày gốc khớp quy tắc mới → giữ; không khớp → **xoá hẳn**, không tạo ngày ngoại lệ (BR-15) | Ngày gốc khớp → giữ; không khớp → giữ và **tách khỏi series** (Q26, BR-17), banner MSG-25 | Giữ (EC-29) | Giữ (EC-29) | Giữ | Không đụng | Quy tắc mới |
+| (c) Cập nhật theo task này | Chép trường BR-05; subtask gộp theo tiêu đề | Như cột trước (ghi đè cả phần sửa riêng) | Như cột trước | Giữ | Giữ | Không đụng | Chép trường BR-05 |
+| (d) Xoá mọi instance chưa xong và dừng | Xoá mềm, tạo ngày ngoại lệ (BR-15) | Xoá mềm; có thời gian thực tế → giữ (BR-17) | Như cột trước | Như cột trước | Giữ | Không đụng | Giữ, series `DA_DUNG` |
+| (e) Đặt giờ bắt đầu | Đặt / xoá `approxTime` | Như cột trước | Như cột trước | Giữ | Giữ | Không đụng | Đặt / xoá `approxTime` |
+
+**Gộp subtask theo tiêu đề** ở (c) (C12): subtask trên instance có cùng tiêu đề với subtask của mẫu mới → giữ trạng thái xong và thời gian thực tế, cập nhật thời lượng và thứ tự; subtask mới trong mẫu → thêm ở `CHUA_XONG`; subtask không còn trong mẫu → gỡ nếu chưa xong và chưa có thời gian thực tế, ngược lại giữ `[giả định]`.
+
+Instance bị xoá mềm, xoá hẳn hay tách có timebox → xử lý timebox theo QC-05 dòng "Xoá" (tách: giữ timebox như task thường).
 
 ## 4. Trạng thái
 
@@ -60,14 +79,17 @@ Chuyển trạng thái: `DANG_LAP` → `DA_DUNG` (UC-05, BR-08 a, d). `DA_DUNG` 
 
 ### 4.2. Trạng thái instance
 
-| **Trạng thái** | **Điều kiện** | **Hiển thị** |
-| --- | --- | --- |
-| `KE_HOACH` | Chưa xong, chưa lưu trữ, chưa xoá | Card trên cột `startDate`, giờ projection hoặc `approxTime`, biểu tượng lặp |
-| `HOAN_THANH` | `completedAt` có giá trị | Như task xong (G02); không bị BR-08 thay đổi |
-| `BI_BO_QUA` | `archivedAt` có giá trị, `archiveReason = skipped` | Chỉ trong Archive (G06), nhãn "bị bỏ qua" |
-| `DA_XOA` | `deletedAt` có giá trị | Thùng rác (G02); `seriesDate` vẫn chiếm chỗ, không sinh lại |
+Instance dùng đúng bộ trạng thái task của **QC-03** (G02), không có trạng thái riêng. Bảng dưới chỉ ghi điểm riêng của instance.
 
-Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` của G02 / G06 với lý do `skipped`.
+| **Trạng thái** (QC-03) | **Điểm riêng của instance** | **Hiển thị** |
+| --- | --- | --- |
+| `KE_HOACH` | Có ngày gốc (`seriesDate`) không đổi khi dời | Card trên cột ngày dự định, giờ projection hoặc `approxTime`, biểu tượng lặp |
+| `BACKLOG` | Instance bị đưa vào backlog vẫn giữ ngày gốc | Panel Backlog (G06), biểu tượng lặp |
+| `HOAN_THANH` | Hoàn thành giữ nguyên ngày dự định (G02 BR-08 d) | Như task xong (G02); không bị BR-08 thay đổi |
+| `LUU_TRU` | Lý do `skipped` khi áp QC-06 đường tự động (BR-16); `stale` khi bị hoãn lâu (QC-04) | Chỉ trong Lưu trữ (G06), nhãn lý do "bị bỏ qua" / "bị bỏ quên"; BR-08 không đụng |
+| `DA_XOA` | Ngày gốc đã thành ngày ngoại lệ nếu do người dùng xoá (BR-15) | Thùng rác (G02); BR-08 không đụng |
+
+Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` = null, giữ `detachedFromSeriesId` để tra cứu, BR-08 b), `customized` (BR-07).
 
 ## 5. Use Case
 
@@ -75,7 +97,7 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 
 | **Mục** | **Nội dung** |
 | --- | --- |
-| Tiền điều kiện | Người dùng đã đăng nhập; task không ở `DA_XOA`; task chưa thuộc series `DANG_LAP`; workspace không chỉ đọc (G12) |
+| Tiền điều kiện | Người dùng đã đăng nhập; task ở `KE_HOACH` hoặc `BACKLOG` (không `HOAN_THANH`, `LUU_TRU`, `DA_XOA`); task chưa thuộc series `DANG_LAP`; (từ 1.1) workspace không chỉ đọc (QC-09) |
 | Hậu điều kiện thành công | Series `DANG_LAP` được tạo; task là instance đầu; instance 60 ngày tới đã sinh (UC-02) |
 | Hậu điều kiện thất bại | Không có series; task không đổi |
 
@@ -87,7 +109,7 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 | 2 | Hệ thống | Mở **SCR-01**, điền mặc định từ `startDate` (BR-03): thứ, ngày trong tháng, "thứ N" |
 | 3 | Người dùng | Chọn quy tắc, thứ, khoảng lặp, (tuỳ chọn) giờ "khoảng"; bấm "Lưu" |
 | 4 | Hệ thống | Kiểm tra BR-01; gọi \[SeriesCreate\] (idempotency key) |
-| 5 | Hệ thống | Server tạo series (BR-02), gọi sinh instance đồng bộ cho 14 ngày đầu `[giả định]`, phần còn lại do job (UC-02) |
+| 5 | Hệ thống | Server tạo series (BR-02: `weekStart`, `anchorDate`, instance đầu), gọi sinh instance đồng bộ cho 14 ngày đầu `[giả định]`, phần còn lại do job (UC-02) |
 | 6 | Hệ thống | Đóng SCR-01; toast MSG-01; card task có biểu tượng lặp; instance mới hiện trên board qua realtime |
 
 **Luồng thay thế**
@@ -99,6 +121,8 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 | A3 | Task đã thuộc series `DANG_LAP` | Mục "Lặp lại" mở SCR-01 ở chế độ "Đổi tần suất" (UC-04) |
 | A4 | Task thuộc series `DA_DUNG` | Tạo series mới từ task này (BR-12) |
 | A5 | Bấm ra ngoài / Esc | Đóng SCR-01, không lưu |
+| A6 | Ngày dự định của task không khớp quy tắc (ví dụ task Thứ Ba, quy tắc Hằng tuần Thứ Hai) | Instance đầu = ngày khớp đầu tiên sau đó (Thứ Hai kế tiếp); task dời sang ngày đó (BR-02); MSG-01 nêu ngày |
+| A7 | Chọn "Hằng tuần" với N ≥ 2 | SCR-01 hiện ngày đầu tuần sẽ cố định cho series (BR-03) |
 
 **Luồng lỗi**
 
@@ -107,25 +131,27 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 | E1 | `interval` ngoài 1–99 | MSG-02 tại ô, nút Lưu disabled |
 | E2 | `WEEKLY` không chọn thứ nào | MSG-03, nút Lưu disabled |
 | E3 | Đã có 200 series đang lặp | MSG-14 có link "Quản lý mọi task lặp" |
-| E4 | Mất mạng | Lưu vào hàng đợi; card có biểu tượng "chờ đồng bộ"; instance chỉ hiện khi server sinh xong |
+| E4 | Mất mạng | Lưu vào hàng đợi (QC-08); card có biểu tượng "chờ đồng bộ"; instance chỉ hiện khi server sinh xong |
 | E5 | \[SeriesCreate\] lỗi 5xx / timeout | MSG-12 có "Thử lại"; task không đổi |
-| E6 | Workspace chỉ đọc | MSG-13, không tạo |
+| E6 | (1.1) Workspace chỉ đọc (QC-09) | MSG-13, không tạo |
+| E7 | Task đã `HOAN_THANH` | Mục "Lặp lại" disabled, tooltip MSG-22; API trả 409 `TASK_COMPLETED` (BR-02, C14) |
+| E8 | Task đã được bật lặp trên thiết bị khác (lệnh offline tới sau) | 409 `ALREADY_REPEATING`; bỏ lệnh khỏi hàng đợi, tải lại task và series, MSG-23 (QC-08 mục 4) |
 
 ### UC-02 Sinh instance (job `recurrence.generate`)
 
 | **Mục** | **Nội dung** |
 | --- | --- |
 | Tiền điều kiện | Có series `DANG_LAP` với `generatedUntil` < hôm nay + 60 ngày |
-| Hậu điều kiện thành công | Mọi ngày khớp quy tắc tới hôm nay + 60 ngày có đúng một instance; `generatedUntil` cập nhật |
+| Hậu điều kiện thành công | Mọi ngày khớp quy tắc từ hôm nay tới hôm nay + 60 ngày, trừ ngày ngoại lệ, có đúng một instance gắn series; `generatedUntil` cập nhật |
 | Hậu điều kiện thất bại | Series giữ `generatedUntil` cũ; lần chạy sau sinh bù |
 
 **Luồng chính**
 
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
-| 1 | Hệ thống | Job chạy mỗi giờ `[giả định]`, chọn series `DANG_LAP` của người dùng vừa qua `day_start_time` hoặc có `generatedUntil` < hôm nay + 60 ngày; cũng chạy ngay sau UC-01, UC-04 |
-| 2 | Hệ thống | Tính danh sách ngày khớp quy tắc trong (`generatedUntil`, hôm nay + 60] theo BR-03 |
-| 3 | Hệ thống | Với mỗi ngày: chèn instance theo mẫu (BR-05), `startDate = seriesDate`, không timebox; xung đột khoá duy nhất → bỏ qua (BR-04) |
+| 1 | Hệ thống | Job chạy mỗi giờ `[giả định]`, chọn series `DANG_LAP` của người dùng vừa qua mốc đầu ngày (QC-01) hoặc có `generatedUntil` < hôm nay + 60 ngày; cũng chạy ngay sau UC-01, UC-04 |
+| 2 | Hệ thống | Tính danh sách ngày khớp quy tắc trong (max(`generatedUntil`, hôm qua), hôm nay + 60] theo BR-03; loại ngày ngoại lệ (BR-15) |
+| 3 | Hệ thống | Với mỗi ngày: chèn instance theo mẫu (BR-05), `startDate = seriesDate`, không timebox; ngày gốc đã có instance gắn series → bỏ qua (BR-04) |
 | 4 | Hệ thống | Cập nhật `generatedUntil`; ghi nhật ký `system` (BR-13) |
 | 5 | Hệ thống | Phát `task.upserted` cho từng instance và `day.recomputed` cho các ngày bị ảnh hưởng (G04) |
 
@@ -133,16 +159,17 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | Bật lập lịch cứng và có `approxTime` | Sau bước 3, gửi yêu cầu tạo timebox cho G05 (BR-06) |
-| A2 | Job không chạy nhiều ngày (sự cố) | Lần chạy sau sinh bù toàn bộ khoảng còn thiếu; ngày trong quá khứ không sinh `[giả định]` |
+| A1 | (Bỏ ở 1.0 — lập lịch cứng do G05 sở hữu, bản 1.1, Q7; xem BR-06) | – |
+| A2 | Job không chạy nhiều ngày (sự cố) | Lần chạy sau sinh bù khoảng còn thiếu từ hôm nay; ngày trong quá khứ không sinh (C14) |
 | A3 | `YEARLY` / interval lớn, không có ngày nào trong khoảng | Chỉ cập nhật `generatedUntil` |
+| A4 | (1.1) Workspace chỉ đọc | Bỏ qua series của workspace đó; khi thoát chỉ đọc sinh bù từ hôm nay (QC-09) |
 
 **Luồng lỗi**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | E1 | Lỗi CSDL giữa chừng | Mỗi series một giao dịch; rollback series đó, thử lại 3 lần backoff 1–5–15 phút `[giả định]`; quá 3 lần ghi log cảnh báo |
-| E2 | Channel trong mẫu đã bị xoá | Dùng channel mặc định (G02 BR-05), cập nhật mẫu, ghi nhật ký |
+| E2 | (Bỏ — xoá channel đã chuyển cả mẫu series sang channel nhận, G02 BR-14, C10) | – |
 
 ### UC-03 Xem và sửa một instance
 
@@ -168,14 +195,17 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 | A1 | Bấm "Trước" / "Sau" | Mở chi tiết instance liền kề; instance đầu → "Trước" disabled |
 | A2 | Lần kế tiếp chưa được sinh (ngoài 60 ngày) | "Sau" disabled, tooltip MSG-20 |
 | A3 | Bấm "Sửa series" | Mở **SCR-03** (UC-04, UC-05) |
-| A4 | Dời instance sang ngày khác | Theo G04; giữ `seriesDate` (BR-07) |
+| A4 | Dời instance sang ngày khác | Theo G04 và QC-05; giữ ngày gốc (BR-07). Ngày đích đã có instance của cùng series → áp QC-06 (BR-16): kéo thả / chọn ngày cho phép kèm MSG-21; phím D → instance chuyển `LUU_TRU` lý do `skipped`, toast Hoàn tác |
 | A5 | Series `DA_DUNG` | Banner MSG-15; không có Trước / Sau tới instance đã xoá |
+| A6 | Hoàn thành instance ở ngày tương lai | Giữ nguyên ngày dự định (G02 BR-08 d, Q12) |
+| A7 | Xoá instance | Theo G02 UC-04 A4; ngày gốc thành ngày ngoại lệ (BR-15) |
+| A8 | Instance đã tách khỏi series | Banner MSG-25 thay SCR-02; không có "Sửa series", Trước / Sau |
 
 **Luồng lỗi**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| E1 | Lỗi khi lưu | Như G02 UC-02 E4 (MSG-12) |
+| E1 | Lỗi khi lưu | Như G02 UC-02 E4: trả trường về giá trị cũ, hiện MSG-10 của G02 |
 | E2 | Instance liền kề đã bị xoá khi bấm Trước / Sau | Bỏ qua, mở instance kế tiếp còn tồn tại |
 
 ### UC-04 Sửa series: đổi tần suất, đặt giờ, áp nội dung
@@ -183,7 +213,7 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 | **Mục** | **Nội dung** |
 | --- | --- |
 | Tiền điều kiện | Series `DANG_LAP`; người dùng đang mở một instance |
-| Hậu điều kiện thành công | Quy tắc / giờ / mẫu cập nhật; instance chưa xong bị ảnh hưởng cập nhật theo BR-08 (b), (c), (e) |
+| Hậu điều kiện thành công | Quy tắc / giờ / mẫu cập nhật; instance bị ảnh hưởng cập nhật theo BR-08 (b), (c), (e) và bảng phạm vi |
 | Hậu điều kiện thất bại | Series và instance không đổi |
 
 **Luồng chính**
@@ -193,18 +223,19 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 | 1 | Người dùng | Banner → "Sửa series" → **SCR-03** → "Đổi tần suất" |
 | 2 | Hệ thống | Mở SCR-01 với quy tắc hiện tại |
 | 3 | Người dùng | Đổi quy tắc, bấm "Lưu" |
-| 4 | Hệ thống | Gọi \[SeriesUpdate\] với `If-Match` version; server áp BR-08 (b) trong một giao dịch, rồi chạy UC-02 |
+| 4 | Hệ thống | Gọi \[SeriesUpdate\] với `If-Match` version; server áp BR-08 (b) theo bảng phạm vi (so khớp ngày gốc) trong một giao dịch, rồi chạy UC-02 |
 | 5 | Hệ thống | Toast MSG-07 với số instance thay đổi, có Hoàn tác |
 
 **Luồng thay thế**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | "Cập nhật mọi instance chưa xong theo task này" | Gọi \[SeriesApplyFrom\] với id instance đang mở; áp BR-08 (c); toast MSG-08 |
+| A1 | "Cập nhật mọi instance chưa xong theo task này" | Gọi \[SeriesApplyFrom\] với id instance đang mở; áp BR-08 (c) theo bảng phạm vi, subtask gộp theo tiêu đề; toast MSG-08 |
 | A2 | "Đặt giờ bắt đầu" | Mở chọn giờ (bước 15 phút) + "Xoá giờ"; \[SeriesUpdate\] `approxTime`; áp BR-08 (e); toast MSG-18 |
 | A3 | Bấm Hoàn tác | Gọi \[SeriesUpdate\] / \[SeriesApplyFrom\] với `undoToken`; khôi phục theo BR-09 |
 | A4 | Quy tắc mới giống quy tắc cũ | Đóng SCR-01, không gọi API |
-| A5 | Có instance quá khứ đã xong (EC-29) | Giữ nguyên; chỉ instance chưa xong sau hôm nay bị ảnh hưởng |
+| A5 | Có instance quá khứ, hôm nay, đã xong, `LUU_TRU` hoặc `DA_XOA` (EC-29, C12) | Giữ nguyên |
+| A6 | Có instance tương lai đã dời, sửa riêng, đang chạy timer hoặc có thời gian thực tế mà ngày gốc không khớp quy tắc mới | Dừng timer nếu đang chạy; giữ instance và tách khỏi series (BR-08 b, BR-17); toast MSG-07 kèm MSG-24 |
 
 **Luồng lỗi**
 
@@ -219,7 +250,7 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 | **Mục** | **Nội dung** |
 | --- | --- |
 | Tiền điều kiện | Series `DANG_LAP` |
-| Hậu điều kiện thành công | Series `DA_DUNG`; instance chưa xong bị xoá mềm theo BR-08 (a) hoặc (d) |
+| Hậu điều kiện thành công | Series `DA_DUNG`; instance bị xoá mềm hoặc giữ theo BR-08 (a) hoặc (d) và bảng phạm vi |
 | Hậu điều kiện thất bại | Series `DANG_LAP`, instance không đổi |
 
 **Luồng chính**
@@ -227,16 +258,16 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
 | 1 | Người dùng | SCR-03 → "Dừng lặp" |
-| 2 | Hệ thống | Gọi \[SeriesStop\]; server đặt `stoppedAt`, xoá mềm instance chưa xong có `startDate` > hôm nay |
-| 3 | Hệ thống | Gỡ instance khỏi board; G05 xoá timebox của instance bị xoá; toast MSG-09 có Hoàn tác |
+| 2 | Hệ thống | Gọi \[SeriesStop\]; server đặt `stoppedAt`, áp BR-08 (a) theo bảng phạm vi (xoá mềm instance tương lai chưa xong, trừ instance có thời gian thực tế) |
+| 3 | Hệ thống | Gỡ instance khỏi board; timebox của instance bị xoá xử lý theo QC-05 dòng "Xoá"; toast MSG-09 có Hoàn tác |
 
 **Luồng thay thế**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | "Xoá mọi instance chưa xong và dừng lặp" | Mở **SCR-04** (MSG-10, số instance) → "Xoá và dừng" → \[SeriesStop\] `deleteIncomplete=true`; toast MSG-11 có Hoàn tác |
-| A2 | Instance đang chạy timer bị xoá | Dừng timer, lưu thời gian trước khi xoá (G07) |
-| A3 | Bấm Hoàn tác | Khôi phục các instance và đặt lại series `DANG_LAP` (BR-09) |
+| A1 | "Xoá mọi instance chưa xong và dừng lặp" | Mở **SCR-04** (MSG-10, số instance) → "Xoá và dừng" → \[SeriesStop\] `deleteIncomplete=true`; áp BR-08 (d); toast MSG-11 có Hoàn tác |
+| A2 | Instance trong phạm vi đang chạy timer | Dừng timer (G07); instance đã có thời gian thực tế → giữ, không xoá (BR-17, C13); toast kèm MSG-24 |
+| A3 | Bấm Hoàn tác | Khôi phục các instance và đặt lại series `DANG_LAP` (BR-09); timer đã dừng không chạy lại |
 
 **Luồng lỗi**
 
@@ -245,29 +276,32 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 | E1 | Series đã dừng ở thiết bị khác | 409 `SERIES_STOPPED` → MSG-15, làm mới |
 | E2 | Lỗi 5xx / timeout | MSG-12; không xoá instance nào |
 
-### UC-06 Xử lý instance bị bỏ lỡ (trong job `rollover`, G06)
+### UC-06 Xử lý instance trùng series trong một ngày (QC-06; rollover G06, phím D G04, shutdown G08)
 
 | **Mục** | **Nội dung** |
 | --- | --- |
-| Tiền điều kiện | Người dùng vừa qua `day_start_time`; có instance chưa xong với `startDate` < hôm nay |
-| Hậu điều kiện thành công | Mỗi series có tối đa một instance chưa xong trên ngày hôm nay do hệ thống đặt; instance thừa ở `BI_BO_QUA` |
+| Tiền điều kiện | Người dùng vừa qua mốc đầu ngày (QC-01) và có instance chưa xong với ngày dự định < hôm nay; hoặc một đường đổi ngày đưa instance vào ngày D |
+| Hậu điều kiện thành công | Đường tự động / hàng loạt không bao giờ để hai instance của cùng series trong một ngày; instance thừa ở `LUU_TRU` lý do `skipped`. Đường thủ công cho phép, có cảnh báo |
 | Hậu điều kiện thất bại | Instance giữ nguyên; lần chạy sau xử lý lại (idempotent, G06) |
 
-**Luồng chính**
+**Luồng chính** (rollover)
 
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
 | 1 | Hệ thống | Job `rollover` (G06) nhóm instance chưa xong quá khứ theo `seriesId` |
-| 2 | Hệ thống | Series đã có instance `startDate` = hôm nay → mọi instance quá khứ: `archivedAt`, `archiveReason = skipped` (BR-10) |
-| 3 | Hệ thống | Ghi nhật ký `system` "Bị bỏ qua vì đã có lần lặp hôm nay"; phát `task.upserted` |
+| 2 | Hệ thống | Hôm nay đã có instance của series (ngày gốc hoặc ngày dự định = hôm nay, trạng thái `KE_HOACH` hoặc `HOAN_THANH`; QC-06 mục 1, B5) → mọi instance quá khứ: `LUU_TRU`, `archiveReason = skipped` (BR-10) |
+| 3 | Hệ thống | Ghi nhật ký `system` "Bị bỏ qua vì đã có lần lặp hôm nay"; không có toast; phát `task.upserted` |
 
 **Luồng thay thế**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | Series chưa có instance hôm nay | Instance quá khứ mới nhất rollover theo G06; instance cũ hơn → `skipped` |
+| A1 | Series chưa có instance hôm nay | Instance quá khứ mới nhất rollover theo G06; instance cũ hơn → `skipped` `[giả định]` (BR-10) |
 | A2 | Series `DA_DUNG` | Không áp BR-10; instance rollover như task thường (G06) |
-| A3 | Người dùng khôi phục instance `skipped` từ Archive | Theo G06; được phép có hai instance cùng ngày vì người dùng chủ động |
+| A3 | Người dùng khôi phục instance `skipped` từ Lưu trữ, hoặc instance từ Thùng rác, vào ngày đã có instance | Đường thủ công (QC-06 mục 3): cho phép, cảnh báo MSG-21 (G06 / G02 hiển thị) |
+| A4 | Phím D (G04) hoặc shutdown "Ngày mai" (G08, kể cả "Áp dụng cho tất cả") đưa instance vào ngày đã có instance | Đường tự động / hàng loạt (QC-06 mục 2): instance được đưa vào chuyển `LUU_TRU` lý do `skipped`, toast Hoàn tác (G04 / G08 hiển thị) |
+| A5 | Kéo thả hoặc chọn ngày (G04) đưa instance vào ngày đã có instance | Đường thủ công: cho phép, cảnh báo MSG-21 |
+| A6 | Instance đã tách khỏi series | Không áp QC-06 (không còn thuộc series) |
 
 **Luồng lỗi**
 
@@ -322,20 +356,22 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
 | 1 | Lặp | Dropdown | Có | Hằng ngày · Ngày làm việc (T2–T6) · Hằng tuần · Hằng tháng vào ngày {D} · Hằng tháng vào {thứ N} {thứ} · Hằng năm vào {ngày/tháng} |
-| 2 | Vào (thứ) | Nhóm 7 nút T2…CN | Có khi Hằng tuần | Mặc định thứ của `startDate`; bỏ hết → MSG-03 |
+| 2 | Vào (thứ) | Nhóm 7 nút | Có khi Hằng tuần | Thứ tự bắt đầu từ ngày đầu tuần (BR-03); mặc định thứ của `startDate`; bỏ hết → MSG-03 |
 | 3 | Mỗi N | Số + đơn vị | Có (trừ Ngày làm việc) | 1–99; sai → MSG-02 |
-| 4 | Vào khoảng | Time picker | Không | Bước 15 phút; có "Không đặt giờ" |
+| 4 | Vào khoảng | Time picker | Không | Bước 15 phút; có "Không đặt giờ"; chỉ hiện trên card, không tạo timebox ở 1.0 (BR-06) |
 | 5 | Ghi chú ngày đặc biệt | Hint | – | MSG-04 / MSG-05 khi chọn 29–31 hoặc 29/2 |
 | 6 | Mô tả quy tắc | Text | – | Câu đọc được, ví dụ "Mỗi 2 tuần vào Thứ Ba, Thứ Năm" |
 | 7 | "Lưu" | Button | – | Disabled khi vi phạm BR-01 |
+| 8 | Ngày đầu tuần | Hint | – | Hiện khi Hằng tuần, N ≥ 2: MSG-26 (BR-03, UC-01 A7) |
+| 9 | Lần đầu | Hint | – | "Lần đầu: {ngày}" = `anchorDate` dự kiến (BR-02) |
 
 ### SCR-02 Banner series (đầu chi tiết instance)
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
-| 1 | Mô tả | Text | MSG-06; series dừng → MSG-15 |
-| 2 | "Sửa series" | Link | Mở SCR-03; ẩn khi series `DA_DUNG` |
-| 3 | "Trước" / "Sau" | Button | UC-03 A1, A2 |
+| 1 | Mô tả | Text | MSG-06; series dừng → MSG-15; instance đã tách → MSG-25 (UC-03 A8) |
+| 2 | "Sửa series" | Link | Mở SCR-03; ẩn khi series `DA_DUNG` hoặc instance đã tách |
+| 3 | "Trước" / "Sau" | Button | UC-03 A1, A2; ẩn khi instance đã tách |
 
 ### SCR-03 Menu "Sửa series"
 
@@ -376,10 +412,10 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 
 | **API** | **Request chính** | **Response chính** | **Timeout / retry** `[giả định]` |
 | --- | --- | --- | --- |
-| \[SeriesCreate\] `POST /tasks/{id}/repeat` | rule {type, interval, weekdays[], monthDay, nth, weekday, month}, approxTime, Idempotency-Key | Series, Task (instance đầu), instances 14 ngày đầu | 5s / retry 3 lần cùng key |
-| \[SeriesUpdate\] `PATCH /series/{id}` | rule và / hoặc approxTime, If-Match | Series, version, affectedCount, undoToken | 5s / 2 lần |
+| \[SeriesCreate\] `POST /tasks/{id}/repeat` | rule {type, interval, weekdays[], monthDay, nth, weekday, month}, approxTime, Idempotency-Key | Series (`weekStart`, `anchorDate`, `exceptionDates`), Task (instance đầu), instances 14 ngày đầu | 5s / retry 3 lần cùng key |
+| \[SeriesUpdate\] `PATCH /series/{id}` | rule và / hoặc approxTime, If-Match | Series, version, affectedCount, deletedCount, detachedCount, keptCount, undoToken | 5s / 2 lần |
 | \[SeriesApplyFrom\] `POST /series/{id}/apply-from/{taskId}` | Idempotency-Key | affectedCount, undoToken | 5s / 2 lần cùng key |
-| \[SeriesStop\] `POST /series/{id}/stop` | `?deleteIncomplete=true` (tuỳ chọn) | Series (stoppedAt), deletedCount, undoToken | 5s / 2 lần |
+| \[SeriesStop\] `POST /series/{id}/stop` | `?deleteIncomplete=true` (tuỳ chọn) | Series (stoppedAt), deletedCount, keptCount, undoToken | 5s / 2 lần |
 | \[SeriesList\] `GET /series` | status, cursor, limit ≤ 200 | Series[] (rule, approxTime, channel, nextDate), nextCursor | 5s / 1 lần |
 | \[TaskDetail\] `GET /tasks/{id}` (G02) | id | Task + `series` {id, ruleText, index, prevTaskId, nextTaskId, nextDate, status} | 5s / 1 lần |
 | \[RecurrenceGenerate\] (job nội bộ) | seriesId[] hoặc userId | createdCount, generatedUntil | Mỗi series một giao dịch; 3 lần backoff 1–5–15 phút |
@@ -395,7 +431,9 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 | `SERIES_STOPPED` (409) | MSG-15 |
 | `VERSION_CONFLICT` (412) | MSG-16 |
 | `NOT_FOUND` (task / series đã xoá) | MSG-17 |
-| `WORKSPACE_READ_ONLY` (402) | MSG-13 |
+| `TASK_COMPLETED` (409) | MSG-22 |
+| `ALREADY_REPEATING` (409) | MSG-23 |
+| `WORKSPACE_READ_ONLY` (402, từ 1.1) | MSG-13 |
 | 5xx / timeout | MSG-12 |
 
 ## 9. Danh sách thông báo
@@ -411,10 +449,10 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 | MSG-07 | Toast | Đã đổi tần suất, {n} lần sắp tới được cập nhật · Hoàn tác |
 | MSG-08 | Toast | Đã cập nhật {n} lần chưa xong theo task này · Hoàn tác |
 | MSG-09 | Toast | Đã dừng lặp "{tiêu đề}" · Hoàn tác |
-| MSG-10 | Dialog | Xoá {n} lần chưa xong của "{tiêu đề}" và dừng lặp? Các lần đã xong được giữ lại. Task xoá nằm trong Thùng rác 30 ngày |
+| MSG-10 | Dialog | Xoá {n} lần chưa xong của "{tiêu đề}" và dừng lặp? Các lần đã xong và các lần đã có thời gian thực tế được giữ lại. Task xoá nằm trong Thùng rác 30 ngày |
 | MSG-11 | Toast | Đã xoá {n} lần và dừng lặp · Hoàn tác |
 | MSG-12 | Toast | Chưa lưu được thay đổi. Thử lại |
-| MSG-13 | Banner | Gói dùng thử đã hết. Nâng cấp để tiếp tục thêm và sửa task |
+| MSG-13 | Banner | (1.1) Gói dùng thử đã hết. Nâng cấp để tiếp tục thêm và sửa task |
 | MSG-14 | Inline | Bạn đã có {n} task lặp đang chạy, tối đa {max}. Dừng bớt trong "Quản lý mọi task lặp" |
 | MSG-15 | Banner | Series này đã dừng lặp |
 | MSG-16 | Toast | Series vừa được sửa trên thiết bị khác, đã tải lại |
@@ -422,6 +460,12 @@ Instance dùng chung vòng đời task của G02; `BI_BO_QUA` là `LUU_TRU` củ
 | MSG-18 | Toast | Đã đặt giờ {giờ} cho các lần chưa xong · Hoàn tác |
 | MSG-19 | Empty state | Chưa có task lặp lại nào. Mở menu … của một task → "Lặp lại" để bắt đầu |
 | MSG-20 | Tooltip | Lần kế tiếp: {ngày} |
+| MSG-21 | Toast | Ngày này đã có {tên series} |
+| MSG-22 | Tooltip / Toast | Task đã hoàn thành không bật lặp được |
+| MSG-23 | Toast | Task này đã được đặt lặp lại trên thiết bị khác, đã tải lại |
+| MSG-24 | Toast | {k} lần đã dời, sửa riêng hoặc có thời gian thực tế được giữ lại |
+| MSG-25 | Banner | Lần này đã tách khỏi series "{tiêu đề}" do đổi tần suất |
+| MSG-26 | Hint | Tuần tính từ {thứ}; giữ cố định cho task lặp này |
 
 Bản EN: `[chờ bổ sung]`.
 
@@ -430,11 +474,11 @@ Bản EN: `[chờ bổ sung]`.
 | **Mục** | **Yêu cầu** `[giả định]` |
 | --- | --- |
 | Hiệu năng | \[SeriesCreate\] p95 ≤ 500 ms (gồm sinh 14 ngày đầu); instance 60 ngày hiện đủ trên board ≤ 5 giây; job sinh ≤ 50 ms / series |
-| Toàn vẹn | `UNIQUE(series_id, series_date)`; job idempotent, chạy lại không tạo trùng; thao tác series trong một giao dịch |
-| Offline | Bật lặp, sửa instance chạy được khi mất mạng (hàng đợi); thao tác series (BR-08) cần mạng, nút disabled kèm tooltip khi offline |
+| Toàn vẹn | Khoá duy nhất `(series_id, series_date)` trên instance còn gắn series (BR-04); ngày ngoại lệ lưu trên series, độc lập vòng đời task (BR-15); job idempotent, chạy lại không tạo trùng; thao tác series trong một giao dịch |
+| Offline | Bật lặp, sửa instance chạy được khi mất mạng (hàng đợi, QC-08); hai thiết bị cùng bật lặp một task → lệnh tới sau bị từ chối `ALREADY_REPEATING`; thao tác series (BR-08) cần mạng, nút disabled kèm tooltip khi offline |
 | Đồng bộ | Instance mới, thay đổi series hiện trên thiết bị khác ≤ 5 giây (`task.upserted`, `day.recomputed`) |
 | Bảo mật | Chỉ chủ series đọc / sửa (BR-14); kiểm tra quyền trên cả series và task trong mọi API |
 | Log / audit | \[ActivityLog\] theo BR-13; log job: số series, số instance tạo, lỗi; không chứa tiêu đề / notes |
 | Giám sát | Cảnh báo khi tỉ lệ lỗi job > 0,1% / ngày hoặc có series `generatedUntil` < hôm nay + 53 ngày |
-| Tracking | Sự kiện: `repeat_picker_opened`, `series_created` (rule type), `series_frequency_changed`, `series_applied_from_task`, `series_time_set`, `series_stopped` (deleteIncomplete), `series_instance_skipped`, `series_list_opened` |
+| Tracking | Sự kiện: `repeat_picker_opened`, `series_created` (rule type), `series_frequency_changed`, `series_applied_from_task`, `series_time_set`, `series_stopped` (deleteIncomplete), `series_instance_skipped` (đường: rollover / phím D / shutdown), `series_same_day_warning`, `series_instance_detached`, `series_exception_added`, `series_list_opened` |
 | Accessibility | SCR-01 điều khiển hoàn toàn bằng bàn phím; nút thứ có nhãn đọc màn hình đầy đủ ("Thứ Hai"); biểu tượng lặp có nhãn "Task lặp lại: {quy tắc}" |
