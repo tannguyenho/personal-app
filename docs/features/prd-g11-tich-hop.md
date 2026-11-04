@@ -6,7 +6,7 @@
 >
 > **Cập nhật 04/11/2026** theo [quyết định chốt mâu thuẫn](../review/quyet-dinh-chot-2026-11-04.md) (Q8, Q21, B14, B15, C27–C30, C34). Quy tắc dùng chung (ngày làm việc QC-01, đồng bộ QC-08, chế độ chỉ đọc QC-09, quyền theo gói QC-10) xem [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); PRD này chỉ tham chiếu, không định nghĩa lại. G11 phát hành 1.1 cùng lúc với chế độ chỉ đọc và quyền theo gói (Q10, ADR-0002).
 >
-> **Cập nhật vòng 5–6 (04/11/2026)** theo Q35, Q45, Q46, [ADR-0004](../adr/0004-ai-qua-claude-code-cli.md), [ADR-0005](../adr/0005-nen-tang-windows-truoc.md): nền tảng 1.0 là app Windows, 1.1 thêm web và macOS; G11 vẫn phát hành 1.1. Dữ liệu tích hợp chỉ đến được trợ lý AI qua công cụ MCP đọc dữ liệu tích hợp của G10, mặc định tắt, và phiên AI đã đọc dữ liệu đó thì mọi thay đổi chờ duyệt ([QC-12](../01-quy-tac-dung-chung.md) mục 6). Bản 1 chỉ cho một người dùng; Privacy và quản trị workspace để bản sau (Q35, [`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md)).
+> **Cập nhật vòng 5–6 (04/11/2026)** theo Q35, Q45, Q46, [ADR-0004](../adr/0004-ai-qua-claude-code-cli.md), [ADR-0005](../adr/0005-nen-tang-windows-truoc.md): nền tảng 1.0 là app Windows, 1.1 thêm web và macOS; G11 vẫn phát hành 1.1. Dữ liệu tích hợp chỉ đến được trợ lý AI qua công cụ MCP đọc dữ liệu tích hợp của G10, mặc định tắt, và phiên AI đã đọc dữ liệu đó thì các thay đổi sau lần đọc đầu tiên chờ duyệt ([QC-12](../01-quy-tac-dung-chung.md) mục 6, D8). Cập nhật vòng 7: AI không bao giờ hoàn thành hay xoá task có liên kết tích hợp (D10). Bản 1 chỉ cho một người dùng; Privacy và quản trị workspace để bản sau (Q35, [`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md)).
 
 # 1. Bối cảnh và vấn đề
 
@@ -93,7 +93,7 @@ Chỉ xin scope cần cho tính năng đang bật; tính năng cần thêm quy�
 
 ## 4.6 Dữ liệu tích hợp với trợ lý AI chỉ là dữ liệu
 
-Trợ lý AI (G10) chạy bằng Claude Code trên máy người dùng và chỉ thấy dữ liệu tích hợp qua công cụ MCP đọc dữ liệu tích hợp, mặc định tắt. Khi người dùng bật, công cụ chỉ trả metadata của việc giao cho mình (không nội dung thư, không đoạn trích Gmail); phiên AI đã đọc dữ liệu này thì mọi thay đổi sau đó chờ người dùng duyệt trong app (QC-12 mục 6). Task có liên kết tích hợp không bao giờ được AI hoàn thành, kể cả khi người dùng cho phép AI hoàn thành task (QC-12 mục 4), nên AI không bao giờ đẩy trạng thái ra nguồn.
+Trợ lý AI (G10) chạy bằng Claude Code trên máy người dùng và chỉ thấy dữ liệu tích hợp qua công cụ MCP đọc dữ liệu tích hợp, mặc định tắt. Khi người dùng bật, công cụ chỉ trả metadata của việc giao cho mình (không nội dung thư, không đoạn trích Gmail); phiên AI đã đọc dữ liệu này thì mọi thay đổi sau lần đọc đầu tiên chờ người dùng duyệt trong app, thay đổi trước đó giữ nguyên (QC-12 mục 6, D8). Task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá, kể cả khi người dùng cho phép AI hoàn thành và xoá task (QC-12 mục 4, D10), nên AI không bao giờ đẩy trạng thái ra nguồn.
 
 ## 4.5 Chỉ việc của tôi
 
@@ -140,8 +140,8 @@ Slack và Teams ở 1.2 dùng cho hai việc: đích chia sẻ Daily planning / 
 | Token | Mã hoá AES-256-GCM, chỉ dùng ở server | Ngắt kết nối thu hồi token |
 | Số tích hợp được kết nối | Theo bảng quyền theo gói của G12 (QC-10) | Không viết cứng |
 | Chế độ chỉ đọc (QC-09, Q8) | Webhook / poll chỉ cập nhật cache panel; không tạo, hoàn thành hay sửa task; không đẩy trạng thái ra nguồn | Bản 1.1 |
-| Dữ liệu tích hợp với trợ lý AI (QC-12 mục 6) | Chỉ qua công cụ MCP đọc dữ liệu tích hợp của G10, mặc định tắt; trả metadata item (tiêu đề, trạng thái, hạn, nguồn phụ, URL) và hoạt động trong ngày của chính tài khoản; không nội dung thư, không đoạn trích Gmail, không nội dung xem trước; phiên AI đã đọc → mọi thay đổi chờ duyệt | Đoạn trích Gmail: `[giả định — không đưa]` |
-| AI và hoàn thành task liên kết | Task có liên kết tích hợp còn hiệu lực không bao giờ được AI hoàn thành (QC-12 mục 4); AI xoá task liên kết (khi người dùng cho phép) không đẩy gì ra nguồn `[giả định]` | — |
+| Dữ liệu tích hợp với trợ lý AI (QC-12 mục 6) | Chỉ qua công cụ MCP đọc dữ liệu tích hợp của G10, mặc định tắt; trả metadata item (tiêu đề, trạng thái, hạn, nguồn phụ, URL) và hoạt động trong ngày của chính tài khoản; không nội dung thư, không đoạn trích Gmail, không nội dung xem trước; phiên AI đã đọc → các thay đổi sau lần đọc đầu tiên chờ duyệt (D8) | Đoạn trích Gmail: `[giả định — không đưa]` |
+| AI và task liên kết | Task có liên kết tích hợp còn hiệu lực không bao giờ được AI hoàn thành hay xoá (QC-12 mục 4, D10) | — |
 
 Giá trị trong bảng 5.3 là `[giả định]` trừ các dòng ghi mã quyết định (C27, C30, QC-09, QC-10, QC-12).
 
@@ -261,7 +261,7 @@ AC03: Hoàn tác trong toast → trả nguồn về trạng thái trước `[gi�
 
 AC04: Hai bên không còn khớp (bỏ hoàn thành sau thời hạn đẩy ngược, item mở lại ở nguồn, hàng đợi đẩy quá 7 ngày) → card và chi tiết task hiện nhãn "Lệch với nguồn" và nút "Đồng bộ lại" (C27).
 
-AC05: Task có liên kết tích hợp không bao giờ được AI hoàn thành, kể cả khi người dùng bật "Cho phép AI hoàn thành và xoá task" của G10, nên AI không bao giờ đẩy trạng thái ra nguồn (QC-12 mục 4, Q46; thay Q20 ở phần này).
+AC05: Task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá, kể cả khi người dùng bật "Cho phép AI hoàn thành và xoá task" của G10, nên AI không bao giờ đẩy trạng thái ra nguồn (QC-12 mục 4, Q46, D10; thay Q20 ở phần này).
 
 ### US3.2 Đóng ở nguồn hoàn thành task
 
@@ -332,7 +332,7 @@ AC03: Mặc định không hiện tên task trên status `[giả định]`.
 | **Mục** | **Mô tả** | **Hướng xử lý** |
 |---|---|---|
 | Thẩm định Gmail | Scope Gmail là scope hạn chế, cần Google xác minh và đánh giá bảo mật; có thể chậm ra mắt Gmail | Nộp sớm cùng hồ sơ lịch (G05); mặc định chỉ đọc (`gmail.readonly`), `gmail.modify` chỉ xin khi bật lưu trữ thư (C29) |
-| Lệnh ẩn trong item | Tiêu đề email / issue do người lạ viết có thể chứa câu lệnh cho Claude Code | Công cụ MCP đọc dữ liệu tích hợp mặc định tắt; phiên AI đã đọc thì mọi thay đổi chờ duyệt trong app; AI không hoàn thành task liên kết (G10, Q21, QC-12 mục 4, 6) |
+| Lệnh ẩn trong item | Tiêu đề email / issue do người lạ viết có thể chứa câu lệnh cho Claude Code | Công cụ MCP đọc dữ liệu tích hợp mặc định tắt; phiên AI đã đọc thì các thay đổi sau lần đọc đầu tiên chờ duyệt trong app (D8); AI không hoàn thành, không xoá task liên kết (G10, Q21, QC-12 mục 4, 6, D10) |
 | Dữ liệu của người khác | JQL tự do hoặc database Notion chung kéo việc của đồng nghiệp vào app và vào AI | Chỉ nhập item giao cho mình; đổi người giao → liên kết chỉ đọc (B15); công cụ MCP chỉ trả item giao cho mình |
 | Duyệt app của Atlassian / Notion / Slack / Microsoft | Thời gian duyệt chưa rõ | Đưa vào kế hoạch phát hành 1.1 / 1.2 |
 | Giới hạn tần suất của hãng | Nhiều người dùng chung một app OAuth | Backoff, cache, ưu tiên webhook; giám sát 429 theo hãng |
@@ -359,6 +359,6 @@ AC03: Mặc định không hiện tên task trên status `[giả định]`.
 - Status Slack / Teams có hiện tên task không?
 - Ai nộp hồ sơ xác minh Google cho Gmail, khi nào (chung với G05)?
 - Quản trị workspace có cần chặn / cho phép từng tích hợp không? — Đã chốt 04/11/2026: bản 1 chỉ một người dùng; quản trị workspace và Privacy để bản sau (Q35).
-- Dữ liệu tích hợp có được gửi cho AI không? — Đã chốt 04/11/2026: chỉ qua công cụ MCP đọc dữ liệu tích hợp của G10, mặc định tắt; phiên AI đã đọc thì mọi thay đổi chờ duyệt (Q21, Q46, QC-12 mục 6).
+- Dữ liệu tích hợp có được gửi cho AI không? — Đã chốt 04/11/2026: chỉ qua công cụ MCP đọc dữ liệu tích hợp của G10, mặc định tắt; phiên AI đã đọc thì các thay đổi sau lần đầu đọc dữ liệu tích hợp trong phiên đó chờ duyệt (Q21, Q46, QC-12 mục 6, D8).
 - Công cụ MCP đọc dữ liệu tích hợp có trả đoạn trích Gmail (≤ 200 ký tự) không, hay chỉ chủ đề thư (đang giả định: chỉ chủ đề)?
-- AI (khi người dùng cho phép xoá) có được xoá task có liên kết tích hợp không (đang giả định: được, không đẩy gì ra nguồn)?
+- AI (khi người dùng cho phép xoá) có được xoá task có liên kết tích hợp không? — Đã chốt 04/11/2026: không; AI không bao giờ hoàn thành hay xoá task có liên kết tích hợp (D10, QC-12 mục 4).

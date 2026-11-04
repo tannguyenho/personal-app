@@ -86,7 +86,7 @@ Bỏ lỡ ritual tuần thì chỉ nhắc tuần hiện tại (giống EC-27 c�
 | Giờ Weekly review | Ngày trong tuần + giờ | Thứ Sáu 15:00 | |
 | Gộp review vào planning | Bật / tắt | Tắt | Bật: các bước review tuần trước chạy trước bước 1 của Weekly planning; một bước Chia sẻ, một email (đã chốt, C25) |
 | Ngày hiển thị trong tuần | Lịch chung (G01) | Thứ Hai–Thứ Sáu | Đã chốt (QC-02 mục 8): cột ngày lấy từ lịch chung, không theo khung giờ channel, không hard-code |
-| Gồm ngày nghỉ trong review | Bật / tắt | Tắt | Bật: hiện đủ 7 ngày, gồm ngày không thuộc lịch chung (kể cả ngày chỉ có khung giờ channel) |
+| Gồm ngày nghỉ trong review | Bật / tắt | Tắt | Bật: hiện đủ 7 ngày, gồm ngày không thuộc lịch chung (kể cả ngày chỉ có khung giờ channel). Công tắc chỉ ẩn / hiện cột; giờ ở ngày nghỉ (ví dụ khung channel) luôn tính vào tổng tuần (D15) |
 | Objective | 1–200 ký tự; tối đa 20 / tuần | — | Channel tuỳ chọn |
 | Tuần tạo được objective | Tuần hiện tại đến 12 tuần tới | Tuần đang xem | Tuần đã qua chỉ xem |
 | Task gắn objective | Tối đa 1 objective / task | Không gắn | Instance lặp mới không sao chép (G03), trừ khi chọn "Gắn cho cả series" (đã chốt, C26) |
@@ -124,7 +124,7 @@ User Story: Là Hà, tôi muốn thấy giờ làm theo từng ngày và theo t�
 
 AC01: Mở bằng sidebar "Weekly review", command menu, lời nhắc Thứ Sáu 15:00 hoặc tự mở (1 lần / tuần).
 
-AC02: Bước "What got done": biểu đồ cột giờ thực tế cho từng ngày làm việc trong tuần theo lịch chung (QC-02 mục 8; đủ 7 ngày nếu bật "Gồm ngày nghỉ") và donut phân bổ theo channel. Người có lịch chung Thứ Hai–Thứ Bảy thấy cột Thứ Bảy mà không cần bật gì; ngày chỉ có khung giờ channel (ví dụ `#Cá nhân` Chủ Nhật) không có cột riêng khi tắt "Gồm ngày nghỉ".
+AC02: Bước "What got done": biểu đồ cột giờ thực tế cho từng ngày làm việc trong tuần theo lịch chung (QC-02 mục 8; đủ 7 ngày nếu bật "Gồm ngày nghỉ") và donut phân bổ theo channel. Người có lịch chung Thứ Hai–Thứ Bảy thấy cột Thứ Bảy mà không cần bật gì; ngày chỉ có khung giờ channel (ví dụ `#Cá nhân` Chủ Nhật) không có cột riêng khi tắt "Gồm ngày nghỉ", nhưng giờ của ngày đó vẫn tính vào tổng tuần và phân bổ channel (D15).
 
 AC03: Số liệu dùng cùng định nghĩa với Analytics.
 
@@ -208,7 +208,7 @@ User Story: Là Hà, tôi muốn xem và tải số giờ theo ngày và channel
 
 AC01: Menu workspace → Analytics; mặc định tuần trước (Sunsama "Last week Oct 26–30"), ‹ › đổi tuần.
 
-AC02: Công tắc "Gồm ngày nghỉ" (Sunsama: "Weekends"; mặc định chỉ ngày trong lịch chung); lọc "Tổng / personal / work" theo context.
+AC02: Công tắc "Gồm ngày nghỉ" (Sunsama: "Weekends"; mặc định chỉ ngày trong lịch chung) chỉ ẩn / hiện cột ngày; giờ ở ngày nghỉ vẫn tính vào tổng tuần (D15); lọc "Tổng / personal / work" theo context.
 
 AC03: Tổng tuần (Weekly Totals), giờ theo ngày (Daily Breakdown), phân bổ channel, tỉ lệ hoàn thành task đã lên kế hoạch, độ lệch planned / actual, số ngày vượt ngưỡng, chuỗi ngày làm Daily planning.
 
@@ -266,7 +266,7 @@ AC04: Email có link huỷ nhận 1 chạm (G12).
 - Đã chốt 04/11/2026: cột ngày lấy từ lịch làm việc; recap gửi tại mốc đầu ngày của ngày sau ngày làm việc cuối tuần (Q19, QC-02).
 - Đã chốt 04/11/2026: cột ngày, ngày làm việc đầu / cuối tuần và giờ gửi recap theo **lịch chung**, không theo khung giờ channel (Q38a, QC-02 mục 8).
 - Đã chốt 04/11/2026: nền tảng 1.1 là app Windows, web, macOS; iOS / Android từ 1.2 (Q45, ADR-0005). Trợ lý AI có từ 1.0 qua Claude Code CLI, không có hạn mức AI theo gói (Q46, QC-12).
-- Khi tắt "Gồm ngày nghỉ", giờ thực tế ở ngày ngoài lịch chung (ví dụ khung giờ `#Cá nhân` Chủ Nhật) có tính vào tổng tuần, phân bổ channel và recap không? (Đề xuất: luôn tính vào tổng và phân bổ, công tắc chỉ ẩn / hiện cột ngày `[giả định]`.)
+- Đã chốt 04/11/2026: tắt "Gồm ngày nghỉ" chỉ ẩn / hiện cột ngày; giờ thực tế ở ngày ngoài lịch chung (ví dụ khung giờ `#Cá nhân` Chủ Nhật) vẫn tính vào tổng tuần, phân bổ channel và recap (D15).
 - Đã chốt 04/11/2026: giờ thực tế cộng theo QC-07, planned chỉ thay cho task không có bản ghi, không cộng hai lần; task ghi chép ritual không tính vào phép đếm task (Q13, C21).
 - Đã chốt 04/11/2026: objective chỉ chuyển "Chưa đạt" khi Weekly planning tuần mới hoàn tất hoặc hết ngày làm việc đầu tuần (B13).
 - Đã chốt 04/11/2026: gộp review vào planning chèn trước bước 1, một bước Chia sẻ, một email (C25).

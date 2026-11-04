@@ -2,14 +2,14 @@
 
 # UC-G07 - Focus & theo dõi thời gian trên app Windows (ứng dụng lập kế hoạch ngày)
 
-> **Bản nháp.** Giá trị `[giả định]` cần BA / PO xác nhận. Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). G07 sở hữu quy tắc **bản ghi thời gian QC-07** trong [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); SRS này hiện thực QC-07 và tham chiếu QC-01 (ngày làm việc), QC-05 (đổi ngày task), QC-08 (đồng bộ), QC-09 (chế độ chỉ đọc, 1.1). Tên kỹ thuật `TimeEntry` trong API / CSDL là bản ghi thời gian. SRS này mô tả timer, thời gian thực tế (bản ghi thời gian), Focus mode và giám sát timer (**1.0**); Pomodoro, màn nghỉ, nhắc nghỉ desktop, phím tắt toàn cục Ctrl+Shift+Space, chế độ chỉ đọc (**1.1**); Focus Bar desktop (**1.2**). Mỗi UC, BR, SCR thuộc 1.1 / 1.2 được ghi rõ phiên bản; không ghi là 1.0. Hoàn thành / xoá task (G02), khối thực tế trên lịch (G05), Daily shutdown (G08), analytics (G09), đổi status Slack / Teams khi bật timer (G11, 1.2), trung tâm thông báo (G12) đặc tả ở SRS riêng của từng nhóm. Mã API, CSDL tham chiếu tài liệu "Thiết kế kỹ thuật & đặc tả API — MVP 1.0".
+> **Bản nháp.** Giá trị `[giả định]` cần BA / PO xác nhận. Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). G07 sở hữu quy tắc **bản ghi thời gian QC-07** trong [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); SRS này hiện thực QC-07 và tham chiếu QC-01 (ngày làm việc), QC-05 (đổi ngày task), QC-08 (đồng bộ), QC-09 (chế độ chỉ đọc, 1.1). Tên kỹ thuật `TimeEntry` trong API / CSDL là bản ghi thời gian. SRS này mô tả timer, thời gian thực tế (bản ghi thời gian), Focus mode, giám sát timer, phím tắt toàn cục Ctrl+Shift+Space (D11) (**1.0**); Pomodoro, màn nghỉ, nhắc nghỉ desktop, chế độ chỉ đọc (**1.1**); Focus Bar desktop (**1.2**). Mỗi UC, BR, SCR thuộc 1.1 / 1.2 được ghi rõ phiên bản; không ghi là 1.0. Hoàn thành / xoá task (G02), khối thực tế trên lịch (G05), Daily shutdown (G08), analytics (G09), đổi status Slack / Teams khi bật timer (G11, 1.2), trung tâm thông báo (G12) đặc tả ở SRS riêng của từng nhóm. Mã API, CSDL tham chiếu tài liệu "Thiết kế kỹ thuật & đặc tả API — MVP 1.0".
 
 ## 1. Tổng quan
 
 | **Mục** | **Nội dung** |
 | --- | --- |
 | Mục tiêu | Người dùng đo thời gian thực tế của task bằng một phím, sửa được khi quên; làm một việc một lúc trong Focus mode; timer quên tắt được phát hiện và xử lý |
-| Actor | Người dùng đã đăng nhập · Hệ thống (job `timer.watchdog`, dịch vụ đồng bộ) · Hệ điều hành Windows (thông báo hệ thống, khay hệ thống — 1.0 `[giả định]`; phím tắt toàn cục 1.1; Focus Bar 1.2) |
+| Actor | Người dùng đã đăng nhập · Hệ thống (job `timer.watchdog`, dịch vụ đồng bộ) · Hệ điều hành Windows (thông báo Windows, khay hệ thống, phím tắt toàn cục — 1.0, D11–D13; Focus Bar 1.2) |
 | Phạm vi | Timer trên task cha, một timer toàn tài khoản, bản ghi thời gian (QC-07; nguồn `timer` / `manual` / `auto_closed` / `ritual`), nhập tay (E) theo thời lượng hoặc khoảng giờ, Focus mode, âm báo theo kế hoạch, nhắc > 4 giờ, tự đóng > 24 giờ, đồng bộ nhiều thiết bị; Pomodoro, nghỉ (1.1); Focus Bar (1.2) |
 | Ngoài phạm vi | Khối thực tế trên lịch (G05), "Tính planned là actual" (G02; chỉ hiển thị, QC-07 mục 4), thời điểm ritual tạo bản ghi (G08), DND Slack / Teams (G11), cộng số liệu theo ngày / tuần và báo cáo thời gian (chỉ G09, QC-07 mục 5), Toggl, chặn website |
 | Nền tảng | App Windows (Flutter) ở 1.0 (Q45, ADR-0005). Web, macOS từ 1.1; iOS / Android từ 1.2 dùng cùng đặc tả; Focus Bar chỉ app desktop (Windows, macOS; 1.2). Chạy nền, khay hệ thống, thông báo Windows, phím tắt toàn cục: tech chốt — `docs/tech/` |
@@ -39,7 +39,7 @@
 | BR-05 | **Nhập tay (E)** — theo QC-07 mục 3 (B11); `source = manual`. (a) **Theo thời lượng** (`entryMode = duration`): `endedAt` = now, `startedAt` = now − thời lượng (chỉ dùng để xác định ngày làm việc); **không** kiểm tra chồng lấn, kể cả với timer đang chạy; không vẽ lên lịch (G05 BR-18). (b) **Theo khoảng giờ** (`entryMode = range`): `endedAt` > `startedAt`; `endedAt` ≤ now; chồng timer đang chạy → từ chối (MSG-18); chồng bản ghi đã đóng → cho lưu, cảnh báo MSG-08; có vẽ lên lịch. Cả hai: mỗi bản ghi 1 phút – 24 giờ (MSG-06). Được nhập cho subtask (`subtaskId`), cộng vào thực tế của task theo QC-07 mục 5 |
 | BR-06 | **Hoàn thành / xoá task đang chạy timer** → dừng timer theo BR-04 trước khi G02 xử lý (EC-24, QC-05); áp cả khi task bị hoàn thành / xoá ở thiết bị khác. **Không đường nào khác dừng timer** (Q14, QC-05): phím D, kéo sang ngày khác, rollover, đưa vào backlog, shutdown "Ngày mai" (G08 chỉ nhắc ở bước đầu), AI dời ngày, lưu trữ do trùng series |
 | BR-07 | **Âm báo theo kế hoạch.** Còn lại = kế hoạch − thực tế (gồm lượt đang chạy). Chạm mức cài đặt (10 / 5 / 0 phút, mặc định 0) → âm báo (nếu bật) + MSG-10, tối đa một lần / lượt chạy. Task không có kế hoạch → không báo |
-| BR-08 | **Nhắc chạy lâu.** Timer chạy liên tục > 4 giờ → một thông báo MSG-11: 1.0 trong app (trung tâm thông báo, G12) và thông báo hệ thống Windows `[giả định]` theo cài đặt Thông báo; push di động từ 1.2 |
+| BR-08 | **Nhắc chạy lâu.** Timer chạy liên tục > 4 giờ → một thông báo MSG-11: 1.0 trong app (trung tâm thông báo, G12) và thông báo Windows (D12) theo cài đặt Thông báo; push di động từ 1.2 |
 | BR-09 | **Tự đóng.** Timer chạy > 24 giờ → đóng với `endedAt` = `startedAt` + 24 giờ, `source = auto_closed`, `needsReview = true`; lần mở app kế tiếp hiện SCR-06 hỏi giờ dừng thật (EC-23) |
 | BR-10 | **Offline nhiều thiết bị** (C20, EC-11). Mỗi lệnh bật / dừng mang `startedAt` / `endedAt` của máy và `clientOpId`. Server xử lý lệnh timer theo **thứ tự nhận** (QC-08): lệnh bật nhận sau cùng là timer đang chạy, timer trước đó đóng theo BR-01. Bản ghi tới server sau mà chồng lên bản ghi `timer` / `auto_closed` đã có thì **bị cắt phần chồng**; bản ghi đã có giữ nguyên `[giả định: bản tới trước giữ, bản tới sau bị cắt]`. Phần còn lại < 10 giây → bỏ. Bị cắt ở giữa (thành hai đoạn) → giữ cả hai đoạn `[giả định]`. Thiết bị có timer bị đóng / bản ghi bị cắt hiện MSG-17 / MSG-22. Không áp cho bản ghi `manual` theo thời lượng (BR-05 a) |
 | BR-11 | **Giờ.** Online: `startedAt` / `endedAt` theo giờ server. Offline: giờ máy, server điều chỉnh khi lệch > 2 phút so với giờ server lúc đồng bộ `[giả định]`. Client hiển thị đồng hồ theo `startedAt` + độ lệch server |
@@ -48,13 +48,13 @@
 | BR-14 | **Nghỉ (1.1).** K / "Nghỉ một chút" / hết phiên Pomodoro → dừng timer task; đếm ngược 1–30 phút, mặc định 5; TẠM DỪNG / KẾT THÚC NGHỈ; hết giờ → MSG-13, quay về task; không tự bật lại timer `[giả định]`. Thời gian nghỉ không tạo TimeEntry |
 | BR-15 | **Nhắc nghỉ desktop (1.1).** Timer chạy liên tục 25 phút (cài đặt) → thông báo hệ thống MSG-14 gợi ý nghỉ 5 phút; một lần / lượt chạy |
 | BR-16 | **Focus Bar (1.2, desktop).** Cài đặt: hiện khi focus / khi đang chạy timer / tắt. Hiển thị tiêu đề task, thực tế / kế hoạch, Dừng, Hoàn thành, Mở app. macOS thêm đồng hồ ở menu bar |
-| BR-17 | **Phím tắt.** Space bật / dừng timer task đang chọn; F Focus; K nghỉ (1.1); E nhập tay; Ctrl+Shift+Space toàn cục (desktop, 1.1, C20; không phụ thuộc Focus Bar 1.2). Chỉ hoạt động khi không focus ô nhập; gõ ≥ 4 ký tự / 1 giây → khoá phím tắt 1 giây (EC-25) |
+| BR-17 | **Phím tắt.** Space bật / dừng timer task đang chọn; F Focus; K nghỉ (1.1); E nhập tay; Ctrl+Shift+Space toàn cục (desktop, 1.0, D11; không phụ thuộc Focus Bar 1.2). Chỉ hoạt động khi không focus ô nhập; gõ ≥ 4 ký tự / 1 giây → khoá phím tắt 1 giây (EC-25) |
 | BR-18 | Nhật ký (\[ActivityLog\], G02): bật / dừng timer, thêm / sửa / xoá bản ghi, tự đóng (tác nhân `system`), timer bị đóng do thiết bị khác |
 | BR-19 | **Chế độ chỉ đọc (1.1)** — theo QC-09 (Q8). Lúc workspace vào chỉ đọc: timer đang chạy **tự dừng** với `endedAt` = thời điểm vào chỉ đọc, `source = timer`, nhật ký tác nhân `system`, phát `timer.changed` (lý do `read_only`), MSG-21. Trong chỉ đọc: không bật timer, không thêm / sửa / xoá bản ghi (402, MSG-15). Lệnh offline tạo trước thời điểm vào chỉ đọc được nhận nếu đồng bộ trong 2 giờ; lệnh bật offline được nhận thì đóng tại thời điểm vào chỉ đọc. Bản 1.0 không có chế độ chỉ đọc |
 | BR-20 | **Ngày của bản ghi** — theo QC-07 mục 1 (Q13): `workday(startedAt)`, không chia khi vắt qua mốc đầu ngày. Rollover / dời ngày task không đổi ngày của bản ghi đã có |
 | BR-21 | **Nguồn `ritual`** — theo QC-07 mục 2. \[TimeEntryCreate\] với `source = ritual` (do G08 gọi) khi người dùng đang có timer chạy → không tạo, trả `skipped: true` (không phải lỗi). Bản ghi `ritual` có giờ thật, không bị cắt theo BR-10 `[giả định]`, sửa / xoá được như bản ghi khác |
 | BR-22 | **"Tính planned là actual"** — theo QC-07 mục 4: G07 không tạo bản ghi; thực tế hiển thị trên task theo QC-07 mục 5 dùng cờ `plannedAsActual` G02 lưu lúc hoàn thành. G07 không cộng số liệu theo ngày / tuần (chỉ G09) |
-| BR-23 | **Cửa sổ app (1.0, Windows).** Timer là bản ghi trên server (BR-01); thu nhỏ, đóng cửa sổ, tắt app hoặc máy ngủ **không** dừng timer. Mở lại app → \[TimerGet\], đồng hồ hiện theo `startedAt` + độ lệch server (BR-11). Đóng cửa sổ khi có timer chạy → app thu về khay hệ thống, biểu tượng khay cho thấy có timer `[giả định]`. Cơ chế chạy nền / khay: tech chốt — `docs/tech/` |
+| BR-23 | **Cửa sổ app (1.0, Windows).** Timer là bản ghi trên server (BR-01); thu nhỏ, đóng cửa sổ, tắt app hoặc máy ngủ **không** dừng timer. Mở lại app → \[TimerGet\], đồng hồ hiện theo `startedAt` + độ lệch server (BR-11). Đóng cửa sổ khi có timer chạy → app thu về khay hệ thống, timer chạy tiếp, biểu tượng khay cho thấy có timer (D13). Cơ chế chạy nền / khay: tech chốt — `docs/tech/` |
 
 ## 4. Trạng thái
 
@@ -109,7 +109,7 @@ Chuyển trạng thái: `KHONG_CHAY` → `DANG_CHAY` (UC-01) · `DANG_CHAY` → 
 | A1 | Task không thuộc hôm nay | Vẫn chạy; toast MSG-01 (BR-03) |
 | A2 | Bật "Vào Focus khi chạy timer" | Sau bước 4 mở SCR-03 |
 | A3 | (Bỏ — timer chạy trên task cha, xem QC-07 mục 6 / C20) | |
-| A4 | Ctrl+Shift+Space toàn cục (desktop, 1.1) | Bật timer task gần nhất đã chạy, hoặc task đầu tiên chưa xong của hôm nay |
+| A4 | Ctrl+Shift+Space toàn cục (desktop, 1.0, D11) | Bật timer task gần nhất đã chạy, hoặc task đầu tiên chưa xong của hôm nay |
 | A5 | Bản ghi `TU_DONG` đang chờ | Hiện SCR-06 trước, rồi mới bật |
 
 **Luồng lỗi**
@@ -278,7 +278,7 @@ Chuyển trạng thái: `KHONG_CHAY` → `DANG_CHAY` (UC-01) · `DANG_CHAY` → 
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
 | 1 | Hệ thống | Job chạy mỗi 5 phút `[giả định]`, quét timer đang chạy |
-| 2 | Hệ thống | Chạy > 4 giờ, chưa nhắc → tạo thông báo MSG-11 (G12, kèm thông báo hệ thống Windows `[giả định]`; push di động từ 1.2), đặt `longRunNotifiedAt` |
+| 2 | Hệ thống | Chạy > 4 giờ, chưa nhắc → tạo thông báo MSG-11 (G12, kèm thông báo Windows, D12; push di động từ 1.2), đặt `longRunNotifiedAt` |
 | 3 | Hệ thống | Chạy > 24 giờ → đóng theo BR-09 (`auto_closed`, `needsReview`); phát `timer.changed`; ghi nhật ký `system` |
 | 4 | Người dùng | Lần mở app kế tiếp: **SCR-06** (MSG-20); chọn giờ dừng thật, "Lưu" |
 | 5 | Hệ thống | \[TimeEntryUpdate\] `{endedAt, needsReview: false}`; thực tế tính lại |
@@ -373,12 +373,12 @@ Chuyển trạng thái: `KHONG_CHAY` → `DANG_CHAY` (UC-01) · `DANG_CHAY` → 
 | --- | --- | --- | --- | --- |
 | ▶ trên card / chi tiết (task cha) | ✓ | ✓ | ✓ | UC-01 |
 | Phím Space trên task đang chọn | ✓ | ✓ | – | UC-01, UC-02 |
-| Phím tắt toàn cục Ctrl+Shift+Space | ✓ (từ 1.1) | ✓ (macOS; web không có) | – | UC-01 A4 |
+| Phím tắt toàn cục Ctrl+Shift+Space | ✓ (D11) | ✓ (macOS; web không có) | – | UC-01 A4 |
 | Phím E / ô "Thực tế" trong chi tiết | ✓ | ✓ | ✓ | UC-03 |
 | Phím F / mục "Focus" ở sidebar | ✓ | ✓ | ✓ | UC-04 |
 | Tab Pomodoro, phím K | ✓ (từ 1.1) | ✓ | ✓ | UC-05 |
 | Thông báo MSG-11 / mở app sau tự đóng | ✓ | ✓ | ✓ (push) | UC-06 |
-| Biểu tượng khay hệ thống khi đóng cửa sổ | ✓ `[giả định]` | – | – | BR-23 |
+| Biểu tượng khay hệ thống khi đóng cửa sổ | ✓ (D13) | – | – | BR-23 |
 | Focus Bar / macOS menu bar | ✓ (từ 1.2) | ✓ (macOS, 1.2) | – | UC-08 |
 
 ## 7. Mô tả màn hình
@@ -524,5 +524,5 @@ Bản EN: `[chờ bổ sung]`.
 | Bảo mật | Chỉ chủ task đọc / sửa bản ghi thời gian; kiểm tra `taskId` thuộc người dùng ở mọi API |
 | Log / audit | \[ActivityLog\] theo BR-18; log job watchdog: số nhắc, số tự đóng; không chứa tiêu đề |
 | Giám sát | Cảnh báo khi số timer tự đóng > 1% / ngày hoặc job watchdog trễ > 15 phút |
-| Tracking | Sự kiện: `timer_started` (nguồn: nút / Space / Focus / toàn cục — 1.1), `timer_stopped` (lý do: user / user_picked_time / replaced / complete / delete / auto_closed / read_only), `timer_discarded_short`, `time_entry_trimmed`, `time_entry_added` (chế độ: duration / range; nguồn: manual / ritual) / `_edited` / `_deleted`, `focus_opened`, `remaining_alert_shown`, `long_timer_notified`, `pomodoro_started` (1.1), `break_started` / `break_ended` (1.1), `focus_bar_action` (1.2) |
+| Tracking | Sự kiện: `timer_started` (nguồn: nút / Space / Focus / toàn cục), `timer_stopped` (lý do: user / user_picked_time / replaced / complete / delete / auto_closed / read_only), `timer_discarded_short`, `time_entry_trimmed`, `time_entry_added` (chế độ: duration / range; nguồn: manual / ritual) / `_edited` / `_deleted`, `focus_opened`, `remaining_alert_shown`, `long_timer_notified`, `pomodoro_started` (1.1), `break_started` / `break_ended` (1.1), `focus_bar_action` (1.2) |
 | Accessibility | ▶ / ■ có nhãn "Bắt đầu / Dừng timer cho {tiêu đề}"; đồng hồ đếm giây không đọc liên tục với trình đọc màn hình (chỉ đọc khi bấm); âm báo luôn kèm thông báo chữ; tương phản WCAG 2.1 AA ở cả giao diện sáng / tối |

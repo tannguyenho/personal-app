@@ -2,7 +2,7 @@
 
 # PRD Focus & theo dõi thời gian trên app Windows (ứng dụng lập kế hoạch ngày)
 
-> **Bản nháp.** Con số đánh dấu `[giả định]` dùng để dựng flow, cần PO xác nhận trước khi dùng. Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). G07 sở hữu quy tắc **bản ghi thời gian (QC-07)** trong [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); PRD này tham chiếu QC-07 và các quy tắc dùng chung khác (QC-01 ngày làm việc, QC-05 đổi ngày task, QC-08 đồng bộ, QC-09 chế độ chỉ đọc), không định nghĩa lại. Phiên bản: timer, thời gian thực tế, Focus mode ở **1.0** (app Windows, Q45, ADR-0005); Pomodoro, màn nghỉ (Take a break), nhắc nghỉ trên desktop và phím tắt toàn cục Ctrl+Shift+Space ở **1.1**; Focus Bar desktop ở **1.2**. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026: nút ▶ và "Stop timer · Space", actual đếm màu xanh (0:00:03), badge ở mục Focus trên sidebar, toast "Must focus on today" khi bật timer cho task không thuộc hôm nay (timer vẫn chạy), block thời gian thực tế trên lịch ("2:01 – 2:02"), Focus mode có tab Focus / Pomodoro, Pomodoro "Remaining 0:25:00" với Session 0:25 chỉnh ▲▼, màn "Break" đếm ngược 0:05:00 có PAUSE, END BREAK. Chỗ khác Sunsama có chủ đích được ghi rõ.
+> **Bản nháp.** Con số đánh dấu `[giả định]` dùng để dựng flow, cần PO xác nhận trước khi dùng. Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). G07 sở hữu quy tắc **bản ghi thời gian (QC-07)** trong [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); PRD này tham chiếu QC-07 và các quy tắc dùng chung khác (QC-01 ngày làm việc, QC-05 đổi ngày task, QC-08 đồng bộ, QC-09 chế độ chỉ đọc), không định nghĩa lại. Phiên bản: timer, thời gian thực tế, Focus mode, phím tắt toàn cục Ctrl+Shift+Space (D11) ở **1.0** (app Windows, Q45, ADR-0005); Pomodoro, màn nghỉ (Take a break), nhắc nghỉ trên desktop ở **1.1**; Focus Bar desktop ở **1.2**. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026: nút ▶ và "Stop timer · Space", actual đếm màu xanh (0:00:03), badge ở mục Focus trên sidebar, toast "Must focus on today" khi bật timer cho task không thuộc hôm nay (timer vẫn chạy), block thời gian thực tế trên lịch ("2:01 – 2:02"), Focus mode có tab Focus / Pomodoro, Pomodoro "Remaining 0:25:00" với Session 0:25 chỉnh ▲▼, màn "Break" đếm ngược 0:05:00 có PAUSE, END BREAK. Chỗ khác Sunsama có chủ đích được ghi rõ.
 
 # 1. Bối cảnh và vấn đề
 
@@ -41,14 +41,15 @@ Lên kế hoạch chỉ có ích khi biết thực tế đã dùng thời gian t
 ## 3.1 Trong phạm vi (1.0; Pomodoro và nghỉ 1.1; Focus Bar 1.2)
 
 - Nền tảng: app Windows (Flutter) ở 1.0 (Q45, ADR-0005). Web và macOS từ 1.1, iOS / Android từ 1.2 dùng cùng đặc tả. Focus Bar chỉ có trên app desktop (Windows, macOS; 1.2).
-- **1.0** Timer lưu trên server theo giờ bắt đầu: thu nhỏ, đóng cửa sổ app, tắt app hoặc máy ngủ không dừng timer; mở lại app thì đồng hồ hiện đúng thời gian đã chạy. Đóng cửa sổ khi đang có timer thì app thu về khay hệ thống `[giả định]`; cơ chế chạy nền / khay hệ thống: tech chốt — `docs/tech/`.
+- **1.0** Timer lưu trên server theo giờ bắt đầu: thu nhỏ, đóng cửa sổ app, tắt app hoặc máy ngủ không dừng timer; mở lại app thì đồng hồ hiện đúng thời gian đã chạy. Đóng cửa sổ khi đang có timer thì app thu về khay hệ thống, timer chạy tiếp (D13); cơ chế chạy nền / khay hệ thống: tech chốt — `docs/tech/`.
 - **1.0** Timer trên task: ▶ trên card / chi tiết, phím Space; timer luôn chạy trên **task cha**, không chạy trên subtask (QC-07 mục 6, C20); một timer toàn tài khoản; dừng tạo bản ghi thời gian, cộng vào thời gian thực tế, hiện khối thực tế trên lịch (G05).
 - **1.0** Nhập / sửa / xoá thời gian thực tế bằng tay (phím E), theo thời lượng hoặc theo khoảng giờ (QC-07 mục 3).
 - **1.0** Bản ghi thời gian theo QC-07: thuộc ngày làm việc của thời điểm bắt đầu, nguồn `timer` / `manual` / `auto_closed` / `ritual`.
 - **1.0** Focus mode (F hoặc mục Focus ở sidebar): một task, tiêu đề lớn, subtask, notes, comment, Thực tế / Kế hoạch, START.
 - **1.0** Âm báo khi còn 10 / 5 / 0 phút so với thời lượng kế hoạch (chọn một mức, mặc định 0).
-- **1.0** Giám sát timer: nhắc khi chạy > 4 giờ (1.0: trong app và thông báo hệ thống Windows `[giả định]`; push di động từ 1.2), tự đóng > 24 giờ và hỏi giờ dừng.
-- **1.1** Tab Pomodoro trong Focus mode; màn nghỉ (K); nhắc nghỉ sau 25 phút trên desktop; phím tắt toàn cục Ctrl+Shift+Space (C20).
+- **1.0** Giám sát timer: nhắc khi chạy > 4 giờ (1.0: trong app và thông báo Windows, D12; push di động từ 1.2), tự đóng > 24 giờ và hỏi giờ dừng.
+- **1.0** Phím tắt toàn cục Ctrl+Shift+Space bật / dừng timer (D11, thay mốc 1.1 của C20).
+- **1.1** Tab Pomodoro trong Focus mode; màn nghỉ (K); nhắc nghỉ sau 25 phút trên desktop.
 - **1.1** Chế độ chỉ đọc theo QC-09: timer đang chạy tự dừng tại thời điểm vào chỉ đọc.
 - **1.2** Focus Bar desktop (hiện khi focus / khi đang chạy timer), macOS menu bar.
 
@@ -90,7 +91,7 @@ Vào / thoát Focus bằng một phím; thoát Focus không dừng timer; nghỉ
 | Lượt timer tối thiểu | < 10 giây thì bỏ, không lưu | 10 giây | Tránh bật nhầm |
 | Nhập tay tối thiểu | 1 phút (QC-07 mục 3) | — | Áp cho cả thời lượng và khoảng giờ |
 | Một bản ghi tối đa | 24 giờ | — | Nhập tay và tự đóng dùng chung giới hạn |
-| Nhắc timer chạy lâu | 4 giờ | Bật | Trong app và thông báo hệ thống Windows `[giả định]` (1.0); push di động (1.2) |
+| Nhắc timer chạy lâu | 4 giờ | Bật | Trong app và thông báo Windows (1.0, D12); push di động (1.2) |
 | Tự đóng timer | 24 giờ | — | Đóng tạm tại mốc 24 giờ, hỏi giờ dừng thật |
 | Âm báo theo thời lượng kế hoạch | Còn 10 / 5 / 0 phút | 0 phút, âm báo bật | Chỉ khi task có thời lượng kế hoạch |
 | Vào Focus khi chạy timer | Bật / tắt | Tắt | Cài đặt Focus |
@@ -134,7 +135,7 @@ AC04: Task không thuộc hôm nay (ngày khác hoặc backlog; "hôm nay" theo 
 
 AC05: Timer chỉ bật trên task cha; dòng subtask không có ▶ (QC-07 mục 6, C20).
 
-AC06 (1.1, desktop): Ctrl+Shift+Space (toàn cục) bật / dừng timer task gần nhất đã chạy (C20).
+AC06 (1.0, desktop): Ctrl+Shift+Space (toàn cục) bật / dừng timer task gần nhất đã chạy (D11).
 
 ### US1.2 Dừng timer
 
@@ -148,7 +149,7 @@ AC04: Dời task đang chạy timer bằng phím D, kéo sang ngày khác, rollo
 
 AC05: Bản ghi vắt qua mốc đầu ngày (ví dụ 22:00–02:00 với mốc 04:00, hoặc 03:00–05:00) thuộc ngày làm việc của thời điểm bắt đầu, không bị chia (Q13).
 
-AC06: Thu nhỏ, đóng cửa sổ app, tắt app hoặc máy ngủ → timer **không** dừng; mở lại app thì đồng hồ hiện đúng thời gian đã chạy theo giờ bắt đầu. Đóng cửa sổ khi đang có timer → app thu về khay hệ thống `[giả định]`.
+AC06: Thu nhỏ, đóng cửa sổ app, tắt app hoặc máy ngủ → timer **không** dừng; mở lại app thì đồng hồ hiện đúng thời gian đã chạy theo giờ bắt đầu. Đóng cửa sổ khi đang có timer → app thu về khay hệ thống, timer chạy tiếp (D13).
 
 ### US1.3 Timer cho subtask
 
@@ -224,7 +225,7 @@ AC03: Desktop: chạy liên tục 25 phút → thông báo hệ thống gợi ý
 
 ### US5.1 Nhắc và tự đóng
 
-AC01: Timer chạy > 4 giờ → nhắc "Bạn vẫn đang làm?" với Dừng / Dừng lúc… / Tiếp tục (1.0: trong app và thông báo hệ thống Windows `[giả định]`, kể cả khi cửa sổ app đang thu nhỏ hoặc ở khay hệ thống; push di động từ 1.2).
+AC01: Timer chạy > 4 giờ → nhắc "Bạn vẫn đang làm?" với Dừng / Dừng lúc… / Tiếp tục (1.0: trong app và thông báo Windows, kể cả khi cửa sổ app đang thu nhỏ hoặc ở khay hệ thống, D12; push di động từ 1.2).
 
 AC03: "Dừng lúc…" cho chọn giờ dừng thật trong khoảng từ giờ bắt đầu tới hiện tại; bản ghi lưu với giờ đã chọn (B11).
 
@@ -238,7 +239,7 @@ AC01: Desktop app hiện thanh nổi trên mọi cửa sổ khi đang focus ho�
 
 AC02: macOS: menu bar hiện thời gian đang chạy.
 
-AC03: (Chuyển sang US1.1 AC06 — phím tắt Ctrl+Shift+Space thuộc bản 1.1, không phụ thuộc Focus Bar, C20.)
+AC03: (Chuyển sang US1.1 AC06 — phím tắt Ctrl+Shift+Space thuộc bản 1.0, không phụ thuộc Focus Bar, D11.)
 
 # 8. Chỉ số theo dõi `[giả định]`
 
@@ -258,8 +259,8 @@ AC03: (Chuyển sang US1.1 AC06 — phím tắt Ctrl+Shift+Space thuộc bản 1
 | Space là phím tắt | Gõ nhầm bật timer (đã gặp trên Sunsama) | Chỉ khi không focus ô nhập; khoá phím tắt 1 giây khi gõ nhanh; bản ghi < 10 giây bỏ |
 | Đồng hồ máy lệch | Thiết bị đặt giờ sai làm bản ghi lệch | Server ghi `startedAt` theo giờ server khi online; offline dùng giờ máy, server chỉnh khi lệch > 2 phút `[giả định]` |
 | Offline nhiều thiết bị | Hai timer chạy song song, thời gian bị tính hai lần | Xử lý theo thứ tự server nhận (QC-08); cắt phần chồng lấn (C20, EC-11) |
-| Thu nhỏ / đóng cửa sổ app, máy ngủ | Đồng hồ trên máy không đếm khi app không chạy; người dùng tưởng đóng cửa sổ là dừng timer | Timer lưu ở server; app chỉ hiển thị theo `startedAt`; đóng cửa sổ không dừng timer, thu về khay hệ thống `[giả định]`; cơ chế: tech chốt — `docs/tech/` |
-| Thông báo khi không nhìn app (1.0) | App di động chưa có tới 1.2 | 1.0 nhắc trong app (trung tâm thông báo, G12) và thông báo hệ thống Windows `[giả định]`; push di động từ 1.2 |
+| Thu nhỏ / đóng cửa sổ app, máy ngủ | Đồng hồ trên máy không đếm khi app không chạy; người dùng tưởng đóng cửa sổ là dừng timer | Timer lưu ở server; app chỉ hiển thị theo `startedAt`; đóng cửa sổ không dừng timer, thu về khay hệ thống (D13); cơ chế: tech chốt — `docs/tech/` |
+| Thông báo khi không nhìn app (1.0) | App di động chưa có tới 1.2 | 1.0 nhắc trong app (trung tâm thông báo, G12) và thông báo Windows (D12); push di động từ 1.2 |
 | Lịch ngoài (G05) | Khối thực tế không ghi ra lịch ngoài | Chỉ hiển thị trong app ở 1.0 `[giả định]`; chỉ bản ghi có giờ thật (B11) |
 | Ritual chồng timer (G08) | Làm ritual trong lúc timer chạy bị tính hai lần | Ritual chỉ tạo bản ghi khi không có timer chạy (QC-07 mục 2) |
 
@@ -268,11 +269,11 @@ AC03: (Chuyển sang US1.1 AC06 — phím tắt Ctrl+Shift+Space thuộc bản 1
 - Đã chốt 04/11/2026: thời gian thực tế của task cộng cả bản ghi của subtask (QC-07 mục 5, Q13). Timer chỉ chạy trên task cha (C20).
 - Ngưỡng bỏ lượt timer ngắn: 10 giây hay 1 phút? Một phần đã chốt 04/11/2026: nhập tay tối thiểu 1 phút (QC-07 mục 3); ngưỡng của timer vẫn `[giả định]` 10 giây.
 - Hết phiên Pomodoro / hết giờ nghỉ có tự bật lại timer task không?
-- Nhắc timer > 4 giờ ở 1.0 (app Windows, chưa có app di động tới 1.2): thông báo hệ thống Windows (đề xuất) là đủ hay cần thêm email?
-- Đóng cửa sổ app khi đang có timer: thu về khay hệ thống (đề xuất) hay thoát hẳn? Timer vẫn chạy trên server ở cả hai cách.
+- Đã chốt 04/11/2026: nhắc timer > 4 giờ ở 1.0 bằng thông báo Windows và trong app, không có email (D12).
+- Đã chốt 04/11/2026: đóng cửa sổ app khi đang có timer thì thu về khay hệ thống, timer chạy tiếp (D13).
 - Khối thời gian thực tế có ghi ra Google / Outlook không (G05)?
 - Trạng thái Pomodoro / nghỉ có đồng bộ giữa thiết bị không, hay chỉ trên thiết bị đang dùng?
-- Đã chốt 04/11/2026: phím tắt toàn cục Ctrl+Shift+Space thuộc bản 1.1 (C20); Focus Bar giữ 1.2.
+- Đã chốt 04/11/2026: phím tắt toàn cục Ctrl+Shift+Space có ở bản 1.0 (D11, thay mốc 1.1 của C20); Focus Bar giữ 1.2.
 - Đã chốt 04/11/2026: workspace vào chỉ đọc (1.1) thì timer tự dừng tại thời điểm vào chỉ đọc (Q8, QC-09).
 - Đã chốt 04/11/2026: chỉ hoàn thành và xoá task dừng timer; các đường dời ngày, kể cả shutdown "Ngày mai", không dừng (Q14).
 - Cắt phần chồng lấn khi đồng bộ offline (C20): khi bản ghi tới sau nằm giữa bản ghi đã có (bị chia làm hai đoạn) thì giữ cả hai đoạn hay chỉ giữ đoạn dài hơn?
