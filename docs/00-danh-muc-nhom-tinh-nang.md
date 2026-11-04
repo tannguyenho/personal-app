@@ -13,7 +13,7 @@ Chốt ngày 04/11/2026: 12 nhóm, mỗi nhóm một cặp PRD + SRS theo mẫu 
 | G07 | Focus & theo dõi thời gian | 1.0 | UC-11, UC-12 | prd-g07-focus-timer.md | srs-g07-focus-timer.md | Đã chốt mâu thuẫn — chờ duyệt |
 | G08 | Daily planning & Daily shutdown | 1.0 | UC-13, UC-14, UC-16 | prd-g08-daily-rituals.md | srs-g08-daily-rituals.md | Đã chốt mâu thuẫn — chờ duyệt |
 | G09 | Weekly planning / review, objective, analytics | 1.1 | UC-15, UC-17, UC-26 | prd-g09-weekly-objective.md | srs-g09-weekly-objective.md | Đã chốt mâu thuẫn — chờ duyệt |
-| G10 | Trợ lý AI (Agent, chat, gợi ý, highlights) | 1.2 | UC-18 | prd-g10-tro-ly-ai.md | srs-g10-tro-ly-ai.md | Đã chốt mâu thuẫn — chờ duyệt |
+| G10 | Trợ lý AI qua Claude Code CLI + MCP local (chat, Agent, gợi ý, highlights) | 1.0 | UC-18 | prd-g10-tro-ly-ai.md | srs-g10-tro-ly-ai.md | Đã chốt mâu thuẫn — chờ duyệt |
 | G11 | Tích hợp công cụ (Gmail, Jira, Notion…) | 1.1+ | UC-19 | prd-g11-tich-hop.md | srs-g11-tich-hop.md | Đã chốt mâu thuẫn — chờ duyệt |
 | G12 | Workspace, thành viên, quyền riêng tư & thanh toán | 1.0 (workspace cá nhân, thông báo) / 1.1 (trial, thanh toán, thành viên) | UC-22, UC-23, UC-25 | prd-g12-workspace-billing.md | srs-g12-workspace-billing.md | Đã chốt mâu thuẫn — chờ duyệt |
 

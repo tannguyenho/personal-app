@@ -16,6 +16,10 @@ _Avoid_: day_start_time (trong văn bản nghiệp vụ), nửa đêm
 Các ngày làm việc trong tuần và giờ làm của từng ngày do người dùng chọn; mặc định Thứ Hai–Thứ Sáu. "Ngày làm việc kế tiếp" bỏ qua các ngày không nằm trong lịch làm việc.
 _Avoid_: work schedule, giờ hành chính
 
+**Khung giờ channel**:
+Lịch làm việc riêng của một channel (ngày và giờ), thay cho lịch làm việc chung với các task thuộc channel đó.
+_Avoid_: giờ làm việc theo channel, channel working hours
+
 **Bản ghi thời gian**:
 Một khoảng thời gian thực tế người dùng đã làm cho một task, từ timer, nhập tay hoặc ritual. Thuộc về ngày làm việc của thời điểm bắt đầu.
 _Avoid_: TimeEntry (trong văn bản nghiệp vụ), log giờ
@@ -31,7 +35,7 @@ Ngày làm việc mà task đang được xếp vào. Không tự đổi khi ng�
 _Avoid_: ngày bắt đầu, due date
 
 **Lưu trữ**:
-Trạng thái của task đã rời board ngày nhưng chưa bị xoá; luôn kèm lý do: bị bỏ quên (stale), bị bỏ qua (instance lặp), hoặc do người dùng.
+Trạng thái của task đã rời board ngày nhưng chưa bị xoá; luôn kèm lý do: bị hoãn quá lâu (stale) hoặc bị bỏ qua (instance lặp).
 _Avoid_: Archive (trong văn bản nghiệp vụ), bị bỏ qua (như một trạng thái riêng)
 
 **Rollover**:
@@ -73,8 +77,12 @@ Timebox gắn với một sự kiện có sẵn trên lịch ngoài (ví dụ cu
 ## Gói & quyền
 
 **Trợ lý AI**:
-Các tính năng gọi mô hình AI (chat, Planning Agent, highlights). Mặc định tắt cho tới khi người dùng đồng ý chia sẻ dữ liệu; không bao giờ tự đánh dấu task hoàn thành.
-_Avoid_: Sunny (tên hiển thị, không dùng trong quy tắc)
+Các tính năng AI của app (chat, Planning Agent, highlights, gợi ý task), chạy bằng Claude Code CLI trên máy của người dùng. Mặc định tắt cho tới khi người dùng đồng ý; chỉ hoàn thành hoặc xoá task khi người dùng bật công tắc riêng.
+_Avoid_: Sunny (tên hiển thị, không dùng trong quy tắc), LLM của app
+
+**MCP local**:
+Bộ công cụ app mở trên chính máy người dùng để Claude Code đọc và điều khiển app.
+_Avoid_: API AI, plugin
 
 **Ghế**:
 Một suất thành viên trong workspace trả phí do chủ sở hữu mua trước; một người chỉ vào được workspace khi còn ghế trống.

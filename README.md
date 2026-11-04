@@ -20,9 +20,9 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
 
 | Phiên bản | Phạm vi |
 |---|---|
-| **1.0 (MVP, Beta)** | Tài khoản, task, task lặp lại, board ngày, lịch Google / Outlook và timebox, backlog và rollover, timer và Focus, Daily planning, Daily shutdown. **Miễn phí, không giới hạn** ([ADR-0002](docs/adr/0002-thanh-toan-chuyen-sang-1-1.md)). Chỉ có Web (desktop, mobile web) |
-| **1.1** | Trial 14 ngày, thanh toán và chế độ chỉ đọc; workspace nhiều thành viên; Weekly planning / review, objective, analytics, Pomodoro, auto-schedule, lập lịch cứng cho task lặp, Gmail / Jira / Notion, app iOS / Android và desktop |
-| **1.2** | Planning Agent, trợ lý AI, highlights AI, Slack / Teams, Focus Bar trên desktop |
+| **1.0 (MVP, Beta)** | **App Windows (Flutter)**, một người dùng. Tài khoản, task, task lặp lại, board ngày, lịch Google / Outlook và timebox, khung giờ channel, backlog và rollover, timer và Focus, Daily planning, Daily shutdown, **trợ lý AI qua Claude Code CLI + MCP local**. Miễn phí, không giới hạn ([ADR-0002](docs/adr/0002-thanh-toan-chuyen-sang-1-1.md), [ADR-0004](docs/adr/0004-ai-qua-claude-code-cli.md), [ADR-0005](docs/adr/0005-nen-tang-windows-truoc.md)) |
+| **1.1** | **Web, macOS.** Trial 14 ngày, thanh toán và chế độ chỉ đọc; workspace nhiều thành viên; Weekly planning / review, objective, analytics, Pomodoro, auto-schedule, lập lịch cứng cho task lặp, Gmail / Jira / Notion |
+| **1.2** | **iOS / Android.** Slack / Teams, Focus Bar |
 
 ## Cấu trúc thư mục
 
@@ -32,7 +32,9 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
 ├── CONTEXT.md                          # bảng thuật ngữ chung
 └── docs/
     ├── 00-danh-muc-nhom-tinh-nang.md   # danh mục 12 nhóm, trạng thái từng tài liệu
-    ├── 01-quy-tac-dung-chung.md        # quy tắc dùng chung QC-01..QC-11 (ngày làm việc, trạng thái task, đổi ngày…)
+    ├── 01-quy-tac-dung-chung.md        # quy tắc dùng chung QC-01..QC-12 (ngày làm việc, trạng thái task, đổi ngày, AI…)
+    ├── 02-tinh-nang-ban-sau.md         # tính năng đã chốt hướng nhưng để bản sau (nhiều thành viên, thanh toán…)
+    ├── tech/                           # câu hỏi tech stack & API, chờ grill riêng với tech
     ├── adr/                            # quyết định khó đảo ngược
     ├── review/                         # báo cáo review và quyết định chốt mâu thuẫn
     └── features/
@@ -54,7 +56,7 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
 | G07 | Focus & theo dõi thời gian | 1.0 | [prd-g07](docs/features/prd-g07-focus-timer.md) | [srs-g07](docs/features/srs-g07-focus-timer.md) |
 | G08 | Daily planning & Daily shutdown | 1.0 | [prd-g08](docs/features/prd-g08-daily-rituals.md) | [srs-g08](docs/features/srs-g08-daily-rituals.md) |
 | G09 | Weekly planning / review, objective, analytics | 1.1 | [prd-g09](docs/features/prd-g09-weekly-objective.md) | [srs-g09](docs/features/srs-g09-weekly-objective.md) |
-| G10 | Trợ lý AI (Planning Agent, chat, highlights) | 1.2 | [prd-g10](docs/features/prd-g10-tro-ly-ai.md) | [srs-g10](docs/features/srs-g10-tro-ly-ai.md) |
+| G10 | Trợ lý AI qua Claude Code CLI + MCP local (Planning Agent, chat, highlights, gợi ý) | 1.0 | [prd-g10](docs/features/prd-g10-tro-ly-ai.md) | [srs-g10](docs/features/srs-g10-tro-ly-ai.md) |
 | G11 | Tích hợp công cụ (Gmail, Jira, Notion…) | 1.1+ | [prd-g11](docs/features/prd-g11-tich-hop.md) | [srs-g11](docs/features/srs-g11-tich-hop.md) |
 | G12 | Workspace, thành viên, quyền riêng tư & thanh toán | 1.0 / 1.1 | [prd-g12](docs/features/prd-g12-workspace-billing.md) | [srs-g12](docs/features/srs-g12-workspace-billing.md) |
 
@@ -63,6 +65,8 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
 - **Bắt đầu từ PRD** để hiểu vấn đề, người dùng và phạm vi. Sau đó đọc **SRS** để biết chi tiết cần làm.
 - **PRD** có 10 mục: bối cảnh và vấn đề, người dùng, phạm vi, nguyên tắc sản phẩm, quy tắc / cấu hình, luồng trải nghiệm, use case + user story + acceptance criteria, chỉ số, rủi ro, câu hỏi mở.
 - **SRS** có 10 mục: tổng quan, user story, business rule (BR), trạng thái, use case (luồng chính, luồng thay thế A#, luồng lỗi E#), điểm vào, màn hình (SCR), API, danh sách thông báo (MSG), yêu cầu phi chức năng.
+- **Giao diện** theo design system riêng trên Figma; mục màn hình (SCR) trong SRS chỉ mô tả thành phần và hành vi, không mô tả hình ảnh.
+- **API, mã lỗi, job** trong SRS là hợp đồng nghiệp vụ tham khảo; tech stack và API chốt riêng ([`docs/tech/`](docs/tech/00-cau-hoi-tech-stack-va-api.md)).
 - Mỗi tài liệu chỉ mô tả phần thuộc nhóm của nó. Phần thuộc nhóm khác được ghi chú `(Gxx)` để người đọc mở tài liệu nhóm đó.
 - Quy tắc nhiều nhóm cùng dùng nằm ở [`docs/01-quy-tac-dung-chung.md`](docs/01-quy-tac-dung-chung.md) và được tham chiếu bằng mã `QC-xx`. Thuật ngữ chuẩn nằm ở [`CONTEXT.md`](CONTEXT.md).
 
@@ -85,7 +89,9 @@ Chi tiết ở [quyết định chốt mâu thuẫn](docs/review/quyet-dinh-chot
 - Ngày làm việc bắt đầu lúc **04:00** (chỉnh trong 00:00–06:00); đổi cài đặt có hiệu lực từ ngày làm việc kế tiếp; đổi timezone không đổi ngày của task (QC-01, ADR-0001).
 - Thùng rác giữ task đã xoá **30 ngày**.
 - Bản 1.0 miễn phí; trial, thanh toán và chế độ chỉ đọc ở bản 1.1 (ADR-0002).
-- Planning Agent **áp dụng ngay** kèm Hoàn tác; chờ duyệt khi kế hoạch dùng dữ liệu tích hợp. Trợ lý AI mặc định tắt và không được đánh dấu task hoàn thành (ADR-0003).
+- Bản 1.0 là app Windows (Flutter) cho một người dùng, có tài khoản và dữ liệu trên cloud; web + macOS ở 1.1, di động ở 1.2 (ADR-0005).
+- Trợ lý AI chạy bằng Claude Code CLI của người dùng, điều khiển app qua MCP local, có từ 1.0; mặc định tắt; thay đổi áp dụng ngay kèm Hoàn tác; chờ duyệt khi dùng dữ liệu tích hợp; hoàn thành / xoá task chỉ khi người dùng bật công tắc (QC-12, ADR-0004).
+- Mỗi channel có thể đặt khung giờ riêng (QC-02).
 - Bản 1.0 không bắt buộc lưu dữ liệu tại Việt Nam, dùng máy chủ khu vực châu Á.
 
 ## Câu hỏi còn mở
@@ -94,6 +100,7 @@ Chi tiết ở [quyết định chốt mâu thuẫn](docs/review/quyet-dinh-chot
 - Cổng thanh toán (gợi ý Stripe cho thẻ quốc tế, VNPay / MoMo cho nội địa) và định nghĩa các gói giá: chốt trước khi làm 1.1.
 - Chính sách hoàn tiền khi xoá tài khoản giữa kỳ (chờ pháp chế).
 - Ai nộp hồ sơ xác minh Google OAuth và khi nào. Việc này có thể chặn ngày ra mắt.
+- Tech stack và API: chờ buổi grill riêng ([`docs/tech/`](docs/tech/00-cau-hoi-tech-stack-va-api.md)).
 - Các giá trị còn gắn `[giả định]` và câu hỏi mở còn lại ở mục 10 của từng PRD.
 
 ## Tài liệu liên quan

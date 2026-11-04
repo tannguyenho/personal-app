@@ -194,3 +194,23 @@ Thuật ngữ: [`CONTEXT.md`](../../CONTEXT.md). Quyết định khó đảo ng�
 | C34 | G11/G08 | G11 đặc tả tab Tích hợp trong Daily planning và kéo item vào Backlog (1.1) |
 | C35 | Chung | Liệt kê các mã EC đang dùng kèm mô tả, đánh dấu "cần đối chiếu SRS tổng". Sửa EC-25 dùng sai ở G07 |
 | C36 | Chung | Bỏ "Ghi chú cuộc họp" khỏi Privacy, bỏ "Latest updates" khỏi phạm vi. Đồng bộ README; sửa UC-20 bị gán cho hai nhóm |
+
+## Vòng 5–6 (phát sinh khi sửa tài liệu)
+
+| # | Quyết định |
+|---|---|
+| Q32 | Số ngày bị hoãn chỉ đếm các ngày có trong lịch làm việc của task (lịch chung hoặc khung giờ channel). Rollover vẫn chạy hằng ngày (QC-04) |
+| Q33 | Gợi ý task dùng trợ lý AI qua Claude Code CLI (QC-12), không gọi LLM nào khác |
+| Q34 | Bỏ lưu trữ thủ công (`manual`) khỏi 1.0; người dùng đưa vào backlog hoặc xoá. Để bản sau |
+| Q35 | Bản 1 chỉ cho một người dùng. Mọi tính năng nhiều thành viên (workspace, mời, giao task, Privacy, quyền tạo channel chung) để bản sau, gom ở `docs/02-tinh-nang-ban-sau.md` |
+| Q36 | (Bản sau) Task được giao vào bucket "Tuần sau", đặt lên đầu |
+| Q37 | Privacy "Lịch" và các tính năng nhiều thành viên chưa làm ở bản 1, ghi vào `docs/02-tinh-nang-ban-sau.md` |
+| Q38 / Q38a | Giữ **khung giờ channel**: mỗi channel đặt được ngày và giờ riêng (G02 sở hữu cài đặt); lịch của task = khung channel nếu có, ngược lại lịch chung; sức chứa ngày = hợp lịch chung và các khung channel; số ngày bị hoãn và "ngày làm việc kế tiếp" theo lịch của task; auto-schedule (1.1) xếp trong khung channel. Cài đặt, sức chứa, projection ở 1.0 (QC-02 mục 5–9) |
+| Q39 | Highlights do AI soạn qua Claude Code CLI; soạn vào các ngày trong lịch làm việc, tại giờ kết thúc làm việc; UI chat như chat thường |
+| Q40 | "Hoãn 1 tuần" và phím S reset số ngày bị hoãn; thêm vào bảng QC-05 |
+| Q41 | Rollover và tự lưu trữ không có Hoàn tác; Hoàn tác khôi phục liên kết chỉ áp cho đường do người dùng / AI làm |
+| Q42 | Tự lưu trữ `stale` xử lý timebox như "Đưa vào backlog" |
+| Q43 | Nhãn quy tắc lặp `WEEKDAYS` đổi thành "Thứ Hai–Thứ Sáu"; quy tắc lặp không theo lịch làm việc |
+| Q44 | Sửa giờ timebox của instance lặp tính là sửa riêng (`customized`) |
+| Q45 | Nền tảng: 1.0 app **Windows (Flutter)**, 1.1 web + macOS, 1.2 iOS / Android. Có tài khoản và dữ liệu trên cloud từ 1.0. Giao diện theo design system Figma riêng. Tech stack và API chốt trong buổi grill riêng (`docs/tech/`). ADR-0005 |
+| Q46 | Trợ lý AI chạy bằng **Claude Code CLI** của người dùng, app mở **MCP local** để Claude Code điều khiển; có ở **1.0**; mặc định tắt, màn đồng ý gọn; MCP mặc định không có hoàn thành / xoá, có công tắc bật (trừ task có liên kết tích hợp); thay đổi áp dụng ngay + chip AI + Hoàn tác; bật đọc dữ liệu tích hợp thì thay đổi trong phiên đó chờ duyệt; bỏ hạn mức AI. QC-12, ADR-0004 (thay một phần Q20, Q31, C32) |
