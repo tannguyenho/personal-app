@@ -17,6 +17,8 @@ Trạng thái: **chưa chốt**. Tài liệu này gom các quyết định kỹ 
 - Đóng gói và cập nhật trên Windows (MSIX, installer, auto-update), ký số.
 - Thông báo hệ thống Windows, phím tắt toàn cục, chạy nền / khay hệ thống.
 - Chia sẻ code với web (1.1) và di động (1.2).
+- Đóng cửa sổ khi đang có timer: thu về khay hệ thống hay thoát hẳn; tính projection / sức chứa ở nền.
+- Phiên bản Windows tối thiểu.
 
 ### 2. Backend & dữ liệu
 - Ngôn ngữ / framework, hosting và vùng (châu Á), môi trường.
@@ -26,7 +28,8 @@ Trạng thái: **chưa chốt**. Tài liệu này gom các quyết định kỹ 
 - Sao lưu, xoá dữ liệu theo yêu cầu, lưu giữ log / chứng từ (C5).
 
 ### 3. Xác thực & tích hợp
-- Đăng nhập trên app desktop: email + mật khẩu, Google / Microsoft OAuth (luồng loopback / PKCE), lưu token an toàn trên Windows.
+- Đăng nhập trên app desktop: email + mật khẩu, Google / Microsoft OAuth (luồng loopback / PKCE), lưu token an toàn trên Windows, thời gian chờ đăng nhập qua trình duyệt.
+- Bản 1.0 chưa có web: link trong email (xác minh, đặt lại mật khẩu, "Không phải tôi", tải bản xuất, huỷ đăng ký email, checkout 1.1) mở ở đâu — trang web tối giản hay deep link vào app.
 - OAuth lịch Google / Outlook: webhook / push vs poll, xác minh ứng dụng Google (rủi ro chặn ngày ra mắt).
 - Tích hợp Gmail / Jira / Notion (1.1): webhook, scope tối thiểu (C29).
 
@@ -36,6 +39,8 @@ Trạng thái: **chưa chốt**. Tài liệu này gom các quyết định kỹ 
 - Cách cài đặt MCP server local (stdio hay HTTP cục bộ), đăng ký với Claude Code, xác thực để chỉ tiến trình hợp lệ trên máy kết nối được.
 - Danh sách công cụ MCP và schema; cách gắn chip AI, Hoàn tác theo lượt, chế độ chờ duyệt khi có dữ liệu tích hợp (QC-12).
 - Cách cung cấp AI trên web / di động ở các bản sau.
+- Phiên bản Claude Code tối thiểu; có cho chọn model không; điều khoản sử dụng của Anthropic với cách app gọi CLI (cần xác nhận pháp lý).
+- Bản ghi phiên do Claude Code tự lưu trên máy nằm ngoài phạm vi xoá dữ liệu của app (C30) — cách thông báo cho người dùng.
 
 ### 5. API
 - Kiểu API (REST / GraphQL / RPC), quy ước đặt tên, phiên bản hoá.

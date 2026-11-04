@@ -243,7 +243,7 @@ Trợ lý AI **không có hạn mức theo gói**: AI chạy bằng Claude Code 
 | EC-34 | Hết hạn gói giữa một thao tác | G12, QC-09 |
 | EC-35 | Webhook thanh toán tới trùng | G12 |
 | EC-36 | Chủ sở hữu duy nhất xoá tài khoản khi còn thành viên | G01, G12 |
-| EC-37 | Thay đổi AI ảnh hưởng > 3 task cần xác nhận (trừ Planning Agent không dùng dữ liệu tích hợp, Q31) | G10 |
+| EC-37 | Thay đổi AI áp dụng ngay, có Hoàn tác cả lượt; chờ duyệt khi phiên có dữ liệu tích hợp (QC-12 mục 5–6) | G10 |
 | EC-38 | Hoàn tác AI không xoá phần người dùng đã sửa | G10 |
 | EC-39 | AI lỗi thì chuyển sang luồng thủ công | G10 |
 | EC-40 | Ngày có rất nhiều task (500) | G04 |

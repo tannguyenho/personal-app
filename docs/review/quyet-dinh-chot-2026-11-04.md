@@ -203,7 +203,7 @@ Thuật ngữ: [`CONTEXT.md`](../../CONTEXT.md). Quyết định khó đảo ng�
 | Q33 | Gợi ý task dùng trợ lý AI qua Claude Code CLI (QC-12), không gọi LLM nào khác |
 | Q34 | Bỏ lưu trữ thủ công (`manual`) khỏi 1.0; người dùng đưa vào backlog hoặc xoá. Để bản sau |
 | Q35 | Bản 1 chỉ cho một người dùng. Mọi tính năng nhiều thành viên (workspace, mời, giao task, Privacy, quyền tạo channel chung) để bản sau, gom ở `docs/02-tinh-nang-ban-sau.md` |
-| Q36 | (Bản sau) Task được giao vào bucket "Tuần sau", đặt lên đầu |
+| Q36 | (Bản sau) Task được giao vào bucket "Tuần sau" (`next_week`, nhãn hiển thị theo G06), đặt lên đầu |
 | Q37 | Privacy "Lịch" và các tính năng nhiều thành viên chưa làm ở bản 1, ghi vào `docs/02-tinh-nang-ban-sau.md` |
 | Q38 / Q38a | Giữ **khung giờ channel**: mỗi channel đặt được ngày và giờ riêng (G02 sở hữu cài đặt); lịch của task = khung channel nếu có, ngược lại lịch chung; sức chứa ngày = hợp lịch chung và các khung channel; số ngày bị hoãn và "ngày làm việc kế tiếp" theo lịch của task; auto-schedule (1.1) xếp trong khung channel. Cài đặt, sức chứa, projection ở 1.0 (QC-02 mục 5–9) |
 | Q39 | Highlights do AI soạn qua Claude Code CLI; soạn vào các ngày trong lịch làm việc, tại giờ kết thúc làm việc; UI chat như chat thường |
