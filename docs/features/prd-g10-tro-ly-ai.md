@@ -462,18 +462,28 @@ AC03: Claude Code chậm hơn ngưỡng của G02, lỗi hoặc hết hạn mứ
 # 10. Câu hỏi mở
 
 - Mốc đầu ngày 04:00 hay 00:00? — Đã chốt 04/11/2026: mặc định 04:00, chỉnh trong 00:00–06:00; AI hiểu "hôm nay / ngày mai" theo hàm ngày làm việc QC-01, bảng ví dụ QC-01 là ca chuẩn (Q2, C33).
-- Planning Agent chờ duyệt rồi mới áp dụng hay áp dụng ngay rồi Undo all như Sunsama? — Đã chốt 04/11/2026: áp dụng ngay kèm "Hoàn tác kế hoạch AI"; kế hoạch có dùng dữ liệu tích hợp thì chờ duyệt; chat áp dụng ngay khi ≤ 3 task và không có dữ liệu ngoài (Q31/Q31a).
-- Sunny có được đánh dấu xong task không, hay chỉ người dùng? — Đã chốt 04/11/2026: AI không được đánh dấu xong; chỉ tạo task, dời ngày, timebox, ước lượng (Q20, ADR-0003).
-- Chọn nhà cung cấp LLM nào; dữ liệu có cần xử lý / lưu tại Việt Nam không? — Một phần đã chốt 04/11/2026: không bắt buộc lưu tại Việt Nam, cần hồ sơ đánh giá tác động chuyển dữ liệu ra nước ngoài, pháp chế xác nhận trước khi phát hành (Q29). Còn mở: chọn nhà cung cấp LLM.
-- Hạn mức chat và số lần chạy agent có khác theo gói không (G12)? — Đã chốt 04/11/2026: hạn mức tách riêng chat / agent / highlights, đặt trong bảng quyền theo gói của G12; lượt lỗi không trừ (C32, QC-10). Con số vẫn là giả định trong QC-10.
-- Có cần đồng ý trước khi gửi dữ liệu cho AI không? — Đã chốt 04/11/2026: trợ lý AI mặc định tắt, có màn đồng ý và lưu thời điểm đồng ý; dữ liệu tích hợp có công tắc riêng (Q21).
+- Planning Agent chờ duyệt rồi mới áp dụng hay áp dụng ngay rồi Undo all như Sunsama? — Đã chốt 04/11/2026: áp dụng ngay kèm "Hoàn tác kế hoạch AI"; kế hoạch có dùng dữ liệu tích hợp thì chờ duyệt (Q31/Q31a). Ngưỡng "chat ≤ 3 task" đã được thay: mọi thay đổi qua MCP áp dụng ngay (Q46, QC-12 mục 5).
+- Trợ lý có được đánh dấu xong task không, hay chỉ người dùng? — Đã chốt 04/11/2026: mặc định không; người dùng bật được công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt); task có liên kết tích hợp không bao giờ được AI hoàn thành (Q46, QC-12 mục 4; thay một phần Q20 / ADR-0003).
+- Chọn nhà cung cấp LLM nào? — Đã chốt 04/11/2026: không chọn; trợ lý AI chạy bằng Claude Code CLI của người dùng, app không gọi LLM nào khác (Q33, Q46, ADR-0004).
+- Dữ liệu có cần xử lý / lưu tại Việt Nam không? — Một phần đã chốt 04/11/2026: không bắt buộc lưu tại Việt Nam, cần hồ sơ đánh giá tác động chuyển dữ liệu ra nước ngoài (Q29). Còn mở: khi dữ liệu đi qua Claude Code bằng tài khoản Claude của chính người dùng, app có trách nhiệm gì và có phải đưa vào hồ sơ Q29 không — pháp chế xác nhận trước khi phát hành.
+- Hạn mức chat và số lần chạy agent có khác theo gói không (G12)? — Đã chốt 04/11/2026: không còn hạn mức AI theo gói; người dùng dùng hạn mức của gói Claude của họ; hết hạn mức thì hiện thông báo của Claude Code và chuyển luồng thủ công (Q46, QC-10, QC-12 mục 8; thay C32).
+- Có cần đồng ý trước khi gửi dữ liệu cho AI không? — Đã chốt 04/11/2026: trợ lý AI mặc định tắt, có màn đồng ý gọn nói rõ dữ liệu nào đưa cho Claude Code và lưu thời điểm đồng ý; dữ liệu tích hợp có công tắc riêng (Q21, Q46, QC-12 mục 7).
+- Nháp highlights có theo Lịch làm việc (QC-02) thay cho T2–T6 17:00 cố định không? — Đã chốt 04/11/2026: soạn vào các ngày có trong lịch làm việc, tại giờ kết thúc làm việc (Q39).
+- Gợi ý thời lượng / channel của G02 (bản 1.0) có gọi nhà cung cấp AI không; nếu có thì có cần cùng màn đồng ý không? — Đã chốt 04/11/2026: gợi ý dùng trợ lý AI qua Claude Code CLI, không gọi LLM nào khác (Q33); vì vậy cần trợ lý bật và cùng màn đồng ý của G10.
+- Quản trị workspace có được tắt AI cho cả workspace không? — Đã chốt 04/11/2026: bản 1 chỉ cho một người dùng; tính năng nhiều thành viên để bản sau (Q35).
+- Highlights chia sẻ có gồm task trong channel private không (Privacy, G12)? — Đã chốt 04/11/2026: Privacy và nhiều thành viên để bản sau (Q35, Q37); bản 1 không có câu hỏi này.
 - Lịch sử chat giữ 90 ngày có đủ không; có cho tắt lưu lịch sử?
 - Phản hồi có "Đính kèm cuộc trò chuyện" giữ bao lâu?
-- Highlights chia sẻ có gồm task trong channel private không (Privacy, G12)?
 - Highlights có chỉ được chứa link nội bộ (task, item đã liên kết) để chặn link lạ do dữ liệu ngoài đưa vào không?
-- Sự kiện lịch do người khác mời (G05) có tính là "dữ liệu ngoài" phải chờ duyệt như dữ liệu tích hợp không?
-- Nháp highlights có theo Lịch làm việc (QC-02) thay cho T2–T6 17:00 cố định không?
+- Sự kiện lịch do người khác mời (G05) có tính là "dữ liệu ngoài" phải chờ duyệt như dữ liệu tích hợp không? (Nay hiểu là: công cụ đọc lịch có tính là công cụ đọc dữ liệu tích hợp không.)
 - Bật lại trợ lý sau khi tắt, hoặc khi nội dung màn đồng ý thay đổi, có phải đồng ý lại không?
-- Gợi ý thời lượng / channel của G02 (bản 1.0) có gọi nhà cung cấp AI không; nếu có thì có cần cùng màn đồng ý không?
 - Khi nào Planning Agent bỏ nhãn Beta; tiêu chí nào?
-- Quản trị workspace có được tắt AI cho cả workspace không?
+- "Phiên AI đã đọc dữ liệu tích hợp thì mọi thay đổi trong phiên chờ duyệt" (QC-12 mục 6): chỉ các thay đổi **sau** lần đọc (PRD đang giả định) hay cả thay đổi đã áp dụng **trước** đó trong phiên? Hay bật công tắc là mọi phiên đều chờ duyệt?
+- Planning Agent / chat lỗi giữa chừng khi đã áp dụng một phần: giữ phần đã áp dụng kèm "Hoàn tác kế hoạch AI" (đang giả định) hay tự hoàn tác cả lượt?
+- Ngoài QC-12 mục 3, AI có được thêm subtask, sắp thứ tự, đổi priority, gắn objective không (bản nháp trước cho phép)?
+- Công tắc hoàn thành / xoá có gồm bỏ hoàn thành và hoàn thành / xoá subtask không? AI có được xoá task có liên kết tích hợp không (đang giả định: được)?
+- Phiên bản Claude Code tối thiểu được hỗ trợ; app có cho chọn model của Claude Code không?
+- Gợi ý task qua Claude Code có đạt ngưỡng 2 giây của G02 không; nếu không thì đổi ngưỡng hay đổi trải nghiệm (gợi ý đến sau)?
+- Nháp highlights tự động khi người dùng có nhiều máy Windows, hoặc app không mở tại giờ kết thúc làm việc (đang giả định: soạn khi mở bước highlights)?
+- Trợ lý AI trên web, macOS (1.1) và iOS / Android (1.2): cung cấp thế nào (tech chốt, ADR-0004)?
+- Điều khoản sử dụng của Anthropic có cho phép app gọi Claude Code CLI theo cách này không?

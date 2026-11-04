@@ -248,7 +248,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | A7 | Phiên Daily shutdown của ngày cũ đang làm (Q18, BR-20, G08 BR-21) | `CHO_SHUTDOWN`; job các lượt sau kiểm lại; nhận sự kiện `ritual.shutdown.closed` (phiên hoàn tất / bỏ dở theo G08 BR-21) thì chạy ngay; tới mốc + 2 giờ thì chạy dù phiên còn mở |
 | A8 | Workspace chỉ đọc (bản 1.1, BR-21) | Không chạy. Khi thoát chỉ đọc: chạy bù một lần cho hôm nay; không tính các ngày bị đóng băng vào số ngày bị hoãn |
 | A9 | Lượt `DANG_CHAY` hết lease (worker chết) | Lượt job kế tiếp hoặc \[RolloverEnsure\] nhận lại, chạy từ bước 2 (BR-18) |
-| A10 | Hôm nay không có trong lịch chung hoặc lịch của task (ví dụ Thứ Bảy) | Vẫn chạy như luồng chính (BR-06, Q32); số ngày bị hoãn của task không tăng nếu hôm nay không có trong lịch của task (BR-10), nên task đó không bị tự lưu trữ trong lượt này |
+| A10 | Hôm nay không có trong lịch chung hoặc lịch của task (ví dụ Thứ Bảy) | Vẫn chạy như luồng chính (BR-06, Q32); số ngày bị hoãn của task không tăng nếu hôm nay không có trong lịch của task (BR-10); tự lưu trữ xét theo n như thường (BR-12) |
 | A11 | Người dùng muốn trả lại kết quả rollover | Không có Hoàn tác (Q41, BR-16); người dùng kéo / chọn ngày (G04) hoặc đưa vào backlog (UC-01) |
 
 **Luồng lỗi**
@@ -359,17 +359,17 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 
 ## 6. Điểm vào
 
-| **Điểm vào** | **Web** | **App** (1.1) | **Ghi chú** |
-| --- | --- | --- | --- |
-| Sidebar "Backlog" / phím B | ✓ | ✓ | Mở SCR-01 |
-| Phím Z / Shift+Z trên task | ✓ | – | UC-01 |
-| Menu Ngày dự định → "Chuyển vào backlog", "Lên đầu backlog" | ✓ | ✓ | SCR-03 |
-| Kéo task vào panel Backlog (panel phải) | ✓ | – | UC-01 A2 |
-| Kéo item tích hợp vào panel Backlog (bản 1.1) | ✓ | – | G11 UC-04 A7; SCR-01 #9 |
-| Panel phải → Lưu trữ / Shift+A | ✓ | ✓ | Mở SCR-05 |
-| Toast MSG-11 → "Xem Lưu trữ" | ✓ | ✓ | Mở SCR-05 |
-| Command menu Ctrl/Cmd+K | ✓ | – | "Chuyển vào backlog", "Mở Backlog", "Mở Lưu trữ" |
-| Mở app lần đầu trong ngày làm việc (G04) / bước "Xem lại hôm qua" (G08) | ✓ | ✓ | UC-07, không có giao diện riêng |
+| **Điểm vào** | **App Windows** (1.0) | **Web, macOS** (1.1) | **iOS / Android** (1.2) | **Ghi chú** |
+| --- | --- | --- | --- | --- |
+| Sidebar "Backlog" / phím B | ✓ | ✓ | ✓ | Mở SCR-01 |
+| Phím Z / Shift+Z trên task | ✓ | ✓ | – | UC-01 |
+| Menu Ngày dự định → "Chuyển vào backlog", "Lên đầu backlog" | ✓ | ✓ | ✓ | SCR-03 |
+| Kéo task vào panel Backlog (panel phải) | ✓ | ✓ | – | UC-01 A2 |
+| Kéo item tích hợp vào panel Backlog (bản 1.1) | ✓ (từ 1.1) | ✓ | – | G11 UC-04 A7; SCR-01 #9 |
+| Panel phải → Lưu trữ / Shift+A | ✓ | ✓ | ✓ | Mở SCR-05 |
+| Toast MSG-11 → "Xem Lưu trữ" | ✓ | ✓ | ✓ | Mở SCR-05 |
+| Command menu Ctrl+K (⌘K trên macOS) | ✓ | ✓ | – | "Chuyển vào backlog", "Mở Backlog", "Mở Lưu trữ" |
+| Mở app lần đầu trong ngày làm việc (G04) / bước "Xem lại hôm qua" (G08) | ✓ | ✓ | ✓ | UC-07, không có giao diện riêng |
 
 ## 7. Mô tả màn hình
 
@@ -418,7 +418,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | 1 | Tiêu đề + mô tả | Header | "Lưu trữ" · mô tả MSG-12 |
 | 2 | "Tự lưu trữ" | Toggle | UC-06 A2 |
 | 3 | "Xoá tất cả" | Button (nguy hiểm) | Mở SCR-06; disabled khi rỗng |
-| 4 | Danh sách task | List | Mỗi dòng: tiêu đề, #channel, thời lượng, ngày lưu trữ, nhãn lý do theo `archiveReason` (MSG-12 / MSG-13 / MSG-22) |
+| 4 | Danh sách task | List | Mỗi dòng: tiêu đề, #channel, thời lượng, ngày lưu trữ, nhãn lý do theo `archiveReason` (MSG-12 / MSG-13; MSG-22 bỏ ở 1.0 — Q34) |
 | 5 | "Khôi phục" | Button (theo dòng) | UC-06 bước 3 |
 | 6 | Trạng thái rỗng | Empty state | MSG-19 |
 
@@ -439,6 +439,8 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 
 ## 8. API
 
+API dưới đây là hợp đồng nghiệp vụ tham khảo; kiểu API, tên, mã lỗi, hạ tầng job: tech chốt — `docs/tech/` (Q45).
+
 | **API** | **Request chính** | **Response chính** | **Timeout / retry** `[giả định]` |
 | --- | --- | --- | --- |
 | \[BacklogList\] `GET /tasks/backlog` | bucket, folderId, channelId, cursor, limit ≤ 200 | Task[] (theo bucket), totals {bucket: count, plannedMin}, nextCursor | 5s / 1 lần |
@@ -446,11 +448,11 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | \[BacklogFolderList\] `GET /backlog-folders` | – | Folder[] | 5s / 1 lần |
 | \[BacklogFolderCreate\] / \[BacklogFolderUpdate\] / \[BacklogFolderDelete\] `POST / PATCH / DELETE /backlog-folders` | name, position | Folder | 5s / 1 lần |
 | \[TaskCreate\] `POST /tasks` (G02) | title, backlogBucket, folderId, … | Task | Theo G02 |
-| \[ArchiveList\] `GET /tasks/archive` | cursor, limit 50 | Task[] (archivedAt, archiveReason, postponedDays), nextCursor | 5s / 1 lần |
+| \[ArchiveList\] `GET /tasks/archive` | cursor, limit 50 | Task[] (archivedAt, archiveReason ∈ {stale, skipped}, postponedDays), nextCursor | 5s / 1 lần |
 | \[TaskRestore\] `POST /tasks/{id}/restore` | `{from: archive, startDate?}` (mặc định hôm nay; ≥ hôm nay) | Task, `warnings[]` (`SERIES_SAME_DAY`) | 5s / 2 lần |
 | \[ArchiveDeleteAll\] `POST /tasks/archive/delete-all` `[giả định — chưa có trong danh sách API]` | Idempotency-Key | deletedCount, undoToken | 10s / 1 lần |
 | \[SettingsUpdate\] `PATCH /me/settings` (G01) | autoArchive, rolloverPosition, keepPriorityLevels (tập mức, C16) | Settings | 5s / 2 lần |
-| \[Rollover\] (job nội bộ) | userId, date | rolledCount, archivedCount, skippedCount | Mỗi người dùng một giao dịch; lease 5 phút; thử lại ở lượt job kế tiếp, 3 lần lỗi → `THAT_BAI` (BR-18) |
+| \[Rollover\] (job nội bộ) | userId, date | rolledCount, archivedCount, skippedCount (không có `undoToken`, Q41) | Mỗi người dùng một giao dịch; lease 5 phút; thử lại ở lượt job kế tiếp, 3 lần lỗi → `THAT_BAI` (BR-18) |
 | \[RolloverEnsure\] `POST /rollover/ensure` (dùng chung G04, G08) | Không có body; server tính hôm nay theo QC-01 | `{date, status: XONG \| DANG_CHAY \| CHO_SHUTDOWN \| DONG_BANG \| THAT_BAI, rolledCount, archivedCount, skippedCount, waitUntil?}` | 15s `[giả định]` (gồm tối đa 10s chờ lượt đang chạy); idempotent theo người dùng + ngày, client không tự retry khi nhận `THAT_BAI` |
 
 **Map lỗi API → thông báo**
@@ -493,7 +495,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | MSG-19 | Empty state | Không có task nào được lưu trữ |
 | MSG-20 | Toast | Task này không còn tồn tại |
 | MSG-21 | Toast cảnh báo | Ngày này đã có {tên series} (dùng G03 MSG-21, QC-06) |
-| MSG-22 | Nhãn | Bạn đã lưu trữ |
+| MSG-22 | – | (Bỏ ở 1.0 — Q34, bản sau) Bạn đã lưu trữ |
 | MSG-23 | Toast | Task đã thay đổi trên thiết bị khác |
 | MSG-24 | Toast | Không thể đặt task chưa xong vào ngày đã qua |
 | MSG-25 | Banner | Chưa chuyển được việc dở từ hôm trước sang hôm nay. Thử lại |
@@ -508,7 +510,7 @@ Bản EN: `[chờ bổ sung]`.
 | Job rollover | 95% người dùng có lượt `XONG` ≤ 15 phút sau mốc đầu ngày (B6; không tính người dùng ở `CHO_SHUTDOWN`); một người dùng ≤ 500 ms với 200 task; lease 5 phút |
 | \[RolloverEnsure\] | p95 ≤ 2 s khi phải chạy lượt trong request `[giả định]` |
 | Toàn vẹn | `UNIQUE(user_id, date)` trên `rollover_runs`; một giao dịch / người dùng; chạy lại không chuyển hai lần (BR-13); job tăng `version` của task (QC-08) |
-| Offline | Theo QC-08. Backlog lưu trong IndexedDB; chuyển vào / ra backlog chạy được khi mất mạng; cụm vị trí ghi nguyên khối, lệnh trên phiên bản cũ bị từ chối; rollover tạm trên máy chỉ để hiển thị, không vào hàng đợi đồng bộ, server là chuẩn |
+| Offline | Theo QC-08. Backlog lưu trên máy (cơ chế: tech chốt — `docs/tech/`); chuyển vào / ra backlog chạy được khi mất mạng; cụm vị trí ghi nguyên khối, lệnh trên phiên bản cũ bị từ chối; rollover tạm trên máy chỉ để hiển thị, không vào hàng đợi đồng bộ, server là chuẩn |
 | Đồng bộ | Kết quả rollover và thay đổi backlog hiện trên thiết bị khác ≤ 5 giây |
 | Bảo mật | Chỉ chủ task xem / sửa backlog, Lưu trữ; job chỉ xử lý task của đúng người dùng trong lượt |
 | Log / audit | \[ActivityLog\] theo BR-16; log job: người dùng, ngày, trạng thái lượt, số lần thử, số chuyển / lưu trữ / bỏ qua, thời gian chạy, nguồn (job / ensure); không chứa tiêu đề |

@@ -328,7 +328,7 @@ AC02: Xoá → đăng xuất mọi phiên, thu hồi kết nối lịch / tích 
 
 AC03: (Bản sau — workspace nhiều người, xem `docs/02-tinh-nang-ban-sau.md`) Không phải chủ sở hữu → trước khi xoá, người dùng rời workspace theo G12 (task được giao chưa xong trả về người giao, giảm ghế); gói của nhóm **không** bị huỷ.
 
-AC04: (Bản sau — workspace nhiều người) Chủ sở hữu của workspace còn thành viên khác → chặn, yêu cầu chuyển quyền sở hữu hoặc xoá workspace trước (G12). Chủ sở hữu workspace chỉ có mình (mọi tài khoản ở 1.0 và 1.1) → xoá tài khoản kèm xoá workspace, huỷ gói nếu có (G12).
+AC04: (Bản sau — workspace nhiều người) Chủ sở hữu của workspace còn thành viên khác → chặn, yêu cầu chuyển quyền sở hữu hoặc xoá workspace trước (G12). Chủ sở hữu workspace chỉ có mình (mọi tài khoản khi chưa có tính năng nhiều thành viên) → xoá tài khoản kèm xoá workspace, huỷ gói nếu có (G12).
 
 AC05: Đang có yêu cầu xuất dữ liệu đang xử lý → không cho xoá tới khi bản xuất sẵn sàng hoặc lỗi.
 

@@ -1,20 +1,20 @@
 > **Mã:** PLN-SRS-G10-WEB · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g10-tro-ly-ai.md
 
-# UC-G10 - Trợ lý AI trên Web / App (ứng dụng lập kế hoạch ngày)
+# UC-G10 - Trợ lý AI qua Claude Code trên app Windows (ứng dụng lập kế hoạch ngày)
 
-> **Bản nháp.** Giá trị `[giả định]` cần BA / PO xác nhận. SRS này chỉ mô tả Planning Agent, trợ lý chat Sunny, highlights AI cuối ngày, rào chắn, cài đặt AI và bộ đánh giá (bản 1.2). Gợi ý thời lượng / channel khi tạo task (G02, 1.0), Daily planning / Daily shutdown thủ công và chia sẻ (G08), timebox (G05), Weekly planning / objective (G09), kết nối công cụ (G11), hạn mức theo gói và Privacy (G12) đặc tả ở SRS riêng của từng nhóm. Mã API, CSDL tham chiếu tài liệu "Thiết kế kỹ thuật & đặc tả API — MVP 1.0".
+> **Bản nháp.** Giá trị `[giả định]` cần BA / PO xác nhận. SRS này mô tả việc phát hiện Claude Code, MCP server local, Planning Agent, khung chat trợ lý, điều khiển app từ Claude Code trong terminal, highlights AI cuối ngày, lời gọi AI cho gợi ý task, rào chắn, cài đặt AI và bộ đánh giá (bản **1.0**, app Windows). Trải nghiệm gợi ý thời lượng / channel khi tạo task (G02), Daily planning / Daily shutdown thủ công và chia sẻ (G08), timebox (G05), Weekly planning / objective (G09), kết nối công cụ (G11, 1.1), chế độ chỉ đọc (G12, 1.1) đặc tả ở SRS riêng của từng nhóm. Phần API, mã lỗi, job ở mục 8 là **hợp đồng nghiệp vụ tham khảo**; cách gọi CLI, kiểu kết nối MCP (stdio / HTTP cục bộ), xác thực và schema công cụ: tech chốt — [`docs/tech/00-cau-hoi-tech-stack-va-api.md`](../tech/00-cau-hoi-tech-stack-va-api.md) mục 4.
 >
-> **Cập nhật 04/11/2026** theo [quyết định chốt mâu thuẫn](../review/quyet-dinh-chot-2026-11-04.md) và [ADR-0003](../adr/0003-gioi-han-quyen-cua-tro-ly-ai.md). Quy tắc dùng chung tham chiếu [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md): ngày làm việc QC-01, lịch làm việc QC-02, đổi ngày task QC-05, đồng bộ QC-08, chế độ chỉ đọc QC-09 và quyền theo gói QC-10 (cả hai có từ 1.1 nên áp dụng ngay cho bản 1.2).
+> **Cập nhật 04/11/2026** theo [quyết định chốt mâu thuẫn](../review/quyet-dinh-chot-2026-11-04.md) và [ADR-0003](../adr/0003-gioi-han-quyen-cua-tro-ly-ai.md). **Cập nhật vòng 5–6 (04/11/2026)** theo Q33, Q35, Q39, Q45, Q46, [ADR-0004](../adr/0004-ai-qua-claude-code-cli.md) (thay một phần ADR-0003, Q20, Q31, C32) và [ADR-0005](../adr/0005-nen-tang-windows-truoc.md). Quy tắc dùng chung tham chiếu [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md): ngày làm việc QC-01, lịch làm việc và khung giờ channel QC-02, trạng thái task QC-03, đổi ngày task QC-05, đồng bộ QC-08, chế độ chỉ đọc QC-09 (từ 1.1), quyền theo gói QC-10 (AI không có hạn mức), **trợ lý AI qua Claude Code CLI và MCP local QC-12** (G10 sở hữu).
 
 ## 1. Tổng quan
 
 | **Mục** | **Nội dung** |
 | --- | --- |
-| Mục tiêu | Người dùng lập kế hoạch ngày với agent, thao tác task bằng ngôn ngữ tự nhiên và có nháp highlights cuối ngày; mọi thay đổi AI nhìn thấy được, đúng ngày và hoàn tác được |
-| Actor | Người dùng đã đăng nhập · Hệ thống · Dịch vụ AI (\[AiGateway\] → nhà cung cấp LLM) · Bộ thực thi hành động AI (\[AiActionExecutor\]) · Kỹ sư AI (bộ đánh giá) |
-| Phạm vi | Đồng ý dùng AI lần đầu, công tắc dữ liệu tích hợp, thiết lập và chạy Planning Agent, Review Plan, "Hoàn tác kế hoạch AI", chat Sunny (hỏi đáp, ra lệnh, lịch sử), duyệt thay đổi > 3 task hoặc có dữ liệu ngoài, hoàn tác hành động AI, highlights AI, phản hồi, cài đặt AI / Beta, xoá dữ liệu tích hợp khỏi lịch sử AI, bộ đánh giá |
-| Ngoài phạm vi | Gợi ý planned / channel (G02), ritual thủ công và chia sẻ (G08), kết nối công cụ (G11), agent chạy nền, nhập giọng nói, AI cho nhóm |
-| Nền tảng | Bản 1.2: Web (desktop, mobile web), App iOS / Android, desktop dùng cùng đặc tả |
+| Mục tiêu | Người dùng lập kế hoạch ngày với agent, thao tác task bằng ngôn ngữ tự nhiên (trong app hoặc từ Claude Code trong terminal) và có nháp highlights cuối ngày; mọi thay đổi AI nhìn thấy được, đúng ngày và hoàn tác được; máy không có Claude Code vẫn dùng đủ chức năng lõi |
+| Actor | Người dùng đã đăng nhập · App Windows · Claude Code CLI (do người dùng cài và đăng nhập trên máy; app gọi, hoặc người dùng mở trong terminal) · MCP server local của app (\[McpServer\], gồm bộ thực thi hành động AI \[AiActionExecutor\]) · Hệ thống (server cloud: lưu task, nhật ký, thay đổi AI) · Kỹ sư AI (bộ đánh giá) |
+| Phạm vi | Phát hiện Claude Code, đồng ý dùng AI lần đầu, MCP local và bộ công cụ, công tắc dữ liệu tích hợp, công tắc hoàn thành / xoá, thiết lập và chạy Planning Agent, Review Plan, "Hoàn tác kế hoạch AI", khung chat (hỏi đáp, ra lệnh, lịch sử), phiên Claude Code từ terminal, duyệt thay đổi của phiên có dữ liệu tích hợp, hoàn tác hành động AI, highlights AI, lời gọi AI cho gợi ý task (G02), phản hồi, cài đặt AI / Beta, xoá dữ liệu tích hợp khỏi lịch sử AI, bộ đánh giá |
+| Ngoài phạm vi | Trải nghiệm gợi ý planned / channel (G02), ritual thủ công và chia sẻ (G08), kết nối công cụ (G11), cài đặt / đăng nhập / cập nhật Claude Code (người dùng tự làm), app tự gọi LLM khác, hạn mức AI theo gói, agent chạy nền, nhập giọng nói, AI cho nhóm (bản sau, Q35) |
+| Nền tảng | Bản 1.0: app Windows (Flutter) (Q45, ADR-0005). Web, macOS (1.1) và iOS / Android (1.2): cách cung cấp AI do tech chốt (ADR-0004) |
 | Figma | `[chưa có]` |
 
 ## 2. User Story
@@ -24,13 +24,16 @@
 | US-01 | Người dùng | Thiết lập agent một lần (công cụ, thông tin về tôi, theme days) | Agent lập kế hoạch đúng thói quen của tôi |
 | US-02 | Người dùng | Nói điều quan trọng hôm nay rồi bấm "Plan my day" | Có kế hoạch ngày trong vài phút |
 | US-03 | Người dùng | Xem và chọn từng thay đổi của agent trước khi áp dụng | Giữ quyền quyết định kế hoạch |
-| US-04 | Người dùng | Hỏi và ra lệnh cho Sunny bằng tiếng Việt hoặc tiếng Anh | Thao tác nhiều task nhanh |
+| US-04 | Người dùng | Hỏi và ra lệnh cho trợ lý bằng tiếng Việt hoặc tiếng Anh | Thao tác nhiều task nhanh |
 | US-05 | Người dùng làm khuya | "Ngày mai" được hiểu đúng hoặc được hỏi lại | Task không rơi vào ngày sai (EC-01) |
 | US-06 | Người dùng | Hoàn tác thay đổi của AI mà không mất phần mình đã sửa | Không sợ thử AI |
 | US-07 | Người dùng | Có nháp highlights cuối ngày để duyệt | Đỡ viết tóm tắt từ đầu |
 | US-08 | Người dùng | Bật / tắt từng tính năng AI | Dùng AI ở mức mình muốn |
-| US-09 | Kỹ sư AI | Chạy bộ đánh giá trước khi đổi model / prompt | Không phát hành bản AI kém hơn |
-| US-10 | Người dùng | Đồng ý trước khi dữ liệu của tôi được gửi cho AI, và tự quyết có cho AI đọc dữ liệu công cụ đã kết nối không | Dữ liệu không bị gửi đi khi tôi chưa biết; email lạ không điều khiển được AI |
+| US-09 | Kỹ sư AI | Chạy bộ đánh giá trước khi đổi prompt, bộ công cụ MCP hoặc phiên bản Claude Code tối thiểu | Không phát hành bản AI kém hơn |
+| US-10 | Người dùng | Đồng ý trước khi dữ liệu của tôi được đưa cho Claude Code, và tự quyết có cho AI đọc dữ liệu công cụ đã kết nối không | Dữ liệu không bị đưa đi khi tôi chưa biết; email lạ không điều khiển được AI |
+| US-11 | Người dùng | App tự nhận ra Claude Code trên máy, hoặc chỉ tôi cách cài khi chưa có | Bật trợ lý AI không cần cấu hình; không có Claude Code vẫn dùng đủ app |
+| US-12 | Người dùng đã dùng Claude Code | Điều khiển app từ Claude Code trong terminal | Không phải chuyển qua khung chat của app |
+| US-13 | Người dùng | Tự quyết có cho AI hoàn thành và xoá task không | AI chỉ làm việc có hậu quả khi tôi cho phép |
 
 ## 3. Business Rules
 
