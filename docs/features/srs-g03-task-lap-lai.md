@@ -1,4 +1,4 @@
-> **Mã:** PLN-SRS-G03-WEB · **Trạng thái:** nháp · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g03-task-lap-lai.md
+> **Mã:** PLN-SRS-G03 · **Trạng thái:** nháp · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g03-task-lap-lai.md
 
 # UC-G03 - Task lặp lại trên Web / App (ứng dụng lập kế hoạch ngày)
 

@@ -1,4 +1,4 @@
-> **Mã:** PLN-SRS-G06-WEB · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g06-backlog-rollover.md
+> **Mã:** PLN-SRS-G06 · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g06-backlog-rollover.md
 
 # UC-G06 - Backlog, rollover & lưu trữ trên app Windows (ứng dụng lập kế hoạch ngày)
 

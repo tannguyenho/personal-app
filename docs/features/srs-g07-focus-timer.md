@@ -1,4 +1,4 @@
-> **Mã:** PLN-SRS-G07-WEB · **Trạng thái:** đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g07-focus-timer.md
+> **Mã:** PLN-SRS-G07 · **Trạng thái:** đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g07-focus-timer.md
 
 # UC-G07 - Focus & theo dõi thời gian trên app Windows (ứng dụng lập kế hoạch ngày)
 

@@ -21,8 +21,8 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
 | Phiên bản | Phạm vi |
 |---|---|
 | **1.0 (MVP, Beta)** | **App Windows (Flutter)**, một người dùng. Tài khoản, task, task lặp lại, board ngày, lịch Google / Outlook và timebox, khung giờ channel, backlog và rollover, timer và Focus, Daily planning, Daily shutdown, **trợ lý AI qua Claude Code CLI + MCP local**. Miễn phí, không giới hạn ([ADR-0002](docs/adr/0002-thanh-toan-chuyen-sang-1-1.md), [ADR-0004](docs/adr/0004-ai-qua-claude-code-cli.md), [ADR-0005](docs/adr/0005-nen-tang-windows-truoc.md)) |
-| **1.1** | **Web, macOS.** Trial 14 ngày, thanh toán và chế độ chỉ đọc; workspace nhiều thành viên; Weekly planning / review, objective, analytics, Pomodoro, auto-schedule, lập lịch cứng cho task lặp, Gmail / Jira / Notion |
-| **1.2** | **iOS / Android.** Slack / Teams, Focus Bar |
+| **1.1** | **Web, macOS.** Trial 14 ngày, thanh toán gói cá nhân và chế độ chỉ đọc; Weekly planning / review, objective, analytics, Pomodoro, auto-schedule, lập lịch cứng cho task lặp, Gmail / Jira / Notion |
+| **1.2** | **iOS / Android.** Slack / Teams, Focus Bar. Workspace nhiều thành viên và tính tiền theo ghế từ 1.2 trở đi ([`docs/02`](docs/02-tinh-nang-ban-sau.md)) |
 
 ## Cấu trúc thư mục
 
@@ -74,7 +74,7 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
 
 | Quy ước | Ý nghĩa |
 |---|---|
-| `PLN-PRD-Gxx`, `PLN-SRS-Gxx-WEB` | Mã tài liệu của nhóm Gxx |
+| `PLN-PRD-Gxx`, `PLN-SRS-Gxx` | Mã tài liệu của nhóm Gxx |
 | `QC-xx` | Mã quy tắc dùng chung trong `docs/01-quy-tac-dung-chung.md` |
 | `BR-01`, `UC-01`, `SCR-01`, `MSG-01` | Mã business rule, use case, màn hình, thông báo; đánh số lại từ 01 trong từng SRS |
 | `EC-xx` | Mã tình huống biên (side case) dùng chung cho mọi nhóm; danh mục ở QC-11 |
@@ -88,7 +88,7 @@ Chi tiết ở [quyết định chốt mâu thuẫn](docs/review/quyet-dinh-chot
 
 - Ngày làm việc bắt đầu lúc **04:00** (chỉnh trong 00:00–06:00); đổi cài đặt có hiệu lực từ ngày làm việc kế tiếp; đổi timezone không đổi ngày của task (QC-01, ADR-0001).
 - Thùng rác giữ task đã xoá **30 ngày**.
-- Bản 1.0 miễn phí; trial, thanh toán và chế độ chỉ đọc ở bản 1.1 (ADR-0002).
+- Bản 1.0 miễn phí; trial, thanh toán gói cá nhân và chế độ chỉ đọc ở bản 1.1; nhiều thành viên từ 1.2 trở đi (ADR-0002, Q47).
 - Bản 1.0 là app Windows (Flutter) cho một người dùng, có tài khoản và dữ liệu trên cloud; web + macOS ở 1.1, di động ở 1.2 (ADR-0005).
 - Trợ lý AI chạy bằng Claude Code CLI của người dùng, điều khiển app qua MCP local, có từ 1.0; mặc định tắt; thay đổi áp dụng ngay kèm Hoàn tác; chờ duyệt khi dùng dữ liệu tích hợp; hoàn thành / xoá task chỉ khi người dùng bật công tắc (QC-12, ADR-0004).
 - Mỗi channel có thể đặt khung giờ riêng (QC-02).

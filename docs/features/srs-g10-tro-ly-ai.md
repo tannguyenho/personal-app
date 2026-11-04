@@ -1,4 +1,4 @@
-> **Mã:** PLN-SRS-G10-WEB · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g10-tro-ly-ai.md
+> **Mã:** PLN-SRS-G10 · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g10-tro-ly-ai.md
 
 # UC-G10 - Trợ lý AI qua Claude Code trên app Windows (ứng dụng lập kế hoạch ngày)
 

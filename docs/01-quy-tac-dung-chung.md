@@ -62,13 +62,13 @@ Bảng ví dụ dùng làm ca kiểm thử chuẩn (cả cho bộ đánh giá AI
    - G08 không tự mở và không nhắc ritual vào ngày nghỉ;
    - G09 dựng cột ngày trong tuần.
 4. **Ngày lễ:** chưa hỗ trợ ở 1.0. Người dùng bỏ qua ritual bằng "Bỏ qua hôm nay".
-5. **Khung giờ channel** (G02 sở hữu, cài trong màn cài đặt channel). Mỗi channel có thể đặt khung riêng gồm các ngày trong tuần và giờ bắt đầu, kết thúc từng ngày, kể cả ngày không có trong lịch chung. Ví dụ `#Công ty` T2–T6 09:00–17:00, `#Cá nhân` T2–CN 19:00–22:00. Channel không đặt khung riêng thì dùng lịch chung.
+5. **Khung giờ channel** (G02 sở hữu, cài trong màn cài đặt channel). Mỗi channel có thể đặt khung riêng gồm các ngày trong tuần và giờ bắt đầu, kết thúc từng ngày, kể cả ngày không có trong lịch chung. Mỗi ngày một khoảng, không vắt qua nửa đêm, bước 15 phút (D1). Đổi khung có hiệu lực từ ngày làm việc kế tiếp (D2). Channel "Chưa phân loại" không có khung riêng (D3). Ví dụ `#Công ty` T2–T6 09:00–17:00, `#Cá nhân` T2–CN 19:00–22:00. Channel không đặt khung riêng thì dùng lịch chung.
 6. **Lịch làm việc của task** = khung giờ channel của task nếu có, ngược lại là lịch chung. Dùng cho:
    - projection và cờ "Vượt giờ làm" của task (G04);
    - số ngày bị hoãn của task (QC-04);
    - "ngày làm việc kế tiếp" khi dời task (phím D, shutdown "Ngày mai");
    - auto-schedule chỉ xếp task vào khung của channel của task (G05, bản 1.1).
-7. **Sức chứa của một ngày** (G04) = thời gian trống trong **hợp** của lịch chung và mọi khung channel có trong ngày đó.
+7. **Sức chứa của một ngày** (G04) = thời gian trống trong **hợp** của lịch chung và mọi khung channel có trong ngày đó. Ngày **quá tải** khi tổng planned của task chưa xong > sức chứa. Ngưỡng khối lượng (G04) chỉ là giới hạn riêng của lịch chung, áp cho các task không có khung channel; không lấy min với sức chứa (Q48).
 8. Ritual ngày (G08) và cột ngày của G09 theo **lịch chung**.
 9. **Phát hành:** lịch chung, khung giờ channel, sức chứa và projection ở 1.0; auto-schedule dùng khung channel ở 1.1.
 
@@ -104,7 +104,7 @@ Bảng ví dụ dùng làm ca kiểm thử chuẩn (cả cho bộ đánh giá AI
 
 ## QC-04. Số ngày bị hoãn
 
-1. **Định nghĩa.** Số ngày bị hoãn = số ngày có trong lịch làm việc của task (QC-02 mục 6) tính từ `firstPlannedDate` tới hôm nay. Ngày không có trong lịch làm việc của task không được đếm; rollover vẫn chạy mọi ngày. `firstPlannedDate` là ngày dự định tại lần đặt có chủ đích gần nhất. Giá trị này thay cho `rolloverCount` trong toàn bộ tài liệu.
+1. **Định nghĩa.** Số ngày bị hoãn = số ngày có trong lịch làm việc của task (QC-02 mục 6) tính từ `firstPlannedDate` tới hôm nay. Ngày không có trong lịch làm việc của task không được đếm; rollover vẫn chạy mọi ngày. Số được tính theo lịch **hiện tại** của task, nên đổi lịch, khung giờ hoặc channel có thể làm số thay đổi (D4). `firstPlannedDate` là ngày dự định tại lần đặt có chủ đích gần nhất. Giá trị này thay cho `rolloverCount` trong toàn bộ tài liệu.
 2. **Không reset** (`firstPlannedDate` giữ nguyên) khi task bị đẩy sang ngày sau theo kiểu thụ động: rollover, phím D, shutdown chọn "Ngày mai" (kể cả "Áp dụng cho tất cả").
 3. **Reset** (`firstPlannedDate` = ngày dự định mới) khi người dùng đặt ngày có chủ đích hoặc task rời luồng ngày: chọn ngày bằng bộ chọn ngày, kéo sang ngày khác, "Hoãn 1 tuần", phím S, đưa vào backlog, hoàn thành, khôi phục từ Lưu trữ hoặc Thùng rác.
 4. **Hiển thị.** Card hiện nhãn "Dời {n} ngày" khi n ≥ 1. Bước "Xem lại hôm qua" của Daily planning lấy task có n ≥ 1.
@@ -124,8 +124,8 @@ Mọi đường làm thay đổi ngày dự định hoặc đưa task ra khỏi 
 | Đưa vào backlog | Timebox tương lai: gỡ. Quá khứ: gỡ liên kết | Tương lai: **xoá**. Quá khứ: giữ | Không dừng | Reset | G04, G06 |
 | Hoàn thành | Giữ; rút ngắn khi thời điểm hoàn thành nằm trong khoảng giờ của timebox | Cập nhật theo | **Dừng** | Reset | G02 |
 | Xoá | Tương lai: gỡ. Quá khứ: gỡ liên kết | Tương lai: xoá. Quá khứ: giữ | **Dừng** | — | G02 |
-| "Hoãn 1 tuần", phím S | Như "kéo sang ngày khác" | Cập nhật theo | Không dừng | Reset | G04, G06 |
-| Tự lưu trữ (`stale`) | Như "Đưa vào backlog" | Như "Đưa vào backlog" | Không dừng | — | G06 |
+| "Hoãn 1 tuần" (= max(ngày dự định, hôm nay) + 7 ngày, D5), phím S | Như "kéo sang ngày khác" | Cập nhật theo | Không dừng | Reset | G04, G06 |
+| Tự lưu trữ (`stale`), lưu trữ do trùng series (`skipped`, D6) | Như "Đưa vào backlog" | Như "Đưa vào backlog" | Không dừng | — | G06 |
 | AI dời ngày | Như "kéo sang ngày khác" | Như trên | Không dừng | Reset | G10 |
 
 - **Ngoại lệ: timebox liên kết sự kiện** (G05 BR-21, B8). Timebox gắn với sự kiện có sẵn trên lịch ngoài không theo các cột Timebox / Sự kiện ngoài ở trên: ở mọi đường (đổi ngày, rollover, đưa vào backlog, xoá) chỉ gỡ liên kết, **không** dời và **không** xoá sự kiện ngoài; timebox đi theo sự kiện gốc (sự kiện đổi giờ thì timebox đổi theo, sự kiện bị xoá hoặc đổi thành cả ngày thì gỡ timebox, task giữ nguyên). Các timebox thường khác của cùng task theo bảng trên.
@@ -201,9 +201,9 @@ Trợ lý AI **không có hạn mức theo gói**: AI chạy bằng Claude Code 
    - đọc: board ngày, backlog, lịch và sự kiện, task, objective;
    - ghi: tạo task, sửa tiêu đề / ghi chú / planned / channel, dời ngày (theo QC-05, dòng "AI dời ngày"), đưa vào backlog, timebox / gỡ timebox;
    - đọc dữ liệu tích hợp (email, Jira, Notion…): chỉ có khi người dùng bật công tắc riêng (mục 6).
-4. **Hoàn thành và xoá task** không có trong MCP mặc định. Người dùng bật được công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt). Task có liên kết tích hợp không bao giờ được AI hoàn thành.
-5. **Áp dụng ngay.** Mọi thay đổi qua MCP được áp dụng ngay, gắn chip "AI" trên task, ghi nhật ký, và có Hoàn tác (từng thay đổi và "Hoàn tác kế hoạch AI" cho cả lượt).
-6. **Dữ liệu tích hợp chỉ là dữ liệu.** Công cụ đọc dữ liệu tích hợp mặc định tắt. Khi đã bật, mọi thay đổi trong cùng phiên AI đó chuyển thành **chờ duyệt** trong app thay vì áp dụng ngay, để chặn lệnh ẩn trong nội dung bên ngoài.
+4. **Hoàn thành và xoá task** không có trong MCP mặc định. Người dùng bật được công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt), áp cho cả subtask. Task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (D10).
+5. **Áp dụng ngay.** Mọi thay đổi qua MCP được áp dụng ngay, gắn chip "AI" trên task, ghi nhật ký, và có Hoàn tác (từng thay đổi và "Hoàn tác kế hoạch AI" cho cả lượt). Planning Agent lỗi giữa chừng thì giữ phần đã áp dụng, vẫn có Hoàn tác cả lượt (D9).
+6. **Dữ liệu tích hợp chỉ là dữ liệu.** Công cụ đọc dữ liệu tích hợp mặc định tắt. Khi đã bật, mọi thay đổi **sau lần đầu đọc dữ liệu tích hợp** trong cùng phiên AI đó chuyển thành **chờ duyệt** trong app thay vì áp dụng ngay, để chặn lệnh ẩn trong nội dung bên ngoài (D8).
 7. **Đồng ý.** Trợ lý AI mặc định tắt. Lần bật đầu tiên hiện một màn gọn nói rõ dữ liệu nào được đưa cho Claude Code; app lưu thời điểm đồng ý. Tắt trợ lý thì MCP server ngừng nhận kết nối.
 8. **Không có hạn mức theo gói** (QC-10). Lỗi hết hạn mức đến từ Claude Code thì app hiện thông báo của Claude Code và chuyển sang luồng thủ công (EC-39).
 

@@ -1,4 +1,4 @@
-> **Mã:** PLN-SRS-G08-WEB · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g08-daily-rituals.md
+> **Mã:** PLN-SRS-G08 · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g08-daily-rituals.md
 
 # UC-G08 - Daily planning & Daily shutdown (ứng dụng lập kế hoạch ngày)
 

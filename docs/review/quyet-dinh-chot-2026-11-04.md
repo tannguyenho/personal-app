@@ -214,3 +214,26 @@ Thuật ngữ: [`CONTEXT.md`](../../CONTEXT.md). Quyết định khó đảo ng�
 | Q44 | Sửa giờ timebox của instance lặp tính là sửa riêng (`customized`) |
 | Q45 | Nền tảng: 1.0 app **Windows (Flutter)**, 1.1 web + macOS, 1.2 iOS / Android. Có tài khoản và dữ liệu trên cloud từ 1.0. Giao diện theo design system Figma riêng. Tech stack và API chốt trong buổi grill riêng (`docs/tech/`). ADR-0005 |
 | Q46 | Trợ lý AI chạy bằng **Claude Code CLI** của người dùng, app mở **MCP local** để Claude Code điều khiển; có ở **1.0**; mặc định tắt, màn đồng ý gọn; MCP mặc định không có hoàn thành / xoá, có công tắc bật (trừ task có liên kết tích hợp); thay đổi áp dụng ngay + chip AI + Hoàn tác; bật đọc dữ liệu tích hợp thì thay đổi trong phiên đó chờ duyệt; bỏ hạn mức AI. QC-12, ADR-0004 (thay một phần Q20, Q31, C32) |
+
+## Vòng 7
+
+| # | Quyết định |
+|---|---|
+| Q47 | Bản 1.1 có trial và thanh toán **cho một người dùng** (gói cá nhân, không tính ghế). Nhiều thành viên, ghế và mọi thứ liên quan để bản sau (1.2 trở đi). Sửa ADR-0002 |
+| Q48 | Sức chứa ngày không còn lấy min với ngưỡng khối lượng: quá tải khi planned của task chưa xong > thời gian trống trong hợp lịch chung và các khung channel. Ngưỡng khối lượng chỉ là giới hạn riêng của lịch chung, áp cho task không có khung channel (QC-02 mục 7) |
+| D1 | Khung giờ channel: một khoảng mỗi ngày, không vắt qua nửa đêm, bước 15 phút |
+| D2 | Đổi khung giờ channel có hiệu lực từ ngày làm việc kế tiếp |
+| D3 | Channel "Chưa phân loại" không có khung giờ riêng, luôn theo lịch chung |
+| D4 | Số ngày bị hoãn tính theo lịch hiện tại của task (đổi lịch / khung / channel thì số có thể thay đổi) |
+| D5 | "Hoãn 1 tuần" = max(ngày dự định, hôm nay) + 7 ngày; rơi vào ngày nghỉ thì giữ nguyên ngày đó |
+| D6 | Instance lưu trữ `skipped` (trùng series) xử lý timebox như "Đưa vào backlog" |
+| D7 | Highlights soạn tại giờ kết thúc của lịch chung; app không mở lúc đó thì soạn khi mở app lần kế tiếp trong ngày |
+| D8 | Khi bật đọc dữ liệu tích hợp: chỉ các thay đổi **sau** lần đầu đọc dữ liệu tích hợp trong phiên đó chờ duyệt |
+| D9 | Planning Agent lỗi giữa chừng: giữ phần đã áp dụng, có Hoàn tác cả lượt |
+| D10 | Công tắc AI hoàn thành / xoá áp cho cả subtask; AI không bao giờ hoàn thành hay xoá task có liên kết tích hợp |
+| D11 | Phím tắt toàn cục (Ctrl+Shift+A thêm task, Ctrl+Shift+Space timer) có ở 1.0 |
+| D12 | Nhắc ritual và nhắc timer > 4 giờ bằng thông báo Windows và trong app, từ 1.0 |
+| D13 | Đóng cửa sổ khi timer đang chạy: thu về khay hệ thống, timer chạy tiếp |
+| D14 | Mã tài liệu bỏ hậu tố nền tảng: `PLN-SRS-Gxx` |
+| D15 | G09: tắt "Gồm ngày nghỉ" chỉ ẩn / hiện cột; giờ của khung channel vào ngày nghỉ vẫn tính vào tổng tuần |
+| D16 | Tên hiển thị của trợ lý AI chưa đặt; quyết định khi làm thiết kế Figma |

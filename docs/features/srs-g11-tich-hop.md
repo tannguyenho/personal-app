@@ -1,4 +1,4 @@
-> **Mã:** PLN-SRS-G11-WEB · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g11-tich-hop.md
+> **Mã:** PLN-SRS-G11 · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g11-tich-hop.md
 
 # UC-G11 - Tích hợp công cụ (ứng dụng lập kế hoạch ngày)
 

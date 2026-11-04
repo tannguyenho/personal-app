@@ -1,4 +1,4 @@
-> **Mã:** PLN-SRS-G04-WEB · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g04-board-ngay.md
+> **Mã:** PLN-SRS-G04 · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g04-board-ngay.md
 
 # UC-G04 - Board ngày, projection, khối lượng, tìm kiếm & phím tắt trên app Windows (ứng dụng lập kế hoạch ngày)
 

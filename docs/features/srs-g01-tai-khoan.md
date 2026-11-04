@@ -1,4 +1,4 @@
-> **Mã:** PLN-SRS-G01-WEB · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g01-tai-khoan.md
+> **Mã:** PLN-SRS-G01 · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g01-tai-khoan.md
 
 # UC-G01 - Tài khoản, onboarding & cài đặt trên app Windows (ứng dụng lập kế hoạch ngày)
 

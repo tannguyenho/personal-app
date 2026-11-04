@@ -2,7 +2,9 @@
 
 Bản 1.0 là app Windows cho **một người dùng** (Q35, Q45). Danh sách dưới đây giữ lại các tính năng đã đặc tả hoặc đã chốt hướng nhưng **không làm ở 1.0**, để không bị mất khi lên kế hoạch các bản sau. Đặc tả chi tiết vẫn nằm trong PRD/SRS của nhóm tương ứng, được gắn nhãn phiên bản.
 
-## Nhiều thành viên (workspace nhóm)
+## Nhiều thành viên (workspace nhóm) — bản 1.2 trở đi
+
+Bản 1.0 và 1.1 chỉ phục vụ một người dùng (Q35, Q47).
 
 | Tính năng | Quyết định đã chốt | Nhóm |
 |---|---|---|
@@ -15,7 +17,7 @@ Bản 1.0 là app Windows cho **một người dùng** (Q35, Q45). Danh sách d�
 
 ## Gói & thanh toán (bản 1.1)
 
-Trial 14 ngày, thanh toán, chế độ chỉ đọc (QC-09), quyền theo gói (QC-10). Cổng thanh toán còn mở (Q30). Xem ADR-0002.
+Trial 14 ngày, thanh toán gói cá nhân (không tính ghế, Q47), chế độ chỉ đọc (QC-09), quyền theo gói (QC-10). Tính tiền theo ghế đi cùng nhiều thành viên (bản sau). Cổng thanh toán còn mở (Q30). Xem ADR-0002.
 
 ## Nền tảng
 

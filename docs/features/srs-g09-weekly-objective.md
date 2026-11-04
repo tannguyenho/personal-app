@@ -1,4 +1,4 @@
-> **Mã:** PLN-SRS-G09-WEB · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g09-weekly-objective.md
+> **Mã:** PLN-SRS-G09 · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g09-weekly-objective.md
 
 # UC-G09 - Weekly planning, Weekly review, objective & analytics (ứng dụng lập kế hoạch ngày)
 

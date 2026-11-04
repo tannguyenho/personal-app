@@ -19,4 +19,4 @@ Chốt ngày 04/11/2026: 12 nhóm, mỗi nhóm một cặp PRD + SRS theo mẫu 
 
 UC-20 của SRS tổng được tách: G01 giữ phần cài đặt, G04 giữ phần phím tắt.
 
-Quy ước mã: PRD `PLN-PRD-Gxx`, SRS `PLN-SRS-Gxx-WEB`. Trong mỗi SRS, mã BR, UC, SCR, MSG đánh số lại từ 01 theo nhóm (giống mẫu). Thông báo (UC-25) đặc tả ngay trong nhóm phát sinh thông báo; G12 giữ phần cấu hình kênh thông báo.
+Quy ước mã: PRD `PLN-PRD-Gxx`, SRS `PLN-SRS-Gxx`. Trong mỗi SRS, mã BR, UC, SCR, MSG đánh số lại từ 01 theo nhóm (giống mẫu). Thông báo (UC-25) đặc tả ngay trong nhóm phát sinh thông báo; G12 giữ phần cấu hình kênh thông báo.

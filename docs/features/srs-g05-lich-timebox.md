@@ -1,4 +1,4 @@
-> **Mã:** PLN-SRS-G05-WEB · **Trạng thái:** đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g05-lich-timebox.md
+> **Mã:** PLN-SRS-G05 · **Trạng thái:** đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g05-lich-timebox.md
 
 # UC-G05 - Lịch & timebox (ứng dụng lập kế hoạch ngày)
 

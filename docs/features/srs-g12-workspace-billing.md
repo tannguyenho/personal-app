@@ -1,4 +1,4 @@
-> **Mã:** PLN-SRS-G12-WEB · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g12-workspace-billing.md
+> **Mã:** PLN-SRS-G12 · **Trạng thái:** Đã chốt mâu thuẫn — chờ duyệt · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g12-workspace-billing.md
 
 # UC-G12 - Workspace, thành viên, quyền riêng tư & thanh toán trên app Windows (ứng dụng lập kế hoạch ngày)
 

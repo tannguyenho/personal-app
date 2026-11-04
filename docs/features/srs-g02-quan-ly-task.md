@@ -1,4 +1,4 @@
-> **Mã:** PLN-SRS-G02-WEB · **Trạng thái:** nháp · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g02-quan-ly-task.md
+> **Mã:** PLN-SRS-G02 · **Trạng thái:** nháp · **Người viết:** Tan Ho (soạn cùng Claude) · **PRD:** prd-g02-quan-ly-task.md
 
 # UC-G02 - Quản lý task trên Web / App (ứng dụng lập kế hoạch ngày)
 
