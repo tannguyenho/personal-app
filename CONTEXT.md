@@ -47,8 +47,12 @@ Quy tắc lặp của một task lặp lại, sinh ra các instance theo lịch.
 _Avoid_: task gốc, mẫu lặp
 
 **Instance**:
-Một task cụ thể do series sinh ra cho một ngày làm việc.
+Một task cụ thể do series sinh ra cho một ngày làm việc. Ngày mà quy tắc lặp sinh ra nó gọi là **ngày gốc**; ngày gốc không đổi khi instance bị dời.
 _Avoid_: bản sao, occurrence
+
+**Ngày ngoại lệ**:
+Ngày gốc mà người dùng đã bỏ khỏi series (bằng cách xoá instance của ngày đó); series không bao giờ sinh lại instance cho ngày ngoại lệ.
+_Avoid_: bia mộ, skip date
 
 ## Lịch
 
@@ -71,6 +75,10 @@ Timebox gắn với một sự kiện có sẵn trên lịch ngoài (ví dụ cu
 **Trợ lý AI**:
 Các tính năng gọi mô hình AI (chat, Planning Agent, highlights). Mặc định tắt cho tới khi người dùng đồng ý chia sẻ dữ liệu; không bao giờ tự đánh dấu task hoàn thành.
 _Avoid_: Sunny (tên hiển thị, không dùng trong quy tắc)
+
+**Ghế**:
+Một suất thành viên trong workspace trả phí do chủ sở hữu mua trước; một người chỉ vào được workspace khi còn ghế trống.
+_Avoid_: seat, license
 
 **Chế độ chỉ đọc**:
 Trạng thái của workspace khi không còn quyền dùng trả phí: người dùng chỉ xem được, và mọi việc tự động ghi dữ liệu nghiệp vụ đều bị đóng băng. Chỉ có từ khi có thanh toán (bản 1.1).
