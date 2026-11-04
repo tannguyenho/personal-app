@@ -8,7 +8,7 @@
 
 ## 1.1 Bối cảnh
 
-G12 lo hai mảng: **kinh doanh** (trial, thanh toán, chế độ chỉ đọc) và **làm việc nhóm** (workspace nhiều thành viên, vai trò, quyền riêng tư, giao và follow task). G12 cũng sở hữu cài đặt Thông báo và trung tâm thông báo trong app: nhóm khác phát sinh sự kiện (G05, G07, G08, G09, G11), G12 quyết định ai nhận, qua kênh nào. Bản 1.0 là **app Windows (Flutter)** cho **một người dùng**, có tài khoản và dữ liệu trên cloud (Q35, Q45, ADR-0005), **miễn phí, không giới hạn, gắn nhãn Beta**: mỗi tài khoản một workspace cá nhân do chính họ làm chủ sở hữu (tạo ở G01); G12 ở 1.0 chỉ còn workspace cá nhân và thông báo (cài đặt, trung tâm, huỷ đăng ký email). Bản 1.1 (thêm web, macOS) mở trial 14 ngày, thanh toán, chế độ chỉ đọc, quyền theo gói. Người dùng có từ 1.0 nhận trial 14 ngày tính từ ngày phát hành 1.1. Mời thành viên, ghế, vai trò, Privacy, giao / follow task, chuyển quyền sở hữu là **bản sau** (Q35, Q37) — đặc tả giữ nguyên trong tài liệu này, gắn nhãn "bản sau", danh sách gom ở [`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md).
+G12 lo hai mảng: **kinh doanh** (trial, thanh toán, chế độ chỉ đọc — 1.1) và **làm việc nhóm** (workspace nhiều thành viên, vai trò, quyền riêng tư, giao và follow task — bản sau). G12 cũng sở hữu cài đặt Thông báo và trung tâm thông báo trong app: nhóm khác phát sinh sự kiện (G05, G07, G08, G09, G11), G12 quyết định ai nhận, qua kênh nào. Bản 1.0 là **app Windows (Flutter)** cho **một người dùng**, có tài khoản và dữ liệu trên cloud (Q35, Q45, ADR-0005), **miễn phí, không giới hạn, gắn nhãn Beta**: mỗi tài khoản một workspace cá nhân do chính họ làm chủ sở hữu (tạo ở G01); G12 ở 1.0 chỉ còn workspace cá nhân và thông báo (cài đặt, trung tâm, huỷ đăng ký email). Bản 1.1 (thêm web, macOS) mở trial 14 ngày, thanh toán, chế độ chỉ đọc, quyền theo gói. Người dùng có từ 1.0 nhận trial 14 ngày tính từ ngày phát hành 1.1. Mời thành viên, ghế, vai trò, Privacy, giao / follow task, chuyển quyền sở hữu là **bản sau** (Q35, Q37) — đặc tả giữ nguyên trong tài liệu này, gắn nhãn "bản sau", danh sách gom ở [`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md).
 
 ## 1.2 Vấn đề
 
@@ -135,16 +135,17 @@ Gộp thông báo trùng, tắt được từng loại theo từng kênh, email 
 | Chủ sở hữu mới cần nhập phương thức thanh toán | Chủ sở hữu mới | Trong app + email | Bản sau | G12 |
 | Hoàn tiền / tranh chấp | Chủ sở hữu | Trong app + email | 1.1 | G12 |
 | Lịch / tích hợp mất kết nối | Người đã kết nối | Trong app + email | 1.0 (lịch), 1.1 (tích hợp) | G05, G11 |
-| Đến giờ ritual | Người dùng | Trong app; desktop: thông báo hệ thống | 1.0 (desktop 1.1) | G08, G09 |
+| Đến giờ ritual | Người dùng | Trong app + thông báo hệ thống Windows `[giả định]` | 1.0 | G08, G09 |
 | Timebox sắp bắt đầu | Người dùng | Reminder của lịch ngoài (theo "nhắc theo lịch mặc định") | 1.0 | G05 |
-| Timer chạy quá 4 giờ | Người dùng | Mobile push | 1.1 | G07 |
-| Được giao task | Người được giao | Trong app + email | 1.1 | G12 |
-| Task đang follow: tạo, giao lại, hoàn thành, comment | Người follow | Email (mobile 1.1, Slack 1.2) | 1.1 | G12 |
+| Timer chạy quá 4 giờ | Người dùng | Thông báo hệ thống Windows `[giả định]`; mobile push từ 1.2 | 1.0 `[giả định — G07 xác nhận]` | G07 |
+| Được giao task | Người được giao | Trong app + email | Bản sau | G12 |
+| Task đang follow: tạo, giao lại, hoàn thành, comment | Người follow | Email (mobile 1.2, Slack 1.2) | Bản sau | G12 |
 | Recap tuần | Người dùng + người nhận thêm | Email tại mốc đầu ngày của ngày sau ngày làm việc cuối tuần (QC-02, G01) | 1.1 (Beta) | G09 |
 | Product updates | Người dùng | Email, mặc định tắt `[giả định]` | 1.0 | G12 |
 
 - Các giới hạn là **cấu hình hệ thống**, không cố định trong code.
-- Quyền theo gói (1.1) theo bảng cấu hình QC-10 do G12 sở hữu: số tài khoản lịch, hạn mức AI tách riêng chat / Planning Agent / soạn lại highlights, số tích hợp. Lượt AI lỗi không trừ hạn mức. Không nhóm nào viết cứng con số hay rẽ nhánh theo tên gói. Danh sách gói và giá vẫn là câu hỏi mở.
+- Quyền theo gói (1.1) theo bảng cấu hình QC-10 do G12 sở hữu: số tài khoản lịch, số tích hợp. Trợ lý AI **không có hạn mức theo gói** — AI chạy bằng Claude Code CLI trên máy người dùng, dùng hạn mức gói Claude của chính họ (Q46, QC-12 mục 8; thay C32). Không nhóm nào viết cứng con số hay rẽ nhánh theo tên gói. Danh sách gói và giá vẫn là câu hỏi mở.
+- Kênh thông báo theo nền tảng: Trong app và Email từ 1.0; Desktop (thông báo hệ thống Windows) từ 1.0 `[giả định]`, macOS từ 1.1; Mobile push từ 1.2 (Q45).
 
 # 6. Luồng trải nghiệm tổng thể
 
@@ -155,9 +156,9 @@ Gộp thông báo trùng, tắt được từng loại theo từng kênh, email 
 | 2 | Nhắc (1.1) | Còn 3 ngày, 1 ngày: banner + email có nút "Nâng cấp" | Người dùng biết trước |
 | 3 | Nâng cấp (1.1) | Chọn tháng / năm, số ghế, thông tin hoá đơn → trang thanh toán của cổng → quay lại app | Gói hoạt động (kỳ đầu từ khi hết trial), hoá đơn điện tử |
 | 4 | Gia hạn (1.1) | Tự thu mỗi kỳ; lỗi thì thử lại ngày 1, 3, 7; hết lượt → chỉ đọc (đóng băng, QC-09) | Không mất khách vì lỗi tạm thời |
-| 5 | Mời nhóm (1.1) | "Thêm đồng nghiệp": nhập email, chọn vai trò; hoặc copy link mời; người chấp nhận vào khi còn ghế trống | Thành viên mới trong số ghế đã mua |
-| 6 | Riêng tư (1.1) | Mỗi người chọn loại dữ liệu nào thành viên khác thấy | Chia sẻ có kiểm soát |
-| 7 | Phối hợp (1.1) | Giao task, follow task; nhận thông báo | Biết ai làm gì, việc nào xong |
+| 5 | Mời nhóm (bản sau) | "Thêm đồng nghiệp": nhập email, chọn vai trò; hoặc copy link mời; người chấp nhận vào khi còn ghế trống | Thành viên mới trong số ghế đã mua |
+| 6 | Riêng tư (bản sau) | Mỗi người chọn loại dữ liệu nào thành viên khác thấy | Chia sẻ có kiểm soát |
+| 7 | Phối hợp (bản sau) | Giao task, follow task; nhận thông báo | Biết ai làm gì, việc nào xong |
 | 8 | Thông báo (1.0) | Trung tâm thông báo trong app; tắt / bật theo sự kiện × kênh | Đúng thông báo, đúng kênh |
 
 Bước 0–1 dựa trên G01; PRD này tập trung bước 2–8.
@@ -220,7 +221,7 @@ AC03: Danh sách hoá đơn tải được PDF; hoá đơn điện tử theo NĐ
 
 AC04: Hoàn tiền hoặc tranh chấp từ cổng thanh toán được ghi vào hoá đơn, báo chủ sở hữu; hoàn tiền toàn phần hoặc thua tranh chấp → workspace chỉ đọc `[giả định]`.
 
-## UC3. Thành viên (1.1)
+## UC3. Thành viên (bản sau — xem `docs/02-tinh-nang-ban-sau.md`, Q35)
 
 ### US3.1 Mời đồng nghiệp
 
@@ -262,7 +263,7 @@ AC02: Chủ sở hữu muốn rời workspace hoặc xoá tài khoản (G01) khi
 
 AC03: Xoá workspace chỉ chủ sở hữu, phải gõ tên workspace để xác nhận; huỷ gói, mọi thành viên bị đăng xuất.
 
-## UC4. Quyền riêng tư (1.1)
+## UC4. Quyền riêng tư (bản sau — xem `docs/02-tinh-nang-ban-sau.md`, Q35, Q37)
 
 ### US4.1 Chọn dữ liệu nào thành viên khác thấy
 
@@ -274,11 +275,13 @@ AC03: Channel private (G02) không hiện với người khác dù cài đặt l
 
 AC04: Privacy chỉ áp cho task tự tạo. Task đã giao hoặc có người follow luôn hiện tiêu đề, trạng thái, comment với người giao, người được giao và người follow.
 
-## UC5. Giao task và follow task (1.1)
+AC05: Privacy "Lịch" ở "Thành viên" → người khác chỉ thấy bận / rảnh và timebox của người đó, **không** thấy chi tiết sự kiện của lịch ngoài (tiêu đề, người tham dự, ghi chú) — khuyến nghị, chờ chốt khi làm (Q37); ảnh hưởng G05.
+
+## UC5. Giao task và follow task (bản sau — xem `docs/02-tinh-nang-ban-sau.md`, Q35, Q36)
 
 ### US5.1 Giao task
 
-AC01: Chi tiết task (G02) có ô "Giao cho" chọn thành viên; người được giao nhận task vào backlog của họ (G06) và thông báo trong app + email.
+AC01: Chi tiết task (G02) có ô "Giao cho" chọn thành viên; người được giao nhận task vào backlog của họ ở bucket **"Tuần sau"**, đặt lên đầu bucket (Q36, G06) và thông báo trong app + email.
 
 AC02: Giao lại cho người khác → người mới nhận thông báo, người cũ không còn thấy task trong backlog (trừ khi follow).
 
@@ -292,7 +295,7 @@ AC02: Bỏ theo dõi bất cứ lúc nào; người giao tự động follow `[g
 
 ### US6.1 Cài đặt thông báo
 
-AC01: Cài đặt → Thông báo hiện bảng sự kiện × kênh (Trong app, Email, Mobile, Desktop); mỗi ô là một công tắc; sự kiện / kênh chưa phát hành ở bản hiện tại không hiện.
+AC01: Cài đặt → Thông báo hiện bảng sự kiện × kênh (Trong app, Email, Desktop — thông báo hệ thống Windows `[giả định]`, Mobile từ 1.2); mỗi ô là một công tắc; sự kiện / kênh chưa phát hành ở bản hiện tại không hiện.
 
 AC02: Ô bắt buộc (từ 1.1: email sắp xoá dữ liệu workspace chỉ đọc; email trial sắp hết, gia hạn lỗi `[giả định]`) hiện khoá kèm giải thích.
 
@@ -314,9 +317,9 @@ AC01: Mọi email thông báo (trừ email bắt buộc) có link "Huỷ nhận 
 | Thời gian nâng cấp (1.1) | Từ bấm "Nâng cấp" tới gói hoạt động | ≤ 3 phút (trung vị) |
 | Tỉ lệ cứu được gia hạn lỗi (1.1) | Gia hạn thành công ở lần thử lại / gia hạn lỗi lần đầu | ≥ 40% |
 | Tỉ lệ quay lại từ chỉ đọc (1.1) | Workspace chỉ đọc thanh toán trong 90 ngày / workspace chỉ đọc | Theo dõi |
-| Lời mời chờ ghế (1.1) | Lời mời `CHO_GHE` được vào trong 7 ngày / lời mời `CHO_GHE` | Theo dõi |
-| Workspace nhiều thành viên (1.1) | Workspace ≥ 2 thành viên hoạt động / workspace trả phí | ≥ 20% |
-| Tỉ lệ chấp nhận lời mời (1.1) | Lời mời được chấp nhận / lời mời gửi | ≥ 50% |
+| Lời mời chờ ghế (bản sau) | Lời mời `CHO_GHE` được vào trong 7 ngày / lời mời `CHO_GHE` | Theo dõi |
+| Workspace nhiều thành viên (bản sau) | Workspace ≥ 2 thành viên hoạt động / workspace trả phí | ≥ 20% |
+| Tỉ lệ chấp nhận lời mời (bản sau) | Lời mời được chấp nhận / lời mời gửi | ≥ 50% |
 | Tỉ lệ tắt thông báo | Người dùng tắt ≥ 1 loại / người dùng hoạt động | Theo dõi (cao = thông báo gây phiền) |
 
 # 9. Phụ thuộc và rủi ro
@@ -328,8 +331,8 @@ AC01: Mọi email thông báo (trừ email bắt buộc) có link "Huỷ nhận 
 | Hoàn tiền khi xoá tài khoản | Luật Bảo vệ quyền lợi người tiêu dùng 2023 có thể yêu cầu hoàn phần chưa dùng | Tạm giả định hoàn phần còn lại; pháp chế xác nhận |
 | Chuyển dữ liệu ra nước ngoài | 1.0 dùng máy chủ khu vực châu Á | Hồ sơ đánh giá tác động chuyển dữ liệu ra nước ngoài (NĐ 13/2023); pháp chế xác nhận trước phát hành |
 | Webhook trễ, trùng, sai thứ tự | Gói kích hoạt chậm hoặc bị xử lý hai lần | Idempotent theo ID giao dịch (EC-35); đối soát hằng ngày với cổng; trang "Đang xác nhận" |
-| Lộ dữ liệu giữa thành viên (1.1) | Lỗi kiểm tra Privacy làm lộ task cá nhân | Kiểm tra quyền ở tầng truy vấn server; kiểm thử tự động cho cả 5 loại dữ liệu và ngoại lệ giao / follow |
-| Thu tiền ngoài ý muốn qua lời mời / link chung | Chủ sở hữu bị thu thêm tiền không lường trước | Đã xử lý: ghế mua trước, hết ghế thì người mới chờ; chỉ thu khi chủ sở hữu bấm; log trong Team changes |
+| Lộ dữ liệu giữa thành viên (bản sau) | Lỗi kiểm tra Privacy làm lộ task cá nhân | Kiểm tra quyền ở tầng truy vấn server; kiểm thử tự động cho cả 5 loại dữ liệu và ngoại lệ giao / follow |
+| Thu tiền ngoài ý muốn qua lời mời / link chung (bản sau) | Chủ sở hữu bị thu thêm tiền không lường trước | Đã xử lý: ghế mua trước, hết ghế thì người mới chờ; chỉ thu khi chủ sở hữu bấm; log trong Team changes |
 | Người dùng Beta 1.0 bị bất ngờ khi có gói trả phí | Rời bỏ khi trial 1.1 hết | Báo trước trong app + email khi 1.1 phát hành; trial 14 ngày từ ngày phát hành |
 | Email vào thư rác | Nhắc trial, gia hạn lỗi không tới | SPF / DKIM / DMARC; luôn kèm thông báo trong app |
 | Tiếp thị qua email | Product updates cần đồng ý theo Nghị định 13/2023/NĐ-CP, GDPR | Mặc định tắt `[giả định]`; pháp chế xác nhận |
@@ -337,16 +340,19 @@ AC01: Mọi email thông báo (trừ email bắt buộc) có link "Huỷ nhận 
 # 10. Câu hỏi mở
 
 - Chọn cổng thanh toán nào: Stripe, VNPay, MoMo, hay kết hợp? **Còn mở, chốt trước 1.1** (Q30); gợi ý Stripe cho thẻ quốc tế, VNPay / MoMo cho thanh toán nội địa.
-- Danh sách gói, giá tháng / năm là gì? **Còn mở.** Đã chốt 04/11/2026: cấu trúc quyền theo gói theo QC-10, hạn mức AI tách chat / agent / highlights, lượt lỗi không trừ (C32).
+- Danh sách gói, giá tháng / năm là gì? **Còn mở.** Đã chốt 04/11/2026: cấu trúc quyền theo gói theo QC-10 chỉ gồm số tài khoản lịch và số tích hợp; AI **không có hạn mức theo gói** (Q46, QC-12 mục 8 — thay C32).
+- Đã chốt 04/11/2026: bản 1.0 là app Windows (Flutter), có tài khoản và dữ liệu trên cloud; 1.1 thêm web + macOS; 1.2 thêm iOS / Android (Q45, ADR-0005).
+- Đã chốt 04/11/2026: bản 1 chỉ cho một người dùng; mời, ghế, vai trò, giao / follow task, Privacy, chuyển quyền sở hữu để bản sau, gom ở `docs/02-tinh-nang-ban-sau.md` (Q35, Q37).
 - Đã chốt 04/11/2026 một phần: bản 1.0 không bắt buộc lưu tại Việt Nam, dùng máy chủ khu vực châu Á, kèm hồ sơ đánh giá tác động chuyển dữ liệu ra nước ngoài (Q29). **Còn mở:** pháp chế xác nhận trước khi phát hành.
 - Đã chốt 04/11/2026: giữ dữ liệu workspace chỉ đọc 90 ngày, sau đó chỉ xoá dữ liệu workspace, không xoá tài khoản; báo mọi thành viên, email bắt buộc (C8).
 - Đã chốt 04/11/2026 một phần: hoàn tiền khi xoá tài khoản `[giả định — chờ pháp chế]`; có xử lý hoàn tiền / tranh chấp từ cổng (C6). Huỷ giữa kỳ, giảm ghế vẫn `[giả định: không hoàn]`.
-- Có cho chọn vai trò khi mời (khác Sunsama) không? (Đang thiết kế là có.)
+- (Bản sau) Có cho chọn vai trò khi mời (khác Sunsama) không? (Đang thiết kế là có.)
 - Đã chốt 04/11/2026: thành viên bị xoá khỏi workspace → task cá nhân chuyển sang workspace cá nhân mới của họ (C7).
 - Đã chốt 04/11/2026: mỗi người một workspace. Người được mời đã có workspace một người chưa trả phí → chuyển task cá nhân sang workspace mới, đóng workspace cũ; đang trả phí hoặc có thành viên khác → chặn. Trial 1 lần mỗi email (Q23, C7).
 - Product updates mặc định bật hay tắt? (Đang giả định tắt.)
-- (Mới) Workspace cá nhân mới tạo cho người bị xoá khỏi workspace, hoặc cho email đã dùng trial, ở gói nào khi không còn trial `[giả định: chỉ đọc tới khi nâng cấp]`?
-- (Mới) Trong trial, workspace có giới hạn số ghế không `[giả định: không]`? Người chờ ghế được vào theo thứ tự nào `[giả định: chấp nhận sớm nhất trước]`?
-- (Mới) Task được giao vào backlog người nhận ở bucket nào (G06 bắt buộc `backlogBucket`)?
-- (Mới) Ma trận quyền chỉ cho Chủ sở hữu / Quản trị tạo channel chung, trong khi G02 cho mọi người tạo channel: phạm vi của từng bên?
-- (Mới) Privacy "Lịch" ảnh hưởng gì tới G05 (sự kiện / timebox người khác thấy)?
+- (Mới) Workspace cá nhân mới cho email đã dùng trial ở gói nào khi không còn trial `[giả định: chỉ đọc tới khi nâng cấp]`? (Bản sau) Cùng câu hỏi cho workspace cá nhân mới tạo cho người bị xoá khỏi workspace.
+- (Mới, bản sau) Trong trial, workspace có giới hạn số ghế không `[giả định: không]`? Người chờ ghế được vào theo thứ tự nào `[giả định: chấp nhận sớm nhất trước]`?
+- Đã chốt 04/11/2026 (bản sau): task được giao vào backlog người nhận ở bucket "Tuần sau", đặt lên đầu bucket (Q36).
+- Đã chốt hướng 04/11/2026 (bản sau): thành viên tạo channel riêng tư; channel chung chỉ Chủ sở hữu / Quản trị — khuyến nghị, chờ chốt khi làm (Q35, `docs/02-tinh-nang-ban-sau.md`). Bản 1 một người dùng nên G02 cho tạo channel tự do.
+- Đã chốt hướng 04/11/2026 (bản sau): Privacy "Lịch" ở "Thành viên" → người khác chỉ thấy bận / rảnh và timebox, không thấy chi tiết sự kiện của lịch ngoài — khuyến nghị, chờ chốt khi làm (Q37). G05 cần đặc tả khi làm.
+- (Mới) ADR-0002 xếp workspace nhiều thành viên cùng 1.1 với thanh toán; Q35 dời sang "bản sau" mà chưa nêu số phiên bản. Gói 1.1 khi chỉ một người dùng có còn tính theo ghế không, hay giá cố định / người? Cần PO chốt (kèm sửa ADR-0002).
