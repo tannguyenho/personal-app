@@ -12,6 +12,14 @@ _Avoid_: ngày lịch, ngày dương lịch (khi nói về task)
 Giờ mà một ngày làm việc bắt đầu; mặc định 04:00, người dùng chỉnh trong khoảng 00:00–06:00. Thay đổi có hiệu lực từ ngày làm việc kế tiếp.
 _Avoid_: day_start_time (trong văn bản nghiệp vụ), nửa đêm
 
+**Lịch làm việc**:
+Các ngày làm việc trong tuần và giờ làm của từng ngày do người dùng chọn; mặc định Thứ Hai–Thứ Sáu. "Ngày làm việc kế tiếp" bỏ qua các ngày không nằm trong lịch làm việc.
+_Avoid_: work schedule, giờ hành chính
+
+**Bản ghi thời gian**:
+Một khoảng thời gian thực tế người dùng đã làm cho một task, từ timer, nhập tay hoặc ritual. Thuộc về ngày làm việc của thời điểm bắt đầu.
+_Avoid_: TimeEntry (trong văn bản nghiệp vụ), log giờ
+
 ## Task
 
 **Task**:
@@ -55,8 +63,15 @@ Tình trạng timebox của task rơi vào ngày làm việc khác với ngày d
 Chế độ tự tạo timebox cho instance của series tại giờ cố định.
 _Avoid_: hard schedule
 
+**Timebox liên kết sự kiện**:
+Timebox gắn với một sự kiện có sẵn trên lịch ngoài (ví dụ cuộc họp được kéo vào thành task); đi theo sự kiện gốc và không bao giờ tạo sự kiện mới.
+
 ## Gói & quyền
 
+**Trợ lý AI**:
+Các tính năng gọi mô hình AI (chat, Planning Agent, highlights). Mặc định tắt cho tới khi người dùng đồng ý chia sẻ dữ liệu; không bao giờ tự đánh dấu task hoàn thành.
+_Avoid_: Sunny (tên hiển thị, không dùng trong quy tắc)
+
 **Chế độ chỉ đọc**:
-Trạng thái của workspace khi không còn quyền dùng trả phí: người dùng chỉ xem được, và mọi việc tự động ghi dữ liệu nghiệp vụ đều bị đóng băng.
+Trạng thái của workspace khi không còn quyền dùng trả phí: người dùng chỉ xem được, và mọi việc tự động ghi dữ liệu nghiệp vụ đều bị đóng băng. Chỉ có từ khi có thanh toán (bản 1.1).
 _Avoid_: khoá tài khoản, hết hạn
