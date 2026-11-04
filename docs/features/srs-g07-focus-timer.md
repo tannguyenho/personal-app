@@ -39,7 +39,7 @@
 | BR-05 | **Nhập tay (E)** — theo QC-07 mục 3 (B11); `source = manual`. (a) **Theo thời lượng** (`entryMode = duration`): `endedAt` = now, `startedAt` = now − thời lượng (chỉ dùng để xác định ngày làm việc); **không** kiểm tra chồng lấn, kể cả với timer đang chạy; không vẽ lên lịch (G05 BR-18). (b) **Theo khoảng giờ** (`entryMode = range`): `endedAt` > `startedAt`; `endedAt` ≤ now; chồng timer đang chạy → từ chối (MSG-18); chồng bản ghi đã đóng → cho lưu, cảnh báo MSG-08; có vẽ lên lịch. Cả hai: mỗi bản ghi 1 phút – 24 giờ (MSG-06). Được nhập cho subtask (`subtaskId`), cộng vào thực tế của task theo QC-07 mục 5 |
 | BR-06 | **Hoàn thành / xoá task đang chạy timer** → dừng timer theo BR-04 trước khi G02 xử lý (EC-24, QC-05); áp cả khi task bị hoàn thành / xoá ở thiết bị khác. **Không đường nào khác dừng timer** (Q14, QC-05): phím D, kéo sang ngày khác, rollover, đưa vào backlog, shutdown "Ngày mai" (G08 chỉ nhắc ở bước đầu), AI dời ngày, lưu trữ do trùng series |
 | BR-07 | **Âm báo theo kế hoạch.** Còn lại = kế hoạch − thực tế (gồm lượt đang chạy). Chạm mức cài đặt (10 / 5 / 0 phút, mặc định 0) → âm báo (nếu bật) + MSG-10, tối đa một lần / lượt chạy. Task không có kế hoạch → không báo |
-| BR-08 | **Nhắc chạy lâu.** Timer chạy liên tục > 4 giờ → một thông báo MSG-11: 1.0 trong app (trung tâm thông báo, G12); từ 1.1 thêm push mobile theo cài đặt Thông báo |
+| BR-08 | **Nhắc chạy lâu.** Timer chạy liên tục > 4 giờ → một thông báo MSG-11: 1.0 trong app (trung tâm thông báo, G12) và thông báo hệ thống Windows `[giả định]` theo cài đặt Thông báo; push di động từ 1.2 |
 | BR-09 | **Tự đóng.** Timer chạy > 24 giờ → đóng với `endedAt` = `startedAt` + 24 giờ, `source = auto_closed`, `needsReview = true`; lần mở app kế tiếp hiện SCR-06 hỏi giờ dừng thật (EC-23) |
 | BR-10 | **Offline nhiều thiết bị** (C20, EC-11). Mỗi lệnh bật / dừng mang `startedAt` / `endedAt` của máy và `clientOpId`. Server xử lý lệnh timer theo **thứ tự nhận** (QC-08): lệnh bật nhận sau cùng là timer đang chạy, timer trước đó đóng theo BR-01. Bản ghi tới server sau mà chồng lên bản ghi `timer` / `auto_closed` đã có thì **bị cắt phần chồng**; bản ghi đã có giữ nguyên `[giả định: bản tới trước giữ, bản tới sau bị cắt]`. Phần còn lại < 10 giây → bỏ. Bị cắt ở giữa (thành hai đoạn) → giữ cả hai đoạn `[giả định]`. Thiết bị có timer bị đóng / bản ghi bị cắt hiện MSG-17 / MSG-22. Không áp cho bản ghi `manual` theo thời lượng (BR-05 a) |
 | BR-11 | **Giờ.** Online: `startedAt` / `endedAt` theo giờ server. Offline: giờ máy, server điều chỉnh khi lệch > 2 phút so với giờ server lúc đồng bộ `[giả định]`. Client hiển thị đồng hồ theo `startedAt` + độ lệch server |
@@ -54,6 +54,7 @@
 | BR-20 | **Ngày của bản ghi** — theo QC-07 mục 1 (Q13): `workday(startedAt)`, không chia khi vắt qua mốc đầu ngày. Rollover / dời ngày task không đổi ngày của bản ghi đã có |
 | BR-21 | **Nguồn `ritual`** — theo QC-07 mục 2. \[TimeEntryCreate\] với `source = ritual` (do G08 gọi) khi người dùng đang có timer chạy → không tạo, trả `skipped: true` (không phải lỗi). Bản ghi `ritual` có giờ thật, không bị cắt theo BR-10 `[giả định]`, sửa / xoá được như bản ghi khác |
 | BR-22 | **"Tính planned là actual"** — theo QC-07 mục 4: G07 không tạo bản ghi; thực tế hiển thị trên task theo QC-07 mục 5 dùng cờ `plannedAsActual` G02 lưu lúc hoàn thành. G07 không cộng số liệu theo ngày / tuần (chỉ G09) |
+| BR-23 | **Cửa sổ app (1.0, Windows).** Timer là bản ghi trên server (BR-01); thu nhỏ, đóng cửa sổ, tắt app hoặc máy ngủ **không** dừng timer. Mở lại app → \[TimerGet\], đồng hồ hiện theo `startedAt` + độ lệch server (BR-11). Đóng cửa sổ khi có timer chạy → app thu về khay hệ thống, biểu tượng khay cho thấy có timer `[giả định]`. Cơ chế chạy nền / khay: tech chốt — `docs/tech/` |
 
 ## 4. Trạng thái
 
@@ -226,7 +227,7 @@ Chuyển trạng thái: `KHONG_CHAY` → `DANG_CHAY` (UC-01) · `DANG_CHAY` → 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | E1 | Task bị xoá khi đang ở Focus | Đóng Focus, MSG-16 |
-| E2 | Trình duyệt chặn phát âm thanh | Chỉ hiện MSG-10; lần đầu gợi ý cho phép âm thanh |
+| E2 | Không phát được âm thanh (Windows tắt tiếng app / không có thiết bị âm thanh) | Chỉ hiện MSG-10; lần đầu gợi ý kiểm tra âm thanh |
 
 ### UC-05 Pomodoro và nghỉ (1.1)
 
@@ -277,7 +278,7 @@ Chuyển trạng thái: `KHONG_CHAY` → `DANG_CHAY` (UC-01) · `DANG_CHAY` → 
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
 | 1 | Hệ thống | Job chạy mỗi 5 phút `[giả định]`, quét timer đang chạy |
-| 2 | Hệ thống | Chạy > 4 giờ, chưa nhắc → tạo thông báo MSG-11 (G12; 1.1 thêm push mobile), đặt `longRunNotifiedAt` |
+| 2 | Hệ thống | Chạy > 4 giờ, chưa nhắc → tạo thông báo MSG-11 (G12, kèm thông báo hệ thống Windows `[giả định]`; push di động từ 1.2), đặt `longRunNotifiedAt` |
 | 3 | Hệ thống | Chạy > 24 giờ → đóng theo BR-09 (`auto_closed`, `needsReview`); phát `timer.changed`; ghi nhật ký `system` |
 | 4 | Người dùng | Lần mở app kế tiếp: **SCR-06** (MSG-20); chọn giờ dừng thật, "Lưu" |
 | 5 | Hệ thống | \[TimeEntryUpdate\] `{endedAt, needsReview: false}`; thực tế tính lại |
@@ -322,11 +323,12 @@ Chuyển trạng thái: `KHONG_CHAY` → `DANG_CHAY` (UC-01) · `DANG_CHAY` → 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | A1 | Thiết bị online nhận `timer.changed` | Cập nhật ≤ 5 giây, không cần tải lại |
-| A2 | WebSocket mất kết nối | Gọi \[TimerGet\] khi kết nối lại và mỗi 60 giây khi app đang mở `[giả định]` |
+| A2 | Mất kết nối realtime | Gọi \[TimerGet\] khi kết nối lại và mỗi 60 giây khi app đang mở `[giả định]` |
 | A3 | Lệnh dừng offline cho timer đã bị timer khác đóng | Bỏ lệnh dừng; giữ mốc đóng sớm hơn |
 | A4 | Bản ghi offline đồng bộ lên chồng với bản ghi `timer` / `auto_closed` đã có | Cắt phần chồng của bản ghi tới sau (BR-10, C20); còn < 10 giây thì bỏ; MSG-22 |
 | A5 | Lệnh offline tạo trước thời điểm workspace vào chỉ đọc (1.1) | Nhận nếu tới server trong 2 giờ; timer bật offline đóng tại thời điểm vào chỉ đọc (BR-19, QC-09). Quá 2 giờ → từ chối 402, MSG-15 |
 | A6 | Task của lệnh offline đã bị dời ngày | Vẫn áp lệnh; ngày của bản ghi theo `startedAt` (BR-20) |
+| A7 | Mở lại app sau khi đóng cửa sổ / tắt máy trong lúc timer chạy (BR-23) | \[TimerGet\]; đồng hồ hiện theo `startedAt`; timer đã quá 24 giờ thì hiện SCR-06 (BR-09) |
 
 **Luồng lỗi**
 
@@ -367,16 +369,17 @@ Chuyển trạng thái: `KHONG_CHAY` → `DANG_CHAY` (UC-01) · `DANG_CHAY` → 
 
 ## 6. Điểm vào
 
-| **Điểm vào** | **Web** | **App** (1.1) | **Ghi chú** |
-| --- | --- | --- | --- |
-| ▶ trên card / chi tiết / dòng subtask | ✓ | ✓ | UC-01 |
-| Phím Space trên task đang chọn | ✓ | ✓ (desktop) | UC-01, UC-02 |
-| Phím tắt toàn cục Ctrl+Shift+Space | – | ✓ (desktop) | UC-01 A4 |
-| Phím E / ô "Thực tế" trong chi tiết | ✓ | ✓ | UC-03 |
-| Phím F / mục "Focus" ở sidebar | ✓ | ✓ | UC-04 |
-| Tab Pomodoro, phím K | – | ✓ (1.1) | UC-05; web cũng có từ 1.1 |
-| Thông báo MSG-11 / mở app sau tự đóng | ✓ | ✓ | UC-06 |
-| Focus Bar / macOS menu bar | – | ✓ (desktop, 1.2) | UC-08 |
+| **Điểm vào** | **App Windows** (1.0) | **Web, macOS** (1.1) | **iOS / Android** (1.2) | **Ghi chú** |
+| --- | --- | --- | --- | --- |
+| ▶ trên card / chi tiết (task cha) | ✓ | ✓ | ✓ | UC-01 |
+| Phím Space trên task đang chọn | ✓ | ✓ | – | UC-01, UC-02 |
+| Phím tắt toàn cục Ctrl+Shift+Space | ✓ (từ 1.1) | ✓ (macOS; web không có) | – | UC-01 A4 |
+| Phím E / ô "Thực tế" trong chi tiết | ✓ | ✓ | ✓ | UC-03 |
+| Phím F / mục "Focus" ở sidebar | ✓ | ✓ | ✓ | UC-04 |
+| Tab Pomodoro, phím K | ✓ (từ 1.1) | ✓ | ✓ | UC-05 |
+| Thông báo MSG-11 / mở app sau tự đóng | ✓ | ✓ | ✓ (push) | UC-06 |
+| Biểu tượng khay hệ thống khi đóng cửa sổ | ✓ `[giả định]` | – | – | BR-23 |
+| Focus Bar / macOS menu bar | ✓ (từ 1.2) | ✓ (macOS, 1.2) | – | UC-08 |
 
 ## 7. Mô tả màn hình
 
@@ -453,6 +456,8 @@ Chuyển trạng thái: `KHONG_CHAY` → `DANG_CHAY` (UC-01) · `DANG_CHAY` → 
 
 ## 8. API
 
+API dưới đây là hợp đồng nghiệp vụ tham khảo; kiểu API, tên, mã lỗi: tech chốt — `docs/tech/` (Q45).
+
 | **API** | **Request chính** | **Response chính** | **Timeout / retry** `[giả định]` |
 | --- | --- | --- | --- |
 | \[TimerStart\] `POST /timer/start` | taskId (task cha, BR-02), startedAt? (chỉ khi offline), clientOpId, Idempotency-Key | Timer {entryId, taskId, startedAt, workday}, stoppedEntry?, trimmedEntries[]? (BR-10) | 5s / retry 3 lần cùng key |
@@ -520,4 +525,4 @@ Bản EN: `[chờ bổ sung]`.
 | Log / audit | \[ActivityLog\] theo BR-18; log job watchdog: số nhắc, số tự đóng; không chứa tiêu đề |
 | Giám sát | Cảnh báo khi số timer tự đóng > 1% / ngày hoặc job watchdog trễ > 15 phút |
 | Tracking | Sự kiện: `timer_started` (nguồn: nút / Space / Focus / toàn cục — 1.1), `timer_stopped` (lý do: user / user_picked_time / replaced / complete / delete / auto_closed / read_only), `timer_discarded_short`, `time_entry_trimmed`, `time_entry_added` (chế độ: duration / range; nguồn: manual / ritual) / `_edited` / `_deleted`, `focus_opened`, `remaining_alert_shown`, `long_timer_notified`, `pomodoro_started` (1.1), `break_started` / `break_ended` (1.1), `focus_bar_action` (1.2) |
-| Accessibility | ▶ / ■ có nhãn "Bắt đầu / Dừng timer cho {tiêu đề}"; đồng hồ đếm giây không đọc liên tục (aria-live tắt, đọc khi bấm); âm báo luôn kèm thông báo chữ; tương phản WCAG 2.1 AA ở cả giao diện sáng / tối |
+| Accessibility | ▶ / ■ có nhãn "Bắt đầu / Dừng timer cho {tiêu đề}"; đồng hồ đếm giây không đọc liên tục với trình đọc màn hình (chỉ đọc khi bấm); âm báo luôn kèm thông báo chữ; tương phản WCAG 2.1 AA ở cả giao diện sáng / tối |
