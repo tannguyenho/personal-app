@@ -542,6 +542,8 @@ iOS / Android (1.2) dùng cùng điểm vào với cột Web / macOS, trừ dòn
 
 ### SCR-05 Onboarding
 
+Toàn cửa sổ, chưa có sidebar và panel phải, nội dung đặt giữa; các màn SCR-01 … SCR-04 cũng vậy. Bước nhập task trông giống ô soạn thật (G02 SCR-01). Xong onboarding → Home hôm nay (IA-12).
+
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
 | 1 | Thanh tiến độ "Bước n / 5" | Progress | – | Có nút ← từ bước 2 |
@@ -554,6 +556,8 @@ iOS / Android (1.2) dùng cùng điểm vào với cột Web / macOS, trừ dòn
 | 8 | "Tiếp" / "Bắt đầu ngày đầu tiên" | Button | – | Lưu bước; bước 5 → UC-05 bước 7 |
 
 ### SCR-06 Khung trang Cài đặt
+
+Lớp phủ gần kín cửa sổ, khung app mờ phía sau (IA-04). Mở bằng avatar → "Cài đặt", Ctrl+, (IA-15) hoặc command menu; link từ nơi khác mở thẳng đúng nhóm.
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
@@ -579,15 +583,17 @@ Cửa sổ app hẹp (và iOS / Android, 1.2): cột trái thành danh sách mà
 | 7 | Tự sắp task | Toggle | – | Mặc định bật |
 | 8 | Vị trí task mới · Vị trí task rollover | Segmented Đầu / Cuối | – | Mặc định Đầu · Đầu |
 | 9 | Giữ priority khi rollover | Chọn nhiều (Urgent, Priority, Normal, Low — G02 BR-06) | – | Mặc định không chọn mức nào; lưu `keepPriorityLevels`, áp theo G06 BR-08 |
+| 10 | Bấm × để thoát hẳn | Toggle | – | App Windows. Mặc định tắt: × thu app về khay hệ thống (IA-05, G07 BR-23) |
+| 11 | Chạy khi Windows khởi động | Toggle | – | App Windows. Mặc định bật, chạy ẩn ở khay (IA-05) |
 
 ### SCR-08 Cài đặt Hiển thị
 
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
-| 1 | Giao diện | Segmented Sáng / Tối / Hệ thống | – | Đổi ngay |
+| 1 | Giao diện | Segmented Sáng / Tối / Hệ thống | – | Mặc định Hệ thống (theo Windows); đổi ngay ([DS](../design-brief/01-nen-tang-design-system.md) DS-03) |
 | 2 | Màu sự kiện trên lịch | Dropdown | – | Theo channel (mặc định) / theo lịch |
 | 3 | Ẩn task đã xong | Toggle | – | Mặc định tắt |
-| 4 | Hiệu ứng chúc mừng | Toggle | – | Mặc định bật `[giả định]`; bật thì chạy thử 1 lần |
+| 4 | Hiệu ứng chúc mừng | Toggle | – | Mặc định bật `[giả định]`; bật thì chạy thử 1 lần. ✓ nở nhẹ tại chỗ mỗi lần hoàn thành; xong task cuối của hôm nay thì có hiệu ứng lớn hơn một lần, không phủ kín màn hình; Windows tắt hoạt ảnh thì không có hiệu ứng lớn (DS-16) |
 
 ### SCR-09 Cài đặt Phím tắt
 

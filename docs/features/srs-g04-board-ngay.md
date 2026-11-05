@@ -411,7 +411,7 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 
 | **Điểm vào** | **App Windows** (1.0) | **Web, macOS** (1.1) | **iOS / Android** (1.2) | **Ghi chú** |
 | --- | --- | --- | --- | --- |
-| Mở app / phím H / sidebar "Home" | ✓ | ✓ | ✓ | SCR-01 |
+| Mở app / phím H / sidebar "Home" | ✓ | ✓ | ✓ | SCR-01; mở app luôn ở hôm nay với view cuối, không nhớ ngày đang xem; có timer chạy vẫn vào Home (IA-18) |
 | Phím T / sidebar "Today" | ✓ | ✓ | ✓ | Today view |
 | Phím Tab / bộ chọn view | ✓ | ✓ | ✓ (bộ chọn) | Đổi view (BR-13) |
 | Chip ngày / Shift+Space / Shift+→ / Shift+← | ✓ | ✓ | ✓ (vuốt) | SCR-04 |
@@ -428,11 +428,11 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
-| 1 | Sidebar trái | Nav | Home, Today, Focus (G07), Backlog (G06), Daily planning / shutdown (G08) |
+| 1 | Sidebar trái | Nav | Trên: Home, Today, Backlog (G06), Focus (G07); đường kẻ; Daily planning, Daily shutdown (G08). Cụm dưới cùng: ✨ Trợ lý (G10), chuông thông báo (G12 SCR-11), avatar (menu Cài đặt · Phím tắt · Đăng xuất · Thoát app) ([IA](../design-brief/00-kien-truc-thong-tin.md) IA-01, IA-14) |
 | 2 | Thanh công cụ | Toolbar | SCR-03 |
 | 3 | Vùng cột ngày | Scroll ngang | Cột SCR-02; tải thêm 7 ngày khi còn 2 cột tới mép; cột hôm nay có nền nhấn |
-| 4 | Panel phải | Panel | Biểu tượng Calendar (Shift+C), Tasks (Shift+T), Backlog (Shift+B), Lưu trữ (Shift+A), Search, tích hợp (G11, 1.1+), nút +; < / > ẩn hiện panel. Không có "Latest updates" (C36) |
-| 5 | Banner trạng thái | Banner | Offline, workspace chỉ đọc (MSG-20, bản 1.1), rollover lỗi (MSG-27). Banner timezone do G01 hiển thị (MSG-23 của G01) |
+| 4 | Panel phải | Panel | Biểu tượng Calendar (Shift+C); Tasks (Shift+T) — task của ngày đang xem, chỉ hiện khi vùng chính là Calendar view (IA-13); Backlog (Shift+B); Lưu trữ · Thùng rác — một panel hai tab, Shift+A mở tab Lưu trữ (IA-09); Search; Trợ lý (Ctrl+J, G10 SCR-04, IA-08); tích hợp (G11, 1.1+); nút +. < / > hoặc Ctrl+\ ẩn hiện panel (IA-15); nhớ trạng thái trên máy (IA-18); Esc không đóng panel (IA-16). Cửa sổ < 1280 px: panel thành lớp trượt (IA-11). Không có "Latest updates" (C36) |
+| 5 | Banner trạng thái | Banner | Tối đa **một** banner cùng lúc, thứ tự ưu tiên: offline → workspace chỉ đọc (MSG-20, bản 1.1) → lịch cần kết nối lại (G05 SCR-09) → rollover lỗi (MSG-27) → lệch timezone (G01 MSG-23). Banner chờ tới lượt và đồng thời vào trung tâm thông báo (IA-17) |
 
 ### SCR-02 Cột ngày
 
@@ -441,9 +441,9 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 | 1 | Thứ, ngày | Text | "Thứ Năm" + "5 tháng 11"; hôm nay ghi "Hôm nay" |
 | 2 | Thanh tiến độ | Progress | BR-03 |
 | 3 | Tổng thời lượng | Text H:MM | BR-02; đỏ khi `QUA_TAI`; biểu tượng đồng hồ khi `VUOT_GIO_LAM`; tooltip "Tổng: thời lượng kế hoạch" + MSG-04 / MSG-18 / MSG-25 khi có |
-| 4 | Nút "Plan" | Button | Hiện khi hover header ngày ≥ hôm nay → Daily planning (G08) |
+| 4 | Nút "Plan" | Button | Hiện khi hover header ngày ≥ hôm nay → Daily planning (G08); cột đã qua không có (IA-20) |
 | 5 | Menu … | Menu | "Sắp xếp lại" (SCR-05) |
-| 6 | "Thêm task" | Button | Mở ô soạn (G02) |
+| 6 | "Thêm task" | Button | Mở ô soạn (G02). Cột ngày < hôm nay không có nút này; chọn cột đã qua rồi nhấn A → ô soạn mở ở cột hôm nay, board cuộn tới hôm nay (IA-20) |
 | 7 | Danh sách card | List | Card G02; giờ theo 4.2; nhãn "Dời {n} ngày" (BR-26), "Lệch ngày" (BR-24), "Dự kiến" (BR-23); ảo hoá khi > 100 task |
 | 8 | Vạch thả | Indicator | Hiện khi kéo; cột không thả được (E1 UC-03) mờ đi |
 

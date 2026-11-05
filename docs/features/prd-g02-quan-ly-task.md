@@ -254,7 +254,7 @@ AC06: Trợ lý AI chỉ xoá được task (và subtask) khi người dùng đ�
 
 ### US4.3 Khôi phục từ Thùng rác
 
-AC01: Thùng rác (panel phải hoặc lệnh "Task đã xoá gần đây") liệt kê task đã xoá, mới nhất trước.
+AC01: Thùng rác (tab Thùng rác trong panel "Lưu trữ · Thùng rác" ở panel phải, hoặc lệnh "Task đã xoá gần đây"; IA-09) liệt kê task đã xoá, mới nhất trước.
 
 AC02: Khôi phục → task về đúng trạng thái trước khi xoá theo bảng QC-03 mục 3: task đã xong giữ ngày và thời điểm hoàn thành; task Lưu trữ về Lưu trữ với lý do cũ; task backlog về đúng bucket; task Kế hoạch giữ ngày nếu ≥ hôm nay, ngược lại về hôm nay với số ngày bị hoãn = 0.
 
