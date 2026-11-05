@@ -1,6 +1,6 @@
-# Câu hỏi tech stack & API — chờ grill riêng
+# Câu hỏi tech stack & API — đã grill
 
-Trạng thái: **chưa chốt**. Tài liệu này gom các quyết định kỹ thuật cần chốt trong một buổi grill riêng với tech (Q45). Phần "API", "mã lỗi", "job" trong các SRS hiện chỉ là **hợp đồng nghiệp vụ tham khảo**; khi tech chốt, kết quả ghi vào thư mục này và ADR, SRS tham chiếu sang.
+Trạng thái: **đã chốt** ngày 05/11/2026. Câu trả lời ở [`01-quyet-dinh-tech-stack-va-api.md`](01-quyet-dinh-tech-stack-va-api.md) và ADR-0006 → ADR-0009. Danh sách câu hỏi dưới đây giữ lại làm lịch sử.
 
 Đã chốt ở phía sản phẩm (đầu vào cho buổi grill):
 - 1.0 là app Windows viết bằng Flutter; 1.1 web + macOS; 1.2 iOS / Android (ADR-0005).

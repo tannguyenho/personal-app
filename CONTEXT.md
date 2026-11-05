@@ -1,4 +1,4 @@
-# Personal App — lập kế hoạch ngày
+# Wakeup — lập kế hoạch ngày
 
 Ứng dụng giúp một người lên kế hoạch cho từng ngày làm việc: gom task và lịch về một chỗ, timebox task lên lịch, rồi khép ngày bằng ritual. Bảng thuật ngữ dưới đây là ngôn ngữ chung cho mọi PRD/SRS trong `docs/`.
 

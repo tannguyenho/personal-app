@@ -7,3 +7,4 @@ Mọi tính năng AI (chat, Planning Agent, highlights, gợi ý task) dùng Cla
 - AI chuyển từ bản 1.2 lên 1.0. Bỏ các hạn mức AI trong QC-10.
 - Thay đổi một phần [ADR-0003](0003-gioi-han-quyen-cua-tro-ly-ai.md): AI vẫn mặc định không hoàn thành / xoá task, nhưng người dùng bật được công tắc cho phép (trừ task có liên kết tích hợp).
 - Quy tắc chung nằm ở QC-12.
+- Cách gọi CLI, MCP local và chế độ API key dự phòng: [`docs/tech/01`](../tech/01-quyet-dinh-tech-stack-va-api.md) mục 4, [ADR-0009](0009-rui-ro-dieu-khoan-claude-code-va-che-do-api-key.md).

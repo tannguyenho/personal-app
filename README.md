@@ -1,8 +1,8 @@
-# Personal App — ứng dụng lập kế hoạch ngày
+# Wakeup — ứng dụng lập kế hoạch ngày
 
 Bộ tài liệu yêu cầu cho một ứng dụng lập kế hoạch ngày có chủ đích. Ứng dụng tham chiếu [Sunsama](https://www.sunsama.com): gom task và lịch về một chỗ, dẫn người dùng qua các ritual mỗi ngày và mỗi tuần, timebox task lên lịch, theo dõi thời gian tập trung, và có AI hỗ trợ lập kế hoạch.
 
-> **Trạng thái:** đã chốt mâu thuẫn giữa các nhóm ngày 04/11/2026 ([quyết định](docs/review/quyet-dinh-chot-2026-11-04.md)), chờ PO duyệt từng nhóm. Các con số còn gắn `[giả định]` cần xác nhận trước khi đưa vào phát triển.
+> **Trạng thái:** đã chốt mâu thuẫn giữa các nhóm ngày 04/11/2026 ([quyết định](docs/review/quyet-dinh-chot-2026-11-04.md)), chờ PO duyệt từng nhóm. Tech stack và API đã chốt ngày 05/11/2026 ([`docs/tech/01`](docs/tech/01-quyet-dinh-tech-stack-va-api.md)). Các con số còn gắn `[giả định]` cần xác nhận trước khi đưa vào phát triển.
 
 ## Sản phẩm làm gì
 
@@ -34,7 +34,7 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
     ├── 00-danh-muc-nhom-tinh-nang.md   # danh mục 12 nhóm, trạng thái từng tài liệu
     ├── 01-quy-tac-dung-chung.md        # quy tắc dùng chung QC-01..QC-12 (ngày làm việc, trạng thái task, đổi ngày, AI…)
     ├── 02-tinh-nang-ban-sau.md         # tính năng đã chốt hướng nhưng để bản sau (nhiều thành viên, thanh toán…)
-    ├── tech/                           # câu hỏi tech stack & API, chờ grill riêng với tech
+    ├── tech/                           # câu hỏi và quyết định tech stack & API
     ├── adr/                            # quyết định khó đảo ngược
     ├── review/                         # báo cáo review và quyết định chốt mâu thuẫn
     └── features/
@@ -66,7 +66,7 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
 - **PRD** có 10 mục: bối cảnh và vấn đề, người dùng, phạm vi, nguyên tắc sản phẩm, quy tắc / cấu hình, luồng trải nghiệm, use case + user story + acceptance criteria, chỉ số, rủi ro, câu hỏi mở.
 - **SRS** có 10 mục: tổng quan, user story, business rule (BR), trạng thái, use case (luồng chính, luồng thay thế A#, luồng lỗi E#), điểm vào, màn hình (SCR), API, danh sách thông báo (MSG), yêu cầu phi chức năng.
 - **Giao diện** theo design system riêng trên Figma; mục màn hình (SCR) trong SRS chỉ mô tả thành phần và hành vi, không mô tả hình ảnh.
-- **API, mã lỗi, job** trong SRS là hợp đồng nghiệp vụ tham khảo; tech stack và API chốt riêng ([`docs/tech/`](docs/tech/00-cau-hoi-tech-stack-va-api.md)).
+- **API, mã lỗi, job** trong SRS là hợp đồng nghiệp vụ tham khảo; cách hiện thực theo [`docs/tech/01`](docs/tech/01-quyet-dinh-tech-stack-va-api.md).
 - Mỗi tài liệu chỉ mô tả phần thuộc nhóm của nó. Phần thuộc nhóm khác được ghi chú `(Gxx)` để người đọc mở tài liệu nhóm đó.
 - Quy tắc nhiều nhóm cùng dùng nằm ở [`docs/01-quy-tac-dung-chung.md`](docs/01-quy-tac-dung-chung.md) và được tham chiếu bằng mã `QC-xx`. Thuật ngữ chuẩn nằm ở [`CONTEXT.md`](CONTEXT.md).
 
@@ -94,13 +94,26 @@ Chi tiết ở [quyết định chốt mâu thuẫn](docs/review/quyet-dinh-chot
 - Mỗi channel có thể đặt khung giờ riêng (QC-02).
 - Bản 1.0 không bắt buộc lưu dữ liệu tại Việt Nam, dùng máy chủ khu vực châu Á.
 
+## Tech stack đã chốt (05/11/2026)
+
+Chi tiết ở [`docs/tech/01`](docs/tech/01-quyet-dinh-tech-stack-va-api.md) và ADR-0006 → ADR-0009.
+
+- **Client:** Flutter Windows (10 22H2+ / 11, x64), Riverpod, go_router, Drift + SQLCipher; bộ cài Inno Setup ký bằng Azure Trusted Signing, tự cập nhật.
+- **Backend:** Dart (`shelf`, SQL tay, dbmate), PostgreSQL; logic chung trong package `wakeup_core`.
+- **Đồng bộ:** hàng đợi lệnh (`POST /v1/commands`, `GET /v1/changes`, WebSocket báo thay đổi).
+- **Hạ tầng:** một VPS Ubuntu ở Singapore, Docker Compose + Caddy, prod và staging; `wakeup.tannguyenho.tech`, `api.wakeup.tannguyenho.tech`.
+- **AI:** `claude -p` chỉ được dùng công cụ `mcp__wakeup__*`; MCP qua HTTP `127.0.0.1` có token; thêm chế độ API key.
+- **Xác minh Google OAuth:** chủ dự án nộp ngay sau khi dựng trang web tối giản; Beta chạy chế độ Production chưa xác minh.
+- **Design system:** mapping 1-1 Figma ↔ Flutter bằng lớp hợp đồng sinh code (không dùng Code Connect vì cần gói Organization).
+
 ## Câu hỏi còn mở
 
 - Pháp chế xác nhận hồ sơ đánh giá tác động chuyển dữ liệu ra nước ngoài (Nghị định 13/2023) trước khi phát hành 1.0.
 - Cổng thanh toán (gợi ý Stripe cho thẻ quốc tế, VNPay / MoMo cho nội địa) và định nghĩa các gói giá: chốt trước khi làm 1.1.
 - Chính sách hoàn tiền khi xoá tài khoản giữa kỳ (chờ pháp chế).
-- Ai nộp hồ sơ xác minh Google OAuth và khi nào. Việc này có thể chặn ngày ra mắt.
-- Tech stack và API: chờ buổi grill riêng ([`docs/tech/`](docs/tech/00-cau-hoi-tech-stack-va-api.md)).
+- Pháp chế hoặc Anthropic xác nhận cách app gọi Claude Code bằng gói claude.ai của người dùng ([ADR-0009](docs/adr/0009-rui-ro-dieu-khoan-claude-code-va-che-do-api-key.md)).
+- AI trên web và di động: chốt trước khi làm 1.1.
+- Gói Figma Education có chạy được plugin Codegen trong Dev Mode không ([ADR-0008](docs/adr/0008-hop-dong-design-code-thay-code-connect.md)).
 - Các giá trị còn gắn `[giả định]` và câu hỏi mở còn lại ở mục 10 của từng PRD.
 
 ## Tài liệu liên quan
