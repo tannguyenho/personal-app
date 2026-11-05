@@ -37,6 +37,8 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
     ├── tech/                           # câu hỏi và quyết định tech stack & API
     ├── adr/                            # quyết định khó đảo ngược
     ├── review/                         # báo cáo review và quyết định chốt mâu thuẫn
+    ├── research/                       # research Sunsama và kết quả kiểm chứng bằng Chrome
+    ├── design-brief/                   # design brief cho designer; _khuon.md là khuôn chung
     └── features/
         ├── prd-g01-tai-khoan.md        # PRD: vì sao, cho ai, phạm vi, user story, AC, chỉ số
         ├── srs-g01-tai-khoan.md        # SRS: business rule, trạng thái, use case, màn hình, API, thông báo
@@ -92,6 +94,8 @@ Chi tiết ở [quyết định chốt mâu thuẫn](docs/review/quyet-dinh-chot
 - Bản 1.0 là app Windows (Flutter) cho một người dùng, có tài khoản và dữ liệu trên cloud; web + macOS ở 1.1, di động ở 1.2 (ADR-0005).
 - Trợ lý AI chạy bằng Claude Code CLI của người dùng, điều khiển app qua MCP local, có từ 1.0; mặc định tắt; thay đổi áp dụng ngay kèm Hoàn tác; chờ duyệt khi dùng dữ liệu tích hợp; hoàn thành / xoá task chỉ khi người dùng bật công tắc (QC-12, ADR-0004).
 - Mỗi channel có thể đặt khung giờ riêng (QC-02).
+- Kiến trúc thông tin app Windows 1.0: khung ba vùng (sidebar, vùng chính, panel phải), chi tiết task là dialog, chat AI ở panel phải, × thu về khay (IA-01..IA-20, [`docs/design-brief/00-kien-truc-thong-tin.md`](docs/design-brief/00-kien-truc-thong-tin.md)).
+- Nền tảng design system: điềm tĩnh, design system riêng cho mọi nền tảng, nhấn teal, AI tím, font Inter, icon Lucide, WCAG AA (DS-01..DS-16, [`docs/design-brief/01-nen-tang-design-system.md`](docs/design-brief/01-nen-tang-design-system.md)).
 - Bản 1.0 không bắt buộc lưu dữ liệu tại Việt Nam, dùng máy chủ khu vực châu Á.
 
 ## Tech stack đã chốt (05/11/2026)

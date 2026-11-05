@@ -39,7 +39,7 @@ Trạng thái: **đã chốt** ngày 05/11/2026. Câu trả lời ở [`01-quyet
 - Cách cài đặt MCP server local (stdio hay HTTP cục bộ), đăng ký với Claude Code, xác thực để chỉ tiến trình hợp lệ trên máy kết nối được.
 - Danh sách công cụ MCP và schema; cách gắn chip AI, Hoàn tác theo lượt, chế độ chờ duyệt khi có dữ liệu tích hợp (QC-12).
 - Cách cung cấp AI trên web / di động ở các bản sau.
-- Phiên bản Claude Code tối thiểu; có cho chọn model không; điều khoản sử dụng của Anthropic với cách app gọi CLI (cần xác nhận pháp lý).
+- Phiên bản Claude Code tối thiểu; có cho chọn model không. (Điều khoản của Anthropic: PO chấp nhận rủi ro, chốt 05/11/2026, xem ADR-0004.)
 - Bản ghi phiên do Claude Code tự lưu trên máy nằm ngoài phạm vi xoá dữ liệu của app (C30) — cách thông báo cho người dùng.
 
 ### 5. API

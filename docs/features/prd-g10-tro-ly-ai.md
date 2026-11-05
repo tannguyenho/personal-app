@@ -214,7 +214,7 @@ AC03: Agent lỗi giữa chừng → các thay đổi đã áp dụng trước �
 
 ### US2.1 Hỏi về kế hoạch
 
-AC01: Nút ✨ góc dưới mở khung chat, giao diện như chat thường (Q39); ô nhập "Mô tả một task hoặc đặt câu hỏi"; có "Lịch sử" và "Cuộc trò chuyện mới". Câu trả lời đến từ Claude Code do app gọi. Tên hiển thị của trợ lý chưa đặt, quyết định khi làm thiết kế Figma; không dùng "Sunny" (tên trợ lý của Sunsama) (D16).
+AC01: Nút ✨ "Trợ lý" ở cụm dưới sidebar (hoặc Ctrl+J) mở khung chat ở panel phải (IA-08), giao diện như chat thường (Q39); ô nhập "Mô tả một task hoặc đặt câu hỏi"; có "Lịch sử" và "Cuộc trò chuyện mới". Câu trả lời đến từ Claude Code do app gọi. Tên hiển thị của trợ lý chưa đặt, quyết định khi làm thiết kế Figma; không dùng "Sunny" (tên trợ lý của Sunsama) (D16).
 
 AC02: Trong lúc xử lý hiện trạng thái "Đang nghĩ…", xong hiện thời gian đã nghĩ ("Đã nghĩ 8s").
 
@@ -487,4 +487,4 @@ AC03: Claude Code chậm hơn ngưỡng của G02, lỗi hoặc hết hạn mứ
 - Gợi ý task qua Claude Code có đạt ngưỡng 2 giây của G02 không; nếu không thì đổi ngưỡng hay đổi trải nghiệm (gợi ý đến sau)?
 - Một phần đã chốt 04/11/2026: app không mở tại giờ kết thúc của lịch chung thì soạn khi mở app lần kế tiếp trong ngày (D7). Còn mở: người dùng có nhiều máy Windows thì một ngày chỉ một nháp tự động (đang giả định: có, server giữ khoá user + ngày)?
 - Trợ lý AI trên web, macOS (1.1) và iOS / Android (1.2): cung cấp thế nào (tech chốt, ADR-0004)?
-- Điều khoản sử dụng của Anthropic có cho phép app gọi Claude Code CLI theo cách này không?
+- Đã chốt 05/11/2026: điều khoản sử dụng của Anthropic với cách app gọi Claude Code CLI — PO giữ mô hình và chấp nhận rủi ro, không chờ xác nhận pháp lý; app không xử lý đăng nhập Claude, không dùng tên / logo Claude Code làm tên tính năng ([ADR-0004](../adr/0004-ai-qua-claude-code-cli.md), #25).

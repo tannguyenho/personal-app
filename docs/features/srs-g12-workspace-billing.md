@@ -433,8 +433,8 @@ iOS / Android (1.2) dùng cùng điểm vào với cột Web / macOS.
 | Cài đặt → Privacy | Bản sau | Bản sau | SCR-08 (BR-28) |
 | Chi tiết task → "Giao cho" / "Theo dõi" | Bản sau | Bản sau | SCR-09 (BR-28) |
 | Cài đặt → Thông báo | ✓ | ✓ | SCR-10 |
-| Chuông trên thanh điều hướng | ✓ | ✓ | SCR-11 |
-| Thông báo hệ thống Windows của app | ✓ (D12) | macOS ✓ | Mở đúng đích như SCR-11 |
+| Chuông ở cụm dưới sidebar | ✓ | ✓ | SCR-11 dạng popover cạnh chuông (IA-10) |
+| Thông báo hệ thống Windows của app | ✓ (D12) | macOS ✓ | Đưa cửa sổ app lên trước (kể cả từ khay) rồi mở đúng đích như SCR-11 (IA-10) |
 | Link "Huỷ nhận loại email này" | Trình duyệt (trang web tối giản, không cần app) | ✓ | SCR-14 |
 
 ## 7. Mô tả màn hình
@@ -547,7 +547,7 @@ iOS / Android (1.2) dùng cùng điểm vào với cột Web / macOS.
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
 | 1 | Chuông + badge | Icon | Số chưa đọc, tối đa "99+" |
-| 2 | Danh sách | Popover / panel | Mới nhất trước; mỗi dòng: icon loại, nội dung (MSG-40 – MSG-43…), thời gian tương đối, chấm chưa đọc |
+| 2 | Danh sách | Popover cạnh chuông (IA-10) | Mới nhất trước; mỗi dòng: icon loại, nội dung (MSG-40 – MSG-43…), thời gian tương đối, chấm chưa đọc |
 | 3 | "Đánh dấu tất cả đã đọc" | Link | A1 UC-09 |
 | 4 | "Cài đặt thông báo" | Icon | SCR-10 |
 | 5 | Trạng thái rỗng | Empty state | MSG-37 |
