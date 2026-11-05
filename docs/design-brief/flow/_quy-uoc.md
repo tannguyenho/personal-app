@@ -80,7 +80,9 @@ flowchart TD
 
 **Đặt id nút.** Chữ thường, ngắn, không dấu: `start`, `u1`, `s1`, `p1`, `d1`, `m1`, `x1`, `ok`, `fail`. Nút của nhánh mang mã nhánh: `a1`, `a1m`, `e3`, `e3m`. Không dùng từ `end` làm id hay tên class (Mermaid hiểu là từ khoá).
 
-**Nhãn.** Luôn để trong ngoặc kép. Xuống dòng bằng `<br/>`. Không dùng emoji trong nhãn (FigJam import không đọc được); viết chữ thay cho ✨ / ✓: "gợi ý AI", "dấu xong".
+**Nhãn.** Luôn để trong ngoặc kép. Xuống dòng bằng `<br/>`. Dấu ngoặc kép bên trong nhãn (ví dụ trong MSG) viết `#quot;`. Không dùng emoji hay ký hiệu ✨ / ✓ / ▶ trong nhãn (FigJam import không đọc được); viết chữ thay: "gợi ý AI", "dấu xong".
+
+**Kiểm cú pháp.** Trước khi commit, render mọi khối Mermaid (mermaid-cli hoặc dán vào mermaid.live). Sơ đồ lỗi cú pháp thì GitHub hiện khung báo lỗi thay cho sơ đồ.
 
 ## 4. Màu
 

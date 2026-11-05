@@ -721,7 +721,7 @@ flowchart TD
 
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
-| A1 | Nhóm do nhóm khác sở hữu | Trang con của nhóm đó (G02, G05, G07, G08, G10, [G11](g11-tich-hop.md), [G12](g12-workspace-billing.md)) | – |
+| A1 | Nhóm do nhóm khác sở hữu | Trang con của nhóm đó (G02, G05, G07, G08, G10, G11 (1.1, chưa có flow), [G12](g12-workspace-billing.md)) | – |
 | A2 | Mở app, timezone thiết bị khác cài đặt | Đổi sang → MSG-24; Giữ → không hỏi lại | MSG-23, MSG-24 |
 | A3 | Đổi mốc đầu ngày / timezone | Lưu, hiệu lực ngày làm việc kế tiếp | MSG-24 |
 | A4 | Đổi ngôn ngữ | Giao diện đổi ngay | – |
