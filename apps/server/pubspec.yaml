@@ -1,0 +1,16 @@
+name: wakeup_server
+description: Backend của Wakeup (shelf + PostgreSQL, docs/tech/01 mục 5–7).
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  postgres: ^3.6.0
+  shelf: ^1.4.3
+  shelf_router: ^1.1.5
+  wakeup_core: any
+
+dev_dependencies:
+  test: ^1.30.0

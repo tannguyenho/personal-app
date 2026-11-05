@@ -1,0 +1,67 @@
+# Một stack cho một môi trường (prod hoặc staging) trên VPS (ADR-0007).
+#   docker compose -p wakeup-prod --env-file .env.prod up -d
+#   docker compose -p wakeup-staging --env-file .env.staging up -d
+# Caddy chung cho cả hai môi trường chạy ở stack riêng (compose.caddy.yaml).
+name: wakeup
+
+services:
+  api:
+    image: ${API_IMAGE:-ghcr.io/tannguyenho/wakeup-server:latest}
+    restart: unless-stopped
+    environment:
+      PORT: "8080"
+      DATABASE_URL: postgres://wakeup:${POSTGRES_PASSWORD}@db:5432/wakeup?sslmode=disable
+      MIN_CLIENT_VERSION: ${MIN_CLIENT_VERSION:-0.0.0}
+      LATEST_CLIENT_VERSION: ${LATEST_CLIENT_VERSION:-0.1.0}
+      LATEST_CLIENT_URL: ${LATEST_CLIENT_URL:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [internal, edge]
+    mem_limit: 384m
+    logging: &logging
+      driver: json-file
+      options: { max-size: "10m", max-file: "5" }
+
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: wakeup
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?đặt POSTGRES_PASSWORD trong file env}
+      POSTGRES_DB: wakeup
+    command: >
+      postgres -c shared_buffers=128MB -c effective_cache_size=256MB
+               -c max_connections=30
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wakeup -d wakeup"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks: [internal]
+    mem_limit: 512m
+    logging: *logging
+
+  migrate:
+    image: ghcr.io/amacneil/dbmate:2
+    profiles: [migrate]
+    environment:
+      DATABASE_URL: postgres://wakeup:${POSTGRES_PASSWORD}@db:5432/wakeup?sslmode=disable
+    volumes:
+      - ../apps/server/db/migrations:/db/migrations:ro
+    command: ["--migrations-dir", "/db/migrations", "--no-dump-schema", "up"]
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [internal]
+
+volumes:
+  db-data:
+
+networks:
+  internal:
+  edge:
+    external: true
+    name: wakeup-edge

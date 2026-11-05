@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.47.9"
+
+jobs:
+  core-server-tokens:
+    name: core, server, ds_tokens (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Kiểm tra định dạng (bỏ qua file sinh ra)
+        run: |
+          files=$(git ls-files '*.dart' | grep -v '\.g\.dart$' | grep -v '^apps/desktop/windows/')
+          dart format --output=none --set-exit-if-changed $files
+      - run: dart analyze --fatal-infos packages/core apps/server
+      - run: flutter analyze --fatal-infos packages/ds_tokens
+      - name: Test wakeup_core (gồm ca chuẩn QC-01)
+        working-directory: packages/core
+        run: dart test
+      - name: Test wakeup_server
+        working-directory: apps/server
+        run: dart test
+      - name: Test wakeup_ds_tokens (token khớp tokens.json)
+        working-directory: packages/ds_tokens
+        run: flutter test
+
+  migrations:
+    name: migration (Postgres)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: wakeup
+          POSTGRES_PASSWORD: wakeup
+          POSTGRES_DB: wakeup
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U wakeup" --health-interval 5s
+          --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Chạy up, down rồi up lại
+        env:
+          DATABASE_URL: postgres://wakeup:wakeup@localhost:5432/wakeup?sslmode=disable
+        run: |
+          curl -fsSL -o dbmate https://github.com/amacneil/dbmate/releases/latest/download/dbmate-linux-amd64
+          chmod +x dbmate
+          ./dbmate -d apps/server/db/migrations --no-dump-schema up
+          ./dbmate -d apps/server/db/migrations --no-dump-schema rollback
+          ./dbmate -d apps/server/db/migrations --no-dump-schema up
+
+  server-image:
+    name: build image server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f apps/server/Dockerfile -t wakeup-server:ci .
+
+  desktop:
+    name: desktop (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze --fatal-infos
+        working-directory: apps/desktop
+      - run: flutter test
+        working-directory: apps/desktop
+      - run: flutter build windows --release
+        working-directory: apps/desktop
