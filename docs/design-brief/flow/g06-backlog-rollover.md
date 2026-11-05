@@ -371,10 +371,10 @@ flowchart TD
   p5[["Áp BR-12 cho task bị hoãn ≥ ngưỡng · UC-05"]]
   p6[["Nhật ký system BR-16<br/>rollover_runs = XONG kèm số liệu"]]
   p7[["Phát task.upserted, day.recomputed<br/>G05 gỡ liên kết timebox quá khứ, bất đồng bộ"]]
-  ok(["Board hôm nay: task dở ở đầu / cuối danh sách,<br/>sau instance lặp hôm nay; SCR-07 nhãn Dời {n} ngày"])
-  m1>"MSG-09 · Tooltip trên SCR-07<br/>Dời {n} ngày · dự định từ {ngày dự định đầu tiên}"]
+  m1>"MSG-09 · Tooltip trên SCR-07 nhãn Dời {n} ngày<br/>Dời {n} ngày · dự định từ {ngày dự định đầu tiên}"]
+  ok(["Board hôm nay: task dở ở đầu / cuối danh sách,<br/>sau instance lặp hôm nay, có SCR-07 nhãn Dời {n} ngày"])
 
-  start ==> p1 ==> p2 ==> p3 ==> p4 ==> p5 ==> p6 ==> p7 ==> ok ==> m1
+  start ==> p1 ==> p2 ==> p3 ==> p4 ==> p5 ==> p6 ==> p7 ==> m1 ==> ok
 
   class start,p1,p2,p3,p4,p5,p6,p7,m1 happy
   class ok done
@@ -651,10 +651,10 @@ flowchart TD
   p2[["TaskRestore from archive"]]
   ok(["Task ở đầu hôm nay"])
   s1 ==> u1 ==> p2 ==> ok
-  a1p[["A1 · ArchiveDeleteAll"]]
-  a3[["A3 · TaskRestore startDate = D"]]
-  s1 --> a1p
-  s1 --> a3
+  a1p[["ArchiveDeleteAll"]]
+  a3[["TaskRestore startDate = D"]]
+  s1 -->|"A1 · Xoá tất cả, xác nhận"| a1p
+  s1 -->|"A3 · kéo dòng vào cột ngày D"| a3
 
   p2 -.->|"E1 · task đã bị xoá ở thiết bị khác"| e1m>"MSG-20 · Toast<br/>Task này không còn tồn tại"]
   e1m -.-> e1(["Gỡ dòng khỏi SCR-05"])
