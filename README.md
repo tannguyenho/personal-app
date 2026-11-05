@@ -30,13 +30,25 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
 .
 ├── README.md
 ├── CONTEXT.md                          # bảng thuật ngữ chung
+├── pubspec.yaml                        # pub workspace gốc
+├── apps/
+│   ├── desktop/                        # app Flutter Windows (wakeup_desktop)
+│   ├── server/                         # backend Dart shelf + migration (wakeup_server)
+│   └── web-mini/                       # trang web tối giản
+├── packages/
+│   ├── core/                           # logic dùng chung app + server (wakeup_core)
+│   └── ds_tokens/                      # token design system sinh từ Figma (wakeup_ds_tokens)
+├── deploy/                             # Docker Compose, Caddy, sao lưu
 └── docs/
     ├── 00-danh-muc-nhom-tinh-nang.md   # danh mục 12 nhóm, trạng thái từng tài liệu
     ├── 01-quy-tac-dung-chung.md        # quy tắc dùng chung QC-01..QC-12 (ngày làm việc, trạng thái task, đổi ngày, AI…)
     ├── 02-tinh-nang-ban-sau.md         # tính năng đã chốt hướng nhưng để bản sau (nhiều thành viên, thanh toán…)
     ├── tech/                           # câu hỏi và quyết định tech stack & API
+    ├── design-system/                  # knowledge base cho agent: DS component / Snowflake, folder Figma
     ├── adr/                            # quyết định khó đảo ngược
     ├── review/                         # báo cáo review và quyết định chốt mâu thuẫn
+    ├── research/                       # research Sunsama và kết quả kiểm chứng bằng Chrome
+    ├── design-brief/                   # design brief cho designer; _khuon.md là khuôn chung
     └── features/
         ├── prd-g01-tai-khoan.md        # PRD: vì sao, cho ai, phạm vi, user story, AC, chỉ số
         ├── srs-g01-tai-khoan.md        # SRS: business rule, trạng thái, use case, màn hình, API, thông báo
@@ -65,7 +77,7 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
 - **Bắt đầu từ PRD** để hiểu vấn đề, người dùng và phạm vi. Sau đó đọc **SRS** để biết chi tiết cần làm.
 - **PRD** có 10 mục: bối cảnh và vấn đề, người dùng, phạm vi, nguyên tắc sản phẩm, quy tắc / cấu hình, luồng trải nghiệm, use case + user story + acceptance criteria, chỉ số, rủi ro, câu hỏi mở.
 - **SRS** có 10 mục: tổng quan, user story, business rule (BR), trạng thái, use case (luồng chính, luồng thay thế A#, luồng lỗi E#), điểm vào, màn hình (SCR), API, danh sách thông báo (MSG), yêu cầu phi chức năng.
-- **Giao diện** theo design system riêng trên Figma; mục màn hình (SCR) trong SRS chỉ mô tả thành phần và hành vi, không mô tả hình ảnh.
+- **Giao diện** theo design system riêng trên Figma; mục màn hình (SCR) trong SRS chỉ mô tả thành phần và hành vi, không mô tả hình ảnh. Cách phân tầng DS component / Snowflake và tổ chức folder Figma: [`docs/design-system/`](docs/design-system/00-knowledge-base-components-snowflakes.md).
 - **API, mã lỗi, job** trong SRS là hợp đồng nghiệp vụ tham khảo; cách hiện thực theo [`docs/tech/01`](docs/tech/01-quyet-dinh-tech-stack-va-api.md).
 - Mỗi tài liệu chỉ mô tả phần thuộc nhóm của nó. Phần thuộc nhóm khác được ghi chú `(Gxx)` để người đọc mở tài liệu nhóm đó.
 - Quy tắc nhiều nhóm cùng dùng nằm ở [`docs/01-quy-tac-dung-chung.md`](docs/01-quy-tac-dung-chung.md) và được tham chiếu bằng mã `QC-xx`. Thuật ngữ chuẩn nằm ở [`CONTEXT.md`](CONTEXT.md).
@@ -92,6 +104,8 @@ Chi tiết ở [quyết định chốt mâu thuẫn](docs/review/quyet-dinh-chot
 - Bản 1.0 là app Windows (Flutter) cho một người dùng, có tài khoản và dữ liệu trên cloud; web + macOS ở 1.1, di động ở 1.2 (ADR-0005).
 - Trợ lý AI chạy bằng Claude Code CLI của người dùng, điều khiển app qua MCP local, có từ 1.0; mặc định tắt; thay đổi áp dụng ngay kèm Hoàn tác; chờ duyệt khi dùng dữ liệu tích hợp; hoàn thành / xoá task chỉ khi người dùng bật công tắc (QC-12, ADR-0004).
 - Mỗi channel có thể đặt khung giờ riêng (QC-02).
+- Kiến trúc thông tin app Windows 1.0: khung ba vùng (sidebar, vùng chính, panel phải), chi tiết task là dialog, chat AI ở panel phải, × thu về khay (IA-01..IA-20, [`docs/design-brief/00-kien-truc-thong-tin.md`](docs/design-brief/00-kien-truc-thong-tin.md)).
+- Nền tảng design system: điềm tĩnh, design system riêng cho mọi nền tảng, nhấn teal, AI tím, font Inter, icon Lucide, WCAG AA (DS-01..DS-16, [`docs/design-brief/01-nen-tang-design-system.md`](docs/design-brief/01-nen-tang-design-system.md)).
 - Bản 1.0 không bắt buộc lưu dữ liệu tại Việt Nam, dùng máy chủ khu vực châu Á.
 
 ## Tech stack đã chốt (05/11/2026)
@@ -102,16 +116,15 @@ Chi tiết ở [`docs/tech/01`](docs/tech/01-quyet-dinh-tech-stack-va-api.md) v�
 - **Backend:** Dart (`shelf`, SQL tay, dbmate), PostgreSQL; logic chung trong package `wakeup_core`.
 - **Đồng bộ:** hàng đợi lệnh (`POST /v1/commands`, `GET /v1/changes`, WebSocket báo thay đổi).
 - **Hạ tầng:** một VPS Ubuntu ở Singapore, Docker Compose + Caddy, prod và staging; `wakeup.tannguyenho.tech`, `api.wakeup.tannguyenho.tech`.
-- **AI:** `claude -p` chỉ được dùng công cụ `mcp__wakeup__*`; MCP qua HTTP `127.0.0.1` có token; thêm chế độ API key.
+- **AI:** `claude -p` chỉ được dùng công cụ `mcp__wakeup__*`; MCP qua HTTP `127.0.0.1` có token; PO chấp nhận rủi ro điều khoản, dự phòng bằng API key do người dùng cấu hình trong Claude Code (ADR-0009).
 - **Xác minh Google OAuth:** chủ dự án nộp ngay sau khi dựng trang web tối giản; Beta chạy chế độ Production chưa xác minh.
-- **Design system:** mapping 1-1 Figma ↔ Flutter bằng lớp hợp đồng sinh code (không dùng Code Connect vì cần gói Organization).
+- **Design system:** mapping 1-1 Figma ↔ Flutter bằng lớp hợp đồng sinh code (không dùng Code Connect vì cần gói Organization; chạy thử lại trên team Figma thật trước khi chốt hẳn).
 
 ## Câu hỏi còn mở
 
 - Pháp chế xác nhận hồ sơ đánh giá tác động chuyển dữ liệu ra nước ngoài (Nghị định 13/2023) trước khi phát hành 1.0.
 - Cổng thanh toán (gợi ý Stripe cho thẻ quốc tế, VNPay / MoMo cho nội địa) và định nghĩa các gói giá: chốt trước khi làm 1.1.
 - Chính sách hoàn tiền khi xoá tài khoản giữa kỳ (chờ pháp chế).
-- Pháp chế hoặc Anthropic xác nhận cách app gọi Claude Code bằng gói claude.ai của người dùng ([ADR-0009](docs/adr/0009-rui-ro-dieu-khoan-claude-code-va-che-do-api-key.md)).
 - AI trên web và di động: chốt trước khi làm 1.1.
 - Gói Figma Education có chạy được plugin Codegen trong Dev Mode không ([ADR-0008](docs/adr/0008-hop-dong-design-code-thay-code-connect.md)).
 - Các giá trị còn gắn `[giả định]` và câu hỏi mở còn lại ở mục 10 của từng PRD.
@@ -123,6 +136,24 @@ Các tài liệu dưới đây soạn trên Claude, chỉ người được chia
 - PRD tổng — phân tích tính năng Sunsama, kết quả test và bảng đối chiếu với bản gốc
 - SRS tổng theo chuẩn ISO/IEC/IEEE 29148 — 26 use case, 41 tình huống biên, ma trận kiểm chứng 154 yêu cầu
 - Thiết kế kỹ thuật & đặc tả API — MVP 1.0: kiến trúc, schema PostgreSQL, 60 endpoint REST, realtime / offline, job nền, tích hợp lịch
+
+## Phát triển
+
+Cần Flutter 3.47 (kèm Dart 3.13). Chạy ở thư mục gốc:
+
+```
+flutter pub get
+```
+
+| Việc | Lệnh |
+|---|---|
+| Test logic dùng chung (gồm ca chuẩn QC-01) | `cd packages/core && dart test` |
+| Test backend | `cd apps/server && dart test` |
+| Chạy backend | xem [`apps/server/README.md`](apps/server/README.md) |
+| Sinh lại token từ `tokens.json` | `cd packages/ds_tokens && dart run tool/generate.dart` |
+| Chạy app Windows | `cd apps/desktop && flutter run -d windows` |
+
+CI ở `.github/workflows/ci.yml`: định dạng, analyze, test cả 4 package, chạy migration trên Postgres, build image server, build app Windows.
 
 ## Cách cập nhật tài liệu
 

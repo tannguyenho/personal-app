@@ -1,0 +1,15 @@
+name: wakeup_core
+description: Logic nghiệp vụ, DTO, lệnh đồng bộ và mã lỗi dùng chung giữa app và server Wakeup.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  meta: ^1.19.0
+  timezone: ^0.11.2
+  uuid: ^4.6.0
+
+dev_dependencies:
+  test: ^1.30.0

@@ -1,0 +1,16 @@
+# Postgres cho máy dev: docker compose -f deploy/compose.dev.yaml up -d
+name: wakeup-dev
+
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: wakeup
+      POSTGRES_PASSWORD: wakeup
+      POSTGRES_DB: wakeup
+    ports: ["5432:5432"]
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:

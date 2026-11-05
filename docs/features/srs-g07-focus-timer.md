@@ -54,7 +54,7 @@
 | BR-20 | **Ngày của bản ghi** — theo QC-07 mục 1 (Q13): `workday(startedAt)`, không chia khi vắt qua mốc đầu ngày. Rollover / dời ngày task không đổi ngày của bản ghi đã có |
 | BR-21 | **Nguồn `ritual`** — theo QC-07 mục 2. \[TimeEntryCreate\] với `source = ritual` (do G08 gọi) khi người dùng đang có timer chạy → không tạo, trả `skipped: true` (không phải lỗi). Bản ghi `ritual` có giờ thật, không bị cắt theo BR-10 `[giả định]`, sửa / xoá được như bản ghi khác |
 | BR-22 | **"Tính planned là actual"** — theo QC-07 mục 4: G07 không tạo bản ghi; thực tế hiển thị trên task theo QC-07 mục 5 dùng cờ `plannedAsActual` G02 lưu lúc hoàn thành. G07 không cộng số liệu theo ngày / tuần (chỉ G09) |
-| BR-23 | **Cửa sổ app (1.0, Windows).** Timer là bản ghi trên server (BR-01); thu nhỏ, đóng cửa sổ, tắt app hoặc máy ngủ **không** dừng timer. Mở lại app → \[TimerGet\], đồng hồ hiện theo `startedAt` + độ lệch server (BR-11). Đóng cửa sổ khi có timer chạy → app thu về khay hệ thống, timer chạy tiếp, biểu tượng khay cho thấy có timer (D13). Cơ chế chạy nền / khay: tech chốt — `docs/tech/` |
+| BR-23 | **Cửa sổ app (1.0, Windows).** Timer là bản ghi trên server (BR-01); thu nhỏ, đóng cửa sổ, tắt app hoặc máy ngủ **không** dừng timer. Mở lại app → \[TimerGet\], đồng hồ hiện theo `startedAt` + độ lệch server (BR-11). Bấm × luôn thu app về khay hệ thống, có timer hay không (trừ khi bật "Bấm × để thoát hẳn", G01 SCR-07); timer chạy tiếp, biểu tượng khay cho thấy có timer (D13, IA-05). Menu khay: Mở app · Thêm task (Ctrl+Shift+A) · Bật / dừng timer (kèm tên task) · Thoát. Mở lại cửa sổ khi timer chạy vẫn vào Home, không vào Focus (IA-18). Cơ chế chạy nền / khay: tech chốt — `docs/tech/` |
 
 ## 4. Trạng thái
 

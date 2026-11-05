@@ -323,6 +323,8 @@ Các bước dưới đây là **đề xuất, chưa kiểm chứng trên Sunsam
 
 ### SCR-01 Khung wizard ritual (dùng chung)
 
+Wizard thay vùng chính; sidebar và panel phải vẫn dùng được để kéo task từ Backlog, sự kiện từ Lịch vào (IA-07, [IA](../design-brief/00-kien-truc-thong-tin.md)).
+
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
 | 1 | Tên ritual + ngày | Header | "Daily planning · Thứ Tư, 04/11"; ngày tương lai có nhãn ngày |
@@ -331,7 +333,7 @@ Các bước dưới đây là **đề xuất, chưa kiểm chứng trên Sunsam
 | 4 | "Làm mới" | Button | Tải lại dữ liệu bước; ở bước Daily plan / Highlights → A9 UC-01 |
 | 5 | "Bỏ qua bước này từ lần sau" | Link | BR-18; ẩn ở bước Chia sẻ, Hoàn tất |
 | 6 | ← "Quay lại" / → "Tiếp" | Button | Phím ← / → khi không focus ô nhập |
-| 7 | × | Icon | Thoát, lưu tiến độ (A5 UC-01); với shutdown sau mốc đầu ngày → bỏ dở (BR-21) |
+| 7 | × | Icon | Thoát, lưu tiến độ (A5 UC-01), về Home; với shutdown sau mốc đầu ngày → bỏ dở (BR-21). Esc **không** thoát wizard (IA-16) |
 | 8 | Banner ân hạn | Banner | MSG-30 khi phiên đang trong ân hạn (BR-21) |
 
 ### SCR-02 Bước 1 – Xem lại hôm qua

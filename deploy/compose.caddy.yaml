@@ -1,0 +1,26 @@
+# Caddy dùng chung cho prod và staging: TLS tự động, phục vụ web tối giản.
+#   docker network create wakeup-edge
+#   docker compose -f compose.caddy.yaml up -d
+name: wakeup-edge
+
+services:
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ../apps/web-mini:/srv/web-mini:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks: [edge]
+    mem_limit: 128m
+
+volumes:
+  caddy-data:
+  caddy-config:
+
+networks:
+  edge:
+    external: true
+    name: wakeup-edge

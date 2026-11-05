@@ -8,3 +8,13 @@ Mọi tính năng AI (chat, Planning Agent, highlights, gợi ý task) dùng Cla
 - Thay đổi một phần [ADR-0003](0003-gioi-han-quyen-cua-tro-ly-ai.md): AI vẫn mặc định không hoàn thành / xoá task, nhưng người dùng bật được công tắc cho phép (trừ task có liên kết tích hợp).
 - Quy tắc chung nằm ở QC-12.
 - Cách gọi CLI, MCP local và chế độ API key dự phòng: [`docs/tech/01`](../tech/01-quyet-dinh-tech-stack-va-api.md) mục 4, [ADR-0009](0009-rui-ro-dieu-khoan-claude-code-va-che-do-api-key.md).
+
+## Điều khoản của Anthropic (chốt 05/11/2026, ticket #25)
+
+PO giữ nguyên mô hình này và **chấp nhận rủi ro điều khoản**; không chờ xác nhận pháp lý từ Anthropic trước khi làm tiếp. Lý do PO nêu: đã có nhiều sản phẩm tích hợp Claude Code làm một phần của sản phẩm.
+
+Bối cảnh để người đọc sau biết: trang [Legal and compliance](https://code.claude.com/docs/en/legal-and-compliance) (đọc lại ngày 05/11/2026) vừa cho phép người dùng tự đăng nhập Claude Code bản gốc bằng gói của họ, vừa cấm bên thứ ba "route requests through Free, Pro, Max, or Ultra plan credentials on behalf of their users", và khuyên nhà phát triển sản phẩm dùng API key. Extension Claude Code cho VS Code là sản phẩm do chính Anthropic phát hành, nên không phải tiền lệ cho app bên thứ ba. Nếu Anthropic thay đổi hoặc làm rõ theo hướng chặn, phương án dự phòng là chỉ bật AI trong app khi Claude Code đăng nhập bằng API key của người dùng, và giữ đường người dùng tự dùng Claude Code trong terminal.
+
+Hai quy tắc vẫn giữ vì trang ghi rõ, không phụ thuộc rủi ro trên:
+- App không xử lý đăng nhập Claude: không nhúng trang đăng nhập, không đọc hay lưu token; chỉ hướng dẫn người dùng tự chạy lệnh đăng nhập.
+- Không dùng tên hoặc logo Claude Code / Anthropic làm tên sản phẩm, tính năng hay nút; chỉ được ghi chữ thường "chạy bằng Claude Code". Tên trợ lý (D16) không chứa "Claude".
