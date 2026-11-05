@@ -1269,12 +1269,12 @@ flowchart TD
 - [x] Mọi A# / E# của UC-01 … UC-12 bản 1.0 có trên sơ đồ hoặc ghi "Bỏ (1.1)" / "SRS đã bỏ".
 - [x] Mọi nút màn hình có mã SCR; mọi nút thông báo có mã MSG, nội dung chép nguyên văn mục 9 SRS (chỉ thay dấu ngoặc kép bằng `#quot;` cho Mermaid).
 - [x] Không dùng tên "Claude Code" làm tên tính năng / nút trong nhãn màn hình (ADR-0004); "Claude Code" chỉ xuất hiện khi mô tả bước hệ thống, trạng thái SCR-09 #12 và nội dung MSG nguyên văn.
-- [x] Không emoji: nút ✨ của SRS ghi là "nút Trợ lý", nhãn ✨ của SCR-07 ghi là "nhãn gợi ý AI".
+- [x] Không emoji: nút biểu tượng lấp lánh của SRS ghi là "nút Trợ lý", nhãn biểu tượng lấp lánh của SCR-07 ghi là "nhãn gợi ý AI".
 
 **Ghi chú cho brief G10**
 
 1. **Tên có "Claude Code" trên giao diện (ADR-0004).** SRS đặt SCR-09 #13 là "Dùng Claude Code trong terminal", tiêu đề SCR-10 là "Bật trợ lý AI với Claude Code", tên SCR-11 là "Hướng dẫn cài Claude Code". ADR-0004 chỉ cho ghi chữ thường "chạy bằng Claude Code", không dùng làm tên tính năng hay nút. Brief cần đặt lại các nhãn này (sơ đồ đã tránh dùng).
-2. **Vị trí nút Trợ lý.** UC-03 bước 1 ghi "nút ✨ góc dưới", còn mục 6 Điểm vào ghi "cụm dưới sidebar (không nổi ở góc màn hình)". Sơ đồ theo mục 6.
+2. **Vị trí nút Trợ lý.** UC-03 bước 1 ghi "nút [biểu tượng lấp lánh] góc dưới", còn mục 6 Điểm vào ghi "cụm dưới sidebar (không nổi ở góc màn hình)". Sơ đồ theo mục 6.
 3. **UC-03 E6 và MSG-19.** E6 chỉ nói chip "Không thực hiện được"; BR-21 lại nói báo MSG-19, và nơi hiện của MSG-19 có "khung chat". Sơ đồ vẽ cả hai; cần chốt khung chat có hiện MSG-19 hay chỉ chip.
 4. **UC-07 không có bảng luồng lỗi.** Chỉ hậu điều kiện thất bại nói "toggle về giá trị cũ, MSG-14". Sơ đồ vẽ nhánh này không có mã E.
 5. **Nhánh không xảy ra ở 1.0 nhưng SRS không ghi 1.1.** UC-07 A2 (tắt Beta khi có đề xuất CHO_DUYET) và UC-05 A6 (công tắc dữ liệu tích hợp tắt): ở 1.0 công tắc BR-20 ẩn nên đề xuất Planning Agent không bao giờ ở CHO_DUYET và A6 luôn đúng. Tương tự, các ý "task có liên kết tích hợp" (LINKED_TASK) ở UC-03 A4 / A12 không xảy ra khi chưa có G11.
