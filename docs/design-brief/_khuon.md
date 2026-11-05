@@ -1,6 +1,6 @@
 # Khuôn design brief
 
-> **Trạng thái:** bản thử, chờ PO phản hồi ([ticket #9](https://github.com/tannguyenho/personal-app/issues/9)). Bản thử đầu tiên theo khuôn: [`_thu-g02-tao-va-chi-tiet-task.md`](_thu-g02-tao-va-chi-tiet-task.md).
+> **Trạng thái:** đã duyệt 05/11/2026 ([ticket #9](https://github.com/tannguyenho/personal-app/issues/9)): dùng lại mã SCR / MSG của SRS; bảng trạng thái 4 cột; copy chép nguyên văn MSG; flow có cả bảng bước trong brief lẫn sơ đồ FigJam; độ dài brief đầy đủ khoảng 2–3 lần bản thử. Bản thử đầu tiên theo khuôn: [`_thu-g02-tao-va-chi-tiet-task.md`](_thu-g02-tao-va-chi-tiet-task.md).
 >
 > Bản đồ: [issue #2](https://github.com/tannguyenho/personal-app/issues/2).
 
