@@ -5,7 +5,7 @@
 > **Mã:** PLN-BRIEF-G02 (thử) · **Trạng thái:** nháp · **Phiên bản:** 1.0
 > **Nguồn:** [prd-g02](../features/prd-g02-quan-ly-task.md), [srs-g02](../features/srs-g02-quan-ly-task.md) (commit `130668d`), QC-01, QC-03, QC-08, QC-12, quyết định C9, C11, B4, Q25, Q33, D10, D11
 > **Phụ thuộc:** kiến trúc thông tin `[chờ #7]` (chi tiết task mở ở panel, dialog hay cửa sổ; ô thêm nhanh toàn cục), design system `[chờ #8]` (tên component), FigJam `[chờ #10]`
-> **FigJam:** `[chờ #10]`
+> **Flow:** [flow/g02-quan-ly-task.md](flow/g02-quan-ly-task.md) (UC-01, UC-02) · **FigJam:** `[chờ]`
 
 ## 1. Tóm tắt cho người vẽ
 
@@ -369,7 +369,7 @@ MSG-xx chép nguyên văn từ SRS G02 mục 9; nguồn vẫn là SRS. UI-xx là
 
 - [x] Mỗi màn ở mục 3 có bảng trạng thái; SCR-01 và SCR-03 có dữ liệu mẫu.
 - [ ] Mỗi trạng thái có chữ cho mọi chỗ hiện chữ (còn SCR-03.S14 chờ O-08).
-- [ ] Mỗi flow ở mục 5 có frame FigJam `[chờ #10]`.
+- [x] Mỗi flow ở mục 5 trỏ tới sơ đồ UC trong `flow/` (F-01 … F-06 → UC-01; F-07, F-08 → UC-02).
 - [x] Mọi luồng A# / E# của UC-01, UC-02 đều có trong mục 4 hoặc mục 6 (trừ UC-01 E5, chế độ chỉ đọc, bản 1.1).
 - [ ] Không còn `[đề xuất]` chưa duyệt ở luồng chính (còn SCR-01.S04, F-02).
 - [ ] Chỗ còn mở không chặn luồng chính (O-01 chặn bố cục SCR-03).

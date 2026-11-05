@@ -1,6 +1,6 @@
 # Khuôn design brief
 
-> **Trạng thái:** đã duyệt 05/11/2026 ([ticket #9](https://github.com/tannguyenho/personal-app/issues/9)): dùng lại mã SCR / MSG của SRS; bảng trạng thái 4 cột; copy chép nguyên văn MSG; flow có cả bảng bước trong brief lẫn sơ đồ FigJam; độ dài brief đầy đủ khoảng 2–3 lần bản thử. Bản thử đầu tiên theo khuôn: [`_thu-g02-tao-va-chi-tiet-task.md`](_thu-g02-tao-va-chi-tiet-task.md).
+> **Trạng thái:** đã duyệt 05/11/2026 ([ticket #9](https://github.com/tannguyenho/personal-app/issues/9)): dùng lại mã SCR / MSG của SRS; bảng trạng thái 4 cột; copy chép nguyên văn MSG; flow có cả bảng bước trong brief lẫn sơ đồ (Mermaid trong [`flow/`](flow/_quy-uoc.md) trước, FigJam sau — #10); độ dài brief đầy đủ khoảng 2–3 lần bản thử. Bản thử đầu tiên theo khuôn: [`_thu-g02-tao-va-chi-tiet-task.md`](_thu-g02-tao-va-chi-tiet-task.md).
 >
 > Bản đồ: [issue #2](https://github.com/tannguyenho/personal-app/issues/2).
 
@@ -43,7 +43,7 @@ Chép nguyên khung dưới đây khi mở brief mới. Mục nào không có n�
 > **Mã:** PLN-BRIEF-Gxx · **Trạng thái:** nháp / chờ PO / đã duyệt · **Phiên bản:** 1.0
 > **Nguồn:** prd-gxx, srs-gxx (commit `xxxxxxx`), QC-xx, quyết định Dxx / Qxx
 > **Phụ thuộc:** kiến trúc thông tin (#7), design system (#8), brief Gyy
-> **FigJam:** <link file, link frame của từng flow> [chờ #10]
+> **Flow:** [flow/gxx-....md](flow/) (Mermaid, theo [quy ước](flow/_quy-uoc.md)) · **FigJam:** `[chờ]`
 
 ## 1. Tóm tắt cho người vẽ
 3–5 dòng: người dùng làm gì ở tính năng này, khoảnh khắc quan trọng nhất là gì,
@@ -79,7 +79,7 @@ Mỗi flow một mục con:
 **Mở đầu:** ở đâu, trạng thái gì. **Kết thúc:** người dùng thấy gì.
 | Bước | Người dùng | Hệ thống / màn hình (mã trạng thái) |
 Nhánh rẽ: ghi "→ CASE-xx" hoặc "→ F-yy".
-FigJam: link frame.
+Sơ đồ: link mục UC trong `flow/gxx-....md`, ví dụ `[UC-01](flow/g02-quan-ly-task.md#uc-01-tạo-task)`.
 
 ## 6. Case chính và edge case
 | Mã | Tình huống | Màn / trạng thái | Hiện gì | Tham chiếu |
@@ -115,7 +115,7 @@ Câu nào đã chốt: ghi quyết định, rồi ghi ngược vào PRD/SRS/QC.
 ## 12. Kiểm tra trước khi giao
 - [ ] Mỗi màn ở mục 3 có bảng trạng thái và dữ liệu mẫu.
 - [ ] Mỗi trạng thái có chữ (MSG / UI) cho mọi chỗ hiện chữ.
-- [ ] Mỗi flow ở mục 5 có frame FigJam.
+- [ ] Mỗi flow ở mục 5 trỏ tới sơ đồ UC trong `flow/`.
 - [ ] Mọi luồng thay thế (A#) và luồng lỗi (E#) trong SRS của các UC thuộc brief
       đều có trong mục 4 hoặc mục 6.
 - [ ] Không còn `[đề xuất]` chưa duyệt ở luồng chính (P1).
