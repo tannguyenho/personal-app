@@ -1,6 +1,6 @@
 # Knowledge base cho agent — Design system: Component & Snowflake
 
-> Tài liệu này là **nguồn quy tắc cho agent** (Claude, Figma MCP, các skill `uxf-*`) khi đọc, vẽ, đặt tên, phân loại hay bàn giao bất cứ thứ gì trên Figma của dự án Multiverse / Personal App.
+> Tài liệu này là **nguồn quy tắc cho agent** (Claude, Figma MCP, các skill `uxf-*`) khi đọc, vẽ, đặt tên, phân loại hay bàn giao bất cứ thứ gì trên Figma của dự án **Wakeup** (team Figma `0.1 [App] Multiverse`).
 > Nền tảng lý thuyết: Brad Frost — [Design system components, recipes, and snowflakes](https://bradfrost.com/blog/post/design-system-components-recipes-and-snowflakes/).
 > **Khác có chủ đích so với bài gốc:** dự án **không dùng tầng Recipe**. Mọi thứ không đủ chuẩn để vào design system đều là **Snowflake**.
 
@@ -27,9 +27,20 @@ Figma
 │
 └── Team: 0.1 [App] Multiverse
     ├── 📁 [Library] Snowflake                    ← Snowflake (library publish, dùng DS library)
+    │     └── ❄️ [Snowflake] Wakeup
     ├── 📁 [Concept] Sandbox                      ← nháp, khám phá, thử ý tưởng
+    │     └── 🖼️ [Concept] Wakeup
     └── 📁 [Handoff] App                          ← file bàn giao cho dev
+          └── ✅ [Handoff] Wakeup
 ```
+
+| File | Folder | Link |
+|---|---|---|
+| ❄️ [Snowflake] Wakeup | [Library] Snowflake (`684592635`) | https://www.figma.com/design/gIBgLQIAiWUjZ1wHb04tZb |
+| 🖼️ [Concept] Wakeup | [Concept] Sandbox (`684598335`) | https://www.figma.com/design/FJZvjhtEzGYGSLFGugHOUz |
+| ✅ [Handoff] Wakeup | [Handoff] App (`684598523`) | https://www.figma.com/design/CUyptdjG4M9V33uELkgImV |
+
+Tên file theo mẫu `<emoji> [<Loại>] <Tên dự án>`: ❄️ Snowflake, 🖼️ Concept, ✅ Handoff.
 
 ### 2.1 Vai trò từng folder
 
@@ -148,7 +159,13 @@ Nhóm nghiệp vụ dùng mã nhóm tính năng của dự án (`G01`…`G12` tr
 
 ### 5.3 File trong `[Concept] Sandbox`
 
-Không ép cấu trúc. Khuyến nghị đặt tên file `[Concept] <chủ đề> — <ngày>` và có 1 page `🖼️ COVER` ghi trạng thái: `Đang khám phá` / `Đã chốt → chuyển Handoff` / `Bỏ`.
+Không ép cấu trúc bên trong. File mặc định:
+
+```
+🖼️ COVER          ← ghi trạng thái: Đang khám phá / Đã chốt → chuyển Handoff / Bỏ
+---
+💡 EXPLORATION    ← thêm sub-page `→ <chủ đề>` tuỳ ý
+```
 
 ---
 
