@@ -1,6 +1,6 @@
 # Nền tảng design system — app Windows bản 1.0
 
-> **Mã:** PLN-DS · **Trạng thái:** chờ PO duyệt · **Ticket:** [#8](https://github.com/tannguyenho/personal-app/issues/8) · **Bản đồ:** [#2](https://github.com/tannguyenho/personal-app/issues/2)
+> **Mã:** PLN-DS · **Trạng thái:** đã duyệt 05/11/2026 · **Ticket:** [#8](https://github.com/tannguyenho/personal-app/issues/8) · **Bản đồ:** [#2](https://github.com/tannguyenho/personal-app/issues/2)
 >
 > Chốt qua buổi grilling ngày 04/11/2026, gồm 16 quyết định **DS-01 … DS-16** (mục 12). Đây là bản nền tảng (foundations) để PO dựng design system trong Figma. Tài liệu chỉ chốt **hướng và cấu trúc token**; mã màu cụ thể do PO chọn khi dựng, theo các ràng buộc ghi ở đây. Con số `[giả định]` thì designer chỉnh được.
 >
@@ -210,7 +210,7 @@ Bản tiếng Anh theo cùng quy tắc; sentence case cho mọi nhãn.
 | DS-15 | Bo góc 6 / 8 / 12; tách lớp bằng viền, bóng chỉ cho lớp nổi | Q15 |
 | DS-16 | Chuyển động 120–200 ms, chỉ để giải thích; hiệu ứng chúc mừng nhỏ, lớn hơn khi xong cả ngày | Q16 |
 
-## 13. Cần sửa ngược và việc tiếp theo
+## 13. Đã sửa ngược và việc còn mở
 
 | Tài liệu | Sửa | Theo |
 |---|---|---|

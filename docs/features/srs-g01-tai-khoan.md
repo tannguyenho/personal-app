@@ -590,10 +590,10 @@ Cửa sổ app hẹp (và iOS / Android, 1.2): cột trái thành danh sách mà
 
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
-| 1 | Giao diện | Segmented Sáng / Tối / Hệ thống | – | Đổi ngay |
+| 1 | Giao diện | Segmented Sáng / Tối / Hệ thống | – | Mặc định Hệ thống (theo Windows); đổi ngay ([DS](../design-brief/01-nen-tang-design-system.md) DS-03) |
 | 2 | Màu sự kiện trên lịch | Dropdown | – | Theo channel (mặc định) / theo lịch |
 | 3 | Ẩn task đã xong | Toggle | – | Mặc định tắt |
-| 4 | Hiệu ứng chúc mừng | Toggle | – | Mặc định bật `[giả định]`; bật thì chạy thử 1 lần |
+| 4 | Hiệu ứng chúc mừng | Toggle | – | Mặc định bật `[giả định]`; bật thì chạy thử 1 lần. ✓ nở nhẹ tại chỗ mỗi lần hoàn thành; xong task cuối của hôm nay thì có hiệu ứng lớn hơn một lần, không phủ kín màn hình; Windows tắt hoạt ảnh thì không có hiệu ứng lớn (DS-16) |
 
 ### SCR-09 Cài đặt Phím tắt
 

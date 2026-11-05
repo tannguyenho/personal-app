@@ -95,6 +95,7 @@ Chi tiết ở [quyết định chốt mâu thuẫn](docs/review/quyet-dinh-chot
 - Trợ lý AI chạy bằng Claude Code CLI của người dùng, điều khiển app qua MCP local, có từ 1.0; mặc định tắt; thay đổi áp dụng ngay kèm Hoàn tác; chờ duyệt khi dùng dữ liệu tích hợp; hoàn thành / xoá task chỉ khi người dùng bật công tắc (QC-12, ADR-0004).
 - Mỗi channel có thể đặt khung giờ riêng (QC-02).
 - Kiến trúc thông tin app Windows 1.0: khung ba vùng (sidebar, vùng chính, panel phải), chi tiết task là dialog, chat AI ở panel phải, × thu về khay (IA-01..IA-20, [`docs/design-brief/00-kien-truc-thong-tin.md`](docs/design-brief/00-kien-truc-thong-tin.md)).
+- Nền tảng design system: điềm tĩnh, design system riêng cho mọi nền tảng, nhấn teal, AI tím, font Inter, icon Lucide, WCAG AA (DS-01..DS-16, [`docs/design-brief/01-nen-tang-design-system.md`](docs/design-brief/01-nen-tang-design-system.md)).
 - Bản 1.0 không bắt buộc lưu dữ liệu tại Việt Nam, dùng máy chủ khu vực châu Á.
 
 ## Câu hỏi còn mở

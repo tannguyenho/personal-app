@@ -424,7 +424,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | --- | --- | --- | --- | --- |
 | 1 | "Tạo context", "Tạo channel" | Button | – | Mở dòng nhập mới |
 | 2 | Tên context / channel | Text | Có | BR-14; trùng → MSG-15; sai định dạng → MSG-17 |
-| 3 | Màu | Color picker | Có | 12 màu cố định `[giả định]` |
+| 3 | Màu | Color picker | Có | 12 màu cố định, chia đều trên vòng màu, có biến thể nền tối; trên card hiện chấm màu + "#tên", trên lịch tô nhạt có viền trái ([DS](../design-brief/01-nen-tang-design-system.md) DS-12). Channel "Chưa phân loại" màu xám trung tính |
 | 4 | Riêng tư | Toggle | Không | Ở 1.0 chỉ ảnh hưởng hiển thị trên lịch ngoài (G05: sự kiện timebox luôn Private); chia sẻ trong workspace (G12) để bản sau (Q35, Q37) |
 | 5 | Bật / ẩn | Toggle | – | A2 UC-06 |
 | 6 | Xoá | Icon | – | Mở SCR-07; ẩn với channel hệ thống "Chưa phân loại" |

@@ -23,7 +23,8 @@ Brief **không** định nghĩa lại quy tắc nghiệp vụ. Quy tắc nằm �
 | Mã flow | `F-xx`, đánh số trong từng brief. Flow đi qua nhiều tính năng đặt ở brief của tính năng **khởi phát** flow; brief khác chỉ ghi link |
 | Mã case | `CASE-xx`, đánh số trong từng brief. Không dùng `EC-xx` để tránh nhầm với danh mục chung QC-11; case nào ứng với một EC thì ghi mã EC ở cột tham chiếu |
 | Mã copy | Dùng lại `MSG-xx` của SRS. Chữ trên giao diện chưa có trong SRS (nhãn, placeholder, empty state) đặt `UI-xx` và gắn `[đề xuất]` cho tới khi PO duyệt |
-| Component | Viết trong backtick theo tên tạm, ví dụ `Chip/Channel`. Tên chính thức chốt ở ticket design system ([#8](https://github.com/tannguyenho/personal-app/issues/8)); brief chỉ cần nhất quán trong file và liệt kê ở mục 9 |
+| Component | Viết trong backtick theo quy ước [DS-09](01-nen-tang-design-system.md#8-quy-ước-đặt-tên-component): tiếng Anh, `Nhóm/Tên`, ví dụ `Chip/Channel`; biến thể và trạng thái là property, không đặt trong tên. Liệt kê ở mục 9 |
+| Giọng văn | Mọi copy (MSG / UI) theo [DS-07](01-nen-tang-design-system.md#11-giọng-văn); tông màu, chữ, khoảng cách theo [nền tảng design system](01-nen-tang-design-system.md), brief không ghi lại |
 | `[đề xuất]` | Brief đề xuất, nguồn chưa nói. PO duyệt thì bỏ nhãn và ghi ngược vào PRD/SRS nếu là nghiệp vụ |
 | `[chờ #n]` | Phụ thuộc ticket khác chưa xong, ví dụ `[chờ #7]` cho kiến trúc thông tin |
 | Tham chiếu | Viết ngắn `G02 BR-08`, `QC-03 mục 4`, `D10`, `#22-C3` (câu C3 trong ticket kiểm chứng #22) |
