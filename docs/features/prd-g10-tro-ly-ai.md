@@ -487,4 +487,4 @@ AC03: Claude Code chậm hơn ngưỡng của G02, lỗi hoặc hết hạn mứ
 - Gợi ý task qua Claude Code có đạt ngưỡng 2 giây của G02 không; nếu không thì đổi ngưỡng hay đổi trải nghiệm (gợi ý đến sau)?
 - Một phần đã chốt 04/11/2026: app không mở tại giờ kết thúc của lịch chung thì soạn khi mở app lần kế tiếp trong ngày (D7). Còn mở: người dùng có nhiều máy Windows thì một ngày chỉ một nháp tự động (đang giả định: có, server giữ khoá user + ngày)?
 - Trợ lý AI trên web, macOS (1.1) và iOS / Android (1.2): cung cấp thế nào (tech chốt, ADR-0004)?
-- Điều khoản sử dụng của Anthropic có cho phép app gọi Claude Code CLI theo cách này không?
+- Đã chốt 05/11/2026: điều khoản sử dụng của Anthropic với cách app gọi Claude Code CLI — PO giữ mô hình và chấp nhận rủi ro, không chờ xác nhận pháp lý; app không xử lý đăng nhập Claude, không dùng tên / logo Claude Code làm tên tính năng ([ADR-0004](../adr/0004-ai-qua-claude-code-cli.md), #25).
