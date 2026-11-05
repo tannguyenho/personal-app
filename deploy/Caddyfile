@@ -1,0 +1,24 @@
+# Domain theo docs/tech/01 mục 1. Tên dịch vụ api theo tên project Compose.
+wakeup.tannguyenho.tech {
+	root * /srv/web-mini
+	file_server {
+		hide README.md
+	}
+	encode gzip
+}
+
+api.wakeup.tannguyenho.tech {
+	reverse_proxy wakeup-prod-api-1:8080
+	encode gzip
+}
+
+staging.wakeup.tannguyenho.tech {
+	root * /srv/web-mini
+	file_server {
+		hide README.md
+	}
+}
+
+api.staging.wakeup.tannguyenho.tech {
+	reverse_proxy wakeup-staging-api-1:8080
+}

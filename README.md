@@ -30,6 +30,15 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
 .
 ├── README.md
 ├── CONTEXT.md                          # bảng thuật ngữ chung
+├── pubspec.yaml                        # pub workspace gốc
+├── apps/
+│   ├── desktop/                        # app Flutter Windows (wakeup_desktop)
+│   ├── server/                         # backend Dart shelf + migration (wakeup_server)
+│   └── web-mini/                       # trang web tối giản
+├── packages/
+│   ├── core/                           # logic dùng chung app + server (wakeup_core)
+│   └── ds_tokens/                      # token design system sinh từ Figma (wakeup_ds_tokens)
+├── deploy/                             # Docker Compose, Caddy, sao lưu
 └── docs/
     ├── 00-danh-muc-nhom-tinh-nang.md   # danh mục 12 nhóm, trạng thái từng tài liệu
     ├── 01-quy-tac-dung-chung.md        # quy tắc dùng chung QC-01..QC-12 (ngày làm việc, trạng thái task, đổi ngày, AI…)
@@ -127,6 +136,24 @@ Các tài liệu dưới đây soạn trên Claude, chỉ người được chia
 - PRD tổng — phân tích tính năng Sunsama, kết quả test và bảng đối chiếu với bản gốc
 - SRS tổng theo chuẩn ISO/IEC/IEEE 29148 — 26 use case, 41 tình huống biên, ma trận kiểm chứng 154 yêu cầu
 - Thiết kế kỹ thuật & đặc tả API — MVP 1.0: kiến trúc, schema PostgreSQL, 60 endpoint REST, realtime / offline, job nền, tích hợp lịch
+
+## Phát triển
+
+Cần Flutter 3.47 (kèm Dart 3.13). Chạy ở thư mục gốc:
+
+```
+flutter pub get
+```
+
+| Việc | Lệnh |
+|---|---|
+| Test logic dùng chung (gồm ca chuẩn QC-01) | `cd packages/core && dart test` |
+| Test backend | `cd apps/server && dart test` |
+| Chạy backend | xem [`apps/server/README.md`](apps/server/README.md) |
+| Sinh lại token từ `tokens.json` | `cd packages/ds_tokens && dart run tool/generate.dart` |
+| Chạy app Windows | `cd apps/desktop && flutter run -d windows` |
+
+CI ở `.github/workflows/ci.yml`: định dạng, analyze, test cả 4 package, chạy migration trên Postgres, build image server, build app Windows.
 
 ## Cách cập nhật tài liệu
 

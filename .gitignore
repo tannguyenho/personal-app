@@ -1,0 +1,19 @@
+# Dart / Flutter
+.dart_tool/
+build/
+.packages
+pubspec_overrides.yaml
+coverage/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Môi trường
+.env
+deploy/.env
+
+# Hệ điều hành
+.DS_Store
+Thumbs.db

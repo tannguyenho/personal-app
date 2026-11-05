@@ -35,13 +35,13 @@ Monorepo ngay trong repo này, dùng pub workspaces (Q28):
 ```
 apps/
   desktop/        # app Flutter Windows (wakeup_desktop)
-    lib/ds/       # thư viện widget design system
-    figma/        # script xuất hợp đồng, plugin codegen (ADR-0008)
-  server/         # backend shelf (wakeup_server)
+    lib/ds/       # thư viện widget design system (ADR-0008)
+  server/         # backend shelf (wakeup_server), migration ở db/migrations
   web-mini/       # trang web tối giản, HTML tĩnh do Caddy phục vụ
 packages/
   core/           # wakeup_core: logic nghiệp vụ, DTO, lệnh, mã lỗi dùng chung
-  ds_tokens/      # wakeup_ds_tokens: tokens.json, components.json và code sinh ra
+  ds_tokens/      # wakeup_ds_tokens: tokens.json, script xuất Figma, code sinh ra
+deploy/           # Docker Compose, Caddyfile, sao lưu
 docs/             # PRD, SRS, ADR, tech
 ```
 
@@ -163,7 +163,7 @@ Xoá tài khoản thì hard-delete ngay trong DB. Dữ liệu còn trong bản s
 | Mục | Quyết định |
 |---|---|
 | Kiểu | Đồng bộ qua `commands` / `changes`; phần còn lại (auth, cài đặt, kết nối lịch, xuất dữ liệu, `app/latest`) là REST thường, tiền tố `/v1` |
-| Hợp đồng | DTO và lệnh định nghĩa trong `wakeup_core` (freezed + json_serializable). Bản 1.0 **không** làm OpenAPI vì client duy nhất là Dart |
+| Hợp đồng | DTO và lệnh định nghĩa trong `wakeup_core` (freezed + json_serializable khi DTO nhiều lên; khung hiện viết tay `toJson` / `fromJson`). Bản 1.0 **không** làm OpenAPI vì client duy nhất là Dart |
 | Lỗi | `{error: {code, message, details}}`. `code` là enum trong `wakeup_core` (`VERSION_CONFLICT`, `TASK_DELETED`, `PAST_DATE`, `CLIENT_TOO_OLD`…). Client ánh xạ `code` sang MSG của SRS; `message` chỉ để debug (Q19) |
 | Idempotency | `commandId` (UUIDv7) là khoá idempotency, server lưu 30 ngày. Gửi lại cùng lệnh nhận lại đúng kết quả cũ (Q20) |
 | Phân trang | Cursor, không dùng offset |
@@ -202,7 +202,7 @@ Webhook nhận qua `api.wakeup.tannguyenho.tech` sau Caddy.
 
 Code Connect **không dùng được** trên gói Figma hiện tại (Education). Đã chạy thử ngày 05/11/2026: CLI template với `label: Flutter`, `language: dart` parse đúng, nhưng mọi lệnh Code Connect đều bị từ chối vì cần gói Organization / Enterprise. Thay bằng lớp hợp đồng design ↔ code (Q35, Q40, ADR-0008):
 
-1. **Token 1-1.** Script Plugin API xuất toàn bộ Variables (collection, mode, alias) ra `packages/ds_tokens/tokens.json`. Bộ sinh code giữ nguyên đường dẫn tên: `color/bg/primary` → `DsTokens.color.bg.primary`. Mỗi mode (light / dark) là một `ThemeExtension`; alias giữ là tham chiếu, không làm phẳng.
+1. **Token 1-1.** Script Plugin API xuất toàn bộ Variables (collection, mode, alias) ra `packages/ds_tokens/tokens.json`. Bộ sinh code map tên 1-1: bỏ tên collection, các đoạn còn lại nối camelCase, `color/bg/primary` → `DsColors.bgPrimary`. Mỗi mode (light / dark) là một `ThemeExtension`; alias giữ là tham chiếu, không làm phẳng.
 2. **Component 1-1.** Script Plugin API xuất component set (tên, property, variant, giá trị mặc định, slot) ra `components.json`. Bộ sinh code tạo enum và kiểu tham số Dart (`DsButtonVariant { primary, secondary }`); widget bắt buộc dùng các kiểu này. Quy ước tên: component `Button` ↔ widget `DsButton`, property / variant trùng tên tham số, slot ↔ `child` / `leading`.
 3. **CI chặn lệch**: so `tokens.json` / `components.json` với code đã sinh; lệch thì báo đỏ. Lint cấm `Color(0x…)` và số khoảng cách cứng bên ngoài `ds_tokens`.
 4. **Plugin Codegen** riêng hiện snippet Dart trong Dev Mode Inspect. Nếu gói Education chặn plugin codegen thì nâng lên gói Organization để dùng Code Connect.
