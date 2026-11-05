@@ -35,6 +35,7 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
     ├── 01-quy-tac-dung-chung.md        # quy tắc dùng chung QC-01..QC-12 (ngày làm việc, trạng thái task, đổi ngày, AI…)
     ├── 02-tinh-nang-ban-sau.md         # tính năng đã chốt hướng nhưng để bản sau (nhiều thành viên, thanh toán…)
     ├── tech/                           # câu hỏi và quyết định tech stack & API
+    ├── design-system/                  # knowledge base cho agent: DS component / Snowflake, folder Figma
     ├── adr/                            # quyết định khó đảo ngược
     ├── review/                         # báo cáo review và quyết định chốt mâu thuẫn
     ├── research/                       # research Sunsama và kết quả kiểm chứng bằng Chrome
@@ -67,7 +68,7 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
 - **Bắt đầu từ PRD** để hiểu vấn đề, người dùng và phạm vi. Sau đó đọc **SRS** để biết chi tiết cần làm.
 - **PRD** có 10 mục: bối cảnh và vấn đề, người dùng, phạm vi, nguyên tắc sản phẩm, quy tắc / cấu hình, luồng trải nghiệm, use case + user story + acceptance criteria, chỉ số, rủi ro, câu hỏi mở.
 - **SRS** có 10 mục: tổng quan, user story, business rule (BR), trạng thái, use case (luồng chính, luồng thay thế A#, luồng lỗi E#), điểm vào, màn hình (SCR), API, danh sách thông báo (MSG), yêu cầu phi chức năng.
-- **Giao diện** theo design system riêng trên Figma; mục màn hình (SCR) trong SRS chỉ mô tả thành phần và hành vi, không mô tả hình ảnh.
+- **Giao diện** theo design system riêng trên Figma; mục màn hình (SCR) trong SRS chỉ mô tả thành phần và hành vi, không mô tả hình ảnh. Cách phân tầng DS component / Snowflake và tổ chức folder Figma: [`docs/design-system/`](docs/design-system/00-knowledge-base-components-snowflakes.md).
 - **API, mã lỗi, job** trong SRS là hợp đồng nghiệp vụ tham khảo; cách hiện thực theo [`docs/tech/01`](docs/tech/01-quyet-dinh-tech-stack-va-api.md).
 - Mỗi tài liệu chỉ mô tả phần thuộc nhóm của nó. Phần thuộc nhóm khác được ghi chú `(Gxx)` để người đọc mở tài liệu nhóm đó.
 - Quy tắc nhiều nhóm cùng dùng nằm ở [`docs/01-quy-tac-dung-chung.md`](docs/01-quy-tac-dung-chung.md) và được tham chiếu bằng mã `QC-xx`. Thuật ngữ chuẩn nằm ở [`CONTEXT.md`](CONTEXT.md).
