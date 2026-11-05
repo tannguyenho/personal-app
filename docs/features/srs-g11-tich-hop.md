@@ -6,7 +6,7 @@
 >
 > **Cập nhật 04/11/2026** theo [quyết định chốt mâu thuẫn](../review/quyet-dinh-chot-2026-11-04.md) (Q8, Q21, B14, B15, C27–C30, C34). Quy tắc dùng chung tham chiếu [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md): ngày làm việc QC-01, đồng bộ nhiều thiết bị QC-08, chế độ chỉ đọc QC-09, quyền theo gói QC-10 (cả hai có từ 1.1, cùng bản với G11), trợ lý AI qua Claude Code và MCP local QC-12 (mục 4, 6).
 >
-> **Cập nhật vòng 5–6 (04/11/2026)** theo Q35, Q45, Q46, [ADR-0004](../adr/0004-ai-qua-claude-code-cli.md), [ADR-0005](../adr/0005-nen-tang-windows-truoc.md): G11 phát hành 1.1 trên app Windows, web và macOS; dữ liệu tích hợp chỉ đến trợ lý AI qua công cụ MCP đọc dữ liệu tích hợp của G10 (BR-26); bản 1 chỉ một người dùng, Privacy "Tích hợp" để bản sau. Phần API, mã lỗi, job ở mục 8 là hợp đồng nghiệp vụ tham khảo; kiến trúc và luồng OAuth trên app desktop: tech chốt (`docs/tech/00-cau-hoi-tech-stack-va-api.md`).
+> **Cập nhật vòng 5–6 (04/11/2026)** theo Q35, Q45, Q46, [ADR-0004](../adr/0004-ai-qua-claude-code-cli.md), [ADR-0005](../adr/0005-nen-tang-windows-truoc.md): G11 phát hành 1.1 trên app Windows, web và macOS; dữ liệu tích hợp chỉ đến trợ lý AI qua công cụ MCP đọc dữ liệu tích hợp của G10 (BR-26); bản 1 chỉ một người dùng, Privacy "Tích hợp" để bản sau. Phần API, mã lỗi, job ở mục 8 là hợp đồng nghiệp vụ tham khảo; kiến trúc và luồng OAuth trên app desktop: tech chốt (`docs/tech/01-quyet-dinh-tech-stack-va-api.md`).
 
 ## 1. Tổng quan
 

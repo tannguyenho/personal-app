@@ -640,7 +640,7 @@ Cờ phụ đi kèm mọi trạng thái trên: `XUNG_DOT` (BR-14; không áp cho
 | Bận / rảnh (cài đặt, mặc định bận) | `transparency`: `opaque` / `transparent` | `showAs`: `busy` / `free` | – |
 | Riêng tư | `visibility`: `private` / `default` | `sensitivity`: `private` / `normal` | Channel riêng tư → luôn private; khác → mặc định của lịch |
 | Nhắc (theo lịch) | `reminders.useDefault = true` | `isReminderOn = true`, `reminderMinutesBeforeStart = 15` `[giả định]` | – |
-| Link về task | `description` | `body` (`contentType = text`) | "Mở trong {app}: {url}"; không ghi notes |
+| Link về task | `description` | `body` (`contentType = text`) | "Mở trong Wakeup: {url}"; không ghi notes |
 | `appTaskId`, `appBlockId` | `extendedProperties.private` | Open extension (`extensionName` `[giả định]`) | Nhận diện, chống trùng (BR-11) |
 | `calendarId` (lịch đích) | `calendarId` của sự kiện | `calendar.id` | Cố định từ lần đẩy đầu; chỉ đổi theo BR-13 (d) |
 | Timebox liên kết sự kiện | Không ghi | Không ghi | BR-21 |
