@@ -101,10 +101,12 @@ claude -p --output-format stream-json --input-format stream-json \
 - Mục nào người dùng đã sửa tay sau đó thì Hoàn tác mục đó bị từ chối kiểu `VERSION_CONFLICT`.
 - Chip AI trên card hiển thị dựa trên `actor`.
 
-### Chế độ API key và rủi ro điều khoản
+### Điều khoản Anthropic và phương án dự phòng
 
-- Ngoài đăng nhập claude.ai, app hỗ trợ chế độ **"dùng API key của bạn"**: người dùng nhập `ANTHROPIC_API_KEY`, app truyền cho CLI qua biến môi trường. Key lưu trong Credential Manager (Q24, ADR-0009).
-- Rủi ro điều khoản của Anthropic khi app gọi CLI dùng gói claude.ai của người dùng: cần pháp chế hoặc Anthropic xác nhận trước khi phát hành rộng.
+- PO **chấp nhận rủi ro điều khoản** và không chờ xác nhận pháp lý (ADR-0004, ticket #25).
+- App **không xử lý đăng nhập Claude**: không nhúng trang đăng nhập, không nhận, đọc hay lưu token hoặc API key; chỉ hướng dẫn người dùng tự chạy lệnh đăng nhập của Claude Code.
+- Phương án dự phòng nếu Anthropic chặn dùng gói claude.ai: chỉ bật AI trong app khi Claude Code đăng nhập bằng API key của người dùng, do người dùng tự cấu hình trong Claude Code (ADR-0009).
+- Không dùng tên hoặc logo Claude Code / Anthropic làm tên sản phẩm, tính năng hay nút; chỉ ghi chữ thường "chạy bằng Claude Code".
 
 ### Bản ghi phiên của Claude Code (C30)
 
@@ -234,7 +236,8 @@ File sandbox: [Wakeup – Code Connect pilot](https://www.figma.com/design/zWidv
 | Câu hỏi | Cần chốt trước |
 |---|---|
 | AI trên web và di động (Q37) | Làm 1.1 |
-| Pháp chế / Anthropic xác nhận cách app gọi Claude Code dùng gói claude.ai (ADR-0009) | Phát hành rộng 1.0 |
+| Cách phát hiện Claude Code đăng nhập bằng gói hay API key, cho phương án dự phòng (ADR-0009) | Làm G10 |
+| Chạy thử lại Code Connect trên team Figma thật của Wakeup (`0.1 [App] Multiverse`, xem [`docs/design-system/`](../design-system/00-knowledge-base-components-snowflakes.md)); nếu team đó thuộc gói Organization thì xem lại ADR-0008 | Dựng thư viện widget |
 | Gói Education có chạy được plugin Codegen trong Dev Mode không (ADR-0008) | Dựng thư viện widget |
 | Hồ sơ Nghị định 13/2023: VPS Singapore, Sentry, Resend, R2 là bên xử lý ở nước ngoài | Phát hành 1.0 |
 | Phiên bản Claude Code tối thiểu | Làm G10 |

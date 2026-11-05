@@ -107,16 +107,15 @@ Chi tiết ở [`docs/tech/01`](docs/tech/01-quyet-dinh-tech-stack-va-api.md) v�
 - **Backend:** Dart (`shelf`, SQL tay, dbmate), PostgreSQL; logic chung trong package `wakeup_core`.
 - **Đồng bộ:** hàng đợi lệnh (`POST /v1/commands`, `GET /v1/changes`, WebSocket báo thay đổi).
 - **Hạ tầng:** một VPS Ubuntu ở Singapore, Docker Compose + Caddy, prod và staging; `wakeup.tannguyenho.tech`, `api.wakeup.tannguyenho.tech`.
-- **AI:** `claude -p` chỉ được dùng công cụ `mcp__wakeup__*`; MCP qua HTTP `127.0.0.1` có token; thêm chế độ API key.
+- **AI:** `claude -p` chỉ được dùng công cụ `mcp__wakeup__*`; MCP qua HTTP `127.0.0.1` có token; PO chấp nhận rủi ro điều khoản, dự phòng bằng API key do người dùng cấu hình trong Claude Code (ADR-0009).
 - **Xác minh Google OAuth:** chủ dự án nộp ngay sau khi dựng trang web tối giản; Beta chạy chế độ Production chưa xác minh.
-- **Design system:** mapping 1-1 Figma ↔ Flutter bằng lớp hợp đồng sinh code (không dùng Code Connect vì cần gói Organization).
+- **Design system:** mapping 1-1 Figma ↔ Flutter bằng lớp hợp đồng sinh code (không dùng Code Connect vì cần gói Organization; chạy thử lại trên team Figma thật trước khi chốt hẳn).
 
 ## Câu hỏi còn mở
 
 - Pháp chế xác nhận hồ sơ đánh giá tác động chuyển dữ liệu ra nước ngoài (Nghị định 13/2023) trước khi phát hành 1.0.
 - Cổng thanh toán (gợi ý Stripe cho thẻ quốc tế, VNPay / MoMo cho nội địa) và định nghĩa các gói giá: chốt trước khi làm 1.1.
 - Chính sách hoàn tiền khi xoá tài khoản giữa kỳ (chờ pháp chế).
-- Pháp chế hoặc Anthropic xác nhận cách app gọi Claude Code bằng gói claude.ai của người dùng ([ADR-0009](docs/adr/0009-rui-ro-dieu-khoan-claude-code-va-che-do-api-key.md)).
 - AI trên web và di động: chốt trước khi làm 1.1.
 - Gói Figma Education có chạy được plugin Codegen trong Dev Mode không ([ADR-0008](docs/adr/0008-hop-dong-design-code-thay-code-connect.md)).
 - Các giá trị còn gắn `[giả định]` và câu hỏi mở còn lại ở mục 10 của từng PRD.
