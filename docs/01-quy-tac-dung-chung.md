@@ -124,7 +124,8 @@ Mọi đường làm thay đổi ngày dự định hoặc đưa task ra khỏi 
 | Đưa vào backlog | Timebox tương lai: gỡ. Quá khứ: gỡ liên kết | Tương lai: **xoá**. Quá khứ: giữ | Không dừng | Reset | G04, G06 |
 | Hoàn thành | Giữ; rút ngắn khi thời điểm hoàn thành nằm trong khoảng giờ của timebox | Cập nhật theo | **Dừng** | Reset | G02 |
 | Xoá | Tương lai: gỡ. Quá khứ: gỡ liên kết | Tương lai: xoá. Quá khứ: giữ | **Dừng** | — | G02 |
-| "Hoãn 1 tuần" (= max(ngày dự định, hôm nay) + 7 ngày, D5), phím S | Như "kéo sang ngày khác" | Cập nhật theo | Không dừng | Reset | G04, G06 |
+| Phím S: về hôm nay (F1) | Như "kéo sang ngày khác" | Cập nhật theo | Không dừng | Reset | G04, G06 |
+| "Hoãn 1 tuần" (= max(ngày dự định, hôm nay) + 7 ngày, D5); chỉ qua command menu / menu Ngày dự định, không có phím tắt (F1) | Như "kéo sang ngày khác" | Cập nhật theo | Không dừng | Reset | G04, G06 |
 | Tự lưu trữ (`stale`), lưu trữ do trùng series (`skipped`, D6) | Như "Đưa vào backlog" | Như "Đưa vào backlog" | Không dừng | — | G06 |
 | AI dời ngày | Như "kéo sang ngày khác" | Như trên | Không dừng | Reset | G10 |
 

@@ -352,6 +352,7 @@ AC03: Lệnh có tác dụng phụ (D, S, Ctrl+↑/↓, sắp lại) có toast H
 - "Sắp xếp lại" khi đang bật tự sắp: tạm tắt tự sắp cho ngày đó hay chỉ đổi vị trí tuỳ chỉnh?
 - Phím hoãn 1 tuần là gì (Shift+D đã dùng cho Todoist ở G11)?
 - Đã chốt 04/11/2026: "Hoãn 1 tuần" và phím S đặt lại số ngày bị hoãn; đã thêm dòng "Hoãn 1 tuần, phím S" vào QC-05 và QC-04 mục 3 (Q40).
+- Đã chốt 06/11/2026: phím S = về hôm nay; "Hoãn 1 tuần" ít dùng nên chỉ còn là lệnh, không có phím tắt. QC-05 tách thành hai dòng (F1).
 - Đã chốt 04/11/2026: "Hoãn 1 tuần" = max(ngày dự định, hôm nay) + 7 ngày; rơi vào ngày nghỉ (ngày không có trong lịch của task) thì giữ nguyên ngày đó, không lùi (D5).
 - Đã chốt 04/11/2026: số ngày bị hoãn tính theo lịch hiện tại của task; đổi lịch, khung giờ channel hoặc channel thì số có thể thay đổi (D4, QC-04 mục 1).
 - Đã chốt 04/11/2026: bỏ "ghi đè giờ làm việc theo channel `[giả định]`", thay bằng khung giờ channel do G02 sở hữu. Sức chứa ngày = thời gian trống trong hợp lịch chung và mọi khung channel có trong ngày; projection, cờ "Vượt giờ làm" và "ngày làm việc kế tiếp" của phím D theo lịch của task (Q38a, QC-02 mục 5–7).

@@ -57,6 +57,7 @@
 | BR-21 | **Chế độ chỉ đọc (bản 1.1, QC-09).** Workspace chỉ đọc → không chạy rollover, không tạo lượt. Khi thoát chỉ đọc: rollover chạy bù một lần; các ngày làm việc bị đóng băng không tính vào số ngày bị hoãn (QC-04 mục 6). Bản 1.0 không có chế độ chỉ đọc |
 | BR-22 | **Đổi mốc đầu ngày hoặc timezone** (Q3, QC-01 mục 3): có hiệu lực từ ngày làm việc kế tiếp; ngày hiện tại kết thúc và rollover theo cài đặt cũ; không chạy lại rollover cho ngày đã có lượt `XONG` (EC-06) |
 | BR-23 | **Task được giao (bản sau** — Q35, Q36, `docs/02-tinh-nang-ban-sau.md`). Task người khác giao cho người dùng vào `BACKLOG`, bucket `next_week` ("Tuần tới"; Q36 gọi là "Tuần sau"), đặt lên đầu bucket. Không có ở 1.0 (bản 1 chỉ cho một người dùng) |
+| BR-24 | **Hiển thị khi rollover chưa xong** (F2, dùng chung cho G04, G08). (a) **Đang chờ** (`DANG_CHAY` còn lease, `CHO_SHUTDOWN`): không báo lỗi; board hiện rollover tạm trên máy (`DANG_CHAY`) hoặc để task ngày cũ ở yên cột ngày cũ (`CHO_SHUTDOWN`); bước "Xem lại hôm qua" của Daily planning hiện G08 MSG-32 và tự tải lại khi rollover xong (realtime). (b) **Thất bại** (`ROLLOVER_FAILED`, hoặc `THAT_BAI`): ở mọi nơi chỉ một cách hiển thị: banner **MSG-25** có "Thử lại" (gọi lại \[RolloverEnsure\]), theo hàng chờ banner của G04 SCR-01 #5 (IA-17). Board giữ rollover tạm; bước "Xem lại hôm qua" vẫn tải danh sách hiện có, không hiện MSG-32. G04 MSG-27 dùng đúng nội dung MSG-25 |
 
 ### 3.1. Ví dụ kiểm thử số ngày bị hoãn (QC-04, Q32)
 
@@ -67,7 +68,7 @@ Giả thiết: lịch chung Thứ Hai–Thứ Sáu; `#Cá nhân` có khung Thứ
 | 1 | Task `#Công ty`, `firstPlannedDate` Thứ Sáu 06/11, chưa xong | Rollover Thứ Bảy 07/11, Chủ Nhật 08/11: task sang hôm nay, n = 0, không có nhãn "Dời". Thứ Hai 09/11: n = 1. Thứ Năm 12/11: n = 4 → tự lưu trữ `stale` |
 | 2 | Task `#Cá nhân`, `firstPlannedDate` Thứ Sáu 06/11, chưa xong | Thứ Bảy n = 1, Chủ Nhật n = 2, Thứ Hai n = 3; Thứ Ba 10/11 n = 4 → tự lưu trữ |
 | 3 | Như 1, Thứ Hai 09/11 người dùng nhấn D (sang Thứ Ba 10/11) | `firstPlannedDate` giữ 06/11; Thứ Ba n = 2 |
-| 4 | Như 1, Thứ Hai 09/11 người dùng chọn "Hoãn 1 tuần" hoặc phím S | n = 0; `firstPlannedDate` = ngày dự định mới (Q40) |
+| 4 | Như 1, Thứ Hai 09/11 người dùng chọn "Hoãn 1 tuần" (task sang 16/11) hoặc nhấn S (task về hôm nay) | n = 0; `firstPlannedDate` = ngày dự định mới (Q40) |
 | 5 | Như 1, Thứ Hai 09/11 người dùng đổi channel của task sang `#Cá nhân` | n tính lại theo khung `#Cá nhân`: n = 3 (BR-10, D4) |
 | 6 | Lượt rollover Thứ Bảy 07/11 thất bại, task cũ được chuyển lần đầu vào Chủ Nhật 08/11 | Một lần chuyển (EC-05); task `#Công ty` n = 0, task `#Cá nhân` n = 2; n không phụ thuộc số lượt rollover |
 | 7 | Như 1, Thứ Bảy 07/11 (task đã rollover sang 07/11) người dùng chọn "Hoãn 1 tuần" | Ngày dự định = max(07/11, 07/11) + 7 = Thứ Bảy 14/11; Thứ Bảy không có trong lịch của task nhưng **giữ nguyên** 14/11, không lùi sang Thứ Hai 16/11 (D5); n = 0 |
@@ -501,7 +502,7 @@ API dưới đây là hợp đồng nghiệp vụ tham khảo; kiểu API, tên,
 | MSG-22 | – | (Bỏ ở 1.0 — Q34, bản sau) Bạn đã lưu trữ |
 | MSG-23 | Toast | Task đã thay đổi trên thiết bị khác |
 | MSG-24 | Toast | Không thể đặt task chưa xong vào ngày đã qua |
-| MSG-25 | Banner | Chưa chuyển được việc dở từ hôm trước sang hôm nay. Thử lại |
+| MSG-25 | Banner | Chưa chuyển được việc dở từ hôm trước sang hôm nay. Thử lại (BR-24; G04 MSG-27 dùng nội dung này) |
 
 Bản EN: `[chờ bổ sung]`.
 

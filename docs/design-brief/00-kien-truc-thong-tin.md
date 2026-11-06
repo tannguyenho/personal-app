@@ -117,7 +117,7 @@ Home board tự giảm số cột ngày hiện được khi cửa sổ hẹp l�
 | Màn | Khi nào | Ghi chú | Nguồn |
 |---|---|---|---|
 | Đăng ký, mã xác minh, đăng nhập, quên mật khẩu | Chưa đăng nhập | Toàn cửa sổ, không có sidebar, nội dung đặt giữa (IA-12) | G01 SCR-01 … SCR-04 |
-| Onboarding 5 bước | Lần đăng nhập đầu, hoặc onboarding còn dở | Như trên. Bước nhập task trông giống ô soạn thật. Xong thì vào Home hôm nay (IA-12) | G01 SCR-05 |
+| Onboarding 5 bước | Lần đăng nhập đầu, hoặc onboarding còn dở | Như trên. Bước nhập task trông giống ô soạn thật. Xong thì vào Home hôm nay với Daily planning ở chế độ có hướng dẫn thay vùng chính (IA-12, sửa theo F3 ngày 06/11/2026; G01 US2.2) | G01 SCR-05 |
 | Focus mode | F; sidebar Focus | Ẩn sidebar và panel phải. Esc / nút thoát về màn trước, timer vẫn chạy (IA-03) | G07 SCR-03 |
 | Ô thêm nhanh toàn cục | Ctrl+Shift+A ở bất kỳ đâu trên Windows | Cửa sổ nổi nhỏ, không viền, ở giữa màn hình đang dùng, luôn ở trên. Click ra ngoài thì đóng, giữ bản nháp. Enter: hiện "Đã thêm vào Hôm nay" ~1 giây rồi đóng, trả focus về app trước. Shift+Enter: thêm và giữ ô mở. Cửa sổ chính đang ở khay thì vẫn ở khay (IA-19) | G02 US1.1 AC07, D11 |
 
@@ -211,7 +211,7 @@ Chỉ ghi điểm vào cấp app (từ khung, phím, khay, thông báo). Điểm
 | IA-09 | Lưu trữ và Thùng rác chung một panel, hai tab | Q9 |
 | IA-10 | Trung tâm thông báo là popover cạnh chuông; bấm thông báo Windows đưa app lên trước và mở đúng đích | Q10 |
 | IA-11 | Mốc cửa sổ hẹp 1280 / 1024 px, tối thiểu 800 × 600 `[giả định]` | Q11 |
-| IA-12 | Đăng nhập và onboarding toàn cửa sổ, không có sidebar; xong onboarding vào Home hôm nay | Q12 |
+| IA-12 | Đăng nhập và onboarding toàn cửa sổ, không có sidebar; xong onboarding vào Home hôm nay, mở Daily planning có hướng dẫn (F3, 06/11/2026) | Q12, F3 |
 | IA-13 | Panel Tasks = task của ngày đang xem, chỉ hiện ở Calendar view | Q13 |
 | IA-14 | Thứ tự sidebar như mục 2 | Q14 |
 | IA-15 | Thêm phím Ctrl+J (Trợ lý), Ctrl+, (Cài đặt), Ctrl+\\ (panel phải) | Q15 |

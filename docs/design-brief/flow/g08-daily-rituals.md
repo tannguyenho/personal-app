@@ -197,8 +197,11 @@ flowchart TD
   s6["SCR-07 Bước 6 Chia sẻ"]
   s1 ==> s2 ==>|"bước 3, 4"| s5 ==> s6
 
-  s1 -->|"BR-06 · RolloverEnsure trả CHO_SHUTDOWN / THAT_BAI"| b6m>"MSG-32 · Inline<br/>Việc từ hôm qua đang được chuyển sang. Danh sách sẽ tự cập nhật"]
+  s1 -->|"BR-06 · RolloverEnsure trả DANG_CHAY / CHO_SHUTDOWN"| b6m>"MSG-32 · Inline<br/>Việc từ hôm qua đang được chuyển sang. Danh sách sẽ tự cập nhật"]
   b6m --> b6["Hiện danh sách đang có<br/>tự tải lại khi rollover xong, realtime"]
+  s1 -.->|"BR-06 · THAT_BAI / ROLLOVER_FAILED"| b6f>"G06 MSG-25 · Banner<br/>Chưa chuyển được việc dở từ hôm trước sang hôm nay. Thử lại"]
+  b6f -.->|"Thử lại"| b6r[["RolloverEnsure lại · G06 BR-24"]]
+  b6f -.-> b6
   b6 --> s1
   s1 -->|"A7 · không có task"| a7m>"MSG-17 · Empty state<br/>Không còn việc nào từ hôm qua<br/>nút Tiếp"]
   a7m --> s2
@@ -219,6 +222,7 @@ flowchart TD
   s5 -.->|"E5 · Trở ngại > 5.000 ký tự"| e5m>"MSG-22 · Inline<br/>Nội dung tối đa 5.000 ký tự<br/>chặn Tiếp"]
 
   class s1,s2,s5,s6 happy
+  class b6f,b6r err
   class b6,a7m,a8,a8m,a9m,a9r alt
   class b6m warn
   class a14,d14 ai
@@ -305,7 +309,8 @@ flowchart TD
 | E3 | Mất mạng | Chạy trên dữ liệu máy, xếp hàng, gửi khi có mạng | MSG-23 |
 | E4 | `RitualComplete` 5xx / timeout | Giữ bước 6, Thử lại cùng key | MSG-12 |
 | E5 | Trở ngại > 5.000 ký tự | Chặn Tiếp | MSG-22 |
-| BR-06 | `RolloverEnsure` trả `CHO_SHUTDOWN` / `THAT_BAI` | Danh sách hiện có, tự tải lại | MSG-32 |
+| BR-06 | `RolloverEnsure` trả `DANG_CHAY` / `CHO_SHUTDOWN` | Danh sách hiện có, tự tải lại | MSG-32 |
+| BR-06 | `RolloverEnsure` trả `THAT_BAI` / lỗi `ROLLOVER_FAILED` | Danh sách hiện có, banner "Thử lại" (G06 BR-24) | G06 MSG-25 |
 | BR-08 | Quá tải ở bước 3 | Cảnh báo, không chặn | MSG-03 |
 | BR-09 | Dự kiến xong muộn hơn giờ kết thúc ngày | Cảnh báo, không chặn | MSG-06 |
 | – | Plan my day (trợ lý AI bật) | → [G10 · UC-02](g10-tro-ly-ai.md); xong về bước 5, lỗi về bước 1 | – |
