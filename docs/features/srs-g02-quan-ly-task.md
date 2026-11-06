@@ -118,7 +118,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
-| 1 | Người dùng | Bấm "Thêm task" trên cột ngày D (hoặc phím A khi cột D đang chọn) |
+| 1 | Người dùng | Bấm "Thêm task" trên cột ngày D ≥ hôm nay (hoặc phím A khi cột D đang chọn). Cột ngày đã qua không có nút "Thêm task" (IA-20) |
 | 2 | Hệ thống | Mở **SCR-01**, focus vào ô tiêu đề; ngày = D |
 | 3 | Người dùng | Gõ tiêu đề |
 | 4 | Hệ thống | Sau 400 ms ngừng gõ `[giả định]`, nếu đủ điều kiện BR-04 (trợ lý AI bật, đã đồng ý, có Claude Code, bật gợi ý) gọi \[TaskSuggest\] qua Claude Code CLI; điền thời lượng và channel có biểu tượng ✨ (BR-04) |
@@ -135,6 +135,8 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | A3 | Người dùng nhấn Esc khi đã gõ | Đóng ô soạn, giữ bản nháp trên máy; mở lại ô soạn của cùng ngày thấy nội dung cũ |
 | A4 | \[TaskSuggest\] lỗi / chậm > 2s / tắt gợi ý / trợ lý AI tắt hoặc chưa đồng ý / máy không có Claude Code (QC-12 mục 2) / Claude Code báo hết hạn mức | Không có gợi ý AI, không gọi LLM nào khác (Q33); thời lượng trống, channel mặc định (BR-05); ô soạn không chờ, tạo task bình thường |
 | A5 | Gõ "#" trong tiêu đề | Mở danh sách channel có ô tìm; chọn → gán channel, xoá "#..." khỏi tiêu đề |
+| A6 | Phím A khi cột đang chọn là ngày đã qua | Ô soạn mở ở cột **hôm nay**, board cuộn tới cột hôm nay (IA-20) |
+| A7 | Phím toàn cục Ctrl+Shift+A, ở bất kỳ đâu trên Windows (US1.1 AC07, D11, IA-19) | Mở **ô thêm nhanh toàn cục**: cửa sổ nổi nhỏ, không viền, giữa màn hình đang dùng, luôn ở trên; ngày = hôm nay. Enter → tạo như bước 6, hiện "Đã thêm vào Hôm nay" khoảng 1 giây rồi đóng, trả focus về app trước. Shift+Enter → tạo và giữ ô mở. Click ra ngoài hoặc Esc → đóng, giữ bản nháp. Cửa sổ chính đang ở khay thì vẫn ở khay. Tắt phím tắt (G01 BR-15) thì phím này ngừng. Luồng lỗi E1–E4 như ô soạn |
 
 **Luồng lỗi**
 
@@ -145,7 +147,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | E3 | Mất mạng | Lưu vào hàng đợi trên máy (QC-08), card có biểu tượng "chờ đồng bộ"; có mạng gửi lại với cùng idempotency key (không tạo trùng) |
 | E4 | \[TaskCreate\] lỗi 5xx | Card chuyển trạng thái lỗi, MSG-10 có nút "Thử lại" |
 | E5 | (1.1) Workspace chỉ đọc (QC-09) | MSG-11, không tạo |
-| E6 | Ngày D < hôm nay (cột ngày đã qua) | Server trả `VALIDATION_FAILED` · field startDate · `PAST_DATE` (QC-05); MSG-20, không tạo; nội dung còn trong ô soạn |
+| E6 | Ngày D < hôm nay khi gửi (ví dụ ô soạn mở trước mốc đầu ngày, gửi sau mốc; cột đã qua không còn lối mở ô soạn, IA-20) | Server trả `VALIDATION_FAILED` · field startDate · `PAST_DATE` (QC-05); MSG-20, không tạo; nội dung còn trong ô soạn |
 
 ### UC-02 Xem và sửa chi tiết task
 

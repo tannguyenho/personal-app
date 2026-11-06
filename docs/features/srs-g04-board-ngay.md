@@ -392,7 +392,7 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | Gõ thẳng phím tắt (H, T, P, O, B, Tab, D, S, F, K, Shift+F, Shift+C/T/B/A, <, >, Shift+L…) | Chạy lệnh như bước 4, không mở menu |
+| A1 | Gõ thẳng phím tắt (H, T, P, O, B, Tab, D, S, F, K, Shift+F, Shift+C/T/B/A, <, >, Shift+L…; Ctrl+\\ ẩn / hiện panel phải, Ctrl+J mở / đóng mục Trợ lý, Ctrl+, mở Cài đặt — IA-15) | Chạy lệnh như bước 4, không mở menu |
 | A2 | Lần đầu dùng phím tắt | Toast MSG-21 (một lần / tài khoản) |
 | A3 | Phím ? | Mở bảng phím tắt **SCR-09** |
 | A4 | Gõ ≥ 4 ký tự trong 1 giây ngoài ô nhập (EC-25) | Khoá phím một ký tự 1 giây; ký tự gõ trong lúc khoá bị bỏ qua, không chạy lệnh |

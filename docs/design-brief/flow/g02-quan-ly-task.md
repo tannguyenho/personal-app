@@ -7,7 +7,7 @@
 
 | UC | Flow | Màn chính | Nhánh A / E (1.0) |
 |---|---|---|---|
-| [UC-01](#uc-01-tạo-task) | Tạo task | SCR-01 Ô soạn task, SCR-02 Task card | 5 / 5 |
+| [UC-01](#uc-01-tạo-task) | Tạo task | SCR-01 Ô soạn task, SCR-N01 Ô thêm nhanh toàn cục, SCR-02 Task card | 7 / 5 |
 | [UC-02](#uc-02-xem-và-sửa-chi-tiết-task) | Xem và sửa chi tiết task | SCR-03 Chi tiết task | 12 / 7 |
 | [UC-03](#uc-03-hoàn-thành--bỏ-hoàn-thành-task) | Hoàn thành / bỏ hoàn thành | SCR-02, SCR-03 | 7 / 3 |
 | [UC-04](#uc-04-xoá-hoàn-tác-và-khôi-phục-task) | Xoá, hoàn tác, khôi phục | SCR-04 Menu "Khác", SCR-05 Thùng rác | 7 / 3 |
@@ -18,13 +18,13 @@
 
 ## UC-01 Tạo task
 
-**Mở đầu:** board, cột ngày D ≥ hôm nay. **Thành công:** task nằm trên cột D (hoặc trong Backlog), tổng thời lượng cột tăng. **Thất bại:** không có task mới, nội dung còn trong ô soạn.
+**Mở đầu:** board, cột ngày D ≥ hôm nay (cột đã qua không có "+ Thêm task", IA-20); hoặc bất kỳ đâu trên Windows với Ctrl+Shift+A (A7). **Thành công:** task nằm trên cột D (hoặc trong Backlog), tổng thời lượng cột tăng. **Thất bại:** không có task mới, nội dung còn trong ô soạn.
 
 ### Happy case
 
 ```mermaid
 flowchart TD
-  start(["Board · cột ngày D"])
+  start(["Board · cột ngày D ≥ hôm nay"])
   u1[/"Bấm + Thêm task<br/>hoặc chọn cột rồi nhấn A"/]
   s1["SCR-01 Ô soạn task<br/>focus ô tiêu đề, ngày = D"]
   u2[/"Gõ tiêu đề"/]
@@ -77,11 +77,13 @@ flowchart TD
   a2 --> a2m>"MSG-07 · Toast<br/>Đã thêm vào Backlog · Mở Backlog"]
   a2m -->|"bấm Mở Backlog"| a2x{{"→ G06 Backlog"}}
   s1 -->|"A3 · Esc khi đã gõ"| a3(["Ô soạn đóng, bản nháp giữ trên máy<br/>mở lại cùng ngày thấy nội dung cũ"])
+  past(["Board · cột ngày đã qua đang chọn<br/>không có nút + Thêm task"]) -->|"A6 · nhấn A, IA-20"| a6["Board cuộn tới cột hôm nay"]
+  a6 --> s1
 
   u3 -.->|"E1 · tiêu đề trống"| e1["Nút tạo disabled<br/>Enter không làm gì"]
   u3 -.->|"E2 · > 500 ký tự"| e2m>"MSG-01 · Inline<br/>Tên task tối đa 500 ký tự"]
   e2m -.-> s1
-  p2 -.->|"E6 · cột D đã qua, PAST_DATE"| e6m>"MSG-20 · Inline<br/>Không thể đặt task chưa xong vào ngày đã qua"]
+  p2 -.->|"E6 · D đã thành ngày qua khi gửi<br/>qua mốc đầu ngày lúc ô soạn đang mở, PAST_DATE"| e6m>"MSG-20 · Inline<br/>Không thể đặt task chưa xong vào ngày đã qua"]
   e6m -.-> fail(["Không tạo, nội dung còn trong ô soạn"])
   p2 -.->|"E3 · mất mạng"| e3["SCR-02 card có dấu chờ đồng bộ<br/>hàng đợi trên máy QC-08"]
   e3 -.->|"có mạng, gửi lại cùng idempotency key"| ok
@@ -90,13 +92,58 @@ flowchart TD
   e4m -.->|"Thử lại"| p2
 
   class s1,u2,u3,p2 happy
-  class a1,a5,a5b,a2,a2m,a3 alt
+  class a1,a5,a5b,a2,a2m,a3,past,a6 alt
   class a4 ai
   class a2x link
   class e1,e2m,e6m,e4,e4m err
   class e3 sync
   class ok done
   class fail fail
+  classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
+  classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
+  classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
+  classDef warn fill:#FEF4E2,stroke:#B45309,color:#4A2604
+  classDef ai fill:#F1ECFD,stroke:#6D28D9,color:#2E1065
+  classDef sync fill:#FFFFFF,stroke:#6B7280,stroke-dasharray:4 3,color:#1F2937
+  classDef link fill:#FFFFFF,stroke:#0F766E,stroke-dasharray:4 3,color:#0B3B36
+  classDef done fill:#E6F4F1,stroke:#0F766E,stroke-width:3px,color:#0B3B36
+  classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
+```
+
+### Nhánh thay thế: ô thêm nhanh toàn cục (A7)
+
+Màn: SCR-N01 (chưa có mã trong SRS, mã theo [bản thử brief G02](../_thu-g02-tao-va-chi-tiet-task.md)). Nguồn: UC-01 A7, US1.1 AC07, D11, IA-19.
+
+```mermaid
+flowchart TD
+  start(["Bất kỳ đâu trên Windows<br/>app đang mở, ở nền hoặc ở khay"])
+  u1[/"Nhấn Ctrl+Shift+A"/]
+  d0{"Phím tắt đang bật?<br/>G01 BR-15"}
+  s1["SCR-N01 Ô thêm nhanh toàn cục<br/>cửa sổ nổi nhỏ, giữa màn hình đang dùng<br/>luôn ở trên, ngày = hôm nay"]
+  u2[/"Gõ tiêu đề"/]
+  u3[/"Enter"/]
+  p1[["TaskCreate như bước 6"]]
+  s2["Đã thêm vào Hôm nay<br/>khoảng 1 giây"]
+  ok(["Ô đóng, focus về app trước<br/>cửa sổ chính ở khay thì vẫn ở khay"])
+
+  start ==> u1 ==> d0
+  d0 ==>|"có"| s1 ==> u2 ==> u3 ==> p1 ==> s2 ==> ok
+  d0 -->|"không"| off(["Không có gì xảy ra"])
+  u2 -->|"Shift+Enter"| p2[["TaskCreate, giữ ô mở<br/>ô trống cho task kế tiếp"]]
+  p2 --> u2
+  s1 -->|"Click ra ngoài hoặc Esc"| a3(["Ô đóng, bản nháp giữ<br/>mở lại thấy nội dung cũ"])
+  u3 -.->|"E1 · tiêu đề trống"| e1["Enter không làm gì"]
+  u3 -.->|"E2 · > 500 ký tự"| e2m>"MSG-01 · Inline<br/>Tên task tối đa 500 ký tự"]
+  p1 -.->|"E3 · mất mạng"| e3["Hàng đợi trên máy QC-08<br/>vẫn hiện Đã thêm vào Hôm nay"]
+  e3 -.-> ok
+  p1 -.->|"E4 · lỗi 5xx"| e4m>"MSG-10 · Toast<br/>Chưa lưu được thay đổi. Thử lại"]
+
+  class start,u1,d0,s1,u2,u3,p1,s2 happy
+  class p2,a3 alt
+  class off alt
+  class e1,e2m,e4m err
+  class e3 sync
+  class ok done
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
   classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
@@ -117,12 +164,14 @@ flowchart TD
 | A3 | Esc khi đã gõ | Ô soạn đóng, giữ nháp | – |
 | A4 | Không có gợi ý AI | Về luồng chính, không chờ | – |
 | A5 | Gõ "#" | Chip Channel được gán | – |
+| A6 | Phím A trên cột đã qua | Ô soạn mở ở cột hôm nay (IA-20) | – |
+| A7 | Ctrl+Shift+A toàn cục | Ô thêm nhanh, task vào hôm nay (IA-19) | "Đã thêm vào Hôm nay" (chưa có mã MSG) |
 | E1 | Tiêu đề trống | Nút tạo disabled | – |
 | E2 | > 500 ký tự | Chặn tạo | MSG-01 |
 | E3 | Mất mạng | Card chờ đồng bộ → gửi lại | – |
 | E4 | Lỗi 5xx | Card lỗi, Thử lại | MSG-10 |
 | E5 | Workspace chỉ đọc | Bỏ (1.1) | – |
-| E6 | Cột ngày đã qua | Không tạo | MSG-20 |
+| E6 | Ngày D thành ngày đã qua khi gửi | Không tạo | MSG-20 |
 
 ---
 

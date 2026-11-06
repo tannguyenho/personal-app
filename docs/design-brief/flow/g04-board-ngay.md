@@ -67,8 +67,10 @@ flowchart TD
   s1 ==> u2 ==> ok
 
   s1 -->|"A1 · phím T / sidebar Today"| a1["Today view, chưa có mã SCR<br/>task của ngày đang xem + lịch ngày G05"]
-  s1 -->|"A2 · hover header cột ngày ≥ hôm nay"| a2["SCR-02 #4 nút Plan hiện<br/>cột đã qua: không hiện"]
+  s1 -->|"A2 · hover header cột ngày ≥ hôm nay"| a2["SCR-02 #4 nút Plan hiện"]
   a2 -->|"bấm Plan"| a2x{{"→ G08 · UC-01"}}
+  s1 -->|"cột ngày đã qua, IA-20"| ia20["SCR-02 #4, #6 không có nút Plan<br/>và không có + Thêm task"]
+  ia20 -->|"nhấn A"| ia20x{{"→ G02 · UC-01 A6<br/>ô soạn mở ở cột hôm nay"}}
   u2 -->|"A3 · Calendar views"| a3["SCR-01 Calendar view<br/>sự kiện G05, timebox,<br/>projection mờ hơn sự kiện thật"]
   u2 -->|"A4 · Month view"| a4["SCR-01 Month view<br/>mỗi ngày tối đa 3 task, +n"]
   a4 -->|"bấm +n"| a4b["Popover danh sách task của ngày"]
@@ -86,6 +88,8 @@ flowchart TD
   s1 -->|"A10 · ngày ngoài khoảng instance lặp đã sinh, C17"| a10["SCR-02 card mờ nhãn Dự kiến BR-23<br/>không kéo được, không tính vào tổng"]
 
   class s1,u2 happy
+  class ia20 alt
+  class ia20x link
   class a1,a2,a3,a4,a4b,a5,a6,a7,d7,a7b,a8,a9,a10 alt
   class a8m warn
   class a2x,a8x link
@@ -130,6 +134,41 @@ flowchart TD
   class e2,e2m,e4,e4m err
   class e3,e3m warn
   class fail fail
+  classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
+  classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
+  classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
+  classDef warn fill:#FEF4E2,stroke:#B45309,color:#4A2604
+  classDef ai fill:#F1ECFD,stroke:#6D28D9,color:#2E1065
+  classDef sync fill:#FFFFFF,stroke:#6B7280,stroke-dasharray:4 3,color:#1F2937
+  classDef link fill:#FFFFFF,stroke:#0F766E,stroke-dasharray:4 3,color:#0B3B36
+  classDef done fill:#E6F4F1,stroke:#0F766E,stroke-width:3px,color:#0B3B36
+  classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
+```
+
+### Banner trạng thái (SCR-01 #5, IA-17)
+
+Vùng chính chỉ có **một** banner cùng lúc. Nhiều điều kiện cùng đúng thì banner ưu tiên cao nhất hiện; các banner còn lại chờ tới lượt và vào trung tâm thông báo ([G12 UC-09](g12-workspace-billing.md)).
+
+```mermaid
+flowchart TD
+  start(["Có điều kiện cần banner<br/>offline / lịch cần kết nối lại /<br/>rollover lỗi / lệch timezone"])
+  d1{"Đang có banner<br/>ưu tiên cao hơn?"}
+  s1["SCR-01 #5 hiện banner này<br/>thứ tự: offline → lịch cần kết nối lại<br/>→ rollover lỗi → lệch timezone"]
+  q1["Banner chờ tới lượt"]
+  n1{{"→ G12 · UC-09<br/>đồng thời vào trung tâm thông báo"}}
+  d2{"Banner đang hiện<br/>hết điều kiện?"}
+  ok(["Banner kế tiếp trong hàng chờ hiện<br/>hoặc không còn banner"])
+
+  start ==> d1
+  d1 ==>|"không"| s1 ==> d2
+  d1 -->|"có"| q1 --> n1
+  q1 -->|"banner trên hết điều kiện"| s1
+  d2 ==>|"có: có mạng lại, đã kết nối lại,<br/>rollover xong, chọn Giữ / Đổi timezone"| ok
+
+  class start,d1,s1,d2 happy
+  class q1 alt
+  class n1 link
+  class ok done
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
   classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
@@ -847,7 +886,7 @@ flowchart TD
   s1 ==> u2 ==> p1 ==> ok
 
   k0(["Board · không có ô nhập focus<br/>cài đặt Phím tắt bật"])
-  k0 -->|"A1 · gõ thẳng phím tắt: H, T, P, O, B, Tab, D, S, F,<br/>Shift+F, Shift+C/T/B/A, <, >, Shift+L…"| a1[["Chạy lệnh như bước 4<br/>không mở menu"]]
+  k0 -->|"A1 · gõ thẳng phím tắt: H, T, P, O, B, Tab, D, S, F,<br/>Shift+F, Shift+C/T/B/A, <, >, Shift+L…<br/>Ctrl+\ panel phải, Ctrl+J Trợ lý, Ctrl+, Cài đặt IA-15"| a1[["Chạy lệnh như bước 4<br/>không mở menu"]]
   a1 --> ok
   a1 -->|"A2 · lần đầu dùng phím tắt"| a2m>"MSG-21 · Toast, một lần / tài khoản<br/>Phím tắt đầu tiên của bạn! Nhấn ? để xem tất cả"]
   k0 -->|"A3 · phím ?"| a3["SCR-09 Bảng phím tắt"]

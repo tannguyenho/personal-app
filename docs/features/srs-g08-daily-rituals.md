@@ -246,7 +246,7 @@ Các bước dưới đây là **đề xuất, chưa kiểm chứng trên Sunsam
 | --- | --- | --- |
 | 1 | Hệ thống | Job \[ritual.prompt\] chạy mỗi 5 phút `[giả định]`, chọn người dùng vừa tới giờ Daily planning / Daily shutdown theo timezone, và hôm nay là ngày làm việc của họ (BR-23) |
 | 2 | Hệ thống | Daily planning: kiểm tra BR-03; tạo thông báo MSG-01 (kênh theo G12; ở 1.0 là thông báo Windows và thông báo trong app) và chấm nhắc ở sidebar |
-| 3 | Hệ thống | Client đang mở (hoặc lần đầu mở app sau giờ plan) gọi \[RitualGet\]; server trả `autoOpen = true` và ghi `autoPromptedAt` nguyên tử |
+| 3 | Hệ thống | Cửa sổ app đang hiện (hoặc lần đầu đưa cửa sổ lên sau giờ plan, A10) gọi \[RitualGet\]; server trả `autoOpen = true` và ghi `autoPromptedAt` nguyên tử |
 | 4 | Hệ thống | Client nhận `autoOpen = true` → mở UC-01 bước 2 |
 | 5 | Người dùng | Làm Daily planning (UC-01) / Daily shutdown (UC-02), hoặc chọn "Bỏ qua hôm nay" trên SCR-12 → \[RitualUpdate\] `status = BO_QUA` |
 
@@ -263,6 +263,7 @@ Các bước dưới đây là **đề xuất, chưa kiểm chứng trên Sunsam
 | A7 | Đổi timezone / đổi giờ plan sau khi đã tự mở hôm nay | Không mở lại trong ngày D (khoá theo `autoPromptedAt`). Đổi mốc đầu ngày / timezone có hiệu lực từ ngày làm việc kế tiếp (QC-01 mục 3) |
 | A8 | Hôm nay là ngày nghỉ theo lịch chung (QC-02 mục 8), kể cả khi có khung giờ channel vào ngày đó | Không tạo thông báo, không tự mở, không chấm nhắc (BR-23) |
 | A9 | Lần đầu mở app sau giờ Daily shutdown, hoặc phiên shutdown hôm nay đã `HOAN_TAT` | Không tự mở Daily planning (C22); vẫn mở tay được |
+| A10 | Tới giờ khi app đang chạy nhưng cửa sổ ẩn ở khay hoặc thu nhỏ (IA-05) | Người dùng chỉ thấy thông báo Windows MSG-01 (bước 2, D12); client chưa gọi \[RitualGet\] tự mở khi cửa sổ chưa hiện. Bấm thông báo → đưa cửa sổ lên trước và mở Daily planning (IA-10). Tự mở cửa sổ từ khay (biểu tượng khay, "Mở app") → bước 3; wizard thay vùng chính (IA mục 7) |
 
 **Luồng lỗi**
 

@@ -12,7 +12,7 @@ Wizard ritual thay vùng chính; sidebar và panel phải vẫn dùng được �
 | [UC-01](#uc-01-daily-planning-luồng-thủ-công) | Daily planning (luồng thủ công) | SCR-01 khung, SCR-02 … SCR-07 | 15 / 4 (E2 Bỏ (1.1)) |
 | [UC-02](#uc-02-daily-shutdown) | Daily shutdown | SCR-01 khung, SCR-08, SCR-09, SCR-10, SCR-07, SCR-11 | 11 / 3 (E1 Bỏ (1.1)) |
 | [UC-03](#uc-03-chia-sẻ-kết-quả-ritual) | Chia sẻ kết quả ritual | SCR-07 | 5 / 4 |
-| [UC-04](#uc-04-tự-kích-hoạt-và-nhắc-ritual) | Tự kích hoạt và nhắc ritual | SCR-12 lời nhắc | 9 / 2 |
+| [UC-04](#uc-04-tự-kích-hoạt-và-nhắc-ritual) | Tự kích hoạt và nhắc ritual | SCR-12 lời nhắc | 10 / 2 |
 | [UC-05](#uc-05-cài-đặt-ritual-ngày) | Cài đặt ritual ngày | SCR-13 | 3 / 3 (phần ritual tuần của A3 Bỏ (1.1)) |
 
 ---
@@ -616,7 +616,7 @@ flowchart TD
   p1[["Chọn người dùng vừa tới giờ Daily planning theo timezone<br/>hôm nay là ngày làm việc theo lịch chung BR-23"]]
   p2[["Kiểm BR-03<br/>tạo thông báo và chấm nhắc ở sidebar"]]
   m1>"MSG-01 · SCR-12, thông báo Windows + trong app<br/>Đến giờ lên kế hoạch cho hôm nay · Bắt đầu (P) · Bỏ qua hôm nay"]
-  p3[["Client đang mở, hoặc lần đầu mở app sau giờ plan, gọi RitualGet<br/>server trả autoOpen = true, ghi autoPromptedAt nguyên tử"]]
+  p3[["Cửa sổ app đang hiện, hoặc lần đầu đưa cửa sổ lên sau giờ plan,<br/>gọi RitualGet; server trả autoOpen = true, ghi autoPromptedAt nguyên tử"]]
   s1["SCR-01 wizard Daily planning tự mở<br/>thay vùng chính"]
   x1{{"→ UC-01 bước 2"}}
   ok(["Daily planning tự mở đúng 1 lần trong ngày<br/>trên 1 thiết bị"])
@@ -662,10 +662,14 @@ flowchart TD
   b4(["Mở app trước giờ plan"]) -->|"A4"| a4["Không tự mở<br/>tới giờ khi app đang mở thì gọi RitualGet"]
   a4 --> p3
   b9(["Lần đầu mở app sau giờ Daily shutdown,<br/>hoặc shutdown hôm nay đã HOAN_TAT"]) -->|"A9"| a9(["Không tự mở Daily planning, C22<br/>vẫn mở tay được"])
+  p2 -->|"A10 · cửa sổ ẩn ở khay hoặc thu nhỏ, IA-05"| a10["Người dùng chỉ thấy thông báo Windows MSG-01<br/>chưa gọi RitualGet khi cửa sổ chưa hiện"]
+  a10 -->|"bấm thông báo, IA-10"| a10b["Đưa cửa sổ lên trước"]
+  a10 -->|"tự mở cửa sổ từ khay"| a10b
+  a10b --> p3
   s1 -->|"A7 · đổi timezone / giờ plan sau khi đã tự mở"| a7(["Không mở lại trong ngày D, khoá theo autoPromptedAt<br/>mốc đầu ngày, timezone mới có hiệu lực từ ngày làm việc kế tiếp"])
 
   class start,p1,p2,p3,s1 happy
-  class a8,a2,a6,a1,a3,a3m,b4,a4,b9,a9,a7 alt
+  class a8,a2,a6,a1,a3,a3m,b4,a4,b9,a9,a7,a10,a10b alt
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
   classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
@@ -726,6 +730,7 @@ flowchart TD
 | A7 | Đổi timezone / giờ plan sau khi đã tự mở | Không mở lại trong ngày | – |
 | A8 | Ngày nghỉ theo lịch chung | Không thông báo, không tự mở, không chấm nhắc | – |
 | A9 | Mở app sau giờ shutdown / shutdown đã xong | Không tự mở | – |
+| A10 | Cửa sổ ẩn ở khay / thu nhỏ khi tới giờ (IA-05) | Chỉ thông báo Windows; wizard mở khi cửa sổ được đưa lên | MSG-01 |
 | E1 | Job lỗi / trễ | Lần quét sau xử lý lại | – |
 | E2 | `RitualGet` lỗi khi tự mở | Không tự mở, giữ chấm nhắc | – |
 
