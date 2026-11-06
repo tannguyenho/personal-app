@@ -589,7 +589,7 @@ Cờ phụ đi kèm mọi trạng thái trên: `XUNG_DOT` (BR-14; không áp cho
 | \[ChannelCalendarUpdate\] `PATCH /channels/{id}` `[giả định]` | writeCalendarId (khung giờ channel thuộc API cài đặt channel của G02, QC-02 mục 5) | Channel | 5s / 2 lần |
 | \[CalendarDisconnect\] `DELETE /calendar/accounts/{id}` | deleteAppEvents (bool) | 204 | 10s / 1 lần |
 | \[CalendarEvents\] `GET /calendar/events?from&to` | from, to (≤ 42 ngày) | Event[] {id, calendarId, title, startsAt, endsAt, allDay, busy, appTaskId?, appBlockId?} | 5s / 1 lần |
-| \[TimeboxSet\] `PUT /tasks/{id}/timebox` | startsAt, endsAt, calendarId?, skipReschedule?, blockId? (trống = thêm timebox mới, C19), version, Idempotency-Key | Task + blocks[] {blockId, kind (`app` / `event_linked`), startsAt, endsAt, calendarId, syncStatus, conflict, dayMismatch, hardScheduled}, tasksRescheduled[] | 5s / 2 lần cùng key |
+| \[TimeboxSet\] `PUT /tasks/{id}/timebox` | startsAt, endsAt, calendarId?, skipReschedule?, blockId? (trống = thêm timebox mới, C19), version, Idempotency-Key | Task + blocks[] {blockId, kind (`app` / `event_linked`), startsAt, endsAt, calendarId, syncStatus, conflict, hardScheduled}, tasksRescheduled[] | 5s / 2 lần cùng key |
 | \[TimeboxDelete\] `DELETE /tasks/{id}/timebox` | blockId? (trống = mọi timebox) | Task | 5s / 2 lần |
 | \[TimeboxLink\] `POST /tasks/{id}/timebox/link` `[giả định]` | calendarId, eventId, Idempotency-Key | Task + block {kind: `event_linked`} | 5s / 2 lần cùng key |
 | Job `timebox.hardschedule` (1.1) | userId, seriesId? | createdCount, updatedCount | Khi sinh instance, khi bật toggle, mỗi mốc đầu ngày; idempotent theo instance |

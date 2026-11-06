@@ -82,8 +82,7 @@ flowchart TD
   d7 -->|"chưa"| a7b[["Như BR-25: RolloverEnsure<br/>rollover tạm trên máy"]]
   a7b --> s1
   s1 -->|"A8 · timezone thiết bị khác timezone người dùng, EC-02"| a8x{{"→ G01 · UC-06 banner timezone MSG-23 của G01"}}
-  a8x --> a8["Hiệu lực từ ngày làm việc kế tiếp: task giữ ngày dự định,<br/>timebox giữ thời điểm tuyệt đối<br/>SCR-02 card cờ Lệch ngày BR-24 nếu timebox rơi khác ngày"]
-  a8 --> a8m>"MSG-26 · Tooltip<br/>Lệch ngày: timebox ở {ngày timebox}, task dự định {ngày dự định}. Dời task hoặc dời timebox"]
+  a8x --> a8["Hiệu lực từ ngày làm việc kế tiếp: task giữ ngày dự định,<br/>timebox giữ thời điểm tuyệt đối<br/>timebox rơi khác ngày: task vẫn ở cột ngày dự định,<br/>không gắn cờ, không tự sửa F5"]
   s1 -->|"A9 · cửa sổ < 768 px"| a9["SCR-01 1 cột<br/>cuộn ngang / Shift+→/← đổi ngày"]
   s1 -->|"A10 · ngày ngoài khoảng instance lặp đã sinh, C17"| a10["SCR-02 card mờ nhãn Dự kiến BR-23<br/>không kéo được, không tính vào tổng"]
 
@@ -91,7 +90,6 @@ flowchart TD
   class ia20 alt
   class ia20x link
   class a1,a2,a3,a4,a4b,a5,a6,a7,d7,a7b,a8,a9,a10 alt
-  class a8m warn
   class a2x,a8x link
   class ok done
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -191,7 +189,7 @@ flowchart TD
 | A5 | Ẩn task đã xong | Card xong ẩn, tổng giữ | – |
 | A6 | Ngày > 100 task | Danh sách ảo hoá | – |
 | A7 | Qua mốc đầu ngày khi đang mở | Hôm nay mới, cột cũ `DA_QUA`; chưa có kết quả rollover thì như BR-25 | – |
-| A8 | Lệch timezone | Banner của [G01 UC-06](g01-tai-khoan.md); cờ Lệch ngày | G01 MSG-23, MSG-26 |
+| A8 | Lệch timezone | Banner của [G01 UC-06](g01-tai-khoan.md); task giữ cột ngày dự định, không gắn cờ (F5) | G01 MSG-23 |
 | A9 | Cửa sổ < 768 px | 1 cột | – |
 | A10 | Ngày ngoài khoảng instance đã sinh | Instance dự kiến mờ | – |
 | E1 | Mất mạng | Dữ liệu trên máy, banner offline | – (chưa có mã MSG) |

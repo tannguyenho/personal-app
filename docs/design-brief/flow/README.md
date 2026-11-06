@@ -10,13 +10,13 @@ GitHub hiển thị sẵn Mermaid. Muốn sửa và xem nhanh thì dán khối c
 | G02 | [Quản lý task](g02-quan-ly-task.md) (file mẫu) | 6 | 15 | UC-01 E5 |
 | G03 | [Task lặp lại](g03-task-lap-lai.md) | 7 | 18 | Một số nhánh 1.1 |
 | G04 | [Board ngày](g04-board-ngay.md) | 8 | 20 | Một số nhánh 1.1 |
-| G05 | [Lịch và timebox](g05-lich-timebox.md) | 9 | 23 | UC-05 auto-schedule, UC-09 lập lịch cứng (1.1) |
+| G05 | [Lịch và timebox](g05-lich-timebox.md) | 8 | 21 | UC-05 auto-schedule, UC-09 lập lịch cứng (1.1); UC-11 bỏ (F5) |
 | G06 | [Backlog, rollover, lưu trữ](g06-backlog-rollover.md) | 7 | 18 | Một số nhánh 1.1 |
 | G07 | [Focus và timer](g07-focus-timer.md) | 6 | 12 | UC-05 Pomodoro (1.1), UC-08 Focus Bar (1.2) |
-| G08 | [Daily planning và shutdown](g08-daily-rituals.md) | 5 | 17 | Nhánh chỉ đọc, ritual tuần (1.1) |
+| G08 | [Daily planning và shutdown](g08-daily-rituals.md) | 5 | 18 | Nhánh chỉ đọc, ritual tuần (1.1) |
 | G10 | [Trợ lý AI](g10-tro-ly-ai.md) | 12 | 28 | Nhánh dùng dữ liệu tích hợp, thẻ chờ duyệt (1.1) |
 | G12 | [Workspace, thông báo (phần 1.0)](g12-workspace-billing.md) | 3 | 6 | UC-01 … 03 (1.1); UC-04, 06, 07 (1.2) |
-| | **Tổng** | **74** | **184** | |
+| | **Tổng** | **73** | **183** | |
 
 G09 Weekly và G11 Tích hợp là bản 1.1, không có flow.
 
@@ -49,11 +49,10 @@ Review flow phát hiện nhiều chỗ flow chép theo SRS cũ, trong khi nguồ
 | G08 UC-01 A6 (Plan ngày tương lai) không chuyển trang | SRS G08 UC-01 A6 | (SRS đã đúng) | G08 UC-01: A6 có điểm kết thúc riêng |
 | Nút "Dừng" của Planning Agent | G10 SCR-02 #6, BR-09 | G10 UC-02 A11 | G10 UC-02 (sơ đồ riêng) |
 
-**PO đã chốt ngày 06/11/2026** ([quyết định F1–F4](../../review/quyet-dinh-chot-2026-11-06.md)), đã sửa SRS và flow:
+**PO đã chốt ngày 06/11/2026** ([quyết định F1–F6](../../review/quyet-dinh-chot-2026-11-06.md)), đã sửa SRS và flow:
 - F1: phím S = về hôm nay; "Hoãn 1 tuần" chỉ còn là lệnh.
 - F2: rollover thất bại một cách hiển thị (banner G06 MSG-25 "Thử lại"); đang chờ thì MSG-32.
 - F3: giữ Daily planning có hướng dẫn sau onboarding; G08 BR-28, UC-01 A16.
 - F4: bỏ công tắc "Cho phép AI hoàn thành và xoá task"; AI luôn được hoàn thành và xoá (vào Thùng rác, có Hoàn tác).
-
-**Còn mở:**
-- Nhãn "Lệch ngày" (QC-01 mục 4): chỉ xuất hiện khi người dùng đổi timezone; chip trong chi tiết task G02 chưa có tooltip MSG-26 như trên card G04.
+- F5: bỏ nhãn "Lệch ngày"; G05 UC-11 bỏ.
+- F6: toast lúc cửa sổ ẩn vào trung tâm thông báo (IA-21).
