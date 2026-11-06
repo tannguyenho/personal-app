@@ -61,6 +61,7 @@
 | BR-25 | **Điểm mở rộng cho G09 (C24).** G08 cung cấp cho G09 (1.1): (a) `ritual_sessions` nhận thêm `type` = `weekly_planning` / `weekly_review` với `date = weekStart`; BR-02 không áp cho hai loại này, cửa sổ ngày do G09 quy định; (b) khung SCR-01, SCR-07, task ghi chép (BR-11 – BR-14), BR-21, BR-22 dùng chung; (c) nguồn "Objective tuần" trong bước Thêm task (BR-07); (d) G09 BR-04 được chạy Weekly planning trước Daily planning tự mở và giữ `autoPromptedAt` của Daily planning; (e) ảnh chụp kế hoạch (BR-11) đọc qua \[RitualGet\] `planSnapshot` hoặc \[PlanSnapshotList\] |
 | BR-26 | **Xung đột phiên giữa thiết bị (C23).** \[RitualUpdate\] / \[RitualComplete\] gửi `If-Match`. 409 `RITUAL_ALREADY_COMPLETED` (phiên đã hoàn tất ở thiết bị khác) → MSG-15, mở bản đã chốt ở chế độ xem; nội dung đang sửa ở máy này giữ trong bản nháp cục bộ tới hết ngày D `[giả định]`. 412 `PRECONDITION_FAILED` (khác phiên bản) → tải lại phiên, gộp `data` theo từng trường (QC-08 mục 3: trường máy này vừa sửa thắng vì server nhận sau), gửi lại một lần; trường của người dùng bị ghi đè → MSG-29 |
 | BR-27 | **Task ghi chép ritual không tính vào phép đếm task (C21).** Task có `isRitualNote = true` bị loại khỏi mọi phép đếm số task (task xong, tiến độ theo số task, "{n} task xong" ở SCR-11, ngưỡng "ít dữ liệu" và tỉ lệ hoàn thành của G09) và khỏi danh sách việc đã xong / bản kế hoạch. Bản ghi thời gian của nó vẫn tính vào giờ thực tế (QC-07) |
+| BR-28 | **Chế độ có hướng dẫn** (F3, G01 US2.2). Chỉ áp cho **phiên Daily planning đầu tiên** của tài khoản, mở ngay sau onboarding (G01 UC-05 bước 7); phiên lưu `data.guided = true`, mở lại phiên dở vẫn ở chế độ này. Khác bản thường ở ba điểm: (a) đầu mỗi bước có một dòng lời dẫn ngắn nói bước này để làm gì (nội dung `UI-xx [đề xuất]` do brief G08 soạn, PO duyệt); khái niệm lần đầu gặp (projection, timebox, phím tắt) có tooltip theo G01 US2.3; (b) không có "Bỏ qua bước này từ lần sau" (BR-18) ở mọi bước; (c) bước 2 "Thêm task cho hôm nay" đã có sẵn các task vừa tạo ở onboarding. Còn lại như luồng chính. Phiên hoàn tất xong thì các lần sau là Daily planning thường |
 
 ## 4. Trạng thái
 
@@ -132,6 +133,7 @@ Chuyển trạng thái: `CHUA_BAT_DAU` → `DANG_LAM` (mở, UC-01 / UC-02) · `
 | A13 | Phiên bị sửa ở thiết bị khác (412) | Tải lại phiên, gộp `data` theo từng trường, gửi lại; trường bị ghi đè → MSG-29 (BR-26) |
 | A14 | Bản 1.0, trợ lý AI bật: Planning Agent đã áp dụng kế hoạch cho D | SCR-06 hiện "Hoàn tác kế hoạch AI" (BR-24); bấm → G10 UC-04; xong → sinh lại bản kế hoạch hoặc hỏi MSG-14. Trợ lý AI tắt → không hiện nút |
 | A15 | D là ngày nghỉ theo lịch chung | Không tự mở, không chấm nhắc (BR-23); mở tay vẫn chạy luồng chính |
+| A16 | Phiên Daily planning đầu tiên, mở ngay sau onboarding (G01 UC-05 bước 7) | Chế độ có hướng dẫn (BR-28): lời dẫn đầu mỗi bước, tooltip lần đầu, không có "Bỏ qua bước này"; task vừa tạo đã có trong danh sách |
 
 **Luồng lỗi**
 

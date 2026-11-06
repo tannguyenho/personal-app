@@ -522,7 +522,7 @@ flowchart TD
   s5["SCR-05 bước 5 · 3 ô task<br/>thời lượng, channel gợi ý theo G02"]
   u5[/"Nhập 1-3 task<br/>bấm Bắt đầu ngày đầu tiên"/]
   p2[["Tạo task G02<br/>OnboardingComplete"]]
-  x2{{"→ G08 · UC-01<br/>Daily planning hôm nay, có hướng dẫn"}}
+  x2{{"→ G08 · UC-01 A16<br/>Daily planning hôm nay, chế độ có hướng dẫn"}}
   ok(["Daily planning hôm nay đang mở<br/>onboarding HOAN_TAT"])
 
   start ==> s1 ==> u1 ==> p1 ==> s2 ==> u2 ==> x1 ==> s2b ==>|"Tiếp"| s3 ==> u3 ==> s4 ==> u4 ==> s5 ==> u5 ==> p2 ==> x2 ==> ok

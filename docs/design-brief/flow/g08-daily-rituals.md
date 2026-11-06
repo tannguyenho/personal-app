@@ -9,7 +9,7 @@ Wizard ritual thay vùng chính; sidebar và panel phải vẫn dùng được �
 
 | UC | Flow | Màn chính | Nhánh A / E (1.0) |
 |---|---|---|---|
-| [UC-01](#uc-01-daily-planning-luồng-thủ-công) | Daily planning (luồng thủ công) | SCR-01 khung, SCR-02 … SCR-07 | 15 / 4 (E2 Bỏ (1.1)) |
+| [UC-01](#uc-01-daily-planning-luồng-thủ-công) | Daily planning (luồng thủ công) | SCR-01 khung, SCR-02 … SCR-07 | 16 / 4 (E2 Bỏ (1.1)) |
 | [UC-02](#uc-02-daily-shutdown) | Daily shutdown | SCR-01 khung, SCR-08, SCR-09, SCR-10, SCR-07, SCR-11 | 11 / 3 (E1 Bỏ (1.1)) |
 | [UC-03](#uc-03-chia-sẻ-kết-quả-ritual) | Chia sẻ kết quả ritual | SCR-07 | 5 / 4 |
 | [UC-04](#uc-04-tự-kích-hoạt-và-nhắc-ritual) | Tự kích hoạt và nhắc ritual | SCR-12 lời nhắc | 10 / 2 |
@@ -285,6 +285,38 @@ flowchart TD
   classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
 ```
 
+### Nhánh thay thế: chế độ có hướng dẫn (A16)
+
+Chỉ cho phiên Daily planning **đầu tiên** của tài khoản, mở ngay sau onboarding (BR-28, F3, G01 US2.2).
+
+```mermaid
+flowchart TD
+  start(["Xong onboarding · G01 UC-05 bước 7"])
+  p1[["RitualGet daily_planning hôm nay<br/>phiên đầu tiên: data.guided = true"]]
+  s1["SCR-01 wizard thay vùng chính<br/>đầu mỗi bước có một dòng lời dẫn UI-xx [đề xuất]<br/>không có Bỏ qua bước này"]
+  s2["Bước 2 Thêm task cho hôm nay<br/>đã có sẵn task vừa tạo ở onboarding"]
+  t1["Khái niệm lần đầu gặp: tooltip<br/>projection, timebox, phím tắt · G01 US2.3"]
+  u1[/"Đi hết 6 bước như luồng chính<br/>bấm Bắt đầu ngày"/]
+  ok(["Phiên HOAN_TAT<br/>các lần sau là Daily planning thường"])
+
+  start ==>|"A16"| p1 ==> s1 ==> s2 ==> u1 ==> ok
+  s1 -.-> t1
+  s1 -->|"bấm × giữa chừng"| d1(["Phiên DANG_LAM giữ data.guided<br/>mở lại vẫn ở chế độ có hướng dẫn"])
+
+  class start,p1,s1,s2,u1 alt
+  class t1,d1 alt
+  class ok done
+  classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
+  classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
+  classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
+  classDef warn fill:#FEF4E2,stroke:#B45309,color:#4A2604
+  classDef ai fill:#F1ECFD,stroke:#6D28D9,color:#2E1065
+  classDef sync fill:#FFFFFF,stroke:#6B7280,stroke-dasharray:4 3,color:#1F2937
+  classDef link fill:#FFFFFF,stroke:#0F766E,stroke-dasharray:4 3,color:#0B3B36
+  classDef done fill:#E6F4F1,stroke:#0F766E,stroke-width:3px,color:#0B3B36
+  classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
+```
+
 ### Đối chiếu
 
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
@@ -304,6 +336,7 @@ flowchart TD
 | A13 | Phiên bị sửa ở thiết bị khác (412) | Gộp theo trường, gửi lại | MSG-29 (khi bị ghi đè) |
 | A14 | Trợ lý AI bật, Planning Agent đã áp dụng cho D | Hoàn tác kế hoạch AI → [G10 · UC-04](g10-tro-ly-ai.md); sinh lại hoặc hỏi | MSG-14 (khi `planEdited`) |
 | A15 | D là ngày nghỉ theo lịch chung | Không tự mở, không chấm nhắc; mở tay chạy luồng chính | – |
+| A16 | Phiên đầu tiên sau onboarding | Chế độ có hướng dẫn (BR-28); xong thì các lần sau là bản thường | UI-xx [đề xuất] |
 | E1 | D < hôm nay, chưa có phiên | Không mở wizard | MSG-20 |
 | E2 | Từ 1.1: workspace chỉ đọc | Bỏ (1.1) | – |
 | E3 | Mất mạng | Chạy trên dữ liệu máy, xếp hàng, gửi khi có mạng | MSG-23 |
