@@ -253,7 +253,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | A1 | Khôi phục sau khi toast đã tắt | Người dùng mở **SCR-05** Thùng rác (tab Thùng rác của panel "Lưu trữ · Thùng rác" ở panel phải, hoặc lệnh "Task đã xoá gần đây", IA-09) → "Khôi phục" → \[TaskRestore\] áp BR-12, toast MSG-13 |
-| A2 | Task có timebox | Xoá: theo QC-05 dòng "Xoá" (timebox tương lai gỡ, sự kiện ngoài bị xoá; timebox quá khứ chỉ gỡ liên kết). Hoàn tác (bước 4): khôi phục liên kết. Khôi phục từ Thùng rác (A1): không tạo lại timebox, task về projection |
+| A2 | Task có timebox | Xoá: theo QC-05 dòng "Xoá" (timebox tương lai gỡ, sự kiện ngoài bị xoá; timebox quá khứ chỉ gỡ liên kết). **Timebox liên kết sự kiện** (QC-05 ngoại lệ, G05 BR-21 f): chỉ gỡ liên kết, **không** xoá sự kiện ngoài, kể cả khi ở tương lai. Hoàn tác (bước 4): khôi phục liên kết. Khôi phục từ Thùng rác (A1): không tạo lại timebox, task về projection |
 | A3 | Task do AI tạo, người dùng bấm Hoàn tác trong khung chat (G10) | Task vào Thùng rác như xoá thường |
 | A4 | Xoá instance lặp | Như luồng chính; thêm ngày gốc vào danh sách ngày ngoại lệ của series (G03 BR-15). Hoàn tác / khôi phục không gỡ ngày ngoại lệ |
 | A5 | Khôi phục instance lặp vào ngày đã có instance của cùng series (QC-06 mục 1) | Vẫn khôi phục; toast MSG-13 kèm cảnh báo MSG-24 (QC-06 mục 3) |

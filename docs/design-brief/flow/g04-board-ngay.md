@@ -298,8 +298,7 @@ flowchart TD
   p1 -->|"A2 · task đã timebox"| a2["Giữ giờ, dời timebox sang ngày mới BR-09<br/>timer đang chạy không dừng"]
   a2 --> a2x{{"→ G05 cập nhật sự kiện ngoài"}}
   a2 --> m1
-  p1 -->|"A7 · timebox liên kết sự kiện B8"| a7["BR-09 giả định: timebox liên kết giữ nguyên<br/>card cờ Lệch ngày"]
-  a7 --> a7m>"MSG-26 · Tooltip<br/>Lệch ngày: timebox ở {ngày timebox}, task dự định {ngày dự định}. Dời task hoặc dời timebox"]
+  p1 -->|"A7 · timebox liên kết sự kiện B8"| a7["BR-09: chỉ gỡ liên kết, sự kiện ngoài giữ nguyên<br/>task sang ngày mới không còn timebox đó<br/>QC-05 ngoại lệ, G05 BR-21 f"]
   a7 --> m1
   p1 -->|"A4 · instance lặp, kéo / chọn ngày vào ngày<br/>đã có instance cùng series; chỉ đổi instance này"| a4m>"MSG-23 · Toast cảnh báo<br/>Ngày này đã có {tên series}"]
   a4m --> ok
@@ -314,7 +313,7 @@ flowchart TD
 
   class s0,u1,p1,m1 happy
   class start2,a1,a1d,a1w,a1s,a6,a3,a2,a7,a4d,a4dm,a5,a5e alt
-  class a7m,a4m warn
+  class a4m warn
   class a3x,a2x link
   class ok done
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -381,7 +380,7 @@ flowchart TD
 | A4 | Instance lặp vào ngày đã có instance cùng series | Kéo / chọn ngày: vẫn đặt; phím D: bản bị dời vào Lưu trữ (`skipped`) | MSG-23 / MSG-24 |
 | A5 | Hoàn tác / Ctrl+Z | Về cụm vị trí, vị trí cũ, liên kết timebox | – |
 | A6 | Kéo bằng bàn phím | Như kéo thả | MSG-01 |
-| A7 | Timebox liên kết sự kiện | Theo BR-09 `[giả định]`, cờ Lệch ngày | MSG-26 |
+| A7 | Timebox liên kết sự kiện | Gỡ liên kết, sự kiện giữ nguyên (BR-09, QC-05) | – |
 | E1 | Task chưa xong vào ngày < hôm nay | Không thả / server từ chối | MSG-09 |
 | E2 | Ngoài ± 5 năm | Task về chỗ cũ | MSG-19 |
 | E3 | `VERSION_CONFLICT` | Trạng thái server | MSG-17 |
@@ -907,7 +906,7 @@ flowchart TD
 5. **Phím K ở 1.0.** UC-08 A1 và SCR-08 #7 liệt kê "K nghỉ (G07)" không ghi phiên bản; G07 BR-14, BR-17 ghi K là 1.1. Theo UC-08 A5 ("lệnh chưa có ở 1.0 không hiện"), sơ đồ đã bỏ K khỏi danh sách 1.0; đề xuất sửa A1 và SCR-08 #7.
 6. **UC-02 E2:** "khung cột rỗng có MSG-15 'Thử lại'" nhưng MSG-15 khai báo nơi hiện là Toast. Cần chốt MSG-15 nằm trong cột hay là toast.
 7. **UC-03 A4:** kéo / chọn ngày vào ngày đã có instance cùng series hiện MSG-23; SRS không nói MSG-23 thay MSG-01 hay hiện cùng. Nếu thay thì người dùng mất nút "Hoàn tác" của MSG-01.
-8. **UC-03 A7 / BR-09** còn `[giả định]` (câu hỏi mở PRD): kéo task có timebox liên kết sự kiện sang ngày khác. Sơ đồ vẽ theo giả định.
+8. ~~**UC-03 A7 / BR-09** còn `[giả định]`~~ **Đã sửa 06/11/2026:** theo QC-05 (ngoại lệ timebox liên kết sự kiện), chỉ gỡ liên kết, sự kiện ngoài giữ nguyên; đã ghi ngược vào SRS G04 BR-09, UC-03 A7.
 9. **Kéo trong cột (UC-04 A1, A2)** không có toast / MSG; BR-12 nói mọi thao tác BR-10 có Hoàn tác "toast hoặc Ctrl+Z". Cần chốt có toast không.
 10. **UC-04 tiền điều kiện** ghi "workspace không chỉ đọc" thiếu nhãn "(1.1)"; BR-20 nói 1.0 không có chế độ chỉ đọc.
 11. **UC-03 A3** (thả vào panel Backlog) không ghi thông báo; phụ thuộc G06 UC-01.

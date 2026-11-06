@@ -388,7 +388,7 @@ flowchart TD
   m1>"MSG-09 · Toast ít nhất 5 giây<br/>Đã xoá · Hoàn tác (Ctrl+Z)"]
   ok(["Task biến khỏi board và lịch<br/>nằm trong Thùng rác 30 ngày"])
   u2[/"Tuỳ chọn: Hoàn tác hoặc Ctrl+Z"/]
-  p2[["TaskRestore undo=true<br/>về vị trí cũ, khôi phục timebox,<br/>tạo lại sự kiện ngoài QC-05"]]
+  p2[["TaskRestore undo=true<br/>về vị trí cũ, khôi phục liên kết timebox,<br/>sự kiện ngoài đã bị xoá thì tạo lại QC-05"]]
   ok2(["Task về đúng chỗ cũ"])
 
   start ==> s0 ==> u1 ==> p1 ==> m1 ==> ok
@@ -417,8 +417,10 @@ flowchart TD
   ok(["Task trong Thùng rác"])
   u1 ==> p1 ==> m1 ==> ok
 
-  p1 -->|"A2 · task có timebox"| a2["Timebox tương lai gỡ, sự kiện ngoài bị xoá<br/>timebox quá khứ chỉ gỡ liên kết QC-05"]
+  p1 -->|"A2 · task có timebox"| a2["Timebox thường: tương lai gỡ, sự kiện ngoài bị xoá<br/>quá khứ chỉ gỡ liên kết QC-05"]
   a2 --> m1
+  p1 -->|"A2 · timebox liên kết sự kiện"| a2l["Chỉ gỡ liên kết, sự kiện ngoài giữ nguyên<br/>QC-05 ngoại lệ, G05 BR-21 f"]
+  a2l --> m1
   p1 -->|"A4 · instance lặp"| a4["Ngày gốc vào danh sách ngày ngoại lệ<br/>G03 BR-15, hoàn tác không gỡ"]
   a4 --> m1
   ai0(["Trợ lý AI qua MCP local"]) -->|"A7"| d7{"BR-21 a, b, c đủ?"}
@@ -442,6 +444,7 @@ flowchart TD
 
   class u1,p1,m1 happy
   class a2,a4,a1,a1p,a6,a1m,ai1 alt
+  class a2l warn
   class ai0,d7 ai
   class a5m warn
   class e1m,e3m,e4m err
@@ -463,7 +466,7 @@ flowchart TD
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
 | A1 | Khôi phục khi toast đã tắt | SCR-05 → trạng thái trước khi xoá | MSG-13 |
-| A2 | Task có timebox | Xoá theo QC-05; khôi phục không tạo lại timebox | MSG-09 |
+| A2 | Task có timebox | Xoá theo QC-05; timebox liên kết sự kiện chỉ gỡ liên kết, không xoá sự kiện; khôi phục không tạo lại timebox | MSG-09 |
 | A3 | Hoàn tác task AI tạo trong chat | Thùng rác | – |
 | A4 | Xoá instance lặp | Thêm ngày ngoại lệ | MSG-09 |
 | A5 | Khôi phục instance trùng series | Vẫn khôi phục | MSG-13 + MSG-24 |
