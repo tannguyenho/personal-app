@@ -570,7 +570,7 @@ API dưới đây là hợp đồng nghiệp vụ tham khảo; kiểu API, tên,
 | MSG-14 | Toast | Task này đã bị xoá |
 | MSG-15 | Toast | Chưa tải / lưu được thay đổi. Thử lại |
 | MSG-16 | – | (Bỏ — xem QC-01 mục 3, G01 MSG-23 là banner timezone duy nhất) |
-| MSG-17 | Toast | Task đã thay đổi trên thiết bị khác, đã cập nhật lại |
+| MSG-17 | Toast | Task đã thay đổi trên thiết bị khác (câu chung của QC-08 mục 2) |
 | MSG-18 | Tooltip tổng | Chưa tính lịch: chưa kết nối hoặc lịch đang lỗi |
 | MSG-19 | Toast | Chỉ chọn được ngày trong vòng 5 năm tính từ hôm nay |
 | MSG-20 | Banner | (Bản 1.1) Gói dùng thử đã hết. Nâng cấp để tiếp tục sắp xếp task |

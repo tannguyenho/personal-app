@@ -203,6 +203,7 @@ Một **phiên AI** là một kết nối của Claude Code tới \[McpServer\]:
 | A8 | Kế hoạch dùng dữ liệu tích hợp (`hasExternalData = true`, Q31a, QC-12 mục 6) | Bước 4: thay đổi ghi sau lần đọc dữ liệu tích hợp → `CHUA_AP_DUNG`, đề xuất `CHO_DUYET` (thay đổi trước lần đọc đầu tiên đã áp dụng thì giữ nguyên, D8). Bước 5: SCR-03 chế độ "Chờ duyệt" với MSG-22, mỗi dòng chờ duyệt có checkbox (mặc định chọn hết). Bước 6: bỏ chọn dòng không muốn, bấm "Áp dụng và tiếp" → \[ProposalApply\] các dòng được chọn theo BR-21; đề xuất → `DA_AP_DUNG`; tiếp bước 7 |
 | A9 | Đề xuất `CHO_DUYET` chưa duyệt tới cuối ngày làm việc (BR-21) | Job `ai.proposal.expire` → `DA_HOAN_TAC` (`expired`); SCR-03 hiện "Đã hết hạn", nút áp dụng disabled |
 | A10 | Item đã có task (G11 trả `ALREADY_LINKED`, BR-24) | Dòng "Thêm" được thay bằng "Đã có trong {ngày}", không áp dụng gì cho dòng đó |
+| A11 | Người dùng bấm "Dừng" trên SCR-02 khi agent đang chạy (SCR-02 #6) | Dừng Claude Code; chưa áp dụng gì → đề xuất `LOI`; đã áp dụng một phần → giữ, đề xuất `DA_AP_DUNG`, báo số thay đổi kèm "Hoàn tác kế hoạch AI" (BR-09, D9); mở Daily planning thủ công (G08) bước 1. Người dùng chủ động dừng nên không hiện MSG-05 |
 
 **Luồng lỗi**
 

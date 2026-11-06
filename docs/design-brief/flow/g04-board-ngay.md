@@ -382,7 +382,7 @@ flowchart TD
   p1 -.->|"E2 · ngày đích ngoài ± 5 năm"| e2m>"MSG-19 · Toast<br/>Chỉ chọn được ngày trong vòng 5 năm tính từ hôm nay"]
   e2m -.-> fail
   p1 -.->|"E3 · VERSION_CONFLICT<br/>thiết bị khác / job rollover"| e3["Tải lại task, vẽ theo server"]
-  e3 -.-> e3m>"MSG-17 · Toast<br/>Task đã thay đổi trên thiết bị khác, đã cập nhật lại"]
+  e3 -.-> e3m>"MSG-17 · Toast<br/>Task đã thay đổi trên thiết bị khác"]
   e3m -.-> e3e(["Task theo trạng thái server"])
   p1 -.->|"E4 · TASK_DELETED"| e4["Gỡ card"]
   e4 -.-> e4m>"MSG-14 · Toast<br/>Task này đã bị xoá"]
@@ -487,7 +487,7 @@ flowchart TD
   e1 -.-> e1m>"MSG-15 · Toast<br/>Chưa tải / lưu được thay đổi. Thử lại"]
   e1m -.-> fail(["Thứ tự không đổi"])
   p1 -.->|"E2 · VERSION_CONFLICT"| e2["Tải lại ngày"]
-  e2 -.-> e2m>"MSG-17 · Toast<br/>Task đã thay đổi trên thiết bị khác, đã cập nhật lại"]
+  e2 -.-> e2m>"MSG-17 · Toast<br/>Task đã thay đổi trên thiết bị khác"]
 
   class s1,p1,m1 happy
   class s0,a1,a2,a3,a4,a4e alt

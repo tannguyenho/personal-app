@@ -114,8 +114,8 @@ flowchart TD
   a15 --> p1
   p1 -->|"A1 · phiên DANG_LAM ở bước n"| a1["SCR-01 mở về current_step<br/>giữ dữ liệu đã nhập BR-05"]
   a1 --> s1
-  p1 -->|"A6 · nút Plan trên cột D > hôm nay"| a6["Bước 1 liệt kê task chưa xong của<br/>ngày làm việc liền trước D, BR-06<br/>nút Bắt đầu ngày đổi thành Xong, không chuyển trang"]
-  a6 --> s1
+  p1 -->|"A6 · nút Plan trên cột D > hôm nay"| a6["Bước 1 liệt kê task chưa xong của<br/>ngày làm việc liền trước D, BR-06<br/>nút Bắt đầu ngày đổi thành Xong"]
+  a6 -->|"đi hết các bước như luồng chính, bấm Xong"| a6b(["RitualComplete, đóng wizard<br/>không chuyển tới Home / Today"])
   p1 -->|"A2 · phiên HOAN_TAT"| a2["SCR-06 chế độ xem bản đã chốt<br/>nút Lên kế hoạch lại"]
   a2 -->|"Lên kế hoạch lại"| a2p[["DANG_LAM bước 1 BR-22<br/>giữ firstCompletedAt, noteTaskId, ảnh chụp lần đầu<br/>hoàn tất lại: cập nhật task ghi chép cũ, thêm bản ghi thời gian"]]
   a2p --> s1
@@ -126,6 +126,7 @@ flowchart TD
   p1 -.->|"E1 · D < hôm nay, chưa có phiên"| e1m>"MSG-20 · Toast<br/>Không lên kế hoạch được cho ngày đã qua"]
   e1m -.-> e1(["Không mở wizard"])
 
+  class a6b done
   class u1,p1,s1 happy
   class a15,a1,a6,a2,a2p,a2r alt
   class g10 link

@@ -10,7 +10,7 @@ Bản 1.0 là app Windows. Trợ lý AI chạy bằng Claude Code CLI do ngườ
 | UC | Flow | Màn chính | Nhánh A / E (1.0) |
 |---|---|---|---|
 | [UC-01](#uc-01-thiết-lập-planning-agent) | Thiết lập Planning Agent | SCR-01 Thiết lập Planning Agent | 2 / 2 |
-| [UC-02](#uc-02-lập-kế-hoạch-ngày-với-planning-agent) | Lập kế hoạch ngày với Planning Agent | SCR-02 Nhập và chạy, SCR-03 Review Plan | 6 / 8 |
+| [UC-02](#uc-02-lập-kế-hoạch-ngày-với-planning-agent) | Lập kế hoạch ngày với Planning Agent | SCR-02 Nhập và chạy, SCR-03 Review Plan | 7 / 8 |
 | [UC-03](#uc-03-trò-chuyện-và-ra-lệnh-cho-trợ-lý) | Trò chuyện và ra lệnh cho trợ lý | SCR-04 Khung chat trợ lý | 12 / 8 |
 | [UC-04](#uc-04-hoàn-tác-hành-động-ai) | Hoàn tác hành động AI | SCR-06 Xung đột khi hoàn tác, chip / dòng của SCR-03, SCR-04, SCR-12 | 8 / 2 |
 | [UC-05](#uc-05-soạn-và-duyệt-highlights-ai-cuối-ngày) | Soạn và duyệt highlights AI cuối ngày | SCR-07 Highlights AI | 7 / 3 |
@@ -200,6 +200,38 @@ flowchart TD
   classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
 ```
 
+### Nhánh thay thế: dừng agent (A11)
+
+```mermaid
+flowchart TD
+  s1["SCR-02 Planning Agent đang chạy<br/>tiến độ từng bước"]
+  u1[/"Bấm Dừng · SCR-02 #6"/]
+  a11[["Dừng Claude Code"]]
+  d11{"Đã áp dụng thay đổi nào?"}
+  a11a["Đề xuất LOI"]
+  a11b["Giữ thay đổi, đề xuất DA_AP_DUNG<br/>báo số thay đổi kèm Hoàn tác kế hoạch AI<br/>BR-09, D9"]
+  x1{{"→ G08 · UC-01 bước 1 Daily planning thủ công"}}
+  x2{{"→ UC-04 Hoàn tác cả lượt"}}
+
+  s1 -->|"A11"| u1 --> a11 --> d11
+  d11 -->|"chưa"| a11a --> x1
+  d11 -->|"có"| a11b --> x1
+  a11b -->|"bấm Hoàn tác kế hoạch AI"| x2
+
+  class s1 happy
+  class u1,a11,d11,a11a,a11b alt
+  class x1,x2 link
+  classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
+  classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
+  classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
+  classDef warn fill:#FEF4E2,stroke:#B45309,color:#4A2604
+  classDef ai fill:#F1ECFD,stroke:#6D28D9,color:#2E1065
+  classDef sync fill:#FFFFFF,stroke:#6B7280,stroke-dasharray:4 3,color:#1F2937
+  classDef link fill:#FFFFFF,stroke:#0F766E,stroke-dasharray:4 3,color:#0B3B36
+  classDef done fill:#E6F4F1,stroke:#0F766E,stroke-width:3px,color:#0B3B36
+  classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
+```
+
 ### Nhánh lỗi
 
 ```mermaid
@@ -270,6 +302,7 @@ flowchart TD
 | A8 | Kế hoạch dùng dữ liệu tích hợp, SCR-03 chế độ Chờ duyệt | Bỏ (1.1) | MSG-22 |
 | A9 | Đề xuất CHO_DUYET hết hạn | Bỏ (1.1) | – |
 | A10 | Item đã có task, ALREADY_LINKED | Bỏ (1.1) | – |
+| A11 | Bấm Dừng khi agent đang chạy | [G08 UC-01](g08-daily-rituals.md#uc-01-daily-planning-luồng-thủ-công) bước 1, giữ phần đã áp dụng | – |
 | E1 | 10 giây không có bước đầu / lỗi / > 5 phút | [G08 UC-01](g08-daily-rituals.md#uc-01-daily-planning-luồng-thủ-công) bước 1, giữ phần đã áp dụng | MSG-05 |
 | E2 | Thiếu ngữ cảnh thời gian | Như E1, không gọi Claude Code | MSG-05 |
 | E3 | Task đổi / xoá ở thiết bị khác, giờ đã qua | Dòng đó bị loại, các dòng khác áp dụng | MSG-19 |

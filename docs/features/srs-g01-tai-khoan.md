@@ -206,7 +206,7 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | **Mục** | **Nội dung** |
 | --- | --- |
 | Tiền điều kiện | Khách chưa đăng nhập |
-| Hậu điều kiện thành công | Mật khẩu mới có hiệu lực (BR-09); khách đã đăng nhập, mở Home |
+| Hậu điều kiện thành công | Mật khẩu mới có hiệu lực (BR-09); khách quay lại app và đăng nhập bằng mật khẩu mới (UC-03) |
 | Hậu điều kiện thất bại | Mật khẩu không đổi |
 
 **Luồng chính**
@@ -215,8 +215,8 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | --- | --- | --- |
 | 1 | Khách | SCR-03 → "Quên mật khẩu" → **SCR-04** phần 1, nhập email, bấm "Gửi link" |
 | 2 | Hệ thống | Gọi \[AuthPasswordForgot\]; luôn hiện MSG-17 (BR-04); email có tài khoản nhận link 30 phút |
-| 3 | Khách | Mở link trong email → **SCR-04** phần 2, nhập mật khẩu mới (1.0 chưa có web: link mở app qua deep link hoặc trang web tối giản `[giả định — tech chốt, docs/tech/]`) |
-| 4 | Hệ thống | Gọi \[AuthPasswordReset\]; áp BR-02, BR-09; cấp token, mở Home, toast MSG-19 |
+| 3 | Khách | Mở link trong email → **SCR-04** phần 2 trên **trang web tối giản** (`wakeup.tannguyenho.tech`, [tech mục 1](../tech/01-quyet-dinh-tech-stack-va-api.md)), nhập mật khẩu mới |
+| 4 | Hệ thống | Gọi \[AuthPasswordReset\]; áp BR-02, BR-09; trang web hiện MSG-19. Trang web không cấp token cho app: khách mở app và đăng nhập ở **SCR-03** bằng mật khẩu mới (UC-03) |
 
 **Luồng thay thế**
 
@@ -537,7 +537,7 @@ iOS / Android (1.2) dùng cùng điểm vào với cột Web / macOS, trừ dòn
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
 | 1 | (Phần 1) Email + "Gửi link" | Text + Button | Có | Luôn hiện MSG-17 sau khi gửi |
-| 2 | (Phần 2) Mật khẩu mới | Password | Có | BR-02 (MSG-02 / MSG-03); link hỏng → MSG-18 |
+| 2 | (Phần 2, trên trang web tối giản) Mật khẩu mới | Password | Có | BR-02 (MSG-02 / MSG-03); link hỏng → MSG-18 |
 | 3 | (Phần 2) "Đặt mật khẩu" | Button | – | UC-04 bước 4 |
 
 ### SCR-05 Onboarding
@@ -752,7 +752,7 @@ G01 chỉ đặt nhóm này trong SCR-06 #1; bố cục chi tiết, giá trị m
 | MSG-16 | SCR-03 | Phiên đăng nhập đã kết thúc. Hãy đăng nhập lại |
 | MSG-17 | SCR-04 | Nếu {email} có tài khoản, chúng tôi đã gửi link đặt lại mật khẩu. Link có hiệu lực 30 phút |
 | MSG-18 | SCR-04 | Link đã hết hạn hoặc đã được dùng · Gửi link mới |
-| MSG-19 | Toast | Đã đặt lại mật khẩu. Các thiết bị khác đã được đăng xuất |
+| MSG-19 | Trang web (SCR-04 phần 2) | Đã đặt lại mật khẩu. Các thiết bị khác đã được đăng xuất |
 | MSG-20 | Inline | Giờ kết thúc phải sau giờ bắt đầu |
 | MSG-21 | Inline | Thêm ít nhất 1 task để bắt đầu |
 | MSG-22 | Inline cạnh trường | ✓ Đã lưu |
