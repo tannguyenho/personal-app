@@ -64,9 +64,6 @@ _Avoid_: bia mộ, skip date
 Khoảng giờ người dùng dành cho một task trên lịch; được lưu như một thời điểm tuyệt đối và có thể đồng bộ thành sự kiện trên lịch ngoài.
 _Avoid_: block (trong văn bản nghiệp vụ), lịch hẹn
 
-**Lệch ngày**:
-Tình trạng timebox của task rơi vào ngày làm việc khác với ngày dự định của task, thường sau khi đổi timezone. Hệ thống chỉ cảnh báo, không tự sửa.
-
 **Lập lịch cứng**:
 Chế độ tự tạo timebox cho instance của series tại giờ cố định.
 _Avoid_: hard schedule

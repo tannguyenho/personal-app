@@ -50,7 +50,7 @@ Board ngày (Home) là màn hình người dùng mở nhiều nhất: mỗi cộ
 - Điều hướng ngày: popover chọn ngày, Hôm nay / Ngày sau / Ngày trước, chip ngày đang xem có × để về hôm nay.
 - Di chuyển task: kéo thả giữa cột và trong cột; phím D (sang ngày làm việc kế tiếp), hoãn 1 tuần, S (về hôm nay), Ctrl+↑/↓, Ctrl+Shift+↑/↓. Timebox, timer, số ngày bị hoãn khi đổi ngày theo QC-05.
 - Sắp xếp lại một ngày theo 7 tiêu chí; tự sắp task theo cài đặt.
-- Projection và giờ dự kiến trên card theo lịch của task (khung giờ channel hoặc lịch chung, QC-02 mục 6); cảnh báo khối lượng trên sức chứa ngày (QC-02 mục 7), cờ "Vượt giờ làm", cờ "Lệch ngày".
+- Projection và giờ dự kiến trên card theo lịch của task (khung giờ channel hoặc lịch chung, QC-02 mục 6); cảnh báo khối lượng trên sức chứa ngày (QC-02 mục 7), cờ "Vượt giờ làm".
 - Bộ lọc channel (Shift+F), tìm kiếm (Ctrl+F, gồm cả task Lưu trữ), command menu (Ctrl/Cmd+K), bảng phím tắt (?).
 - Khung panel phải: Calendar, Tasks, Backlog, Lưu trữ, Search, tích hợp (1.1+), nút +.
 - Gọi "đảm bảo rollover" (G06) khi mở app lần đầu trong ngày làm việc.
@@ -148,7 +148,7 @@ AC08: Card có số ngày bị hoãn ≥ 1 hiện nhãn "Dời {n} ngày" (QC-04
 
 AC01: Banner đổi timezone chỉ có một, do G01 hiển thị (MSG-23 của G01); board không hiện banner riêng.
 
-AC02: Task giữ ngày dự định; timebox giữ thời điểm tuyệt đối. Task có timebox rơi vào ngày làm việc khác ngày dự định hiện cờ "Lệch ngày"; hệ thống không tự sửa (QC-01 mục 4, Q4).
+AC02: Task giữ ngày dự định (vẫn nằm ở cột ngày dự định); timebox giữ thời điểm tuyệt đối. Timebox rơi vào ngày làm việc khác ngày dự định thì không gắn cờ, hệ thống không tự sửa; người dùng tự kéo task hoặc timebox nếu muốn khớp (QC-01 mục 4, Q4, F5).
 
 ### US1.2 Today view
 
@@ -339,7 +339,7 @@ AC03: Lệnh có tác dụng phụ (D, S, Ctrl+↑/↓, sắp lại) có toast H
 | Đồng bộ nhiều thiết bị | Hai máy kéo cùng task, hoặc máy offline kéo task mà server đã rollover | Theo QC-08: thứ tự server nhận, cụm vị trí ghi nguyên khối, lệnh trên phiên bản cũ bị từ chối; thiết bị thua nhận realtime và vẽ lại |
 | Phím tắt trùng hệ điều hành / ô nhập | Trên Windows, Tab và Ctrl+F có nghĩa sẵn trong ô nhập và khi chuyển focus | Chỉ xử lý khi board focus; Tab trong ô nhập giữ hành vi chuẩn. Phím trùng trình duyệt xử lý khi có bản web (1.1) |
 | Tìm kiếm không dấu | Chuẩn hoá tiếng Việt (đ/Đ, tổ hợp dấu) | Chỉ mục lưu bản bỏ dấu; bộ test tiếng Việt |
-| Đổi timezone (EC-02) | "Hôm nay" đổi khi người dùng bay sang múi giờ khác | Theo QC-01: có hiệu lực từ ngày làm việc kế tiếp; banner duy nhất là G01 MSG-23; task giữ ngày dự định, timebox giữ thời điểm tuyệt đối; lệch thì gắn cờ "Lệch ngày" |
+| Đổi timezone (EC-02) | "Hôm nay" đổi khi người dùng bay sang múi giờ khác | Theo QC-01: có hiệu lực từ ngày làm việc kế tiếp; banner duy nhất là G01 MSG-23; task giữ ngày dự định, timebox giữ thời điểm tuyệt đối; lệch thì không gắn cờ, không tự sửa, người dùng tự kéo (F5) |
 
 # 10. Câu hỏi mở
 

@@ -57,7 +57,7 @@
 | BR-21 | **Thứ tự ưu tiên trạng thái ngày** (B7): mỗi ngày có đúng một trạng thái chính, xét lần lượt `DA_QUA` > `TRONG` > `XONG_HET` > `QUA_TAI` > `BINH_THUONG`; điều kiện đầu tiên thoả thì dừng. `CHUA_TINH_LICH` và `VUOT_GIO_LAM` là cờ phụ |
 | BR-22 | **Cờ "Vượt giờ làm"** (B7). Xét theo **lịch của task** (QC-02 mục 6). Ngày ≥ hôm nay, có projection (BR-06): task chưa xong có giờ dự kiến kết thúc muộn hơn giờ kết thúc làm của D theo lịch của task, hoặc D không có trong lịch của task → task có cờ `VUOT_GIO_LAM`, tooltip MSG-25; ngày có cờ cùng tên khi có ít nhất một task mang cờ. Giờ làm thuộc lịch khác (ví dụ khung `#Cá nhân` buổi tối) không làm mất cờ của task `#Công ty`. Cờ độc lập với `QUA_TAI` (ví dụ 16:00 còn 4 giờ việc, lịch chung tới 17:00). Ví dụ ở mục 3.1 |
 | BR-23 | **Instance lặp dự kiến ở ngày xa** (C17). Ngày nằm ngoài khoảng G03 đã sinh instance: board hiện instance dự kiến tính từ quy tắc series theo cách G03 tính ngày (G03 BR-03: tuần đếm theo `weekStart` lưu trên series, không theo cài đặt hiện tại), dạng mờ, nhãn "Dự kiến". Không hiện instance dự kiến cho: ngày thuộc danh sách ngày ngoại lệ của series (G03 BR-15), ngày < hôm nay, series đã dừng (khớp điều kiện không sinh của G03 BR-04). Instance dự kiến không tính vào tổng, khối lượng, projection và không thao tác được `[giả định]` |
-| BR-24 | **Cờ "Lệch ngày"** (QC-01 mục 4, Q4). Task có timebox mà ngày làm việc của thời điểm bắt đầu timebox ≠ ngày dự định → card hiện cờ "Lệch ngày", tooltip MSG-26. Hệ thống không tự sửa; người dùng tự dời task hoặc dời timebox. Banner đổi timezone chỉ do G01 hiển thị (MSG-23 của G01), G04 không có banner riêng |
+| BR-24 | (Bỏ — F5: không còn cờ "Lệch ngày". Task có timebox rơi vào ngày làm việc khác ngày dự định vẫn nằm ở cột ngày dự định, không gắn cờ, hệ thống không tự sửa; người dùng tự kéo task hoặc timebox nếu muốn khớp, QC-01 mục 4. Banner đổi timezone chỉ do G01 hiển thị, MSG-23 của G01, G04 không có banner riêng) |
 | BR-25 | **Đảm bảo rollover khi mở app** (B6). Lần mở app đầu tiên trong ngày làm việc, board gọi \[RolloverEnsure\] (G06 UC-07). Trong lúc chờ, hoặc khi kết quả là `DANG_CHAY`, board hiện rollover tạm trên máy (G06, chỉ hiển thị, QC-08 mục 5). Kết quả `CHO_SHUTDOWN`: task ngày cũ ở yên cột ngày cũ. Kết quả lỗi (`ROLLOVER_FAILED` / `THAT_BAI`): banner MSG-27 có "Thử lại". Cách hiển thị theo G06 BR-24 (F2) |
 | BR-26 | **Nhãn "Dời {n} ngày"** trên card khi số ngày bị hoãn n ≥ 1 (QC-04 mục 4, G06 SCR-07); n chỉ đếm ngày có trong lịch của task (QC-04 mục 1, Q32), tính theo lịch **hiện tại** của task: đổi lịch chung, khung giờ channel hoặc channel của task thì n có thể đổi (D4) |
 | BR-27 | **Đổi lịch.** Đổi lịch chung (G01), thêm / sửa / xoá khung giờ channel (G02) hoặc đổi channel của task → tính lại (UC-05) mọi ngày ≥ hôm nay đang hiển thị có task hoặc khung bị ảnh hưởng. Ngày dự định của task không tự đổi (QC-02 mục 6 chỉ đổi cách tính, không dời task) |
@@ -109,7 +109,7 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 | `KHONG_GIO` | Task không có planned, đã xong, ngày đã qua, hoặc tắt projection | Không hiện giờ |
 | `VUOT_NGUONG` | Cờ phụ theo BR-05 | Chấm cảnh báo cạnh giờ, tooltip MSG-03 (vượt sức chứa) hoặc MSG-28 (vượt ngưỡng lịch chung) |
 | `VUOT_GIO_LAM` | Cờ phụ theo BR-22 | Giờ dự kiến kèm biểu tượng đồng hồ, tooltip MSG-25 |
-| `LECH_NGAY` | Cờ phụ theo BR-24 | Nhãn "Lệch ngày" trên card, tooltip MSG-26 |
+| `LECH_NGAY` | (Bỏ — F5: không còn cờ "Lệch ngày", xem BR-24) | – |
 | `DU_KIEN_LAP` | Instance lặp dự kiến ở ngày xa (BR-23) | Card mờ, nhãn "Dự kiến", không kéo được |
 
 ## 5. Use Case
@@ -145,7 +145,7 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 | A5 | Bật "Ẩn task đã xong" | Card xong ẩn; tổng, tiến độ vẫn tính (BR-02, BR-03) |
 | A6 | Ngày có > 100 task (EC-40) | Danh sách ảo hoá (BR-19); cuộn trong cột giữ ≥ 50 fps `[giả định]` |
 | A7 | Qua mốc đầu ngày khi đang mở app (QC-01) | "Hôm nay" chuyển sang ngày mới; cột cũ thành `DA_QUA`; nhận kết quả rollover qua realtime (G06); chưa nhận được thì xử lý như BR-25 |
-| A8 | Timezone thiết bị khác timezone người dùng (EC-02) | Banner do G01 hiển thị (MSG-23 của G01), G04 không có banner riêng. Đổi timezone có hiệu lực từ ngày làm việc kế tiếp; task giữ ngày dự định; timebox giữ thời điểm tuyệt đối, hiển thị theo giờ mới (QC-01 mục 3–4). Task có timebox rơi khác ngày dự định → cờ "Lệch ngày" (BR-24) |
+| A8 | Timezone thiết bị khác timezone người dùng (EC-02) | Banner do G01 hiển thị (MSG-23 của G01), G04 không có banner riêng. Đổi timezone có hiệu lực từ ngày làm việc kế tiếp; task giữ ngày dự định; timebox giữ thời điểm tuyệt đối, hiển thị theo giờ mới (QC-01 mục 3–4). Task có timebox rơi khác ngày dự định vẫn ở cột ngày dự định, không gắn cờ, không tự sửa (F5) |
 | A9 | Cửa sổ app thu hẹp (< 768 px `[giả định]`) | Board hiện 1 cột, cuộn ngang / Shift+→/← đổi ngày `[giả định]`. Giao diện web hẹp và di động đặc tả lại ở 1.1 / 1.2 (ADR-0005) |
 | A10 | Ngày ngoài khoảng instance lặp đã sinh (C17) | Hiện instance dự kiến theo BR-23 |
 
@@ -444,7 +444,7 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 | 4 | Nút "Plan" | Button | Hiện khi hover header ngày ≥ hôm nay → Daily planning (G08); cột đã qua không có (IA-20) |
 | 5 | Menu … | Menu | "Sắp xếp lại" (SCR-05) |
 | 6 | "Thêm task" | Button | Mở ô soạn (G02). Cột ngày < hôm nay không có nút này; chọn cột đã qua rồi nhấn A → ô soạn mở ở cột hôm nay, board cuộn tới hôm nay (IA-20) |
-| 7 | Danh sách card | List | Card G02; giờ theo 4.2; nhãn "Dời {n} ngày" (BR-26), "Lệch ngày" (BR-24), "Dự kiến" (BR-23); ảo hoá khi > 100 task |
+| 7 | Danh sách card | List | Card G02; giờ theo 4.2; nhãn "Dời {n} ngày" (BR-26), "Dự kiến" (BR-23); ảo hoá khi > 100 task |
 | 8 | Vạch thả | Indicator | Hiện khi kéo; cột không thả được (E1 UC-03) mờ đi |
 
 ### SCR-03 Thanh công cụ
@@ -579,7 +579,7 @@ API dưới đây là hợp đồng nghiệp vụ tham khảo; kiểu API, tên,
 | MSG-23 | Toast cảnh báo | Ngày này đã có {tên series} (dùng G03 MSG-21, QC-06) |
 | MSG-24 | Toast | {thứ, ngày} đã có {tên series}, bản này được chuyển vào Lưu trữ · Hoàn tác |
 | MSG-25 | Tooltip | Vượt giờ làm: việc cuối dự kiến xong lúc {giờ}, sau giờ kết thúc {giờ kết thúc} |
-| MSG-26 | Tooltip | Lệch ngày: timebox ở {ngày timebox}, task dự định {ngày dự định}. Dời task hoặc dời timebox |
+| MSG-26 | – | (Bỏ — F5: không còn cờ "Lệch ngày") |
 | MSG-27 | Banner | Chưa chuyển được việc dở từ hôm trước sang hôm nay. Thử lại (dùng G06 MSG-25, G06 BR-24) |
 | MSG-28 | Tooltip chấm cảnh báo | Vượt ngưỡng khối lượng {X} của lịch làm việc chung |
 | MSG-29 | Tooltip tổng | Việc theo lịch làm việc chung ({Y}) vượt ngưỡng khối lượng ({X}) |
@@ -595,5 +595,5 @@ Bản EN: `[chờ bổ sung]`.
 | Đồng bộ | `day.recomputed`, `task.upserted` tới thiết bị khác ≤ 5 giây; chỉ mục tìm kiếm cập nhật ≤ 5 giây |
 | Bảo mật | Chỉ trả task của người dùng (BR-20); truy vấn tìm kiếm không ghi vào log hệ thống |
 | Log / audit | Đổi ngày ghi \[ActivityLog\] (G02 BR-13); sắp xếp lại không ghi nhật ký từng task, chỉ ghi sự kiện tracking |
-| Tracking | Sự kiện: `board_viewed` (view), `view_switched`, `date_navigated` (cách: phím / popover / chip), `task_moved` (cách: kéo / phím / menu, số ngày dịch), `day_reordered` (tiêu chí), `day_overloaded_shown`, `overload_resolved`, `day_over_work_hours_shown`, `day_mismatch_flag_shown` (Lệch ngày), `series_same_day_warning`, `channel_filter_applied`, `search_performed` (độ dài, số kết quả), `search_result_opened`, `command_menu_opened`, `shortcut_used` (phím), `shortcut_blocked_fast_typing`, `undo_after_shortcut` |
+| Tracking | Sự kiện: `board_viewed` (view), `view_switched`, `date_navigated` (cách: phím / popover / chip), `task_moved` (cách: kéo / phím / menu, số ngày dịch), `day_reordered` (tiêu chí), `day_overloaded_shown`, `overload_resolved`, `day_over_work_hours_shown`, `series_same_day_warning`, `channel_filter_applied`, `search_performed` (độ dài, số kết quả), `search_result_opened`, `command_menu_opened`, `shortcut_used` (phím), `shortcut_blocked_fast_typing`, `undo_after_shortcut` |
 | Accessibility | WCAG 2.1 AA; mọi kéo thả có cách bàn phím (A6 UC-03) và menu; trạng thái quá tải không chỉ dùng màu (có biểu tượng + nhãn đọc màn hình "Quá tải, vượt {Y}"); command menu và panel Search điều khiển hoàn toàn bằng bàn phím, focus trả về chỗ cũ khi đóng |

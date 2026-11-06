@@ -50,7 +50,7 @@ Lịch là nơi thời gian thật của người dùng được quyết định
 - Auto-schedule: X vào khe trống đầu tiên, Shift+X không chia nhỏ — phát hành bản 1.1 theo lộ trình chung, đặc tả sẵn trong tài liệu này. Nút "Dời sang khe trống" trong cảnh báo xung đột cũng thuộc 1.1, ẩn ở 1.0 (Q17).
 - **Lập lịch cứng cho task lặp** — bản **1.1** (Q7): G05 sở hữu, tự tạo timebox cho instance tại giờ `approxTime` của series. Bản 1.0 chỉ hiện `approxTime` trên card (G03).
 - Đồng bộ 2 chiều: ghi timebox ra lịch ngoài; nhận sửa / xoá / dời từ lịch ngoài theo một quy tắc xung đột duy nhất (Q15); cảnh báo họp đè timebox.
-- Cờ **"Lệch ngày"** khi timebox rơi khác ngày dự định sau khi đổi timezone (Q4, QC-01).
+- (Bỏ — F5: không còn cờ "Lệch ngày"; timebox rơi khác ngày dự định sau khi đổi timezone thì người dùng tự kéo nếu muốn khớp, QC-01 mục 4.)
 - Hiển thị bản ghi thời gian thực tế (từ G07) trên lịch, chỉ bản ghi có giờ thật (B11, QC-07).
 - Trạng thái kết nối, kết nối lại, ngắt kết nối.
 - Chế độ chỉ đọc theo QC-09 — bản 1.1.
@@ -91,7 +91,7 @@ Mọi lần ghi ra lịch ngoài đều idempotent theo mã task. Lịch đích 
 
 ## 4.5 Ngày của timebox là ngày làm việc
 
-Timebox thuộc ngày làm việc của thời điểm bắt đầu (QC-01). Đổi timezone không đổi ngày dự định; timebox giữ thời điểm tuyệt đối, lệch thì chỉ gắn cờ "Lệch ngày", không tự sửa (Q4).
+Timebox thuộc ngày làm việc của thời điểm bắt đầu (QC-01). Đổi timezone không đổi ngày dự định; timebox giữ thời điểm tuyệt đối, lệch thì không gắn cờ, không tự sửa; người dùng tự kéo task hoặc timebox nếu muốn khớp (Q4, F5).
 
 ## 4.4 Ghi ra ngoài tối thiểu
 
@@ -231,13 +231,13 @@ AC02: Rollover gặp timebox quá khứ (kết thúc trước thời điểm rol
 
 AC03: Hoàn tác của các đường do người dùng hoặc AI thực hiện khôi phục cả liên kết timebox; sự kiện ngoài đã bị xoá thì được tạo lại với giờ cũ (QC-05). Rollover và tự lưu trữ (`stale`) là job hệ thống, **không có Hoàn tác**, chỉ ghi nhật ký; người dùng tự kéo task về nếu cần (Q41).
 
-### US3.5 Lệch ngày sau khi đổi timezone
+### US3.5 Đổi timezone
 
 AC01: Đổi timezone → ngày dự định của task giữ nguyên, timebox giữ thời điểm tuyệt đối (Q4, QC-01).
 
-AC02: Timebox rơi vào ngày làm việc khác ngày dự định → card và timebox hiện cờ "Lệch ngày"; hệ thống không tự sửa.
+AC02: (Bỏ — F5: không còn cờ "Lệch ngày".) Timebox rơi vào ngày làm việc khác ngày dự định → task vẫn ở cột ngày dự định, timebox vẽ theo thời điểm thật; hệ thống không tự sửa, người dùng tự kéo task hoặc timebox nếu muốn khớp.
 
-AC03: Cờ "Lệch ngày" có hai lựa chọn: "Dời task sang {ngày của timebox}" và "Dời timebox về {ngày dự định}" (giữ giờ địa phương). Chọn một trong hai thì cờ mất.
+AC03: (Bỏ — F5.)
 
 AC04: Chỉ hiện banner đổi timezone MSG-23 của G01; G05 không có banner riêng.
 
@@ -356,7 +356,7 @@ AC08: Không tạo timebox cho ngày quá 90 ngày (C18) hoặc khi workspace �
 | Xác minh Google OAuth | Scope `calendar.events` là nhạy cảm; chưa xác minh thì giới hạn người dùng và màn cảnh báo "app chưa xác minh" | Nộp hồ sơ sớm; có kế hoạch ra mắt chỉ Outlook nếu Google chậm |
 | Webhook bị mất / hết hạn | Không nhận thay đổi đẩy về | Gia hạn mỗi 6 giờ; poll 15 phút; đồng bộ lại toàn bộ khi token đồng bộ hết hiệu lực |
 | Giới hạn tốc độ nhà cung cấp | Người dùng kéo nhiều timebox liên tục | Gộp ghi theo task trong 2 giây `[giả định]`; backoff theo `Retry-After` |
-| Múi giờ, giờ mùa hè (EC-02, EC-03) | Hiển thị sai giờ, timebox lệch 1 giờ; task và timebox lệch ngày sau khi bay | Lưu UTC + IANA; hiển thị theo timezone người dùng; đổi timezone theo QC-01 mục 4 (cờ "Lệch ngày"); bộ test DST và bảng ví dụ QC-01 |
+| Múi giờ, giờ mùa hè (EC-02, EC-03) | Hiển thị sai giờ, timebox lệch 1 giờ; task và timebox lệch ngày sau khi bay | Lưu UTC + IANA; hiển thị theo timezone người dùng; đổi timezone theo QC-01 mục 4 (không gắn cờ, không tự sửa, F5); bộ test DST và bảng ví dụ QC-01 |
 | Timebox qua mốc đầu ngày (EC-04) | Timebox nằm trên 2 ngày | Thuộc ngày làm việc của thời điểm bắt đầu (QC-01 mục 5); hiển thị tách 2 đoạn |
 | Lập lịch cứng (1.1) | Sinh hàng loạt sự kiện trên Google / Outlook | Mặc định tắt; cửa sổ 7 ngày `[giả định]`; idempotent theo `appBlockId` |
 | Người khác sửa sự kiện của app (lịch chia sẻ) | Thay đổi không do người dùng | Xử lý như thay đổi từ lịch ngoài, nhật ký ghi tác nhân lịch |
@@ -379,4 +379,4 @@ AC08: Không tạo timebox cho ngày quá 90 ngày (C18) hoặc khi workspace �
 - Đã chốt 04/11/2026: rollover và tự lưu trữ không có Hoàn tác; Hoàn tác khôi phục liên kết timebox chỉ áp cho đường do người dùng / AI thực hiện (Q41, QC-05).
 - Đã chốt 04/11/2026: Privacy "Lịch" để bản sau; khuyến nghị người khác chỉ thấy bận / rảnh và timebox, không thấy chi tiết sự kiện ngoài (Q37, `docs/02-tinh-nang-ban-sau.md`).
 - Sự kiện timebox bị đổi thành sự kiện lặp hoặc dài > 24 giờ ở lịch ngoài thì xử lý thế nào?
-- Cờ "Lệch ngày" có hiện cho task đã hoàn thành không (ví dụ hoàn thành sớm task ngày mai: task về hôm nay theo QC-05, timebox giữ ở ngày mai)?
+- ~~Cờ "Lệch ngày" có hiện cho task đã hoàn thành không (ví dụ hoàn thành sớm task ngày mai: task về hôm nay theo QC-05, timebox giữ ở ngày mai)?~~ **Đã chốt 06/11/2026:** không còn cờ (F5).

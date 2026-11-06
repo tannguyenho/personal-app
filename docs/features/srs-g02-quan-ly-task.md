@@ -81,7 +81,7 @@ Bộ trạng thái và điều kiện của từng trạng thái theo **QC-03 m�
 | `LUU_TRU` (`archiveReason` ∈ `stale` / `skipped`; `manual` để bản sau, Q34) | Chỉ hiện trong panel Lưu trữ (G06), kèm nhãn lý do |
 | `DA_XOA` | Chỉ hiện trong Thùng rác (SCR-05), kèm ngày xoá; xoá vĩnh viễn sau 30 ngày |
 
-Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày bị hoãn ≥ 1, QC-04), "Lệch ngày" (QC-01 mục 4), timer đang chạy (G07), instance lặp (G03).
+Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày bị hoãn ≥ 1, QC-04), timer đang chạy (G07), instance lặp (G03).
 
 **Chuyển trạng thái** (mọi chuyển ghi cụm vị trí nguyên khối, QC-03 mục 2):
 
@@ -387,7 +387,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | 7 | Hover actions | Icon | ✓ hoàn thành, notes, thời lượng, priority |
 | 8 | Biểu tượng đồng bộ | Icon | "Chờ đồng bộ" / "Lỗi, thử lại" (UC-01 E3, E4) |
 | 9 | Nhãn "Dời {n} ngày" | Chip | Hiện khi số ngày bị hoãn n ≥ 1 (QC-04 mục 4) |
-| 10 | Cờ "Lệch ngày" | Chip | Hiện khi timebox rơi vào ngày làm việc khác ngày dự định (QC-01 mục 4) |
+| 10 | (Bỏ — F5: không còn cờ "Lệch ngày", QC-01 mục 4) | – | – |
 | 11 | Chip "AI" | Chip | Hiện khi thay đổi gần nhất trên task do trợ lý AI thực hiện (kể cả hoàn thành / xoá theo BR-21); bấm mở Hoàn tác (G10, QC-12 mục 5) |
 
 ### SCR-03 Chi tiết task

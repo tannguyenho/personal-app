@@ -252,7 +252,7 @@ AC01: Mở app ở timezone khác cài đặt → banner duy nhất (của G01) 
 
 AC02: Đổi mốc đầu ngày hoặc timezone có hiệu lực từ ngày làm việc kế tiếp, có ghi chú dưới trường; ngày hiện tại kết thúc theo cài đặt cũ (QC-01 mục 3).
 
-AC03: Đổi timezone không đổi ngày dự định của task; timebox giữ thời điểm tuyệt đối; timebox rơi khác ngày dự định thì hiện cờ "Lệch ngày", hệ thống không tự sửa (QC-01 mục 4).
+AC03: Đổi timezone không đổi ngày dự định của task; timebox giữ thời điểm tuyệt đối; timebox rơi khác ngày dự định thì không gắn cờ, hệ thống không tự sửa, người dùng tự kéo task hoặc timebox nếu muốn khớp (QC-01 mục 4, F5).
 
 ### US4.3 Hiển thị và phím tắt
 

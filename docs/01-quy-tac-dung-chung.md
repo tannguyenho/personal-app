@@ -39,7 +39,7 @@ Tài liệu này giữ các quy tắc mà nhiều nhóm cùng dùng. PRD/SRS c�
 4. **Đổi timezone không đổi ngày dự định.**
    - Task giữ nguyên ngày dự định.
    - Timebox giữ thời điểm tuyệt đối.
-   - Nếu timebox rơi vào ngày làm việc khác với ngày dự định, task và timebox hiện cờ **"Lệch ngày"**. Hệ thống không tự sửa; người dùng tự chọn dời task hoặc dời timebox.
+   - Nếu timebox rơi vào ngày làm việc khác với ngày dự định: không gắn cờ; hệ thống không tự sửa; người dùng tự kéo task hoặc timebox nếu muốn khớp (F5). Task vẫn ở cột ngày dự định, timebox vẫn vẽ trên lịch theo thời điểm thật.
 5. **Timebox vắt qua mốc đầu ngày.** Timebox thuộc ngày làm việc của thời điểm bắt đầu.
 
 Bảng ví dụ dùng làm ca kiểm thử chuẩn (cả cho bộ đánh giá AI của G10). Mốc 04:00, timezone Asia/Ho_Chi_Minh:
