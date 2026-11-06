@@ -17,7 +17,7 @@ Ngày review: 05/11/2026. Phạm vi: 10 file flow trong `docs/design-brief/flow/
 2. **IA chưa được ghi ngược vào SRS** nên flow bỏ sót: cột ngày đã qua (IA-20), ô thêm nhanh toàn cục (IA-19), app chạy ẩn ở khay (IA-05), hàng đợi banner (IA-17), Focus không có khung (IA-03), phím tắt mới (IA-15).
 3. **Cùng một tương tác, hai nhóm vẽ hai kiểu**: rollover trạng thái `CHO_SHUTDOWN` / `DANG_CHAY` / `THAT_BAI`; câu lỗi `VERSION_CONFLICT` khác nhau giữa G04 và G06; phím S/D trên task backlog; AI xoá task; "Lệch ngày" có hai đặc tả.
 
-Mục 2 gom các lỗi lặp theo **nguyên nhân gốc** — sửa một chỗ đóng được nhiều phát hiện. Mục 3 liệt kê **từng file**. Mục 4 là danh sách việc **PO phải chốt**. Mục 5 là thứ tự sửa đề xuất.
+Mục 2 gom các lỗi lặp theo **nguyên nhân gốc** — sửa một chỗ đóng được nhiều phát hiện. Mục 3 liệt kê **từng file** (bảng tóm tắt); **bản chi tiết từng mục** — flow đang vẽ gì, nguồn nói gì, không ổn ở đâu, sửa thế nào — ở [`review-flow-vs-srs-2026-11-05-chi-tiet.md`](review-flow-vs-srs-2026-11-05-chi-tiet.md), cùng số `Gxx-#`, và được đăng thành comment inline trên [PR #29](https://github.com/tannguyenho/personal-app/pull/29). Mục 4 là danh sách việc **PO phải chốt**. Mục 5 là thứ tự sửa đề xuất.
 
 Quy ước mức độ:
 - **Cao:** sai nghiệp vụ, hoặc designer sẽ vẽ thiếu / vẽ sai một trạng thái.
