@@ -213,7 +213,7 @@ Thuật ngữ: [`CONTEXT.md`](../../CONTEXT.md). Quyết định khó đảo ng�
 | Q43 | Nhãn quy tắc lặp `WEEKDAYS` đổi thành "Thứ Hai–Thứ Sáu"; quy tắc lặp không theo lịch làm việc |
 | Q44 | Sửa giờ timebox của instance lặp tính là sửa riêng (`customized`) |
 | Q45 | Nền tảng: 1.0 app **Windows (Flutter)**, 1.1 web + macOS, 1.2 iOS / Android. Có tài khoản và dữ liệu trên cloud từ 1.0. Giao diện theo design system Figma riêng. Tech stack và API chốt trong buổi grill riêng (`docs/tech/`). ADR-0005 |
-| Q46 | Trợ lý AI chạy bằng **Claude Code CLI** của người dùng, app mở **MCP local** để Claude Code điều khiển; có ở **1.0**; mặc định tắt, màn đồng ý gọn; MCP mặc định không có hoàn thành / xoá, có công tắc bật (trừ task có liên kết tích hợp); thay đổi áp dụng ngay + chip AI + Hoàn tác; bật đọc dữ liệu tích hợp thì thay đổi trong phiên đó chờ duyệt; bỏ hạn mức AI. QC-12, ADR-0004 (thay một phần Q20, Q31, C32) |
+| Q46 | Trợ lý AI chạy bằng **Claude Code CLI** của người dùng, app mở **MCP local** để Claude Code điều khiển; có ở **1.0**; mặc định tắt, màn đồng ý gọn; MCP mặc định không có hoàn thành / xoá, có công tắc bật (trừ task có liên kết tích hợp); thay đổi áp dụng ngay + chip AI + Hoàn tác; bật đọc dữ liệu tích hợp thì thay đổi trong phiên đó chờ duyệt; bỏ hạn mức AI. QC-12, ADR-0004 (thay một phần Q20, Q31, C32) | _(Phần công tắc hoàn thành / xoá thay bởi F4, [06/11/2026](quyet-dinh-chot-2026-11-06.md))_
 
 ## Vòng 7
 

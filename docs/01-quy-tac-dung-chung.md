@@ -200,9 +200,9 @@ Trợ lý AI **không có hạn mức theo gói**: AI chạy bằng Claude Code 
 2. **Không có Claude Code** (chưa cài, chưa đăng nhập, phiên bản không hỗ trợ): mọi tính năng AI bị ẩn, thay bằng hướng dẫn "Cài Claude Code để bật trợ lý AI". Mọi chức năng lõi vẫn chạy đủ.
 3. **MCP server local.** App chạy một MCP server trên máy, chỉ nhận kết nối từ máy đó. Claude Code (do app gọi, hoặc do người dùng tự mở trong terminal) điều khiển app qua các công cụ:
    - đọc: board ngày, backlog, lịch và sự kiện, task, objective;
-   - ghi: tạo task, sửa tiêu đề / ghi chú / planned / channel, dời ngày (theo QC-05, dòng "AI dời ngày"), đưa vào backlog, timebox / gỡ timebox;
+   - ghi: tạo task, sửa tiêu đề / ghi chú / planned / channel, dời ngày (theo QC-05, dòng "AI dời ngày"), đưa vào backlog, timebox / gỡ timebox, hoàn thành task, xoá task (mục 4);
    - đọc dữ liệu tích hợp (email, Jira, Notion…): chỉ có khi người dùng bật công tắc riêng (mục 6).
-4. **Hoàn thành và xoá task** không có trong MCP mặc định. Người dùng bật được công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt), áp cho cả subtask. Task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (D10).
+4. **Hoàn thành và xoá task** (F4): khi trợ lý bật, AI luôn được hoàn thành và xoá task / subtask, không cần công tắc riêng. Xoá của AI là xoá mềm vào Thùng rác; AI không xoá vĩnh viễn hay dọn Thùng rác. Task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (D10).
 5. **Áp dụng ngay.** Mọi thay đổi qua MCP được áp dụng ngay, gắn chip "AI" trên task, ghi nhật ký, và có Hoàn tác (từng thay đổi và "Hoàn tác kế hoạch AI" cho cả lượt). Planning Agent lỗi giữa chừng thì giữ phần đã áp dụng, vẫn có Hoàn tác cả lượt (D9).
 6. **Dữ liệu tích hợp chỉ là dữ liệu.** Công cụ đọc dữ liệu tích hợp mặc định tắt. Khi đã bật, mọi thay đổi **sau lần đầu đọc dữ liệu tích hợp** trong cùng phiên AI đó chuyển thành **chờ duyệt** trong app thay vì áp dụng ngay, để chặn lệnh ẩn trong nội dung bên ngoài (D8).
 7. **Đồng ý.** Trợ lý AI mặc định tắt. Lần bật đầu tiên hiện một màn gọn nói rõ dữ liệu nào được đưa cho Claude Code; app lưu thời điểm đồng ý. Tắt trợ lý thì MCP server ngừng nhận kết nối.

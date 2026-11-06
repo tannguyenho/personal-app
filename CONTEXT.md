@@ -77,7 +77,7 @@ Timebox gắn với một sự kiện có sẵn trên lịch ngoài (ví dụ cu
 ## Gói & quyền
 
 **Trợ lý AI**:
-Các tính năng AI của app (chat, Planning Agent, highlights, gợi ý task), chạy bằng Claude Code CLI trên máy của người dùng. Mặc định tắt cho tới khi người dùng đồng ý; chỉ hoàn thành hoặc xoá task khi người dùng bật công tắc riêng.
+Các tính năng AI của app (chat, Planning Agent, highlights, gợi ý task), chạy bằng Claude Code CLI trên máy của người dùng. Mặc định tắt cho tới khi người dùng đồng ý; khi đã bật thì được hoàn thành và xoá task (vào Thùng rác, có Hoàn tác), trừ task có liên kết tích hợp (F4).
 _Avoid_: Sunny (tên hiển thị, không dùng trong quy tắc), LLM của app
 
 **MCP local**:

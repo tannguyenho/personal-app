@@ -375,10 +375,8 @@ flowchart TD
   a4 --> m1
   a5 --> m1
   a6 --> m1
-  start7(["Trợ lý AI qua MCP local"]) -->|"A7"| d7{"BR-21: công tắc bật,<br/>task không liên kết tích hợp?"}
-  d7 -->|"đủ"| a7["Như bước 2-3, tác nhân ai<br/>chip AI, Hoàn tác"]
+  start7(["Trợ lý AI qua MCP local<br/>trợ lý bật, đã đồng ý BR-21 a"]) -->|"A7"| a7["Như bước 2-3, tác nhân ai<br/>chip AI, Hoàn tác"]
   a7 --> a7x{{"→ G10 receipt và Hoàn tác"}}
-  d7 -->|"TOGGLE_OFF / LINKED_TASK"| a7f(["403 AI_ACTION_FORBIDDEN<br/>task không đổi"])
 
   p1 -.->|"E1 · mất mạng"| e1["Áp ngay trên máy, hàng đợi"]
   e1 -.->|"gửi lên, cụm vị trí đã đổi, 412"| e1m>"MSG-23 · Toast<br/>Task đã thay đổi trên thiết bị khác"]
@@ -389,9 +387,8 @@ flowchart TD
 
   class u1,p1,s1,m1 happy
   class a1,d1,a1r,a2,a2r,a3,a4,a5,a6 alt
-  class start7,d7,a7 ai
+  class start7,a7 ai
   class a7x link
-  class a7f fail
   class e1 sync
   class e1m,e2,e2m,e3m err
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -415,7 +412,8 @@ flowchart TD
 | A4 | Instance lặp ngày tương lai | Xong ở cột ngày đó | MSG-08 |
 | A5 | Hoàn thành trước mốc đầu ngày | Ngày hoàn thành = hôm trước | MSG-08 |
 | A6 | Planned là actual | actual = planned | MSG-08 |
-| A7 | AI hoàn thành | Xong (tác nhân ai) hoặc 403 → [G10](g10-tro-ly-ai.md) | – |
+| A7 | AI hoàn thành (không cần công tắc, F4) | Xong (tác nhân ai) → [G10](g10-tro-ly-ai.md) | – |
+| A7 (phần task có liên kết tích hợp) | 403 `LINKED_TASK` | Bỏ (1.1) | – |
 | E1 | Mất mạng | Hàng đợi; xung đột → trạng thái server | MSG-23 |
 | E2 | TaskComplete lỗi | Trạng thái cũ | MSG-10 |
 | E3 | Task đã bị xoá | – | MSG-22 |
@@ -472,9 +470,7 @@ flowchart TD
   a2l --> m1
   p1 -->|"A4 · instance lặp"| a4["Ngày gốc vào danh sách ngày ngoại lệ<br/>G03 BR-15, hoàn tác không gỡ"]
   a4 --> m1
-  ai0(["Trợ lý AI qua MCP local"]) -->|"A7"| d7{"BR-21 a, b, c đủ?"}
-  d7 -->|"đủ"| p1
-  d7 -->|"TOGGLE_OFF / LINKED_TASK"| a7f(["403 AI_ACTION_FORBIDDEN<br/>task không đổi"])
+  ai0(["Trợ lý AI qua MCP local<br/>trợ lý bật, đã đồng ý BR-21 a"]) -->|"A7"| p1
   ai1(["Khung chat G10 · Hoàn tác<br/>task do AI tạo"]) -->|"A3"| ok
 
   ok -->|"A1 · toast đã tắt"| a1["SCR-05 Thùng rác<br/>panel Lưu trữ · Thùng rác, tab Thùng rác"]
@@ -494,11 +490,11 @@ flowchart TD
   class u1,p1,m1 happy
   class a2,a4,a1,a1p,a6,a1m,ai1 alt
   class a2l warn
-  class ai0,d7 ai
+  class ai0 ai
   class a5m warn
   class e1m,e3m,e4m err
   class ok done
-  class a7f,e1,e3 fail
+  class e1,e3 fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
   classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
@@ -520,7 +516,8 @@ flowchart TD
 | A4 | Xoá instance lặp | Thêm ngày ngoại lệ | MSG-09 |
 | A5 | Khôi phục instance trùng series | Vẫn khôi phục | MSG-13 + MSG-24 |
 | A6 | Khôi phục task Hoàn thành / Lưu trữ / Backlog | Về đúng trạng thái cũ | MSG-13 |
-| A7 | AI xoá | Như xoá thường hoặc 403 | – |
+| A7 | AI xoá (không cần công tắc, F4) | Như xoá thường, vào Thùng rác | – |
+| A7 (phần task có liên kết tích hợp) | 403 `LINKED_TASK` | Bỏ (1.1) | – |
 | E1 | Quá 30 ngày | Gỡ khỏi danh sách | MSG-14 |
 | E2 | (SRS đã bỏ) | – | – |
 | E3 | Lỗi xoá / khôi phục | Trạng thái trước | MSG-10 |

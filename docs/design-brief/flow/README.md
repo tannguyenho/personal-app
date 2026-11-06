@@ -49,9 +49,11 @@ Review flow phát hiện nhiều chỗ flow chép theo SRS cũ, trong khi nguồ
 | G08 UC-01 A6 (Plan ngày tương lai) không chuyển trang | SRS G08 UC-01 A6 | (SRS đã đúng) | G08 UC-01: A6 có điểm kết thúc riêng |
 | Nút "Dừng" của Planning Agent | G10 SCR-02 #6, BR-09 | G10 UC-02 A11 | G10 UC-02 (sơ đồ riêng) |
 
-**Còn chờ PO chốt** (hai nguồn cùng cấp nói khác nhau, chưa sửa):
-- Phím S: "Hoãn 1 tuần" (QC-05, ví dụ G06) hay "về hôm nay" (G04 BR-10, G06 UC-03 A1).
-- Rollover thất bại: G08 gộp `THAT_BAI` với `CHO_SHUTDOWN` ("sẽ tự cập nhật"), G04 hiện banner "Thử lại"; ba mã MSG cùng câu (G04 MSG-27, G06 MSG-25, G08 MSG-32).
-- AI xoá task khi công tắc tắt: G02 vẽ server từ chối 403, G10 nói AI không có công cụ xoá và trả lời MSG-07.
-- Xong onboarding: PRD G01 US2.2 mở "Daily planning có hướng dẫn" (G08 chưa định nghĩa chế độ này), IA-12 nói vào Home hôm nay.
-- Nhãn "Lệch ngày": G04 có tooltip MSG-26, chip trong chi tiết task G02 không có.
+**PO đã chốt ngày 06/11/2026** ([quyết định F1–F4](../../review/quyet-dinh-chot-2026-11-06.md)), đã sửa SRS và flow:
+- F1: phím S = về hôm nay; "Hoãn 1 tuần" chỉ còn là lệnh.
+- F2: rollover thất bại một cách hiển thị (banner G06 MSG-25 "Thử lại"); đang chờ thì MSG-32.
+- F3: giữ Daily planning có hướng dẫn sau onboarding; G08 BR-28, UC-01 A16.
+- F4: bỏ công tắc "Cho phép AI hoàn thành và xoá task"; AI luôn được hoàn thành và xoá (vào Thùng rác, có Hoàn tác).
+
+**Còn mở:**
+- Nhãn "Lệch ngày" (QC-01 mục 4): chỉ xuất hiện khi người dùng đổi timezone; chip trong chi tiết task G02 chưa có tooltip MSG-26 như trên card G04.

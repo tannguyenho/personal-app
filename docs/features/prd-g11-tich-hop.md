@@ -261,7 +261,7 @@ AC03: Hoàn tác trong toast → trả nguồn về trạng thái trước `[gi�
 
 AC04: Hai bên không còn khớp (bỏ hoàn thành sau thời hạn đẩy ngược, item mở lại ở nguồn, hàng đợi đẩy quá 7 ngày) → card và chi tiết task hiện nhãn "Lệch với nguồn" và nút "Đồng bộ lại" (C27).
 
-AC05: Task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá, kể cả khi người dùng bật "Cho phép AI hoàn thành và xoá task" của G10, nên AI không bao giờ đẩy trạng thái ra nguồn (QC-12 mục 4, Q46, D10; thay Q20 ở phần này).
+AC05: Task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá, dù AI được hoàn thành / xoá task thường (G10, F4), nên AI không bao giờ đẩy trạng thái ra nguồn (QC-12 mục 4, Q46, D10; thay Q20 ở phần này).
 
 ### US3.2 Đóng ở nguồn hoàn thành task
 

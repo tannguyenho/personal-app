@@ -8,7 +8,9 @@
 >
 > Cập nhật thêm theo vòng 5–6 (Q33–Q46): bản 1.0 là app Windows cho một người dùng (Q35, Q45, [ADR-0005](../adr/0005-nen-tang-windows-truoc.md)); gợi ý task dùng trợ lý AI qua Claude Code CLI (QC-12, Q33, [ADR-0004](../adr/0004-ai-qua-claude-code-cli.md)); bỏ lưu trữ thủ công khỏi 1.0 (Q34); thêm khung giờ channel (Q38a). Tính năng để bản sau gom ở [`02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md).
 >
-> Cập nhật theo vòng 7: khung giờ channel một khoảng mỗi ngày, không vắt nửa đêm, bước 15 phút, đổi có hiệu lực từ ngày làm việc kế tiếp, "Chưa phân loại" không có khung riêng (D1–D3); công tắc AI hoàn thành / xoá áp cho cả subtask, AI không hoàn thành hay xoá task có liên kết tích hợp (D10); phím toàn cục Ctrl+Shift+A có ở 1.0 (D11); bản 1.1 vẫn chỉ một người dùng, nhiều thành viên từ 1.2 trở đi (Q47).
+> Cập nhật theo vòng 7: khung giờ channel một khoảng mỗi ngày, không vắt nửa đêm, bước 15 phút, đổi có hiệu lực từ ngày làm việc kế tiếp, "Chưa phân loại" không có khung riêng (D1–D3); AI hoàn thành / xoá áp cho cả subtask, AI không hoàn thành hay xoá task có liên kết tích hợp (D10); phím toàn cục Ctrl+Shift+A có ở 1.0 (D11); bản 1.1 vẫn chỉ một người dùng, nhiều thành viên từ 1.2 trở đi (Q47).
+>
+> Cập nhật 06/11/2026 theo F4 ([quyết định 06/11](../review/quyet-dinh-chot-2026-11-06.md)): bỏ công tắc "Cho phép AI hoàn thành và xoá task"; khi trợ lý AI bật, AI luôn được hoàn thành và xoá task / subtask (vào Thùng rác, có Hoàn tác); task có liên kết tích hợp vẫn không bao giờ được AI hoàn thành hay xoá (D10).
 
 # 1. Bối cảnh và vấn đề
 
@@ -51,7 +53,7 @@ Task là đơn vị trung tâm của sản phẩm: board theo ngày, lịch, tim
 - Tạo task: từ ô soạn trên cột ngày, phím A, dán URL.
 - Gợi ý thời lượng và channel bằng trợ lý AI qua Claude Code CLI (QC-12). Trợ lý AI tắt, chưa đồng ý hoặc máy không có Claude Code → không có gợi ý AI; app không gọi LLM nào khác (Q33).
 - Chi tiết task: channel, priority, ngày dự định, hạn chót (due), thời lượng kế hoạch, subtask (một cấp), notes, comment, nhật ký hoạt động.
-- Hoàn thành / bỏ hoàn thành task và subtask; xoá subtask có Hoàn tác. Trợ lý AI chỉ hoàn thành / xoá task và subtask khi người dùng bật công tắc riêng; task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (QC-12 mục 4, D10).
+- Hoàn thành / bỏ hoàn thành task và subtask; xoá subtask có Hoàn tác. Trợ lý AI (khi đang bật) hoàn thành / xoá được task và subtask, không cần công tắc riêng (F4); task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (QC-12 mục 4, D10).
 - Nhân bản, xoá mềm, hoàn tác, Thùng rác, khôi phục.
 - Bộ trạng thái task dùng chung cho mọi nhóm (QC-03) và quy tắc đồng bộ nhiều thiết bị, offline (QC-08).
 - Context và channel: tạo, sửa, ẩn, xoá (chuyển task sang channel khác); channel hệ thống "Chưa phân loại". Bản 1.0 một người dùng: người dùng tạo channel tự do, không phân quyền (Q35).
@@ -220,7 +222,7 @@ AC05: Card hiện "actual / planned" (ví dụ 0:02 / 1:30); có toast Hoàn tá
 
 AC06: Số ngày bị hoãn của task reset về 0 (QC-04).
 
-AC07: Trợ lý AI (qua MCP local) chỉ hoàn thành được task khi người dùng đã bật công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt). Công tắc áp cho cả subtask (D10). Task có liên kết tích hợp không bao giờ được AI hoàn thành, kể cả khi đã bật. Task do AI hoàn thành có chip "AI", nhật ký ghi tác nhân AI và có Hoàn tác (QC-12 mục 4–5).
+AC07: Trợ lý AI (qua MCP local, khi trợ lý đang bật) hoàn thành được task và subtask, không cần công tắc riêng (F4, D10). Task có liên kết tích hợp không bao giờ được AI hoàn thành. Task do AI hoàn thành có chip "AI", nhật ký ghi tác nhân AI và có Hoàn tác (QC-12 mục 4–5).
 
 ### US3.2 Bỏ hoàn thành
 
@@ -250,7 +252,7 @@ AC04: Task đang chạy timer bị xoá → dừng timer, lưu thời gian trư�
 
 AC05: Xoá một instance lặp → ngày gốc của instance thành ngày ngoại lệ của series, series không sinh lại ngày đó (G03, Q26).
 
-AC06: Trợ lý AI chỉ xoá được task (và subtask) khi người dùng đã bật công tắc "Cho phép AI hoàn thành và xoá task"; task có liên kết tích hợp không bao giờ được AI xoá, kể cả khi đã bật (D10); xoá do AI có chip "AI", nhật ký và Hoàn tác như xoá thường (QC-12 mục 4–5).
+AC06: Trợ lý AI (khi trợ lý đang bật) xoá được task và subtask vào Thùng rác, không cần công tắc riêng (F4); AI không xoá vĩnh viễn; task có liên kết tích hợp không bao giờ được AI xoá (D10); xoá do AI có chip "AI", nhật ký và Hoàn tác như xoá thường (QC-12 mục 4–5).
 
 ### US4.3 Khôi phục từ Thùng rác
 
@@ -324,7 +326,7 @@ AC10: Số ngày bị hoãn của task tính theo lịch **hiện tại** của 
 |---|---|---|
 | Gợi ý thời lượng / channel | Gợi ý phụ thuộc trợ lý AI qua Claude Code CLI trên máy người dùng (Q33): trợ lý tắt hoặc không có Claude Code thì không có gợi ý; Claude Code có thể chậm hoặc hết hạn mức của gói Claude | Ô soạn không chờ gợi ý; quá thời gian thì bỏ qua; ẩn gợi ý khi độ tin cậy thấp; không gọi LLM nào khác |
 | Khung giờ channel | Nhiều lịch cùng lúc (lịch chung + khung channel) dễ làm người dùng khó hiểu vì sao projection, sức chứa hay "ngày làm việc kế tiếp" khác nhau giữa các task | Tooltip trên card nêu lịch đang áp ("Theo khung #{channel}"); quy tắc tính ở một chỗ (QC-02 mục 5–9) |
-| AI hoàn thành / xoá task | Claude Code thao tác sai trên nhiều task | Mặc định tắt; công tắc riêng, áp cho cả subtask; không bao giờ hoàn thành hay xoá task có liên kết tích hợp (D10); chip "AI" và Hoàn tác (QC-12) |
+| AI hoàn thành / xoá task | Claude Code thao tác sai trên nhiều task | Xoá chỉ vào Thùng rác, không xoá vĩnh viễn; không bao giờ hoàn thành hay xoá task có liên kết tích hợp (D10); chip "AI" và Hoàn tác (QC-12) |
 | Đồng bộ nhiều thiết bị | Hai máy sửa cùng task, hoặc máy offline sửa task mà job hệ thống (rollover) vừa đổi | Theo QC-08: cụm vị trí {trạng thái, ngày dự định, bucket, lưu trữ, số ngày bị hoãn} ghi nguyên khối, lệnh offline trên phiên bản cũ bị từ chối; trường khác gộp theo từng trường, thứ tự theo server nhận; notes dùng CRDT (thiết kế kỹ thuật mục 6) |
 | Phím tắt một chữ | Gõ khi chưa focus ô nhập kích hoạt lệnh (đã gặp trên Sunsama) | Phím tắt chỉ chạy khi không focus ô nhập; lệnh có tác dụng phụ có toast Hoàn tác |
 | Lấy tiêu đề từ URL | Trang chậm, chặn bot, URL nội bộ | Timeout 3 giây, chặn IP nội bộ, fallback dùng URL |
@@ -344,7 +346,7 @@ AC10: Số ngày bị hoãn của task tính theo lịch **hiện tại** của 
 - Đã chốt 04/11/2026: bỏ lưu trữ thủ công (`manual`) khỏi 1.0, để bản sau (Q34).
 - Đã chốt 04/11/2026: bản 1 chỉ một người dùng; người dùng tạo channel tự do; quyền tạo channel chung / riêng tư, giao task, follow để bản sau (Q35). Task được giao (bản sau) vào bucket "Tuần sau", đặt lên đầu (Q36).
 - Đã chốt 04/11/2026: G02 sở hữu cài đặt khung giờ channel; lịch của task = khung channel nếu có, ngược lại lịch chung (Q38a, QC-02 mục 5–9).
-- Đã chốt 04/11/2026: AI chỉ hoàn thành / xoá task khi người dùng bật công tắc; công tắc áp cho cả subtask; task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (Q46, D10, QC-12 mục 4).
+- Đã chốt 04/11/2026: AI chỉ hoàn thành / xoá task khi người dùng bật công tắc (Q46). **Đã chốt lại 06/11/2026 (F4):** bỏ công tắc, AI luôn hoàn thành / xoá được khi trợ lý bật; áp cho cả subtask; task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (Q46, D10, QC-12 mục 4).
 - Đã chốt 04/11/2026: nền tảng 1.0 là app Windows (Flutter), 1.1 web + macOS, 1.2 iOS / Android (Q45, ADR-0005).
 - Đã chốt 04/11/2026: khung giờ channel một khoảng mỗi ngày, không vắt qua nửa đêm, bước 15 phút (D1).
 - Đã chốt 04/11/2026: đổi khung giờ channel có hiệu lực từ ngày làm việc kế tiếp (D2).
