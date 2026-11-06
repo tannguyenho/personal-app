@@ -17,7 +17,7 @@
 | [UC-08](#uc-08-kết-nối-lại-và-ngắt-kết-nối) | Kết nối lại và ngắt kết nối | SCR-09 Banner, SCR-01, SCR-08 Xác nhận ngắt | 5 / 2 |
 | UC-09 | Lập lịch cứng cho task lặp | – | Bỏ (1.1) |
 | [UC-10](#uc-10-tạo-timebox-liên-kết-sự-kiện) | Tạo timebox liên kết sự kiện | SCR-05 (block liên kết) | 2 / 1 |
-| [UC-11](#uc-11-xử-lý-cờ-lệch-ngày) | Xử lý cờ "Lệch ngày" | SCR-05, SCR-06 | 3 / 1 |
+| UC-11 | Xử lý cờ "Lệch ngày" | – | Bỏ (F5) |
 
 ---
 
@@ -462,15 +462,18 @@ flowchart TD
   g02c -->|"A4 · ngoài khoảng hoặc tắt"| a4n(["Timebox giữ nguyên"])
   g02d(["G02 · UC-04 xoá task"]) -->|"A5"| a5[["Theo dòng Xoá QC-05"]]
   g06b(["Đưa task vào backlog · G04, G06"]) -->|"A8"| a8[["Theo QC-05: như Đưa vào backlog"]]
-  g04d(["Phím D, kéo sang ngày khác, shutdown Ngày mai,<br/>AI dời ngày · G04, G08, G10"]) -->|"A7"| a7[["Timebox giữ giờ, dời sang ngày mới<br/>cập nhật sự kiện ngoài, timer không dừng"]]
+  g04d(["Phím D, kéo sang ngày khác, shutdown Ngày mai,<br/>AI dời ngày · G04, G08, G10"]) -->|"A7"| a7[["Timebox thường giữ giờ, dời sang ngày mới<br/>cập nhật sự kiện ngoài, timer không dừng"]]
   g04d -->|"A7 · instance lặp chuyển LUU_TRU skipped"| a8
   g06r(["G06 · UC-04 rollover hằng ngày · job"]) -->|"A6 · timebox quá khứ"| a6[["Gỡ timebox khỏi task, giữ sự kiện ngoài<br/>không gọi DELETE, tác nhân system<br/>timebox tương lai giữ"]]
   a6 --> a6ok(["Không có Hoàn tác<br/>người dùng tự kéo task về nếu cần"])
   g06r -->|"A6 · tự lưu trữ stale / instance skipped"| a8
-  a5 --> fut[["Timebox tương lai CHO_XOA<br/>xoá sự kiện ngoài"]]
-  a5 --> past[["Timebox quá khứ gỡ liên kết<br/>giữ sự kiện ngoài"]]
-  a8 --> fut
-  a8 --> past
+  a5 -->|"timebox thường"| fut[["Timebox tương lai CHO_XOA<br/>xoá sự kiện ngoài"]]
+  a5 -->|"timebox thường"| past[["Timebox quá khứ gỡ liên kết<br/>giữ sự kiện ngoài"]]
+  a8 -->|"timebox thường"| fut
+  a8 -->|"timebox thường"| past
+  a5 -->|"timebox liên kết sự kiện"| lk[["Chỉ gỡ liên kết<br/>không dời, không xoá sự kiện ngoài<br/>QC-05 ngoại lệ, BR-21 f"]]
+  a7 -->|"timebox liên kết sự kiện"| lk
+  a8 -->|"timebox liên kết sự kiện"| lk
   a4 --> x6{{"→ UC-06 Đẩy timebox"}}
   a7 --> x6
   fut --> x6
@@ -480,6 +483,7 @@ flowchart TD
   a9 --> x6
 
   class g02c,g02d,g06b,g04d,g06r,a4,a5,a8,a7,a6,fut,past,a9 alt
+  class lk warn
   class a4n,a6ok done
   class x6 link
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -501,9 +505,9 @@ flowchart TD
 | A2 | Kéo sang ngày khác | `startDate` mới; ngày đã qua thì chặn | MSG-28 (ngày đã qua) |
 | A3 | Kéo cạnh một trong nhiều timebox | planned = tổng | – |
 | A4 | Hoàn thành trong khoảng timebox ([G02 UC-03](g02-quan-ly-task.md#uc-03-hoàn-thành--bỏ-hoàn-thành-task)) | `endsAt` rút ngắn | – |
-| A5 | Xoá task ([G02 UC-04](g02-quan-ly-task.md#uc-04-xoá-hoàn-tác-và-khôi-phục-task)) | Tương lai `CHO_XOA`, quá khứ gỡ liên kết | – |
+| A5 | Xoá task ([G02 UC-04](g02-quan-ly-task.md#uc-04-xoá-hoàn-tác-và-khôi-phục-task)) | Tương lai `CHO_XOA`, quá khứ gỡ liên kết; timebox liên kết sự kiện chỉ gỡ liên kết, giữ sự kiện | – |
 | A6 | Rollover ([G06 UC-04](g06-backlog-rollover.md#uc-04-rollover-hằng-ngày-job-rollover)) | Gỡ timebox quá khứ, giữ sự kiện, không Hoàn tác | – |
-| A7 | Phím D / kéo ngày / shutdown / AI ([G04 UC-03](g04-board-ngay.md#uc-03-di-chuyển-task-giữa-các-ngày), [G08 UC-02](g08-daily-rituals.md#uc-02-daily-shutdown), [G10 UC-03](g10-tro-ly-ai.md#uc-03-trò-chuyện-và-ra-lệnh-cho-trợ-lý)) | Timebox dời theo ngày mới | – |
+| A7 | Phím D / kéo ngày / shutdown / AI ([G04 UC-03](g04-board-ngay.md#uc-03-di-chuyển-task-giữa-các-ngày), [G08 UC-02](g08-daily-rituals.md#uc-02-daily-shutdown), [G10 UC-03](g10-tro-ly-ai.md#uc-03-trò-chuyện-và-ra-lệnh-cho-trợ-lý)) | Timebox dời theo ngày mới; timebox liên kết sự kiện chỉ gỡ liên kết | – |
 | A8 | Đưa vào backlog ([G06 UC-01](g06-backlog-rollover.md#uc-01-chuyển-task-vào-backlog)) | Như A5 | – |
 | A9 | Hoàn tác A5, A7, A8 ([G10 UC-04](g10-tro-ly-ai.md#uc-04-hoàn-tác-hành-động-ai) khi do AI) | Timebox và liên kết khôi phục | – |
 | A10 | Kéo timebox liên kết sự kiện | Không cho | MSG-26 |
@@ -706,9 +710,7 @@ flowchart TD
   a1 --> a1m>"MSG-14 · Thông báo trong app<br/>Timebox của #quot;{tiêu đề}#quot; đã được gỡ vì sự kiện bị xoá<br/>trên {tên lịch}. Task vẫn ở {ngày dự định}"]
   a1m --> p5
   p4 -->|"A2 · sự kiện bị dời giờ / ngày EC-14"| a2[["BR-13 a: bên sửa muộn hơn thắng<br/>lịch ngoài thắng → cập nhật timebox, startDate,<br/>planned nếu 1 timebox; chỉ ghi nhật ký"]]
-  a2 --> a2f[["Tính lại cờ LECH_NGAY BR-22"]]
-  a2f --> p5
-  a2f -->|"lệch ngày"| x11{{"→ UC-11"}}
+  a2 --> p5
   p4 -->|"A6 · đổi tiêu đề / mô tả / riêng tư / bận"| a6[["BR-13 c: app thắng<br/>xếp timebox.push ghi đè"]]
   a6 --> a6x{{"→ UC-06"}}
   p4 -->|"A9 · đổi thành sự kiện cả ngày"| a9[["BR-13 e: gỡ timebox, task giữ nguyên"]]
@@ -716,14 +718,13 @@ flowchart TD
   a9m --> p5
   p4 -->|"A10 · chuyển sang lịch khác cùng tài khoản"| a10[["BR-13 d: cập nhật calendarId<br/>không gỡ, không tạo sự kiện mới<br/>lịch mới chỉ đọc → lần ghi sau lỗi UC-06 E4"]]
   a10 --> p5
-  start7(["Hệ thống: timezone người dùng đổi EC-02"]) -->|"A7"| a7[["Giữ startsAt / endsAt, không tính lại startDate<br/>tính lại LECH_NGAY BR-22, G04 vẽ lại<br/>không banner riêng, chỉ G01 MSG-23"]]
+  start7(["Hệ thống: timezone người dùng đổi EC-02"]) -->|"A7"| a7[["Giữ startsAt / endsAt, không tính lại startDate<br/>không gắn cờ F5, G04 vẽ lại<br/>không banner riêng, chỉ G01 MSG-23"]]
   a7 --> a7x{{"→ G01 · UC-06 banner timezone"}}
-  a7 -->|"lệch ngày"| x11
 
   class start,p2,d1,p4,p5 happy
-  class a5,a8,a12,a1,a2,a2f,a6,a9,a10,start7,a7 alt
+  class a5,a8,a12,a1,a2,a6,a9,a10,start7,a7 alt
   class a1m,a9m warn
-  class x11,a6x,a7x link
+  class a6x,a7x link
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
   classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
@@ -789,13 +790,13 @@ flowchart TD
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
 | A1 | Sự kiện timebox bị xoá | Gỡ timebox, task giữ ngày | MSG-14 |
-| A2 | Sự kiện timebox bị dời | Bên sửa muộn hơn thắng; cờ Lệch ngày → [UC-11](#uc-11-xử-lý-cờ-lệch-ngày) | – |
+| A2 | Sự kiện timebox bị dời | Bên sửa muộn hơn thắng | – |
 | A3 | Sự kiện chặn mới chồng timebox | `XUNG_DOT`, SCR-07: "Giữ nguyên" / "Mở lịch" ([G04 UC-01](g04-board-ngay.md#uc-01-xem-board-và-chuyển-chế-độ-xem)) | MSG-13 |
 | A3 (nút "Dời sang khe trống") | Dời theo Shift+X | Bỏ (1.1) | – |
 | A4 | Sự kiện không chặn | Không gắn cờ / bỏ cờ | – |
 | A5 | Google 410 / delta hết hiệu lực | Đồng bộ lại toàn bộ, không trùng | – (MSG-14 nếu gỡ) |
 | A6 | Đổi tiêu đề / mô tả / riêng tư / bận | App thắng → [UC-06](#uc-06-đẩy-timebox-ra-lịch-ngoài-job-timeboxpush) | – |
-| A7 | Timezone đổi | Giữ giờ tuyệt đối, tính lại cờ; banner ở [G01 UC-06](g01-tai-khoan.md#uc-06-xem-và-đổi-cài-đặt) | – (G01 MSG-23) |
+| A7 | Timezone đổi | Giữ giờ tuyệt đối, không gắn cờ (F5); banner ở [G01 UC-06](g01-tai-khoan.md#uc-06-xem-và-đổi-cài-đặt) | – (G01 MSG-23) |
 | A8 | Ngày đổi giờ mùa hè | Hiển thị giờ địa phương | – |
 | A9 | Đổi thành sự kiện cả ngày | Gỡ timebox | MSG-31 |
 | A10 | Chuyển sang lịch khác | Cập nhật `calendarId` | – |
@@ -1002,99 +1003,14 @@ flowchart TD
 
 ## UC-11 Xử lý cờ "Lệch ngày"
 
-**Mở đầu:** task `KE_HOACH` có cờ `LECH_NGAY` (nhãn "Lệch ngày" trên card, block hoặc chi tiết task). **Thành công:** `workday(startsAt)` của mọi timebox bằng `startDate`, cờ bỏ. **Thất bại:** cờ giữ nguyên.
-
-### Happy case
-
-```mermaid
-flowchart TD
-  start(["Nhãn Lệch ngày trên card,<br/>SCR-05 block hoặc SCR-06 chi tiết task"])
-  u1[/"Bấm nhãn Lệch ngày"/]
-  s1["SCR-06 popover Lệch ngày"]
-  m1>"MSG-30 · Popover<br/>Lệch ngày: timebox ở {ngày timebox}, task ở {ngày dự định}<br/>· Dời task sang {ngày timebox} · Dời timebox về {ngày dự định}"]
-  d1{"Chọn?"}
-  p1[["Dời task: đổi startDate<br/>như kéo sang ngày khác QC-05"]]
-  p2[["Dời timebox: TimeboxSet giữ giờ địa phương, đổi ngày<br/>đẩy sự kiện UC-06"]]
-  p3[["Tính lại cờ"]]
-  m2>"MSG chưa có mã · Toast<br/>Hoàn tác"]
-  ok(["Cờ Lệch ngày bỏ<br/>task và timebox cùng ngày"])
-
-  start ==> u1 ==> s1 ==> m1 ==> d1
-  d1 ==>|"Dời task sang ngày timebox"| p1 ==> p3
-  d1 ==>|"Dời timebox về ngày dự định"| p2 ==> p3
-  p3 ==> m2 ==> ok
-
-  class start,u1,s1,m1,d1,p1,p2,p3,m2 happy
-  class ok done
-  classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
-  classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
-  classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
-  classDef warn fill:#FEF4E2,stroke:#B45309,color:#4A2604
-  classDef ai fill:#F1ECFD,stroke:#6D28D9,color:#2E1065
-  classDef sync fill:#FFFFFF,stroke:#6B7280,stroke-dasharray:4 3,color:#1F2937
-  classDef link fill:#FFFFFF,stroke:#0F766E,stroke-dasharray:4 3,color:#0B3B36
-  classDef done fill:#E6F4F1,stroke:#0F766E,stroke-width:3px,color:#0B3B36
-  classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
-```
-
-### Nhánh thay thế và lỗi
-
-```mermaid
-flowchart TD
-  s1["SCR-06 popover Lệch ngày"]
-  d1{"Chọn?"}
-  p1[["Dời task"]]
-  p2[["Dời timebox"]]
-  p3[["Tính lại cờ"]]
-  ok(["Cờ bỏ"])
-  s1 ==> d1
-  d1 ==> p1 ==> p3
-  d1 ==> p2 ==> p3
-  p3 ==> ok
-
-  s1 -->|"A1 · không xử lý, đóng popover"| a1(["Cờ giữ nguyên<br/>hệ thống không tự sửa"])
-  s1 -->|"A3 · timebox liên kết sự kiện"| a3["Popover chỉ có Dời task"]
-  a3 --> p1
-  p1 -->|"A2 · ngày đích đã có instance cùng series"| a2m>"G03 MSG-21 · Toast, cảnh báo QC-06<br/>Ngày này đã có {tên series}"]
-  a2m --> p3
-  p1 -.->|"E1 · ngày đích đã qua, task chưa xong"| e1m>"MSG-28 · Toast<br/>Không đặt task chưa xong vào ngày đã qua"]
-  p2 -.->|"E1"| e1m
-  e1m -.-> fail(["Cờ giữ nguyên"])
-
-  class s1,d1,p1,p2,p3 happy
-  class a1,a3 alt
-  class a2m warn
-  class e1m err
-  class ok done
-  class fail fail
-  classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
-  classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
-  classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
-  classDef warn fill:#FEF4E2,stroke:#B45309,color:#4A2604
-  classDef ai fill:#F1ECFD,stroke:#6D28D9,color:#2E1065
-  classDef sync fill:#FFFFFF,stroke:#6B7280,stroke-dasharray:4 3,color:#1F2937
-  classDef link fill:#FFFFFF,stroke:#0F766E,stroke-dasharray:4 3,color:#0B3B36
-  classDef done fill:#E6F4F1,stroke:#0F766E,stroke-width:3px,color:#0B3B36
-  classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
-```
-
-### Đối chiếu
-
-| Mã | Điều kiện | Kết thúc ở | Thông báo |
-|---|---|---|---|
-| A1 | Người dùng không xử lý | Cờ giữ nguyên | – |
-| A2 | "Dời task" tới ngày đã có instance cùng series | Vẫn dời, cảnh báo ([G03 UC-06](g03-task-lap-lai.md#uc-06-xử-lý-instance-trùng-series-trong-một-ngày-qc-06-rollover-g06-phím-d-g04-shutdown-g08)) | G03 MSG-21 |
-| A3 | Timebox liên kết sự kiện | Chỉ có "Dời task" | MSG-30 (một lựa chọn) |
-| E1 | Ngày đích đã qua, task chưa xong | Cờ giữ nguyên | MSG-28 |
+Bỏ theo F5 (06/11/2026): không còn cờ Lệch ngày.
 
 ## Kiểm tra
 
-- [x] Mọi A# / E# của UC-01 … UC-11 bản 1.0 có trên sơ đồ hoặc ghi "Bỏ (1.1)"; UC-05 và UC-09 thuần 1.1, ghi bỏ ở Mục lục.
-- [x] Mọi nút màn hình có mã SCR; mọi nút thông báo có mã MSG (trừ toast Hoàn tác của UC-11, SRS chưa gán mã, xem ghi chú).
+- [x] Mọi A# / E# của UC-01 … UC-10 bản 1.0 có trên sơ đồ hoặc ghi "Bỏ (1.1)"; UC-05 và UC-09 thuần 1.1, UC-11 bỏ theo F5, ghi bỏ ở Mục lục.
+- [x] Mọi nút màn hình có mã SCR; mọi nút thông báo có mã MSG.
 
 **Ghi chú cho brief G05**
-- UC-11 bước 4 có "toast Hoàn tác" nhưng mục 9 không có MSG nào cho toast này. Cần thêm MSG (ví dụ "Đã dời … · Hoàn tác").
-- UC-11 A2 "cảnh báo theo QC-06" không ghi mã MSG của G05; sơ đồ tạm dùng G03 MSG-21 như G02 MSG-24 / G04 MSG-23. Cần chốt G05 dùng mã nào và hiện ở đâu.
 - MSG-13 chứa cả phần của 1.1 ("(1.1 thêm: Dời sang khe trống)"). Bản 1.0 popover chỉ có "Giữ nguyên" và "Mở lịch"; brief nên tách nội dung theo bản.
 - UC-07 A11 dùng MSG-14 ("…vì sự kiện bị xoá…") cho cả trường hợp sự kiện gốc **đổi thành cả ngày**; với timebox thường, trường hợp này dùng MSG-31 (A9). Chữ MSG-14 sai ngữ cảnh; đề xuất dùng MSG-31 cho nhánh cả ngày.
 - UC-06 E5 (404 khi PATCH, không thấy sự kiện) gỡ timebox theo BR-13 (b) nhưng không nói có MSG-14 như UC-07 A1, dù cùng một kết quả cho người dùng. Cần chốt có thông báo hay không.
@@ -1105,7 +1021,7 @@ flowchart TD
 - UC-01 E1, E2, E3, E5 không nói người dùng dừng ở màn nào; sơ đồ đặt kết thúc ở SCR-01 theo hậu điều kiện thất bại. E2 ghi MSG-02 là Inline nhưng không nói inline ở đâu.
 - UC-03 A1: không rõ MSG-23 thay thế hay hiện cùng MSG-09 (cả hai đều có "Hoàn tác").
 - UC-03 A9 dẫn tới lệnh "Timebox…" trong command menu G04, nhưng SRS G04 (UC-08, BR) không có lệnh này. Cần G04 bổ sung hoặc bỏ A9 (đang `[giả định]`).
-- BR-21 (f) nói đổi ngày task có timebox liên kết sự kiện thì "chỉ gỡ liên kết"; SRS G04 BR-09 lại giả định "timebox liên kết giữ nguyên, task hiện cờ Lệch ngày". Hai SRS mâu thuẫn; sơ đồ UC-04 A7 chưa vẽ riêng trường hợp này.
+- ~~BR-21 (f) và SRS G04 BR-09 mâu thuẫn về timebox liên kết sự kiện khi đổi ngày.~~ **Đã sửa 06/11/2026:** G04 BR-09 theo QC-05 (chỉ gỡ liên kết); UC-04 A5, A7, A8 đã có nhánh timebox liên kết sự kiện.
 - UC-04 không có nhánh mất mạng, trong khi mục 10 cho phép dời / gỡ timebox offline (`CHO_DONG_BO`, `SyncBatch`) và UC-03 có E3. Cần thêm E cho UC-04.
 - UC-04 E2 nói "không báo lỗi" khi sửa cùng lúc, nhưng map lỗi mục 8 gán `VERSION_CONFLICT` (409 / 412) trên cụm vị trí → MSG-21. Kéo timebox sang ngày khác đổi `startDate` (cụm vị trí), nên không rõ người dùng có thấy MSG-21 không.
 - Gỡ timebox (Ctrl+X / "Gỡ khỏi lịch") xoá **mọi** block của task (BR-06, `TimeboxDelete` không `blockId`). SRS không có cách gỡ riêng một block khi task có nhiều timebox (C19), dù API hỗ trợ `blockId`.

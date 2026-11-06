@@ -10,12 +10,12 @@ Bản 1.0 là app Windows. Trợ lý AI chạy bằng Claude Code CLI do ngườ
 | UC | Flow | Màn chính | Nhánh A / E (1.0) |
 |---|---|---|---|
 | [UC-01](#uc-01-thiết-lập-planning-agent) | Thiết lập Planning Agent | SCR-01 Thiết lập Planning Agent | 2 / 2 |
-| [UC-02](#uc-02-lập-kế-hoạch-ngày-với-planning-agent) | Lập kế hoạch ngày với Planning Agent | SCR-02 Nhập và chạy, SCR-03 Review Plan | 6 / 8 |
+| [UC-02](#uc-02-lập-kế-hoạch-ngày-với-planning-agent) | Lập kế hoạch ngày với Planning Agent | SCR-02 Nhập và chạy, SCR-03 Review Plan | 7 / 8 |
 | [UC-03](#uc-03-trò-chuyện-và-ra-lệnh-cho-trợ-lý) | Trò chuyện và ra lệnh cho trợ lý | SCR-04 Khung chat trợ lý | 12 / 8 |
 | [UC-04](#uc-04-hoàn-tác-hành-động-ai) | Hoàn tác hành động AI | SCR-06 Xung đột khi hoàn tác, chip / dòng của SCR-03, SCR-04, SCR-12 | 8 / 2 |
 | [UC-05](#uc-05-soạn-và-duyệt-highlights-ai-cuối-ngày) | Soạn và duyệt highlights AI cuối ngày | SCR-07 Highlights AI | 7 / 3 |
 | [UC-06](#uc-06-gửi-phản-hồi-về-ai) | Gửi phản hồi về AI | SCR-08 Gửi phản hồi | 1 / 1 |
-| [UC-07](#uc-07-cài-đặt-ai) | Cài đặt AI | SCR-09 Cài đặt → Trợ lý AI | 7 / 0 |
+| [UC-07](#uc-07-cài-đặt-ai) | Cài đặt AI | SCR-09 Cài đặt → Trợ lý AI | 6 / 0 |
 | [UC-08](#uc-08-chạy-bộ-đánh-giá-trước-khi-đổi-prompt-công-cụ-mcp-hoặc-phiên-bản-claude-code) | Chạy bộ đánh giá (CI, kỹ sư AI) | – (không có màn) | 0 / 2 |
 | [UC-09](#uc-09-đồng-ý-dùng-ai-lần-đầu) | Đồng ý dùng AI lần đầu | SCR-10 Đồng ý dùng AI | 2 / 1 |
 | [UC-10](#uc-10-phát-hiện-và-kết-nối-claude-code) | Phát hiện và kết nối Claude Code | SCR-09 #12, SCR-11 Thẻ hướng dẫn | 5 / 1 |
@@ -200,6 +200,38 @@ flowchart TD
   classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
 ```
 
+### Nhánh thay thế: dừng agent (A11)
+
+```mermaid
+flowchart TD
+  s1["SCR-02 Planning Agent đang chạy<br/>tiến độ từng bước"]
+  u1[/"Bấm Dừng · SCR-02 #6"/]
+  a11[["Dừng Claude Code"]]
+  d11{"Đã áp dụng thay đổi nào?"}
+  a11a["Đề xuất LOI"]
+  a11b["Giữ thay đổi, đề xuất DA_AP_DUNG<br/>báo số thay đổi kèm Hoàn tác kế hoạch AI<br/>BR-09, D9"]
+  x1{{"→ G08 · UC-01 bước 1 Daily planning thủ công"}}
+  x2{{"→ UC-04 Hoàn tác cả lượt"}}
+
+  s1 -->|"A11"| u1 --> a11 --> d11
+  d11 -->|"chưa"| a11a --> x1
+  d11 -->|"có"| a11b --> x1
+  a11b -->|"bấm Hoàn tác kế hoạch AI"| x2
+
+  class s1 happy
+  class u1,a11,d11,a11a,a11b alt
+  class x1,x2 link
+  classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
+  classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
+  classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
+  classDef warn fill:#FEF4E2,stroke:#B45309,color:#4A2604
+  classDef ai fill:#F1ECFD,stroke:#6D28D9,color:#2E1065
+  classDef sync fill:#FFFFFF,stroke:#6B7280,stroke-dasharray:4 3,color:#1F2937
+  classDef link fill:#FFFFFF,stroke:#0F766E,stroke-dasharray:4 3,color:#0B3B36
+  classDef done fill:#E6F4F1,stroke:#0F766E,stroke-width:3px,color:#0B3B36
+  classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
+```
+
 ### Nhánh lỗi
 
 ```mermaid
@@ -270,6 +302,7 @@ flowchart TD
 | A8 | Kế hoạch dùng dữ liệu tích hợp, SCR-03 chế độ Chờ duyệt | Bỏ (1.1) | MSG-22 |
 | A9 | Đề xuất CHO_DUYET hết hạn | Bỏ (1.1) | – |
 | A10 | Item đã có task, ALREADY_LINKED | Bỏ (1.1) | – |
+| A11 | Bấm Dừng khi agent đang chạy | [G08 UC-01](g08-daily-rituals.md#uc-01-daily-planning-luồng-thủ-công) bước 1, giữ phần đã áp dụng | – |
 | E1 | 10 giây không có bước đầu / lỗi / > 5 phút | [G08 UC-01](g08-daily-rituals.md#uc-01-daily-planning-luồng-thủ-công) bước 1, giữ phần đã áp dụng | MSG-05 |
 | E2 | Thiếu ngữ cảnh thời gian | Như E1, không gọi Claude Code | MSG-05 |
 | E3 | Task đổi / xoá ở thiết bị khác, giờ đã qua | Dòng đó bị loại, các dòng khác áp dụng | MSG-19 |
@@ -343,8 +376,8 @@ flowchart TD
   a10 --> p4
   p2 -->|"A9 · task không tìm thấy / khớp nhiều task"| a9["Trợ lý hỏi lại<br/>liệt kê tối đa 5 task khớp"]
   a9 -->|"chọn task"| p2
-  p2 -->|"A4 · yêu cầu bị cấm BR-02,<br/>hoàn thành / xoá khi BR-26 tắt"| a4m>"MSG-07 · Khung chat<br/>Mình không thể {xoá task / đánh dấu xong task / gửi tin ra ngoài / đổi cài đặt}. Bạn có thể tự làm: {cách làm}"]
-  a4m --> a4(["Không tạo đề xuất<br/>hoàn thành / xoá: nhắc công tắc ở Cài đặt → Trợ lý AI"])
+  p2 -->|"A4 · yêu cầu bị cấm BR-02"| a4m>"MSG-07 · Khung chat<br/>Mình không thể {xoá vĩnh viễn / gửi tin ra ngoài / đổi cài đặt / hoàn thành hay xoá task đồng bộ từ công cụ khác}. Bạn có thể tự làm: {cách làm}"]
+  a4m --> a4(["Không tạo đề xuất"])
   p2 -->|"A8 · quá 10 giây chưa xong"| a8["SCR-04 #4 Vẫn đang xử lý… + Dừng"]
   a8 -->|"chờ tiếp"| p4
   a8 -->|"bấm Dừng"| d8{"Đã áp dụng thay đổi nào?"}
@@ -352,7 +385,7 @@ flowchart TD
   d8 -->|"có"| a8b(["Dừng Claude Code, giữ thay đổi<br/>kèm Hoàn tác tất cả"])
   p4 -->|"A11 · dời ngày / đưa vào backlog"| a11["Theo QC-05 AI dời ngày / Đưa vào backlog<br/>timebox, sự kiện ngoài, số ngày bị hoãn<br/>timer không dừng"]
   a11 --> s3
-  p4 -->|"A12 · hoàn thành / xoá khi BR-26 bật"| a12["Chip Đã hoàn thành /<br/>Đã chuyển vào Thùng rác kèm Hoàn tác"]
+  p4 -->|"A12 · hoàn thành / xoá task BR-26"| a12["Chip Đã hoàn thành /<br/>Đã chuyển vào Thùng rác kèm Hoàn tác"]
   a12 --> s3
   p4 -->|"A13 · phiên terminal đổi cùng task"| a13[["QC-08: ghi trên phiên bản cũ nhận VERSION_CONFLICT<br/>Claude Code đọc lại rồi thử lại hoặc báo người dùng"]]
   a13 --> p2
@@ -430,7 +463,7 @@ flowchart TD
 | A1 | Câu hỏi không cần hành động | Chỉ trả lời, không đề xuất | – |
 | A2 | Phiên đã đọc dữ liệu tích hợp, SCR-05 Thẻ chờ duyệt | Bỏ (1.1) | MSG-22 |
 | A3 | "Ngày mai" trong khung mơ hồ | Hỏi lại bằng 2 nút ngày, chọn rồi tiếp | MSG-08 |
-| A4 | Yêu cầu bị cấm / BR-26 tắt | Không tạo đề xuất, chỉ cách tự làm | MSG-07 |
+| A4 | Yêu cầu bị cấm (BR-02) | Không tạo đề xuất, chỉ cách tự làm | MSG-07 |
 | A4 (phần task có liên kết tích hợp) | Hoàn thành / xoá task liên kết | Bỏ (1.1) | MSG-07 |
 | A5 | Hoàn tác trên chip | [UC-04](#uc-04-hoàn-tác-hành-động-ai) | – |
 | A6 | Lịch sử | Danh sách cuộc trò chuyện | – |
@@ -439,7 +472,7 @@ flowchart TD
 | A9 | Task không tìm thấy / khớp nhiều | Hỏi lại, tối đa 5 task | – |
 | A10 | "Hôm nay" trong khung 00:00 → mốc đầu ngày | Dùng ngày làm việc hiện tại | – |
 | A11 | Dời ngày / đưa vào backlog | Theo QC-05 | – |
-| A12 | Hoàn thành / xoá khi BR-26 bật | Chip "Đã hoàn thành" / "Đã chuyển vào Thùng rác" | – |
+| A12 | Hoàn thành / xoá task (không cần công tắc, F4) | Chip "Đã hoàn thành" / "Đã chuyển vào Thùng rác" | – |
 | A13 | Phiên terminal đổi cùng task | VERSION_CONFLICT, Claude Code đọc lại | – |
 | E1 | Claude Code lỗi / > 60 giây | LOI hoặc giữ phần đã áp dụng, Gửi lại | MSG-04 |
 | E2 | Hết hạn mức gói Claude | Tin nhắn giữ để gửi lại | MSG-28 |
@@ -776,7 +809,7 @@ flowchart TD
   start(["Cài đặt → Trợ lý AI<br/>hoặc Cài đặt → Beta"])
   s1["SCR-09 Cài đặt → Trợ lý AI"]
   u1[/"Đổi một cài đặt: Gợi ý channel, Gợi ý thời lượng,<br/>Ngôn ngữ tóm tắt, Tóm tắt tự động, Beta"/]
-  p1[["SettingsUpdate PATCH /me/settings<br/>áp BR-16, BR-26"]]
+  p1[["SettingsUpdate PATCH /me/settings<br/>áp BR-16"]]
   ok(["Lưu ngay, áp dụng trên mọi thiết bị<br/>settings.changed"])
 
   start ==> s1 ==> u1 ==> p1 ==> ok
@@ -816,20 +849,15 @@ flowchart TD
   u1 -->|"A6 · Rút lại đồng ý dùng AI #11"| a6m>"MSG-23 · Dialog SCR-09<br/>Rút lại đồng ý? Trợ lý AI sẽ tắt và Claude Code không còn truy cập app nữa. Thay đổi AI đã làm vẫn giữ nguyên"]
   a6m -->|"xác nhận"| a6[["AiConsent DELETE: xoá aiConsentAt, tắt trợ lý<br/>đóng McpServer, huỷ lượt DANG_XU_LY<br/>CHO_DUYET → DA_HOAN_TAC, đã áp dụng giữ"]]
   a6 --> a6e(["Lần bật sau phải qua SCR-10"])
-  u1 -->|"A7 · bật Cho phép AI hoàn thành và xoá task #14"| a7m>"MSG-32 · Dialog SCR-09<br/>Cho phép AI hoàn thành và chuyển task vào Thùng rác? Mọi thay đổi vẫn hoàn tác được. Task đồng bộ với Jira, Notion, Gmail không bao giờ được AI hoàn thành hay xoá · Bật · Huỷ"]
-  a7m -->|"Bật"| a7[["Lưu ai.allowCompleteDelete = true<br/>McpServer thêm hai công cụ từ phiên kế tiếp"]]
-  a7 --> ok
-  u1 -->|"A7 · tắt #14"| a7o[["Lưu ngay, không hỏi<br/>hai công cụ biến mất từ lời gọi kế tiếp"]]
-  a7o --> ok
   u1 -->|"A8 · Kiểm tra lại #12"| a8{{"→ UC-10"}}
 
   p1 -.->|"lưu lỗi"| em>"MSG-14 · Toast<br/>Chưa lưu được thay đổi. Thử lại"]
   em -.-> fail(["Toggle về giá trị cũ"])
 
   class s1,u1,p1 happy
-  class a4,a2,a3,a7o,a6e alt
-  class a1,a6,a7 ai
-  class a1m,a3m,a6m,a7m warn
+  class a4,a2,a3,a6e alt
+  class a1,a6 ai
+  class a1m,a3m,a6m warn
   class a4x,a8 link
   class em err
   class ok done
@@ -855,7 +883,7 @@ flowchart TD
 | A4 | Bật Trợ lý khi chưa đồng ý | [UC-09](#uc-09-đồng-ý-dùng-ai-lần-đầu) | – |
 | A5 | Bật / tắt "Cho AI đọc dữ liệu từ công cụ đã kết nối" | Bỏ (1.1) | MSG-20 |
 | A6 | Rút lại đồng ý | Trợ lý tắt, McpServer đóng | MSG-23 |
-| A7 | Bật / tắt "Cho phép AI hoàn thành và xoá task" | Bật: qua dialog; tắt: lưu ngay | MSG-32 |
+| A7 | (SRS đã bỏ — F4: không còn công tắc hoàn thành / xoá) | – | – |
 | A8 | Kiểm tra lại Claude Code | [UC-10](#uc-10-phát-hiện-và-kết-nối-claude-code) | – |
 | (thất bại) | Lưu lỗi | Toggle về giá trị cũ | MSG-14 |
 
@@ -1145,8 +1173,11 @@ flowchart TD
   p3 -->|"A3 · khung chat của app cũng đang chạy"| a3[["Hai phiên độc lập, xung đột theo QC-08<br/>phiên bản cũ nhận VERSION_CONFLICT"]]
   a3 --> p2
   p3 -->|"A4 · hành động bị cấm / công cụ không có"| a4[["Trả AI_ACTION_FORBIDDEN<br/>kèm MSG-07 dạng chữ"]]
-  a4 --> a4m>"MSG-07 · Claude Code báo lại trong terminal<br/>Mình không thể {xoá task / đánh dấu xong task / gửi tin ra ngoài / đổi cài đặt}. Bạn có thể tự làm: {cách làm}"]
+  a4 --> a4m>"MSG-07 · Claude Code báo lại trong terminal<br/>Mình không thể {xoá vĩnh viễn / gửi tin ra ngoài / đổi cài đặt / hoàn thành hay xoá task đồng bộ từ công cụ khác}. Bạn có thể tự làm: {cách làm}"]
   m1 -->|"Xem"| a2s["SCR-12 Hoạt động AI"]
+  p3 -->|"cửa sổ app ẩn ở khay / thu nhỏ, IA-21"| hid["MSG-29 không bật toast<br/>vào trung tâm thông báo, badge tăng"]
+  hid --> hidx{{"→ G12 · UC-09 A5"}}
+  hid -->|"bấm dòng, cửa sổ lên trước"| a2s
   m1 -->|"A2 · Hoàn tác trên toast"| a2{{"→ UC-04 thay đổi của phiên"}}
   a2s -->|"A2 · Hoàn tác tất cả"| a2
 
@@ -1162,6 +1193,8 @@ flowchart TD
   e5 -.-> e4e
 
   class start happy
+  class hid alt
+  class hidx link
   class p1,p2,p3,a5,a3,a4 ai
   class m1 happy
   class a4m,a2s alt
@@ -1188,6 +1221,7 @@ flowchart TD
 | A3 | Khung chat của app cũng đang chạy | Hai phiên độc lập, QC-08 | – |
 | A4 | Hành động bị cấm / không có công cụ | AI_ACTION_FORBIDDEN, Claude Code báo lại | MSG-07 (dạng chữ) |
 | A5 | Ngày tương đối trong khung mơ hồ | Claude Code hỏi lại (không bảo đảm), server chặn PAST_DATE | – |
+| – | Cửa sổ app ẩn ở khay / thu nhỏ (IA-21, F6) | MSG-29 vào trung tâm thông báo ([G12 UC-09](g12-workspace-billing.md#uc-09-trung-tâm-thông-báo) A5), bấm dòng mở SCR-12 | MSG-29 |
 | E1 | App không mở / chưa đăng nhập | Không kết nối được | – |
 | E2 | Trợ lý tắt / chưa đồng ý | Từ chối kết nối | MSG-30 |
 | E3 | Tắt trợ lý / rút đồng ý / đóng app giữa phiên | Phiên bị cắt, giữ thay đổi đã áp dụng | MSG-30 (khi tắt trợ lý, BR-16) |
@@ -1278,7 +1312,7 @@ flowchart TD
 3. **UC-03 E6 và MSG-19.** E6 chỉ nói chip "Không thực hiện được"; BR-21 lại nói báo MSG-19, và nơi hiện của MSG-19 có "khung chat". Sơ đồ vẽ cả hai; cần chốt khung chat có hiện MSG-19 hay chỉ chip.
 4. **UC-07 không có bảng luồng lỗi.** Chỉ hậu điều kiện thất bại nói "toggle về giá trị cũ, MSG-14". Sơ đồ vẽ nhánh này không có mã E.
 5. **Nhánh không xảy ra ở 1.0 nhưng SRS không ghi 1.1.** UC-07 A2 (tắt Beta khi có đề xuất CHO_DUYET) và UC-05 A6 (công tắc dữ liệu tích hợp tắt): ở 1.0 công tắc BR-20 ẩn nên đề xuất Planning Agent không bao giờ ở CHO_DUYET và A6 luôn đúng. Tương tự, các ý "task có liên kết tích hợp" (LINKED_TASK) ở UC-03 A4 / A12 không xảy ra khi chưa có G11.
-6. **Chữ nhắc Jira / Notion / Gmail ở 1.0.** MSG-32 và mô tả SCR-09 #14 nhắc "Task đồng bộ với Jira, Notion, Gmail…", trong khi G11 ra ở 1.1. Bước tiến độ "Đọc việc từ công cụ" (SCR-02 #5) và danh sách nguồn Gmail / Jira / Notion (SCR-01 #2) cũng vậy. Cần chốt có ẩn ở 1.0 không.
+6. **Chữ nhắc Jira / Notion / Gmail ở 1.0.** Bước tiến độ "Đọc việc từ công cụ" (SCR-02 #5) và danh sách nguồn Gmail / Jira / Notion (SCR-01 #2) nhắc công cụ của G11, trong khi G11 ra ở 1.1. Cần chốt có ẩn ở 1.0 không. (MSG-32 và SCR-09 #14 cũng nhắc, nhưng đã bỏ theo F4.)
 7. **MSG-30 dùng cho cả hai lỗi.** UC-11 E2 trả MSG-30 cho cả `AI_ASSISTANT_DISABLED` và `AI_CONSENT_REQUIRED`, nhưng chữ "Trợ lý AI đang tắt… Bật trong Cài đặt" không nói tới bước đồng ý (SCR-10).
 8. **Thiếu chữ / đích.** UC-05 A3 "hỏi xác nhận ghi đè" chưa có MSG. UC-01: lưu hồ sơ khi mở từ Cài đặt thì về đâu (SRS chỉ nói trường hợp mở từ "Plan my day"). UC-01 E1: theme day > 100 ký tự (SCR-01 #4) chưa ghi rõ có dùng MSG-02 không. UC-04 A3 "ghi 'không còn task'" chưa rõ hiện ở đâu. UC-06: bấm "Hữu ích / Chưa tốt" có mở SCR-08 hay chỉ ghi đánh giá; khi E1 (lưu lỗi, thử lại nền) có còn hiện MSG-16 không.
 9. **UC-09 tiền điều kiện** "Claude Code `SAN_SANG`" vẫn là câu hỏi mở trong SRS (`[giả định]`). Sơ đồ vẽ theo giả định đó: khi chưa sẵn sàng, mọi điểm vào AI bị ẩn nên không tới SCR-10.

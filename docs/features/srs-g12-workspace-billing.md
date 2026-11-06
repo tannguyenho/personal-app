@@ -409,6 +409,7 @@ Lời mời (bản sau — BR-28): `CHO_CHAP_NHAN` → `DA_CHAP_NHAN` (UC-04, c�
 | A2 | Đích không còn (task đã xoá, mất quyền xem) | Giữ SCR-11 mở, toast MSG-30 |
 | A3 | Cuộn tới cuối danh sách | Tải trang kế (cursor) |
 | A4 | Thông báo quá 90 ngày | Tự xoá (BR-20) |
+| A5 | Toast của nhóm khác phát sinh khi cửa sổ app đang ẩn ở khay / thu nhỏ (IA-21, F6) | Không bật toast; tạo dòng chưa đọc trong SCR-11 với nội dung toast, badge tăng. Dòng tạo trên máy, không gửi lên server, không đồng bộ `[giả định]`. Bấm dòng → đưa cửa sổ lên trước nếu cần, mở đúng đích (bước 4). Nút có thời hạn của toast (Hoàn tác) không mang theo |
 
 **Luồng lỗi**
 
@@ -547,7 +548,7 @@ iOS / Android (1.2) dùng cùng điểm vào với cột Web / macOS.
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
 | 1 | Chuông + badge | Icon | Số chưa đọc, tối đa "99+" |
-| 2 | Danh sách | Popover cạnh chuông (IA-10) | Mới nhất trước; mỗi dòng: icon loại, nội dung (MSG-40 – MSG-43…), thời gian tương đối, chấm chưa đọc |
+| 2 | Danh sách | Popover cạnh chuông (IA-10) | Mới nhất trước; mỗi dòng: icon loại, nội dung (MSG-40 – MSG-43…, hoặc nội dung toast phát sinh lúc cửa sổ ẩn, A5 UC-09), thời gian tương đối, chấm chưa đọc |
 | 3 | "Đánh dấu tất cả đã đọc" | Link | A1 UC-09 |
 | 4 | "Cài đặt thông báo" | Icon | SCR-10 |
 | 5 | Trạng thái rỗng | Empty state | MSG-37 |

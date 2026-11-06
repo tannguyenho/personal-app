@@ -407,7 +407,7 @@ flowchart TD
 
 ## UC-04 Quên và đặt lại mật khẩu
 
-**Mở đầu:** khách chưa đăng nhập, ở SCR-03. **Thành công:** mật khẩu mới có hiệu lực (BR-09), khách đã đăng nhập, mở Home. **Thất bại:** mật khẩu không đổi.
+**Mở đầu:** khách chưa đăng nhập, ở SCR-03. **Thành công:** mật khẩu mới có hiệu lực (BR-09); khách quay lại app và đăng nhập bằng mật khẩu mới. Phần 2 chạy trên **trang web tối giản** (tech mục 1), trang web không cấp token cho app. **Thất bại:** mật khẩu không đổi.
 
 ### Happy case
 
@@ -419,16 +419,19 @@ flowchart TD
   u2[/"Nhập email, bấm Gửi link"/]
   p1[["AuthPasswordForgot BR-04<br/>email có tài khoản nhận link 30 phút"]]
   m1>"MSG-17 · SCR-04<br/>Nếu {email} có tài khoản, chúng tôi đã gửi link đặt lại mật khẩu.<br/>Link có hiệu lực 30 phút"]
-  u3[/"Mở link trong email<br/>deep link hoặc trang web tối giản [giả định]"/]
-  s2["SCR-04 phần 2 · mật khẩu mới"]
+  u3[/"Mở link trong email"/]
+  s2["SCR-04 phần 2 · mật khẩu mới<br/>trên trang web tối giản"]
   u4[/"Nhập mật khẩu mới, bấm Đặt mật khẩu"/]
-  p2[["AuthPasswordReset, áp BR-02, BR-09<br/>mở khoá BR-07, thu hồi phiên khác, gửi email<br/>cấp token"]]
-  m2>"MSG-19 · Toast<br/>Đã đặt lại mật khẩu. Các thiết bị khác đã được đăng xuất"]
+  p2[["AuthPasswordReset, áp BR-02, BR-09<br/>mở khoá BR-07, thu hồi phiên khác, gửi email<br/>không cấp token cho app"]]
+  m2>"MSG-19 · Trang web<br/>Đã đặt lại mật khẩu. Các thiết bị khác đã được đăng xuất"]
+  u5[/"Quay lại app, nhập email và mật khẩu mới"/]
+  x1{{"→ UC-03 Đăng nhập"}}
   ok(["Home, đã đăng nhập"])
 
-  start ==> u1 ==> s1 ==> u2 ==> p1 ==> m1 ==> u3 ==> s2 ==> u4 ==> p2 ==> m2 ==> ok
+  start ==> u1 ==> s1 ==> u2 ==> p1 ==> m1 ==> u3 ==> s2 ==> u4 ==> p2 ==> m2 ==> u5 ==> x1 ==> ok
 
-  class start,u1,s1,u2,p1,m1,u3,s2,u4,p2,m2 happy
+  class start,u1,s1,u2,p1,m1,u3,s2,u4,p2,m2,u5 happy
+  class x1 link
   class ok done
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
@@ -450,8 +453,8 @@ flowchart TD
   u3[/"Mở link trong email"/]
   s2["SCR-04 phần 2"]
   p2[["AuthPasswordReset"]]
-  m2>"MSG-19 · Toast"]
-  ok(["Home, đã đăng nhập"])
+  m2>"MSG-19 · Trang web"]
+  ok(["Quay lại app, đăng nhập bằng mật khẩu mới · UC-03"])
 
   s1 ==> p1 ==> u3 ==> s2 ==> p2 ==> m2 ==> ok
 
@@ -519,7 +522,7 @@ flowchart TD
   s5["SCR-05 bước 5 · 3 ô task<br/>thời lượng, channel gợi ý theo G02"]
   u5[/"Nhập 1-3 task<br/>bấm Bắt đầu ngày đầu tiên"/]
   p2[["Tạo task G02<br/>OnboardingComplete"]]
-  x2{{"→ G08 · UC-01<br/>Daily planning hôm nay, có hướng dẫn"}}
+  x2{{"→ G08 · UC-01 A16<br/>Daily planning hôm nay, chế độ có hướng dẫn"}}
   ok(["Daily planning hôm nay đang mở<br/>onboarding HOAN_TAT"])
 
   start ==> s1 ==> u1 ==> p1 ==> s2 ==> u2 ==> x1 ==> s2b ==>|"Tiếp"| s3 ==> u3 ==> s4 ==> u4 ==> s5 ==> u5 ==> p2 ==> x2 ==> ok
@@ -1272,7 +1275,7 @@ flowchart TD
 
 **Ghi chú cho brief G01**
 - **MSG-22 có ký tự ✓** ("✓ Đã lưu"). Quy ước cấm ký tự này trong nhãn, nên sơ đồ ghi "dấu tích, Đã lưu". SCR-05 bước 2 ("✓ Đã kết nối") cũng ghi là "dấu tích".
-- **Màn chưa có mã SCR:** menu tài khoản (UC-03 A1, UC-06 bước 1); Home (UC-02 bước 5, UC-03 bước 3, UC-04 bước 4); SCR-01 "rút gọn chỉ có ô đồng ý" (UC-02 A1); trang web tối giản / deep link của link đặt lại mật khẩu (UC-04 bước 3), link tải bản xuất (UC-08 bước 4) và link "Không phải tôi" (UC-07 A5); màn MSG-38 (UC-09), màn MSG-42 / MSG-43 (UC-07); dialog xác nhận lại sau MSG-48 (UC-11 A1).
+- **Màn chưa có mã SCR:** menu tài khoản (UC-03 A1, UC-06 bước 1); Home (UC-02 bước 5, UC-03 bước 3, UC-04 bước 4); SCR-01 "rút gọn chỉ có ô đồng ý" (UC-02 A1); trang web tối giản / deep link của link đặt lại mật khẩu (UC-04 bước 3), link tải bản xuất (UC-08 bước 4) và link "Không phải tôi" (UC-07 A5); màn MSG-38 (UC-09), màn MSG-42 / MSG-43 (UC-07); dialog xác nhận lại sau MSG-48 (UC-11 A1). **Đã sửa 06/11/2026:** link đặt lại mật khẩu mở trên trang web tối giản (tech mục 1); UC-04 kết thúc bằng đăng nhập lại trong app.
 - **Thông báo không có mã MSG:** UC-08 E2 (trạng thái `LOI`, nút "Thử lại"), UC-08 E3 (trang 403 "Link này thuộc tài khoản khác"), UC-08 A2 (nhãn "Tạo bản xuất mới"; SCR-11 #6 chỉ ghi "Đã hết hạn"). UC-05 E1 dùng "thông báo của G05", G01 không có MSG.
 - **UC-08 `LOI` mâu thuẫn:** mục 4.2 ghi tự thử lại 3 lần "rồi báo người dùng tạo lại", UC-08 E2 ghi nút "Thử lại".
 - **MSG-11 sai nơi hiện khi xác nhận lại:** UC-02 A6 và UC-07 E7 dùng MSG-11 ("Đăng nhập bằng … chưa thành công"), nhưng MSG-11 ghi nơi hiện là SCR-03. Lúc đó người dùng đang ở dialog SCR-11 / SCR-12, không ở SCR-03. Tương tự, UC-02 E4 dùng MSG-14 (nơi hiện SCR-03) trong dialog MSG-13.

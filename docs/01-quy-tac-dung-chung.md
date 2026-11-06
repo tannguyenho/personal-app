@@ -39,7 +39,7 @@ Tài liệu này giữ các quy tắc mà nhiều nhóm cùng dùng. PRD/SRS c�
 4. **Đổi timezone không đổi ngày dự định.**
    - Task giữ nguyên ngày dự định.
    - Timebox giữ thời điểm tuyệt đối.
-   - Nếu timebox rơi vào ngày làm việc khác với ngày dự định, task và timebox hiện cờ **"Lệch ngày"**. Hệ thống không tự sửa; người dùng tự chọn dời task hoặc dời timebox.
+   - Nếu timebox rơi vào ngày làm việc khác với ngày dự định: không gắn cờ; hệ thống không tự sửa; người dùng tự kéo task hoặc timebox nếu muốn khớp (F5). Task vẫn ở cột ngày dự định, timebox vẫn vẽ trên lịch theo thời điểm thật.
 5. **Timebox vắt qua mốc đầu ngày.** Timebox thuộc ngày làm việc của thời điểm bắt đầu.
 
 Bảng ví dụ dùng làm ca kiểm thử chuẩn (cả cho bộ đánh giá AI của G10). Mốc 04:00, timezone Asia/Ho_Chi_Minh:
@@ -124,7 +124,8 @@ Mọi đường làm thay đổi ngày dự định hoặc đưa task ra khỏi 
 | Đưa vào backlog | Timebox tương lai: gỡ. Quá khứ: gỡ liên kết | Tương lai: **xoá**. Quá khứ: giữ | Không dừng | Reset | G04, G06 |
 | Hoàn thành | Giữ; rút ngắn khi thời điểm hoàn thành nằm trong khoảng giờ của timebox | Cập nhật theo | **Dừng** | Reset | G02 |
 | Xoá | Tương lai: gỡ. Quá khứ: gỡ liên kết | Tương lai: xoá. Quá khứ: giữ | **Dừng** | — | G02 |
-| "Hoãn 1 tuần" (= max(ngày dự định, hôm nay) + 7 ngày, D5), phím S | Như "kéo sang ngày khác" | Cập nhật theo | Không dừng | Reset | G04, G06 |
+| Phím S: về hôm nay (F1) | Như "kéo sang ngày khác" | Cập nhật theo | Không dừng | Reset | G04, G06 |
+| "Hoãn 1 tuần" (= max(ngày dự định, hôm nay) + 7 ngày, D5); chỉ qua command menu / menu Ngày dự định, không có phím tắt (F1) | Như "kéo sang ngày khác" | Cập nhật theo | Không dừng | Reset | G04, G06 |
 | Tự lưu trữ (`stale`), lưu trữ do trùng series (`skipped`, D6) | Như "Đưa vào backlog" | Như "Đưa vào backlog" | Không dừng | — | G06 |
 | AI dời ngày | Như "kéo sang ngày khác" | Như trên | Không dừng | Reset | G10 |
 
@@ -199,9 +200,9 @@ Trợ lý AI **không có hạn mức theo gói**: AI chạy bằng Claude Code 
 2. **Không có Claude Code** (chưa cài, chưa đăng nhập, phiên bản không hỗ trợ): mọi tính năng AI bị ẩn, thay bằng hướng dẫn "Cài Claude Code để bật trợ lý AI". Mọi chức năng lõi vẫn chạy đủ.
 3. **MCP server local.** App chạy một MCP server trên máy, chỉ nhận kết nối từ máy đó. Claude Code (do app gọi, hoặc do người dùng tự mở trong terminal) điều khiển app qua các công cụ:
    - đọc: board ngày, backlog, lịch và sự kiện, task, objective;
-   - ghi: tạo task, sửa tiêu đề / ghi chú / planned / channel, dời ngày (theo QC-05, dòng "AI dời ngày"), đưa vào backlog, timebox / gỡ timebox;
+   - ghi: tạo task, sửa tiêu đề / ghi chú / planned / channel, dời ngày (theo QC-05, dòng "AI dời ngày"), đưa vào backlog, timebox / gỡ timebox, hoàn thành task, xoá task (mục 4);
    - đọc dữ liệu tích hợp (email, Jira, Notion…): chỉ có khi người dùng bật công tắc riêng (mục 6).
-4. **Hoàn thành và xoá task** không có trong MCP mặc định. Người dùng bật được công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt), áp cho cả subtask. Task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (D10).
+4. **Hoàn thành và xoá task** (F4): khi trợ lý bật, AI luôn được hoàn thành và xoá task / subtask, không cần công tắc riêng. Xoá của AI là xoá mềm vào Thùng rác; AI không xoá vĩnh viễn hay dọn Thùng rác. Task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (D10).
 5. **Áp dụng ngay.** Mọi thay đổi qua MCP được áp dụng ngay, gắn chip "AI" trên task, ghi nhật ký, và có Hoàn tác (từng thay đổi và "Hoàn tác kế hoạch AI" cho cả lượt). Planning Agent lỗi giữa chừng thì giữ phần đã áp dụng, vẫn có Hoàn tác cả lượt (D9).
 6. **Dữ liệu tích hợp chỉ là dữ liệu.** Công cụ đọc dữ liệu tích hợp mặc định tắt. Khi đã bật, mọi thay đổi **sau lần đầu đọc dữ liệu tích hợp** trong cùng phiên AI đó chuyển thành **chờ duyệt** trong app thay vì áp dụng ngay, để chặn lệnh ẩn trong nội dung bên ngoài (D8).
 7. **Đồng ý.** Trợ lý AI mặc định tắt. Lần bật đầu tiên hiện một màn gọn nói rõ dữ liệu nào được đưa cho Claude Code; app lưu thời điểm đồng ý. Tắt trợ lý thì MCP server ngừng nhận kết nối.

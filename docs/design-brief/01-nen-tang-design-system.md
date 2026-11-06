@@ -63,7 +63,7 @@ Ba tầng, Figma dùng Variables với hai mode Sáng / Tối:
 |---|---|---|
 | Trung tính | Xám hơi lạnh, 10 bậc | Nền, chữ, viền; task Kế hoạch; chờ đồng bộ |
 | Thành công | Xanh lá | ✓ hoàn thành, thanh tiến độ ngày |
-| Cảnh báo | Hổ phách | "Dời n ngày", "Lệch ngày", due sắp tới, khối lượng sắp chạm ngưỡng (nếu brief G04 giữ mức vàng) |
+| Cảnh báo | Hổ phách | "Dời n ngày", due sắp tới, khối lượng sắp chạm ngưỡng (nếu brief G04 giữ mức vàng) |
 | Nguy hiểm | Đỏ | Quá tải, due quá hạn, lỗi, nút xoá |
 | AI | Tím (4.2) | Mục 4.2 |
 | Nhấn | Teal (4.2) | Mục 4.2 |

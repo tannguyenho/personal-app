@@ -47,7 +47,7 @@
 | BR-10 | **Xác nhận lại.** Đổi mật khẩu, đổi email, xoá tài khoản và chuyển quyền sở hữu workspace (G12, bản sau) cần một trong hai: nhập mật khẩu hiện tại, hoặc `reauthToken` có được khi đăng nhập lại qua Google / Microsoft đã liên kết (trên app desktop cũng qua trình duyệt hệ thống, BR-25). `reauthToken` dùng 1 lần, hiệu lực 5 phút `[giả định]`. Tài khoản chỉ có Google / Microsoft chỉ dùng được `reauthToken` |
 | BR-11 | **Onboarding.** 5 bước theo thứ tự: (1) ngôn ngữ + timezone → (2) kết nối lịch → (3) công cụ công việc → (4) lịch làm việc (BR-22) + giờ plan ngày → (5) task đầu tiên. Mọi trường điền sẵn; bước 2 bỏ qua được; lưu tiến độ sau mỗi bước; mở lại app tiếp tục bước dở. Hoàn tất → mở Daily planning hôm nay ở chế độ có hướng dẫn (G08). Chỉ hiện một lần / tài khoản |
 | BR-12 | **Cài đặt.** Mỗi trường lưu ngay qua \[SettingsUpdate\] (chỉ trường đổi, kèm `version` của từng trường), áp dụng ngay, không khởi động lại app; phát `settings.changed` tới thiết bị khác ≤ 5 giây. Xung đột xử lý theo từng trường (QC-08 mục 3): bản server nhận sau thắng; thiết bị có lệnh bị từ chối (412) lấy giá trị server **của trường đó** và hiện MSG-41; các trường khác trong cùng lệnh vẫn được lưu. Mặc định và giới hạn theo PRD mục 5, lấy từ \[AppConfig\] |
-| BR-13 | **Timezone.** Mặc định theo thiết bị lúc đăng ký. Mỗi lần mở app so timezone thiết bị với cài đặt; lệch → banner MSG-23, không tự đổi; chọn "Giữ" thì không hỏi lại tới khi timezone thiết bị đổi tiếp. MSG-23 là banner duy nhất cho lệch timezone trong toàn app (G04 MSG-16 bỏ). Đổi timezone có hiệu lực từ ngày làm việc kế tiếp (QC-01 mục 3); ngày dự định giữ nguyên, timebox giữ thời điểm tuyệt đối, cờ "Lệch ngày" theo QC-01 mục 4 |
+| BR-13 | **Timezone.** Mặc định theo thiết bị lúc đăng ký. Mỗi lần mở app so timezone thiết bị với cài đặt; lệch → banner MSG-23, không tự đổi; chọn "Giữ" thì không hỏi lại tới khi timezone thiết bị đổi tiếp. MSG-23 là banner duy nhất cho lệch timezone trong toàn app (G04 MSG-16 bỏ). Đổi timezone có hiệu lực từ ngày làm việc kế tiếp (QC-01 mục 3); ngày dự định giữ nguyên, timebox giữ thời điểm tuyệt đối, không gắn cờ, không tự sửa (QC-01 mục 4, F5) |
 | BR-14 | **Mốc đầu ngày và ngày làm việc.** Ngày làm việc và hàm `workday(t)` theo QC-01 (G01 sở hữu). Mốc đầu ngày mặc định 04:00, chỉnh trong 00:00–06:00. Đổi mốc có hiệu lực từ ngày làm việc kế tiếp, hiện MSG-24; không chạy lại rollover cho ngày đã có lượt xong (QC-01 mục 3) |
 | BR-15 | **Phím tắt.** Tắt phím tắt → mọi phím một ký tự ngừng; Ctrl+K (Cmd+K trên macOS, 1.1) và Esc vẫn chạy `[giả định]`. Phím một ký tự chỉ chạy khi không focus ô nhập; gõ ≥ 4 ký tự / 1 giây ngoài ô nhập → khoá phím tắt 1 giây (EC-25). Phím toàn cục Ctrl+Shift+A (thêm task), Ctrl+Shift+Space (bật / dừng timer) trên app Windows, có từ 1.0 (D11, thay C20); web không có phím toàn cục |
 | BR-16 | **Tooltip theo ngữ cảnh** hiện tối đa 1 lần / tài khoản (lưu trong cài đặt, đồng bộ mọi thiết bị); đánh dấu đã xem khi đóng hoặc khi làm hành động được gợi ý. 1.0: "Task projections" (lần đầu thấy projection, G04), "Your first keyboard shortcut" (lần đầu dùng phím tắt, G04); danh sách khác `[giả định]` |
@@ -58,7 +58,7 @@
 | BR-21 | **Nhật ký bảo mật.** Ghi đăng ký, đăng nhập (thành công / thất bại), khoá, đặt lại / đổi mật khẩu, đổi email, "Không phải tôi", đăng xuất mọi phiên, xuất, xoá, đồng ý / rút lại đồng ý: thời điểm, IP, user agent, kết quả. Không ghi mật khẩu, mã, token. Giữ 1 năm; khi tài khoản bị xoá, bản ghi được ẩn danh (bỏ email, tên, gắn mã ngẫu nhiên) thay vì xoá |
 | BR-22 | **Lịch làm việc chung** (QC-02 mục 1–4, G01 sở hữu). Các ngày làm việc trong tuần, mỗi ngày có giờ bắt đầu < giờ kết thúc. Mặc định Thứ Hai–Thứ Sáu, 09:00–17:00 `[giả định giờ]`; thêm được Thứ Bảy hoặc ngày bất kỳ. Cần ≥ 1 ngày làm việc `[giả định]` (MSG-46). Lưu như mọi cài đặt (BR-12) trong trường `workSchedule`; đổi có hiệu lực từ ngày làm việc kế tiếp `[giả định]`. Ngày làm việc kế tiếp, nhóm đọc và cách dùng theo QC-02 mục 2–3; G09 gửi recap tuần tại mốc đầu ngày của ngày sau ngày làm việc cuối cùng trong tuần. Ngày lễ chưa hỗ trợ ở 1.0. **Khung giờ channel** do G02 sở hữu (QC-02 mục 5–9), G01 không đặc tả lại: lịch làm việc của task = khung giờ channel của task nếu có, ngược lại lịch chung (QC-02 mục 6); sức chứa ngày (G04) = hợp lịch chung và các khung channel (QC-02 mục 7); ritual (G08) và cột ngày G09 theo lịch chung (QC-02 mục 8) |
 | BR-23 | **Rút lại và xin lại đồng ý** (Nghị định 13/2023/NĐ-CP). (a) Văn bản Điều khoản / Chính sách có phiên bản mới đánh dấu "cần đồng ý lại" → lần mở app kế tiếp hiện **SCR-15** (MSG-47); chưa đồng ý thì API trả `CONSENT_REQUIRED` cho mọi thao tác trừ đọc cài đặt Tài khoản, xuất dữ liệu, xoá tài khoản, đăng xuất `[giả định]`. (b) "Rút lại đồng ý xử lý dữ liệu" ở SCR-11 → MSG-48 → xác nhận lại (BR-10) → chạy UC-09 (xoá tài khoản) `[giả định — chờ pháp chế]`. (c) **Đồng ý dùng Trợ lý AI** là đồng ý riêng do G10 sở hữu: màn gọn khi bật trợ lý lần đầu, nói rõ dữ liệu nào được đưa cho Claude Code, lưu thời điểm đồng ý (QC-12 mục 7); xem và rút lại ở Cài đặt → Trợ lý AI (SCR-16, G10). Không nằm trên SCR-01 / SCR-15 và không đổi trạng thái đồng ý xử lý dữ liệu của tài khoản. (d) Đồng ý nhận email Product updates (G12) là đồng ý riêng, rút lại ở Cài đặt → Thông báo. Mọi lần đồng ý / rút lại lưu phiên bản, thời điểm (BR-06) và ghi BR-21 |
-| BR-24 | **Nhóm cài đặt Trợ lý AI** (điểm vào; Q46, QC-12, ADR-0004). Khung trang Cài đặt có nhóm "Trợ lý AI" (SCR-16); G01 chỉ đặt vị trí và lối vào, **G10 sở hữu** nội dung, giá trị mặc định, hành vi, API và thông báo. Nhóm gồm: (1) bật / tắt trợ lý, mặc định tắt; tắt thì MCP server local ngừng nhận kết nối (QC-12 mục 7); (2) trạng thái phát hiện Claude Code CLI (đã cài, đã đăng nhập, phiên bản hỗ trợ); không có → ẩn tính năng AI, hiện hướng dẫn "Cài Claude Code để bật trợ lý AI" (QC-12 mục 2); (3) công tắc "Cho phép AI hoàn thành và xoá task", mặc định tắt; công tắc áp cho cả subtask; task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (QC-12 mục 4, D10); (4) công tắc cho AI đọc dữ liệu tích hợp, mặc định tắt; bật thì các thay đổi sau lần đầu đọc dữ liệu tích hợp trong phiên AI đó chờ duyệt (QC-12 mục 6, D8); (5) thời điểm đồng ý và "Rút lại đồng ý dùng AI" (BR-23 c). Bật trợ lý lần đầu → màn đồng ý gọn của G10 (QC-12 mục 7). Không hiện hạn mức AI: AI không có hạn mức theo gói (QC-10, QC-12 mục 8) |
+| BR-24 | **Nhóm cài đặt Trợ lý AI** (điểm vào; Q46, QC-12, ADR-0004). Khung trang Cài đặt có nhóm "Trợ lý AI" (SCR-16); G01 chỉ đặt vị trí và lối vào, **G10 sở hữu** nội dung, giá trị mặc định, hành vi, API và thông báo. Nhóm gồm: (1) bật / tắt trợ lý, mặc định tắt; tắt thì MCP server local ngừng nhận kết nối (QC-12 mục 7); (2) trạng thái phát hiện Claude Code CLI (đã cài, đã đăng nhập, phiên bản hỗ trợ); không có → ẩn tính năng AI, hiện hướng dẫn "Cài Claude Code để bật trợ lý AI" (QC-12 mục 2); (3) (bỏ — F4: không còn công tắc "Cho phép AI hoàn thành và xoá task"; khi trợ lý bật, AI luôn được hoàn thành và xoá task, QC-12 mục 4); (4) công tắc cho AI đọc dữ liệu tích hợp, mặc định tắt; bật thì các thay đổi sau lần đầu đọc dữ liệu tích hợp trong phiên AI đó chờ duyệt (QC-12 mục 6, D8); (5) thời điểm đồng ý và "Rút lại đồng ý dùng AI" (BR-23 c). Bật trợ lý lần đầu → màn đồng ý gọn của G10 (QC-12 mục 7). Không hiện hạn mức AI: AI không có hạn mức theo gói (QC-10, QC-12 mục 8) |
 | BR-25 | **Đăng nhập Google / Microsoft trên app desktop** (Q45). App mở **trình duyệt hệ thống** tới trang của nhà cung cấp; không đăng nhập trong cửa sổ nhúng của app. Trong lúc chờ, app hiện trạng thái chờ (MSG-49) có nút "Huỷ". Nhà cung cấp trả kết quả về app → app tự đưa cửa sổ lên trước và tiếp tục UC-02 bước 4. Hết thời gian chờ `[giả định: 5 phút]` hoặc không mở được trình duyệt → về SCR-03 với MSG-50. Áp dụng cả cho xác nhận lại (`purpose=reauth`, BR-10) và kết nối lịch ở onboarding (G05). Cách trả kết quả về app (loopback / deep link), PKCE, lưu token: tech chốt — `docs/tech/` |
 | BR-26 | **Phạm vi một người dùng** (Q35, Q37). Bản 1 chỉ cho một người dùng, mỗi tài khoản một workspace cá nhân. Các phần nhiều thành viên trong SRS này giữ nguyên đặc tả nhưng **chưa làm**, phát hành ở bản sau (1.2 trở đi; bản 1.1 vẫn chỉ một người dùng, Q47) — xem [`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md): đăng ký / đăng nhập qua lời mời (BR-05, UC-01 A4, UC-02 A3, UC-03 A4), task được giao trong bản xuất (BR-19), xoá tài khoản khi ở workspace nhiều người (BR-20 a, b; UC-09 A3, E1; MSG-37, MSG-45), chuyển quyền sở hữu (BR-10). Trước khi phát hành các phần này, API tương ứng không nhận `inviteToken` |
 
@@ -206,7 +206,7 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | **Mục** | **Nội dung** |
 | --- | --- |
 | Tiền điều kiện | Khách chưa đăng nhập |
-| Hậu điều kiện thành công | Mật khẩu mới có hiệu lực (BR-09); khách đã đăng nhập, mở Home |
+| Hậu điều kiện thành công | Mật khẩu mới có hiệu lực (BR-09); khách quay lại app và đăng nhập bằng mật khẩu mới (UC-03) |
 | Hậu điều kiện thất bại | Mật khẩu không đổi |
 
 **Luồng chính**
@@ -215,8 +215,8 @@ Onboarding: `CHUA_BAT_DAU` → `DANG_LAM` (lưu bước 1–5) → `HOAN_TAT`. Y
 | --- | --- | --- |
 | 1 | Khách | SCR-03 → "Quên mật khẩu" → **SCR-04** phần 1, nhập email, bấm "Gửi link" |
 | 2 | Hệ thống | Gọi \[AuthPasswordForgot\]; luôn hiện MSG-17 (BR-04); email có tài khoản nhận link 30 phút |
-| 3 | Khách | Mở link trong email → **SCR-04** phần 2, nhập mật khẩu mới (1.0 chưa có web: link mở app qua deep link hoặc trang web tối giản `[giả định — tech chốt, docs/tech/]`) |
-| 4 | Hệ thống | Gọi \[AuthPasswordReset\]; áp BR-02, BR-09; cấp token, mở Home, toast MSG-19 |
+| 3 | Khách | Mở link trong email → **SCR-04** phần 2 trên **trang web tối giản** (`wakeup.tannguyenho.tech`, [tech mục 1](../tech/01-quyet-dinh-tech-stack-va-api.md)), nhập mật khẩu mới |
+| 4 | Hệ thống | Gọi \[AuthPasswordReset\]; áp BR-02, BR-09; trang web hiện MSG-19. Trang web không cấp token cho app: khách mở app và đăng nhập ở **SCR-03** bằng mật khẩu mới (UC-03) |
 
 **Luồng thay thế**
 
@@ -537,7 +537,7 @@ iOS / Android (1.2) dùng cùng điểm vào với cột Web / macOS, trừ dòn
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
 | 1 | (Phần 1) Email + "Gửi link" | Text + Button | Có | Luôn hiện MSG-17 sau khi gửi |
-| 2 | (Phần 2) Mật khẩu mới | Password | Có | BR-02 (MSG-02 / MSG-03); link hỏng → MSG-18 |
+| 2 | (Phần 2, trên trang web tối giản) Mật khẩu mới | Password | Có | BR-02 (MSG-02 / MSG-03); link hỏng → MSG-18 |
 | 3 | (Phần 2) "Đặt mật khẩu" | Button | – | UC-04 bước 4 |
 
 ### SCR-05 Onboarding
@@ -659,7 +659,7 @@ G01 chỉ đặt nhóm này trong SCR-06 #1; bố cục chi tiết, giá trị m
 | --- | --- | --- | --- | --- |
 | 1 | Trợ lý AI | Toggle | G10 | Mặc định tắt; bật lần đầu → màn đồng ý gọn (QC-12 mục 7); tắt → MCP local ngừng nhận kết nối |
 | 2 | Trạng thái Claude Code | Text + link | G10 | Đã cài / đã đăng nhập / phiên bản; chưa có → "Cài Claude Code để bật trợ lý AI" (QC-12 mục 2) |
-| 3 | Cho phép AI hoàn thành và xoá task | Toggle | G10 | Mặc định tắt; áp cho cả subtask; task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (QC-12 mục 4, D10) |
+| 3 | (Bỏ — F4: không còn công tắc hoàn thành / xoá, QC-12 mục 4) | – | – | – |
 | 4 | Cho AI đọc dữ liệu tích hợp | Toggle | G10 | Mặc định tắt; bật thì các thay đổi sau lần đầu đọc dữ liệu tích hợp trong phiên AI đó chờ duyệt (QC-12 mục 6, D8); ẩn khi chưa có tích hợp (G11, 1.1) theo G10 |
 | 5 | Đồng ý dùng AI | Text + link | G10 | Thời điểm đồng ý; "Rút lại đồng ý dùng AI" (BR-23 c) |
 
@@ -752,7 +752,7 @@ G01 chỉ đặt nhóm này trong SCR-06 #1; bố cục chi tiết, giá trị m
 | MSG-16 | SCR-03 | Phiên đăng nhập đã kết thúc. Hãy đăng nhập lại |
 | MSG-17 | SCR-04 | Nếu {email} có tài khoản, chúng tôi đã gửi link đặt lại mật khẩu. Link có hiệu lực 30 phút |
 | MSG-18 | SCR-04 | Link đã hết hạn hoặc đã được dùng · Gửi link mới |
-| MSG-19 | Toast | Đã đặt lại mật khẩu. Các thiết bị khác đã được đăng xuất |
+| MSG-19 | Trang web (SCR-04 phần 2) | Đã đặt lại mật khẩu. Các thiết bị khác đã được đăng xuất |
 | MSG-20 | Inline | Giờ kết thúc phải sau giờ bắt đầu |
 | MSG-21 | Inline | Thêm ít nhất 1 task để bắt đầu |
 | MSG-22 | Inline cạnh trường | ✓ Đã lưu |

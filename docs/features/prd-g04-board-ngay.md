@@ -50,7 +50,7 @@ Board ngày (Home) là màn hình người dùng mở nhiều nhất: mỗi cộ
 - Điều hướng ngày: popover chọn ngày, Hôm nay / Ngày sau / Ngày trước, chip ngày đang xem có × để về hôm nay.
 - Di chuyển task: kéo thả giữa cột và trong cột; phím D (sang ngày làm việc kế tiếp), hoãn 1 tuần, S (về hôm nay), Ctrl+↑/↓, Ctrl+Shift+↑/↓. Timebox, timer, số ngày bị hoãn khi đổi ngày theo QC-05.
 - Sắp xếp lại một ngày theo 7 tiêu chí; tự sắp task theo cài đặt.
-- Projection và giờ dự kiến trên card theo lịch của task (khung giờ channel hoặc lịch chung, QC-02 mục 6); cảnh báo khối lượng trên sức chứa ngày (QC-02 mục 7), cờ "Vượt giờ làm", cờ "Lệch ngày".
+- Projection và giờ dự kiến trên card theo lịch của task (khung giờ channel hoặc lịch chung, QC-02 mục 6); cảnh báo khối lượng trên sức chứa ngày (QC-02 mục 7), cờ "Vượt giờ làm".
 - Bộ lọc channel (Shift+F), tìm kiếm (Ctrl+F, gồm cả task Lưu trữ), command menu (Ctrl/Cmd+K), bảng phím tắt (?).
 - Khung panel phải: Calendar, Tasks, Backlog, Lưu trữ, Search, tích hợp (1.1+), nút +.
 - Gọi "đảm bảo rollover" (G06) khi mở app lần đầu trong ngày làm việc.
@@ -148,7 +148,7 @@ AC08: Card có số ngày bị hoãn ≥ 1 hiện nhãn "Dời {n} ngày" (QC-04
 
 AC01: Banner đổi timezone chỉ có một, do G01 hiển thị (MSG-23 của G01); board không hiện banner riêng.
 
-AC02: Task giữ ngày dự định; timebox giữ thời điểm tuyệt đối. Task có timebox rơi vào ngày làm việc khác ngày dự định hiện cờ "Lệch ngày"; hệ thống không tự sửa (QC-01 mục 4, Q4).
+AC02: Task giữ ngày dự định (vẫn nằm ở cột ngày dự định); timebox giữ thời điểm tuyệt đối. Timebox rơi vào ngày làm việc khác ngày dự định thì không gắn cờ, hệ thống không tự sửa; người dùng tự kéo task hoặc timebox nếu muốn khớp (QC-01 mục 4, Q4, F5).
 
 ### US1.2 Today view
 
@@ -339,7 +339,7 @@ AC03: Lệnh có tác dụng phụ (D, S, Ctrl+↑/↓, sắp lại) có toast H
 | Đồng bộ nhiều thiết bị | Hai máy kéo cùng task, hoặc máy offline kéo task mà server đã rollover | Theo QC-08: thứ tự server nhận, cụm vị trí ghi nguyên khối, lệnh trên phiên bản cũ bị từ chối; thiết bị thua nhận realtime và vẽ lại |
 | Phím tắt trùng hệ điều hành / ô nhập | Trên Windows, Tab và Ctrl+F có nghĩa sẵn trong ô nhập và khi chuyển focus | Chỉ xử lý khi board focus; Tab trong ô nhập giữ hành vi chuẩn. Phím trùng trình duyệt xử lý khi có bản web (1.1) |
 | Tìm kiếm không dấu | Chuẩn hoá tiếng Việt (đ/Đ, tổ hợp dấu) | Chỉ mục lưu bản bỏ dấu; bộ test tiếng Việt |
-| Đổi timezone (EC-02) | "Hôm nay" đổi khi người dùng bay sang múi giờ khác | Theo QC-01: có hiệu lực từ ngày làm việc kế tiếp; banner duy nhất là G01 MSG-23; task giữ ngày dự định, timebox giữ thời điểm tuyệt đối; lệch thì gắn cờ "Lệch ngày" |
+| Đổi timezone (EC-02) | "Hôm nay" đổi khi người dùng bay sang múi giờ khác | Theo QC-01: có hiệu lực từ ngày làm việc kế tiếp; banner duy nhất là G01 MSG-23; task giữ ngày dự định, timebox giữ thời điểm tuyệt đối; lệch thì không gắn cờ, không tự sửa, người dùng tự kéo (F5) |
 
 # 10. Câu hỏi mở
 
@@ -352,11 +352,12 @@ AC03: Lệnh có tác dụng phụ (D, S, Ctrl+↑/↓, sắp lại) có toast H
 - "Sắp xếp lại" khi đang bật tự sắp: tạm tắt tự sắp cho ngày đó hay chỉ đổi vị trí tuỳ chỉnh?
 - Phím hoãn 1 tuần là gì (Shift+D đã dùng cho Todoist ở G11)?
 - Đã chốt 04/11/2026: "Hoãn 1 tuần" và phím S đặt lại số ngày bị hoãn; đã thêm dòng "Hoãn 1 tuần, phím S" vào QC-05 và QC-04 mục 3 (Q40).
+- Đã chốt 06/11/2026: phím S = về hôm nay; "Hoãn 1 tuần" ít dùng nên chỉ còn là lệnh, không có phím tắt. QC-05 tách thành hai dòng (F1).
 - Đã chốt 04/11/2026: "Hoãn 1 tuần" = max(ngày dự định, hôm nay) + 7 ngày; rơi vào ngày nghỉ (ngày không có trong lịch của task) thì giữ nguyên ngày đó, không lùi (D5).
 - Đã chốt 04/11/2026: số ngày bị hoãn tính theo lịch hiện tại của task; đổi lịch, khung giờ channel hoặc channel thì số có thể thay đổi (D4, QC-04 mục 1).
 - Đã chốt 04/11/2026: bỏ "ghi đè giờ làm việc theo channel `[giả định]`", thay bằng khung giờ channel do G02 sở hữu. Sức chứa ngày = thời gian trống trong hợp lịch chung và mọi khung channel có trong ngày; projection, cờ "Vượt giờ làm" và "ngày làm việc kế tiếp" của phím D theo lịch của task (Q38a, QC-02 mục 5–7).
 - Đã chốt 04/11/2026: số ngày bị hoãn chỉ đếm ngày có trong lịch làm việc của task; rollover vẫn chạy mọi ngày (Q32, QC-04 mục 1).
-- Kéo task có timebox liên kết sự kiện (B8) sang ngày khác: sự kiện gốc không dời được, vậy gỡ liên kết hay giữ và gắn cờ "Lệch ngày"? SRS tạm giữ liên kết và gắn cờ.
+- ~~Kéo task có timebox liên kết sự kiện (B8) sang ngày khác: gỡ liên kết hay giữ và gắn cờ "Lệch ngày"?~~ **Đã chốt theo QC-05 (ngoại lệ timebox liên kết sự kiện) và G05 BR-21 (f):** chỉ gỡ liên kết, không dời và không xoá sự kiện ngoài (sửa ngược 06/11/2026).
 - Đã chốt 04/11/2026: thời gian trống của ngày tính trên hợp lịch chung và mọi khung channel (Q38a), nên Thứ Bảy có khung `#Cá nhân` thì có sức chứa; ngày không có trong lịch chung lẫn khung channel nào có sức chứa 0, không dùng ngưỡng khối lượng thay thế (Q48).
 - Đã chốt 04/11/2026: bỏ công thức min(ngưỡng, thời gian trống còn lại). Sức chứa = thời gian trống trong hợp lịch chung và các khung channel; quá tải khi planned của task chưa xong > sức chứa; ngưỡng khối lượng chỉ là giới hạn riêng của lịch chung, áp cho task không có khung channel (Q48, QC-02 mục 7).
 - Projection khi có nhiều lịch: SRS tạm xếp mỗi task vào khe trống sớm nhất trong lịch của task theo thứ tự hiển thị; task ở ngày không có trong lịch của task tạm xếp từ giờ bắt đầu mặc định 09:00 và mang cờ "Vượt giờ làm". Cần PO xác nhận.

@@ -17,7 +17,7 @@ Bản 1.0 là app Windows một người dùng, miễn phí, nhãn Beta. G12 ở
 | UC-06 | Cài đặt quyền riêng tư | – | Bỏ (1.2) |
 | UC-07 | Giao task và follow task | – | Bỏ (1.2) |
 | [UC-08](#uc-08-cài-đặt-thông-báo-và-huỷ-đăng-ký-email) | Cài đặt thông báo và huỷ đăng ký email | SCR-10, SCR-14 | 2 / 2 (A1, A3 Bỏ (1.1)) |
-| [UC-09](#uc-09-trung-tâm-thông-báo) | Trung tâm thông báo | SCR-11 | 4 / 2 |
+| [UC-09](#uc-09-trung-tâm-thông-báo) | Trung tâm thông báo | SCR-11 | 5 / 2 |
 
 ---
 
@@ -229,6 +229,8 @@ flowchart TD
 
   p1 -->|"BR-19 · nhiều thông báo cùng task, cùng người nhận trong 5 phút"| g43>"MSG-43 · Trung tâm / email<br/>#quot;{tiêu đề}#quot;: {n} cập nhật mới"]
   win(["Thông báo Windows của app"]) -->|"điểm vào · bấm thông báo, IA-10"| wa["Đưa cửa sổ app lên trước<br/>kể cả từ khay"]
+  t5(["Nhóm khác phát toast<br/>khi cửa sổ app ẩn ở khay / thu nhỏ"]) -->|"A5 · IA-21"| a5["Không bật toast<br/>tạo dòng chưa đọc trên máy, badge tăng<br/>không mang nút Hoàn tác"]
+  a5 --> s1
   wa --> p3
   s2 -->|"A1 · Đánh dấu tất cả đã đọc"| a1[["NotificationRead all=true<br/>badge về 0 trên mọi thiết bị"]]
   s2 -->|"A3 · cuộn tới cuối danh sách"| a3[["Tải trang kế, cursor"]]
@@ -246,7 +248,7 @@ flowchart TD
   e2 -.-> e2m>"Chưa có mã MSG · Thông báo trong app<br/>Email của bạn không nhận được thư · giả định"]
 
   class p1,s1,u1,p2,s2,u2,p3 happy
-  class g43,win,wa,a1,a3,m37,a4,a2m,a2 alt
+  class g43,win,wa,a1,a3,m37,a4,a2m,a2,t5,a5 alt
   class x8 link
   class e1,e1m,e2,e2m err
   class ok done
@@ -269,6 +271,7 @@ flowchart TD
 | A2 | Đích không còn (task đã xoá) | SCR-11 giữ mở | MSG-30 |
 | A3 | Cuộn tới cuối | Tải trang kế | – |
 | A4 | Thông báo quá 90 ngày | Tự xoá | – |
+| A5 | Toast phát sinh khi cửa sổ ẩn (IA-21) | Dòng chưa đọc trong SCR-11, không bật toast | Nội dung toast gốc |
 | E1 | `NotificationList` lỗi / mất mạng | Danh sách cache, Thử lại | MSG-38 |
 | E2 | Email bị trả về cứng | Ngừng email, báo trong app | – (chưa có mã MSG) |
 | BR-19 | Nhiều cập nhật cùng task trong 5 phút | Gộp thành 1 | MSG-43 |

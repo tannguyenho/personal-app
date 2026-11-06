@@ -114,7 +114,7 @@ Không cho người ngoài biết một email đã đăng ký hay chưa. Không 
 
 - Các giới hạn là **cấu hình hệ thống**, không cố định trong code.
 - Nhóm cài đặt do nhóm khác sở hữu (Ritual, Timebox, Focus, Trợ lý AI, Beta, Thông báo, Context & channel, Tích hợp; bản sau: Thành viên, Privacy; 1.1: Billing) chỉ có lối vào trong khung trang Cài đặt; nội dung đặc tả ở nhóm sở hữu.
-- Nhóm **Trợ lý AI** (G10 sở hữu hành vi, QC-12) gồm: bật / tắt trợ lý (mặc định tắt); trạng thái phát hiện Claude Code (đã cài, đã đăng nhập, phiên bản hỗ trợ; chưa có thì hiện hướng dẫn cài); công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt, áp cho cả subtask; task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá — D10); công tắc cho AI đọc dữ liệu tích hợp (mặc định tắt). Bật lần đầu hiện màn đồng ý gọn của G10 (QC-12 mục 7).
+- Nhóm **Trợ lý AI** (G10 sở hữu hành vi, QC-12) gồm: bật / tắt trợ lý (mặc định tắt); trạng thái phát hiện Claude Code (đã cài, đã đăng nhập, phiên bản hỗ trợ; chưa có thì hiện hướng dẫn cài); công tắc cho AI đọc dữ liệu tích hợp (mặc định tắt). Bật lần đầu hiện màn đồng ý gọn của G10 (QC-12 mục 7).
 - Xung đột cài đặt giữa các thiết bị xử lý theo từng trường (QC-08 mục 3); người dùng được báo khi giá trị họ vừa đổi bị ghi đè.
 
 # 6. Luồng trải nghiệm tổng thể
@@ -252,7 +252,7 @@ AC01: Mở app ở timezone khác cài đặt → banner duy nhất (của G01) 
 
 AC02: Đổi mốc đầu ngày hoặc timezone có hiệu lực từ ngày làm việc kế tiếp, có ghi chú dưới trường; ngày hiện tại kết thúc theo cài đặt cũ (QC-01 mục 3).
 
-AC03: Đổi timezone không đổi ngày dự định của task; timebox giữ thời điểm tuyệt đối; timebox rơi khác ngày dự định thì hiện cờ "Lệch ngày", hệ thống không tự sửa (QC-01 mục 4).
+AC03: Đổi timezone không đổi ngày dự định của task; timebox giữ thời điểm tuyệt đối; timebox rơi khác ngày dự định thì không gắn cờ, hệ thống không tự sửa, người dùng tự kéo task hoặc timebox nếu muốn khớp (QC-01 mục 4, F5).
 
 ### US4.3 Hiển thị và phím tắt
 
@@ -284,7 +284,7 @@ User Story: Là người dùng, tôi muốn tìm thấy mọi cài đặt về t
 
 AC01: Khung trang Cài đặt có nhóm "Trợ lý AI". G01 chỉ đặt lối vào; nội dung, hành vi và thông báo do G10 đặc tả theo QC-12.
 
-AC02: Nhóm gồm: bật / tắt trợ lý (mặc định tắt); trạng thái phát hiện Claude Code (đã cài, đã đăng nhập, phiên bản hỗ trợ; chưa có → hướng dẫn "Cài Claude Code để bật trợ lý AI", QC-12 mục 2); công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt, áp cho cả subtask, không áp cho task có liên kết tích hợp; QC-12 mục 4, D10); công tắc cho AI đọc dữ liệu tích hợp (mặc định tắt, QC-12 mục 6).
+AC02: Nhóm gồm: bật / tắt trợ lý (mặc định tắt); trạng thái phát hiện Claude Code (đã cài, đã đăng nhập, phiên bản hỗ trợ; chưa có → hướng dẫn "Cài Claude Code để bật trợ lý AI", QC-12 mục 2); công tắc cho AI đọc dữ liệu tích hợp (mặc định tắt, QC-12 mục 6).
 
 AC03: Bật trợ lý lần đầu → màn đồng ý gọn của G10 nói rõ dữ liệu nào được đưa cho Claude Code; app lưu thời điểm đồng ý (QC-12 mục 7). Đồng ý này tách khỏi đồng ý xử lý dữ liệu của tài khoản (US5.6).
 

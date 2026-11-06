@@ -117,7 +117,7 @@ Home board tự giảm số cột ngày hiện được khi cửa sổ hẹp l�
 | Màn | Khi nào | Ghi chú | Nguồn |
 |---|---|---|---|
 | Đăng ký, mã xác minh, đăng nhập, quên mật khẩu | Chưa đăng nhập | Toàn cửa sổ, không có sidebar, nội dung đặt giữa (IA-12) | G01 SCR-01 … SCR-04 |
-| Onboarding 5 bước | Lần đăng nhập đầu, hoặc onboarding còn dở | Như trên. Bước nhập task trông giống ô soạn thật. Xong thì vào Home hôm nay (IA-12) | G01 SCR-05 |
+| Onboarding 5 bước | Lần đăng nhập đầu, hoặc onboarding còn dở | Như trên. Bước nhập task trông giống ô soạn thật. Xong thì vào Home hôm nay với Daily planning ở chế độ có hướng dẫn thay vùng chính (IA-12, sửa theo F3 ngày 06/11/2026; G01 US2.2) | G01 SCR-05 |
 | Focus mode | F; sidebar Focus | Ẩn sidebar và panel phải. Esc / nút thoát về màn trước, timer vẫn chạy (IA-03) | G07 SCR-03 |
 | Ô thêm nhanh toàn cục | Ctrl+Shift+A ở bất kỳ đâu trên Windows | Cửa sổ nổi nhỏ, không viền, ở giữa màn hình đang dùng, luôn ở trên. Click ra ngoài thì đóng, giữ bản nháp. Enter: hiện "Đã thêm vào Hôm nay" ~1 giây rồi đóng, trả focus về app trước. Shift+Enter: thêm và giữ ô mở. Cửa sổ chính đang ở khay thì vẫn ở khay (IA-19) | G02 US1.1 AC07, D11 |
 
@@ -132,6 +132,7 @@ Home board tự giảm số cột ngày hiện được khi cửa sổ hẹp l�
 - **Thu nhỏ** (nút −): như mọi app Windows, timer vẫn chạy (G07 BR-23).
 - **Mở lại cửa sổ**: luôn vào Home ở hôm nay với view cuối; panel phải như lần trước. Có timer đang chạy cũng vào Home, không vào Focus. Wizard ritual tự mở thì thay vùng chính.
 - **Bấm thông báo Windows**: đưa cửa sổ lên trước (kể cả từ khay) và mở đúng đích như bấm dòng đó trong trung tâm thông báo (IA-10).
+- **Toast khi cửa sổ đang ẩn** (IA-21, F6): Toast phát sinh khi cửa sổ app không hiện (ẩn ở khay hoặc thu nhỏ) không bật lên; nội dung toast vào **trung tâm thông báo** (G12 SCR-11) thành một dòng chưa đọc, chuông tăng badge. Dòng này tạo trên máy, không đồng bộ sang thiết bị khác `[giả định]`. Bấm dòng → mở đúng đích như IA-10. Nút có thời hạn của toast (ví dụ "Hoàn tác" ≥ 5 giây) không mang theo; thao tác còn hoàn tác được ở nơi khác thì làm ở đó (ví dụ G10 SCR-12 Hoạt động AI, Thùng rác G02).
 
 ## 8. Phím tắt điều hướng và Esc
 
@@ -211,7 +212,7 @@ Chỉ ghi điểm vào cấp app (từ khung, phím, khay, thông báo). Điểm
 | IA-09 | Lưu trữ và Thùng rác chung một panel, hai tab | Q9 |
 | IA-10 | Trung tâm thông báo là popover cạnh chuông; bấm thông báo Windows đưa app lên trước và mở đúng đích | Q10 |
 | IA-11 | Mốc cửa sổ hẹp 1280 / 1024 px, tối thiểu 800 × 600 `[giả định]` | Q11 |
-| IA-12 | Đăng nhập và onboarding toàn cửa sổ, không có sidebar; xong onboarding vào Home hôm nay | Q12 |
+| IA-12 | Đăng nhập và onboarding toàn cửa sổ, không có sidebar; xong onboarding vào Home hôm nay, mở Daily planning có hướng dẫn (F3, 06/11/2026) | Q12, F3 |
 | IA-13 | Panel Tasks = task của ngày đang xem, chỉ hiện ở Calendar view | Q13 |
 | IA-14 | Thứ tự sidebar như mục 2 | Q14 |
 | IA-15 | Thêm phím Ctrl+J (Trợ lý), Ctrl+, (Cài đặt), Ctrl+\\ (panel phải) | Q15 |
@@ -220,6 +221,7 @@ Chỉ ghi điểm vào cấp app (từ khung, phím, khay, thông báo). Điểm
 | IA-18 | Mở lại app vào Home hôm nay, view cuối; nhớ trạng thái panel phải; timer chạy vẫn vào Home | Q18 |
 | IA-19 | Ô thêm nhanh toàn cục như mục 6 | Q19 |
 | IA-20 | Cột ngày đã qua không có "+ Thêm task" / "Plan"; A trên cột đã qua mở ô soạn ở hôm nay | Q20 |
+| IA-21 | Toast phát sinh khi cửa sổ app đang ẩn ở khay / thu nhỏ không bật lên mà vào trung tâm thông báo (mục 7) | F6 (06/11/2026) |
 
 ## 13. Đã sửa ngược vào PRD / SRS
 

@@ -97,7 +97,7 @@ Chip có giá trị do AI gợi ý mang dấu ✨ ngay trước giá trị. Dấ
 
 ### SCR-02 Task card — phần do tạo và lưu
 
-Card đầy đủ (giờ projection, nhãn "Dời n ngày", cờ "Lệch ngày", hover actions) thuộc brief G04. Bản thử chỉ nêu các trạng thái sinh ra ngay khi tạo hoặc lưu task.
+Card đầy đủ (giờ projection, nhãn "Dời n ngày", hover actions) thuộc brief G04. Bản thử chỉ nêu các trạng thái sinh ra ngay khi tạo hoặc lưu task.
 
 | Mã | Trạng thái | Khi nào | Hiện gì | Ra khỏi bằng | Tham chiếu |
 |---|---|---|---|---|---|

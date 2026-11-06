@@ -9,10 +9,10 @@ Wizard ritual thay vùng chính; sidebar và panel phải vẫn dùng được �
 
 | UC | Flow | Màn chính | Nhánh A / E (1.0) |
 |---|---|---|---|
-| [UC-01](#uc-01-daily-planning-luồng-thủ-công) | Daily planning (luồng thủ công) | SCR-01 khung, SCR-02 … SCR-07 | 15 / 4 (E2 Bỏ (1.1)) |
+| [UC-01](#uc-01-daily-planning-luồng-thủ-công) | Daily planning (luồng thủ công) | SCR-01 khung, SCR-02 … SCR-07 | 16 / 4 (E2 Bỏ (1.1)) |
 | [UC-02](#uc-02-daily-shutdown) | Daily shutdown | SCR-01 khung, SCR-08, SCR-09, SCR-10, SCR-07, SCR-11 | 11 / 3 (E1 Bỏ (1.1)) |
 | [UC-03](#uc-03-chia-sẻ-kết-quả-ritual) | Chia sẻ kết quả ritual | SCR-07 | 5 / 4 |
-| [UC-04](#uc-04-tự-kích-hoạt-và-nhắc-ritual) | Tự kích hoạt và nhắc ritual | SCR-12 lời nhắc | 9 / 2 |
+| [UC-04](#uc-04-tự-kích-hoạt-và-nhắc-ritual) | Tự kích hoạt và nhắc ritual | SCR-12 lời nhắc | 10 / 2 |
 | [UC-05](#uc-05-cài-đặt-ritual-ngày) | Cài đặt ritual ngày | SCR-13 | 3 / 3 (phần ritual tuần của A3 Bỏ (1.1)) |
 
 ---
@@ -114,8 +114,8 @@ flowchart TD
   a15 --> p1
   p1 -->|"A1 · phiên DANG_LAM ở bước n"| a1["SCR-01 mở về current_step<br/>giữ dữ liệu đã nhập BR-05"]
   a1 --> s1
-  p1 -->|"A6 · nút Plan trên cột D > hôm nay"| a6["Bước 1 liệt kê task chưa xong của<br/>ngày làm việc liền trước D, BR-06<br/>nút Bắt đầu ngày đổi thành Xong, không chuyển trang"]
-  a6 --> s1
+  p1 -->|"A6 · nút Plan trên cột D > hôm nay"| a6["Bước 1 liệt kê task chưa xong của<br/>ngày làm việc liền trước D, BR-06<br/>nút Bắt đầu ngày đổi thành Xong"]
+  a6 -->|"đi hết các bước như luồng chính, bấm Xong"| a6b(["RitualComplete, đóng wizard<br/>không chuyển tới Home / Today"])
   p1 -->|"A2 · phiên HOAN_TAT"| a2["SCR-06 chế độ xem bản đã chốt<br/>nút Lên kế hoạch lại"]
   a2 -->|"Lên kế hoạch lại"| a2p[["DANG_LAM bước 1 BR-22<br/>giữ firstCompletedAt, noteTaskId, ảnh chụp lần đầu<br/>hoàn tất lại: cập nhật task ghi chép cũ, thêm bản ghi thời gian"]]
   a2p --> s1
@@ -126,6 +126,7 @@ flowchart TD
   p1 -.->|"E1 · D < hôm nay, chưa có phiên"| e1m>"MSG-20 · Toast<br/>Không lên kế hoạch được cho ngày đã qua"]
   e1m -.-> e1(["Không mở wizard"])
 
+  class a6b done
   class u1,p1,s1 happy
   class a15,a1,a6,a2,a2p,a2r alt
   class g10 link
@@ -196,8 +197,11 @@ flowchart TD
   s6["SCR-07 Bước 6 Chia sẻ"]
   s1 ==> s2 ==>|"bước 3, 4"| s5 ==> s6
 
-  s1 -->|"BR-06 · RolloverEnsure trả CHO_SHUTDOWN / THAT_BAI"| b6m>"MSG-32 · Inline<br/>Việc từ hôm qua đang được chuyển sang. Danh sách sẽ tự cập nhật"]
+  s1 -->|"BR-06 · RolloverEnsure trả DANG_CHAY / CHO_SHUTDOWN"| b6m>"MSG-32 · Inline<br/>Việc từ hôm qua đang được chuyển sang. Danh sách sẽ tự cập nhật"]
   b6m --> b6["Hiện danh sách đang có<br/>tự tải lại khi rollover xong, realtime"]
+  s1 -.->|"BR-06 · THAT_BAI / ROLLOVER_FAILED"| b6f>"G06 MSG-25 · Banner<br/>Chưa chuyển được việc dở từ hôm trước sang hôm nay. Thử lại"]
+  b6f -.->|"Thử lại"| b6r[["RolloverEnsure lại · G06 BR-24"]]
+  b6f -.-> b6
   b6 --> s1
   s1 -->|"A7 · không có task"| a7m>"MSG-17 · Empty state<br/>Không còn việc nào từ hôm qua<br/>nút Tiếp"]
   a7m --> s2
@@ -218,6 +222,7 @@ flowchart TD
   s5 -.->|"E5 · Trở ngại > 5.000 ký tự"| e5m>"MSG-22 · Inline<br/>Nội dung tối đa 5.000 ký tự<br/>chặn Tiếp"]
 
   class s1,s2,s5,s6 happy
+  class b6f,b6r err
   class b6,a7m,a8,a8m,a9m,a9r alt
   class b6m warn
   class a14,d14 ai
@@ -280,6 +285,38 @@ flowchart TD
   classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
 ```
 
+### Nhánh thay thế: chế độ có hướng dẫn (A16)
+
+Chỉ cho phiên Daily planning **đầu tiên** của tài khoản, mở ngay sau onboarding (BR-28, F3, G01 US2.2).
+
+```mermaid
+flowchart TD
+  start(["Xong onboarding · G01 UC-05 bước 7"])
+  p1[["RitualGet daily_planning hôm nay<br/>phiên đầu tiên: data.guided = true"]]
+  s1["SCR-01 wizard thay vùng chính<br/>đầu mỗi bước có một dòng lời dẫn UI-xx [đề xuất]<br/>không có Bỏ qua bước này"]
+  s2["Bước 2 Thêm task cho hôm nay<br/>đã có sẵn task vừa tạo ở onboarding"]
+  t1["Khái niệm lần đầu gặp: tooltip<br/>projection, timebox, phím tắt · G01 US2.3"]
+  u1[/"Đi hết 6 bước như luồng chính<br/>bấm Bắt đầu ngày"/]
+  ok(["Phiên HOAN_TAT<br/>các lần sau là Daily planning thường"])
+
+  start ==>|"A16"| p1 ==> s1 ==> s2 ==> u1 ==> ok
+  s1 -.-> t1
+  s1 -->|"bấm × giữa chừng"| d1(["Phiên DANG_LAM giữ data.guided<br/>mở lại vẫn ở chế độ có hướng dẫn"])
+
+  class start,p1,s1,s2,u1 alt
+  class t1,d1 alt
+  class ok done
+  classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
+  classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
+  classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
+  classDef warn fill:#FEF4E2,stroke:#B45309,color:#4A2604
+  classDef ai fill:#F1ECFD,stroke:#6D28D9,color:#2E1065
+  classDef sync fill:#FFFFFF,stroke:#6B7280,stroke-dasharray:4 3,color:#1F2937
+  classDef link fill:#FFFFFF,stroke:#0F766E,stroke-dasharray:4 3,color:#0B3B36
+  classDef done fill:#E6F4F1,stroke:#0F766E,stroke-width:3px,color:#0B3B36
+  classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
+```
+
 ### Đối chiếu
 
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
@@ -299,12 +336,14 @@ flowchart TD
 | A13 | Phiên bị sửa ở thiết bị khác (412) | Gộp theo trường, gửi lại | MSG-29 (khi bị ghi đè) |
 | A14 | Trợ lý AI bật, Planning Agent đã áp dụng cho D | Hoàn tác kế hoạch AI → [G10 · UC-04](g10-tro-ly-ai.md); sinh lại hoặc hỏi | MSG-14 (khi `planEdited`) |
 | A15 | D là ngày nghỉ theo lịch chung | Không tự mở, không chấm nhắc; mở tay chạy luồng chính | – |
+| A16 | Phiên đầu tiên sau onboarding | Chế độ có hướng dẫn (BR-28); xong thì các lần sau là bản thường | UI-xx [đề xuất] |
 | E1 | D < hôm nay, chưa có phiên | Không mở wizard | MSG-20 |
 | E2 | Từ 1.1: workspace chỉ đọc | Bỏ (1.1) | – |
 | E3 | Mất mạng | Chạy trên dữ liệu máy, xếp hàng, gửi khi có mạng | MSG-23 |
 | E4 | `RitualComplete` 5xx / timeout | Giữ bước 6, Thử lại cùng key | MSG-12 |
 | E5 | Trở ngại > 5.000 ký tự | Chặn Tiếp | MSG-22 |
-| BR-06 | `RolloverEnsure` trả `CHO_SHUTDOWN` / `THAT_BAI` | Danh sách hiện có, tự tải lại | MSG-32 |
+| BR-06 | `RolloverEnsure` trả `DANG_CHAY` / `CHO_SHUTDOWN` | Danh sách hiện có, tự tải lại | MSG-32 |
+| BR-06 | `RolloverEnsure` trả `THAT_BAI` / lỗi `ROLLOVER_FAILED` | Danh sách hiện có, banner "Thử lại" (G06 BR-24) | G06 MSG-25 |
 | BR-08 | Quá tải ở bước 3 | Cảnh báo, không chặn | MSG-03 |
 | BR-09 | Dự kiến xong muộn hơn giờ kết thúc ngày | Cảnh báo, không chặn | MSG-06 |
 | – | Plan my day (trợ lý AI bật) | → [G10 · UC-02](g10-tro-ly-ai.md); xong về bước 5, lỗi về bước 1 | – |
@@ -616,7 +655,7 @@ flowchart TD
   p1[["Chọn người dùng vừa tới giờ Daily planning theo timezone<br/>hôm nay là ngày làm việc theo lịch chung BR-23"]]
   p2[["Kiểm BR-03<br/>tạo thông báo và chấm nhắc ở sidebar"]]
   m1>"MSG-01 · SCR-12, thông báo Windows + trong app<br/>Đến giờ lên kế hoạch cho hôm nay · Bắt đầu (P) · Bỏ qua hôm nay"]
-  p3[["Client đang mở, hoặc lần đầu mở app sau giờ plan, gọi RitualGet<br/>server trả autoOpen = true, ghi autoPromptedAt nguyên tử"]]
+  p3[["Cửa sổ app đang hiện, hoặc lần đầu đưa cửa sổ lên sau giờ plan,<br/>gọi RitualGet; server trả autoOpen = true, ghi autoPromptedAt nguyên tử"]]
   s1["SCR-01 wizard Daily planning tự mở<br/>thay vùng chính"]
   x1{{"→ UC-01 bước 2"}}
   ok(["Daily planning tự mở đúng 1 lần trong ngày<br/>trên 1 thiết bị"])
@@ -662,10 +701,14 @@ flowchart TD
   b4(["Mở app trước giờ plan"]) -->|"A4"| a4["Không tự mở<br/>tới giờ khi app đang mở thì gọi RitualGet"]
   a4 --> p3
   b9(["Lần đầu mở app sau giờ Daily shutdown,<br/>hoặc shutdown hôm nay đã HOAN_TAT"]) -->|"A9"| a9(["Không tự mở Daily planning, C22<br/>vẫn mở tay được"])
+  p2 -->|"A10 · cửa sổ ẩn ở khay hoặc thu nhỏ, IA-05"| a10["Người dùng chỉ thấy thông báo Windows MSG-01<br/>chưa gọi RitualGet khi cửa sổ chưa hiện"]
+  a10 -->|"bấm thông báo, IA-10"| a10b["Đưa cửa sổ lên trước"]
+  a10 -->|"tự mở cửa sổ từ khay"| a10b
+  a10b --> p3
   s1 -->|"A7 · đổi timezone / giờ plan sau khi đã tự mở"| a7(["Không mở lại trong ngày D, khoá theo autoPromptedAt<br/>mốc đầu ngày, timezone mới có hiệu lực từ ngày làm việc kế tiếp"])
 
   class start,p1,p2,p3,s1 happy
-  class a8,a2,a6,a1,a3,a3m,b4,a4,b9,a9,a7 alt
+  class a8,a2,a6,a1,a3,a3m,b4,a4,b9,a9,a7,a10,a10b alt
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
   classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
@@ -726,6 +769,7 @@ flowchart TD
 | A7 | Đổi timezone / giờ plan sau khi đã tự mở | Không mở lại trong ngày | – |
 | A8 | Ngày nghỉ theo lịch chung | Không thông báo, không tự mở, không chấm nhắc | – |
 | A9 | Mở app sau giờ shutdown / shutdown đã xong | Không tự mở | – |
+| A10 | Cửa sổ ẩn ở khay / thu nhỏ khi tới giờ (IA-05) | Chỉ thông báo Windows; wizard mở khi cửa sổ được đưa lên | MSG-01 |
 | E1 | Job lỗi / trễ | Lần quét sau xử lý lại | – |
 | E2 | `RitualGet` lỗi khi tự mở | Không tự mở, giữ chấm nhắc | – |
 

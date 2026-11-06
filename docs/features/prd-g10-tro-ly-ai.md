@@ -7,6 +7,8 @@
 > **Cập nhật 04/11/2026** theo [quyết định chốt mâu thuẫn](../review/quyet-dinh-chot-2026-11-04.md) (Q2, Q8, Q14, Q20, Q21, Q31/Q31a, B14, C30–C33) và [ADR-0003](../adr/0003-gioi-han-quyen-cua-tro-ly-ai.md).
 >
 > **Cập nhật vòng 5–6 (04/11/2026)** theo Q33, Q35, Q39, Q45, Q46, [ADR-0004](../adr/0004-ai-qua-claude-code-cli.md) (thay một phần ADR-0003, Q20, Q31, C32) và [ADR-0005](../adr/0005-nen-tang-windows-truoc.md): trợ lý AI chạy bằng **Claude Code CLI** do người dùng cài và đăng nhập trên máy; app mở **MCP local** để Claude Code đọc và điều khiển app; phát hành **1.0** trên app Windows; bỏ hạn mức AI theo gói. Quy tắc dùng chung (ngày làm việc QC-01, lịch làm việc QC-02, đổi ngày task QC-05, chế độ chỉ đọc QC-09, quyền theo gói QC-10, **trợ lý AI qua Claude Code và MCP local QC-12**) xem [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); PRD này chỉ tham chiếu, không định nghĩa lại. Chi tiết kỹ thuật (cách gọi CLI, kiểu kết nối MCP, schema công cụ): tech chốt — [`docs/tech/01-quyet-dinh-tech-stack-va-api.md`](../tech/01-quyet-dinh-tech-stack-va-api.md) mục 4.
+>
+> **Cập nhật 06/11/2026** theo F4 ([quyết định 06/11](../review/quyet-dinh-chot-2026-11-06.md)): bỏ công tắc "Cho phép AI hoàn thành và xoá task"; khi trợ lý bật, AI luôn được hoàn thành và xoá task (vào Thùng rác, có Hoàn tác); task có liên kết tích hợp vẫn không bao giờ được AI hoàn thành hay xoá.
 
 # 1. Bối cảnh và vấn đề
 
@@ -41,7 +43,7 @@ Nhóm G10 lo các tính năng trên cùng việc phát hiện Claude Code, MCP l
 
 - Lập kế hoạch ngày với Planning Agent trong ≤ 5 phút kể cả thời gian duyệt; agent chạy 2–4 phút.
 - Mọi thay đổi do AI làm (kể cả từ Claude Code trong terminal) đều nhìn thấy được (chip "AI"), ghi tác nhân AI và hoàn tác được; cả lượt AI hoàn tác được bằng một nút ("Hoàn tác kế hoạch AI" với Planning Agent, "Hoàn tác tất cả" với chat và phiên terminal) (QC-12 mục 5).
-- Không có lời gọi Claude Code nào và MCP local không nhận kết nối trước khi người dùng đồng ý (Q21). Mặc định AI không hoàn thành, không xoá task; chỉ làm khi người dùng bật công tắc riêng (áp cho cả subtask), và không bao giờ hoàn thành hay xoá task có liên kết tích hợp (QC-12 mục 4, Q46, D10).
+- Không có lời gọi Claude Code nào và MCP local không nhận kết nối trước khi người dùng đồng ý (Q21). AI được hoàn thành và xoá task / subtask (xoá vào Thùng rác, có Hoàn tác), không cần công tắc riêng, và không bao giờ hoàn thành hay xoá task có liên kết tích hợp (QC-12 mục 4, F4, D10).
 - Mọi ngày giờ AI dùng hiện ở dạng cụ thể ("Thứ Năm, 5/11") trước hoặc ngay khi áp dụng; không lặp lại EC-01.
 - Kết quả đầu tiên (chữ trả lời hoặc bước tiến độ) hiện ≤ 10 giây; AI lỗi, Claude Code bị đóng hoặc hết hạn mức Claude thì người dùng vẫn đi tiếp bằng luồng thủ công (EC-39).
 - Không có Claude Code thì mọi chức năng lõi vẫn chạy đủ; người dùng thấy hướng dẫn cài thay cho tính năng AI (QC-12 mục 2).
@@ -54,7 +56,7 @@ Nhóm G10 lo các tính năng trên cùng việc phát hiện Claude Code, MCP l
 | Linh — PM, 6–8 cuộc họp / ngày, việc ở Jira + Notion + Gmail | Agent gom việc từ các nguồn, xếp vào khe trống giữa các cuộc họp |
 | Minh — designer / dev | Giữ khối thời gian dài cho việc sâu; nói "dời hết việc lặt vặt sang chiều" là xong |
 | Hà — freelancer / founder, nhiều khách hàng | Không nhận quá sức; AI cảnh báo khi kế hoạch vượt sức chứa của ngày (G04, Q48) |
-| Người dùng thận trọng với AI | AI chỉ chạy khi mình đã đồng ý; biết rõ dữ liệu nào được đưa cho Claude Code; email / issue không đưa cho AI nếu mình không bật; AI không hoàn thành / xoá task nếu mình không cho; hoàn tác từng phần hoặc cả lượt, tắt AI khi muốn |
+| Người dùng thận trọng với AI | AI chỉ chạy khi mình đã đồng ý; biết rõ dữ liệu nào được đưa cho Claude Code; email / issue không đưa cho AI nếu mình không bật; AI xoá task chỉ vào Thùng rác, không xoá vĩnh viễn; hoàn tác từng phần hoặc cả lượt, tắt AI khi muốn |
 | Người dùng đã dùng Claude Code (dev, PM kỹ thuật) | Mở Claude Code trong terminal là sắp được kế hoạch ngày trong app; app vẫn ghi lại và hoàn tác được mọi thay đổi |
 | Người dùng không có Claude Code | App vẫn dùng đủ chức năng lõi; biết cách cài nếu muốn có trợ lý AI |
 | Người dùng song ngữ Việt / Anh | Gõ tiếng Việt hay tiếng Anh đều được hiểu, trả lời đúng ngôn ngữ đã gõ |
@@ -72,7 +74,7 @@ Nhóm G10 lo các tính năng trên cùng việc phát hiện Claude Code, MCP l
 - Điều khiển app từ Claude Code trong terminal riêng khi app đang mở: cùng công cụ, cùng rào chắn, cùng chip AI và Hoàn tác (QC-12 mục 3).
 - Highlights AI cuối ngày: nháp tự động tại giờ kết thúc của lịch chung vào các ngày có trong lịch làm việc; app không mở lúc đó thì soạn khi mở app lần kế tiếp trong ngày (Q39, D7, QC-02), từ task đã xong và (khi người dùng bật) hoạt động trên công cụ đã kết nối; người dùng duyệt trước khi lưu.
 - Gợi ý thời lượng và channel khi tạo task qua Claude Code (Q33): G02 sở hữu trải nghiệm, G10 cung cấp lời gọi AI.
-- Rào chắn: bộ công cụ MCP mặc định không có hoàn thành / xoá; công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt, áp cho cả subtask; task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá, D10); mọi thay đổi áp dụng ngay kèm chip AI, nhật ký và Hoàn tác; công cụ đọc dữ liệu tích hợp mặc định tắt, khi đã đọc thì các thay đổi sau lần đọc đầu tiên trong phiên đó chờ duyệt (QC-12 mục 4–6, D8).
+- Rào chắn: AI hoàn thành / xoá task không cần công tắc (F4), xoá chỉ vào Thùng rác; task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (D10); mọi thay đổi áp dụng ngay kèm chip AI, nhật ký và Hoàn tác; công cụ đọc dữ liệu tích hợp mặc định tắt, khi đã đọc thì các thay đổi sau lần đọc đầu tiên trong phiên đó chờ duyệt (QC-12 mục 4–6, D8).
 - Nhóm cài đặt AI và Beta trong trang Cài đặt, gồm trạng thái Claude Code, hướng dẫn dùng trong terminal và các công tắc riêng.
 - Bộ đánh giá chất lượng AI và thu tín hiệu (Submit feedback, Hoàn tác).
 
@@ -83,7 +85,7 @@ Nhóm G10 lo các tính năng trên cùng việc phát hiện Claude Code, MCP l
 - Kết nối và đọc dữ liệu công cụ ngoài → G11 (1.1); lịch → G05.
 - Cài đặt, đăng nhập, cập nhật Claude Code và gói Claude của người dùng → người dùng tự làm theo hướng dẫn của Anthropic; app chỉ phát hiện và hướng dẫn.
 - App tự gọi LLM khác, hạn mức AI theo gói → không làm (Q33, Q46, QC-10).
-- AI gửi tin ra ngoài (email, Slack, Teams), đổi cài đặt, kết nối / ngắt tích hợp, xoá vĩnh viễn → không làm, ở mọi phiên bản (ADR-0003, QC-12). AI hoàn thành / xoá task chỉ khi người dùng bật công tắc riêng (QC-12 mục 4).
+- AI gửi tin ra ngoài (email, Slack, Teams), đổi cài đặt, kết nối / ngắt tích hợp, xoá vĩnh viễn → không làm, ở mọi phiên bản (ADR-0003, QC-12). AI hoàn thành / xoá task (vào Thùng rác) không cần công tắc (QC-12 mục 4, F4).
 - Agent tự chạy nền không có người dùng (tự lập kế hoạch lúc 06:00) → bản sau.
 - Nhập bằng giọng nói → bản sau `[giả định]`.
 - AI cho workspace nhiều người (lập kế hoạch nhóm, tóm tắt cho quản lý) → bản sau (Q35, `docs/02-tinh-nang-ban-sau.md`).
@@ -123,7 +125,7 @@ App không vận hành LLM, không gửi dữ liệu cho nhà cung cấp AI nào
 | Đồng ý dùng AI | Lần đầu bật trợ lý AI phải qua màn đồng ý gọn, nói rõ dữ liệu nào được đưa cho Claude Code; lưu thời điểm đồng ý | Tắt | Trước khi đồng ý: app không gọi Claude Code, MCP local không nhận kết nối, kể cả nháp highlights (Q21, QC-12 mục 7) |
 | MCP local | Chỉ nhận kết nối từ chính máy đó, khi trợ lý bật và đã đồng ý; tắt trợ lý → ngừng nhận kết nối | Tắt (theo trợ lý) | QC-12 mục 3, 7; cách kết nối và xác thực: tech chốt |
 | Công cụ ghi mặc định | Tạo task, sửa tiêu đề / ghi chú / planned / channel, dời ngày, đưa vào backlog, timebox / gỡ timebox (QC-12 mục 3); thêm subtask, sắp thứ tự, priority, gắn objective `[giả định — chưa có trong QC-12 mục 3]` | Bật (khi trợ lý bật) | Kiểm tại MCP server của app, không phụ thuộc model. Dời ngày theo QC-05 dòng "AI dời ngày" (Q14). Danh sách đầy đủ: SRS mục 3.1 |
-| Hoàn thành và xoá task | Công tắc "Cho phép AI hoàn thành và xoá task"; bật thì MCP thêm công cụ hoàn thành task và xoá task (vào Thùng rác) | Tắt | Áp cho cả subtask. Task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (QC-12 mục 4, Q46, D10; thay một phần Q20 / ADR-0003) |
+| Hoàn thành và xoá task | Không có công tắc (F4): trợ lý bật thì MCP luôn có công cụ hoàn thành task và xoá task (vào Thùng rác) | Luôn có | Áp cho cả subtask. Task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (QC-12 mục 4, Q46, F4, D10; thay một phần Q20 / ADR-0003) |
 | Luôn bị cấm | Gửi tin ra ngoài, đổi cài đặt (kể cả cài đặt AI), kết nối / ngắt tích hợp, xoá vĩnh viễn / dọn Thùng rác, xuất dữ liệu, thao tác tài khoản | — | Không có công cụ MCP tương ứng; yêu cầu loại này → trợ lý từ chối và chỉ cách người dùng tự làm |
 | Đọc dữ liệu tích hợp | Công cụ MCP đọc item và hoạt động từ công cụ G11 (1.1) | Tắt | Công tắc riêng; tắt thì AI không đọc item, highlights không dùng hoạt động công cụ (Q21, QC-12 mục 6) |
 | Áp dụng ngay hay chờ duyệt | Mọi thay đổi qua MCP áp dụng ngay, kèm chip "AI", nhật ký, Hoàn tác từng thay đổi và cả lượt. Phiên AI đã đọc dữ liệu tích hợp → chỉ các thay đổi sau lần đọc đầu tiên trong phiên chờ duyệt trong app; thay đổi trước đó giữ nguyên | — | QC-12 mục 5–6, Q46, D8 (thay ngưỡng "> 3 task" của Q31a). Lượt chạm > 3 task: câu trả lời nổi bật "Hoàn tác tất cả" (EC-37) |
@@ -149,7 +151,7 @@ App không vận hành LLM, không gửi dữ liệu cho nhà cung cấp AI nào
 | **Bước** | **Giai đoạn** | **Trải nghiệm** | **Đầu ra** |
 |---|---|---|---|
 | 0 | Chuẩn bị | Người dùng tự cài Claude Code và đăng nhập tài khoản Claude; app phát hiện Claude Code (hoặc hiện hướng dẫn cài khi chưa có) | Trạng thái Claude Code "Sẵn sàng" |
-| 1 | Bật và thiết lập | Bật trợ lý AI qua màn đồng ý (lần đầu); bật Beta "Agentic Daily Planning"; kết nối công cụ (G05, G11), chọn có cho AI đọc dữ liệu công cụ không, có cho AI hoàn thành / xoá task không, "Tell me about yourself", theme days | Thời điểm đồng ý; MCP local mở; hồ sơ agent |
+| 1 | Bật và thiết lập | Bật trợ lý AI qua màn đồng ý (lần đầu); bật Beta "Agentic Daily Planning"; kết nối công cụ (G05, G11), chọn có cho AI đọc dữ liệu công cụ không, "Tell me about yourself", theme days | Thời điểm đồng ý; MCP local mở; hồ sơ agent |
 | 2 | Lập kế hoạch sáng | Mở Daily planning (G08) → gõ điều quan trọng hôm nay → "Plan my day" → kế hoạch áp dụng ngay, Review Plan hiện các thay đổi kèm "Hoàn tác kế hoạch AI" → Next (kế hoạch có dữ liệu tích hợp: duyệt rồi mới áp dụng) | Kế hoạch ngày được áp dụng, sang bước Daily plan (G08) |
 | 3 | Trong ngày | Bấm ✨ mở khung chat: hỏi "chiều nay còn trống bao lâu?", ra lệnh "dời 3 việc review sang mai". Hoặc mở Claude Code trong terminal và ra lệnh tương tự | Task được tạo / dời / sắp, có chip "AI" và Hoàn tác |
 | 4 | Cuối ngày | Tại giờ kết thúc của lịch chung (ngày có trong lịch làm việc; app không mở thì khi mở app lần kế tiếp trong ngày, D7) có nháp highlights (chỉ khi đã đồng ý); mở Daily shutdown (G08) → duyệt / sửa → lưu | Highlights của ngày |
@@ -182,7 +184,7 @@ AC01: Trong Daily planning (G08) có ô "Điều quan trọng nhất hôm nay l�
 
 AC02: Khi chạy, màn hình hiện các bước tiến độ (đọc lịch, đọc việc từ công cụ, xếp khối thời gian); bước đầu tiên hiện ≤ 10 giây.
 
-AC03: Agent chỉ dùng công cụ MCP đang bật (mục 5); mặc định không xoá task, không đánh dấu task xong; khi người dùng bật công tắc hoàn thành / xoá thì agent vẫn không hoàn thành task có liên kết tích hợp (QC-12 mục 4). Task tạo từ issue / email / trang Notion đi qua cơ chế "một item, một task" của G11 (B14), không sinh task trùng.
+AC03: Agent chỉ dùng công cụ MCP đang bật (mục 5); agent được hoàn thành / xoá task (vào Thùng rác) nhưng không bao giờ hoàn thành hay xoá task có liên kết tích hợp (QC-12 mục 4, F4). Task tạo từ issue / email / trang Notion đi qua cơ chế "một item, một task" của G11 (B14), không sinh task trùng.
 
 AC04: Mỗi thay đổi áp dụng ngay khi agent gọi công cụ (QC-12 mục 5); chạy xong (2–4 phút) → Review Plan. Agent đã đọc dữ liệu tích hợp → chỉ các thay đổi sau lần đọc đầu tiên chờ duyệt, Review Plan ở chế độ chờ duyệt cho phần đó; thay đổi trước đó giữ nguyên (Q31a, QC-12 mục 6, D8).
 
@@ -228,7 +230,7 @@ AC01: Hành động thực hiện xong hiện chip task trong câu trả lời: 
 
 AC02: Bấm "Hoàn tác" → chip gạch ngang "Đã hoàn tác"; task do AI tạo vào Thùng rác (G02).
 
-AC03: Yêu cầu hành động không có công cụ (ví dụ "gửi kế hoạch cho sếp", "bật chế độ tối", "ngắt Jira"), hoặc "xoá task X" / "đánh dấu xong task Y" khi công tắc hoàn thành / xoá đang tắt, hoặc hoàn thành / xoá task có liên kết tích hợp (D10) → trợ lý từ chối, nói cách tự làm (Ctrl+Backspace, tích ✓ / phím C, Chia sẻ trong G08, Cài đặt) và, với hoàn thành / xoá, nhắc có công tắc trong Cài đặt → Trợ lý AI.
+AC03: Yêu cầu hành động không có công cụ (ví dụ "gửi kế hoạch cho sếp", "bật chế độ tối", "ngắt Jira"), hoặc hoàn thành / xoá task có liên kết tích hợp (D10) → trợ lý từ chối, nói cách tự làm (Ctrl+Backspace, tích ✓ / phím C, Chia sẻ trong G08, Cài đặt).
 
 AC04: Yêu cầu dời ngày áp dụng như người dùng kéo task sang ngày khác (QC-05 dòng "AI dời ngày"): timebox giữ giờ và dời theo, timer không dừng, số ngày bị hoãn reset; không đặt task chưa xong vào ngày đã qua.
 
@@ -314,7 +316,7 @@ AC06: Hoàn tác "hoàn thành" của AI = bỏ hoàn thành theo QC-03 mục 4 
 
 ### US5.1 Kiểm soát AI trong Cài đặt
 
-AC01: Cài đặt → Trợ lý AI: trạng thái Claude Code (Sẵn sàng · phiên bản / Chưa cài / Chưa đăng nhập / Phiên bản cũ, nút "Kiểm tra lại"), Trợ lý (bật / tắt, mặc định tắt), Cho AI đọc dữ liệu từ công cụ đã kết nối (mặc định tắt), Cho phép AI hoàn thành và xoá task (mặc định tắt), Dùng Claude Code trong terminal (hướng dẫn), Gợi ý channel, Gợi ý thời lượng (G02), Ngôn ngữ tóm tắt, Tóm tắt tự động, thời điểm đã đồng ý; Cài đặt → Beta: Agentic Daily Planning. G01 đặt lối vào nhóm AI và Beta trong khung trang Cài đặt.
+AC01: Cài đặt → Trợ lý AI: trạng thái Claude Code (Sẵn sàng · phiên bản / Chưa cài / Chưa đăng nhập / Phiên bản cũ, nút "Kiểm tra lại"), Trợ lý (bật / tắt, mặc định tắt), Cho AI đọc dữ liệu từ công cụ đã kết nối (mặc định tắt), Dùng Claude Code trong terminal (hướng dẫn), Gợi ý channel, Gợi ý thời lượng (G02), Ngôn ngữ tóm tắt, Tóm tắt tự động, thời điểm đã đồng ý; Cài đặt → Beta: Agentic Daily Planning. G01 đặt lối vào nhóm AI và Beta trong khung trang Cài đặt.
 
 AC02: Tắt trợ lý → ẩn nút ✨, không gọi Claude Code cho chat, Planning Agent, highlights và gợi ý task; MCP local ngừng nhận kết nối, phiên terminal đang mở nhận lỗi "Trợ lý AI đang tắt trong app" (QC-12 mục 7).
 
@@ -328,7 +330,7 @@ AC02: Phản hồi và lần hoàn tác được thu làm tín hiệu chất lư
 
 ### US5.3 Đánh giá trước khi đổi prompt, công cụ MCP hoặc phiên bản Claude Code (nội bộ)
 
-AC01: Bộ đánh giá ≥ 200 câu Việt / Anh, chạy qua Claude Code với bộ công cụ MCP thật, chia nhóm: ngày giờ tương đối (gồm ca nửa đêm EC-01 và mọi dòng trong bảng ví dụ của QC-01), thao tác task, Hoàn tác cả lượt, hành động bị cấm (gồm "đánh dấu xong" khi công tắc tắt và hoàn thành task có liên kết khi công tắc bật), lệnh ẩn trong dữ liệu (tiêu đề email / issue chứa câu lệnh), ngôn ngữ, highlights, gợi ý task.
+AC01: Bộ đánh giá ≥ 200 câu Việt / Anh, chạy qua Claude Code với bộ công cụ MCP thật, chia nhóm: ngày giờ tương đối (gồm ca nửa đêm EC-01 và mọi dòng trong bảng ví dụ của QC-01), thao tác task, Hoàn tác cả lượt, hành động bị cấm (gồm hoàn thành / xoá task có liên kết tích hợp), hoàn thành / xoá task thường, lệnh ẩn trong dữ liệu (tiêu đề email / issue chứa câu lệnh), ngôn ngữ, highlights, gợi ý task.
 
 AC02: Đạt ≥ 95% tổng `[giả định]` và 100% nhóm rào chắn, ngày giờ, lệnh ẩn trong dữ liệu mới được phát hành; chạy trước mỗi lần đổi prompt, bộ công cụ MCP, hoặc nâng / hạ phiên bản Claude Code tối thiểu được hỗ trợ; kết quả lưu theo phiên bản prompt / công cụ / Claude Code (Q21, C33). App không chọn model của người dùng; bộ đánh giá chạy với model mặc định của Claude Code `[giả định]`.
 
@@ -394,7 +396,7 @@ User Story: Là Minh, tôi đang làm việc trong terminal với Claude Code v�
 
 AC01: Cài đặt → Trợ lý AI có mục "Dùng Claude Code trong terminal" với hướng dẫn kết nối Claude Code tới MCP local của app (lệnh / cấu hình: tech chốt). Chỉ dùng được khi app đang mở, đã đăng nhập, trợ lý bật và đã đồng ý; ngược lại Claude Code nhận lỗi "Trợ lý AI đang tắt trong app" hoặc không thấy công cụ của app.
 
-AC02: Phiên terminal dùng đúng bộ công cụ và rào chắn như khung chat (mục 5): mặc định không hoàn thành / xoá, chỉ đọc dữ liệu tích hợp khi bật.
+AC02: Phiên terminal dùng đúng bộ công cụ và rào chắn như khung chat (mục 5): hoàn thành / xoá như khung chat (F4), chỉ đọc dữ liệu tích hợp khi bật.
 
 AC03: Thay đổi từ terminal áp dụng ngay, task có chip "AI", nhật ký ghi "Claude Code (terminal) đã …"; app hiện toast "Claude Code (terminal) đã thay đổi n task · Xem · Hoàn tác" và gom các thay đổi theo phiên trong màn "Hoạt động AI" để hoàn tác từng thay đổi hoặc cả phiên.
 
@@ -402,15 +404,15 @@ AC04: Phiên terminal đã đọc dữ liệu tích hợp → thay đổi sau đ
 
 AC05: Khung chat của app và phiên terminal chạy cùng lúc → mỗi bên là một phiên riêng; thao tác lên cùng task theo thứ tự server nhận (QC-08); thay đổi ghi trên phiên bản cũ của cụm vị trí bị từ chối và Claude Code nhận lỗi "Task đã thay đổi, đọc lại rồi thử lại".
 
-## UC9. Cho phép AI hoàn thành và xoá task
+## UC9. AI hoàn thành và xoá task
 
-### US9.1 Bật công tắc hoàn thành và xoá
+### US9.1 AI hoàn thành và xoá task
 
 User Story: Là Hà, tôi tin trợ lý đủ để nói "đánh dấu xong 3 việc gửi báo giá", nhưng vẫn muốn AI không đụng vào việc đồng bộ với Jira.
 
-AC01: Cài đặt → Trợ lý AI có "Cho phép AI hoàn thành và xoá task", mặc định tắt; bật hiện xác nhận nói rõ: AI sẽ hoàn thành và đưa task vào Thùng rác, mọi thay đổi vẫn hoàn tác được, công tắc áp cho cả subtask, task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (QC-12 mục 4, D10).
+AC01: (Bỏ — F4: không còn công tắc "Cho phép AI hoàn thành và xoá task" và dialog xác nhận.)
 
-AC02: Bật → MCP local có thêm công cụ hoàn thành task và xoá task (vào Thùng rác); tắt → hai công cụ biến mất từ lượt kế tiếp.
+AC02: Trợ lý bật và đã đồng ý → MCP local luôn có công cụ hoàn thành task và xoá task (vào Thùng rác), áp cho cả subtask (QC-12 mục 4, F4).
 
 AC03: AI hoàn thành task theo đúng quy tắc hoàn thành của G02 (QC-05 dòng "Hoàn thành": dừng timer, rút ngắn timebox; task tương lai về hôm nay, instance lặp giữ ngày), có chip "AI" và Hoàn tác (US4.1 AC06).
 
@@ -455,7 +457,7 @@ AC03: Claude Code chậm hơn ngưỡng của G02, lỗi hoặc hết hạn mứ
 | Dữ liệu cá nhân đưa cho Claude Code | Nghị định 13/2023/NĐ-CP, GDPR; dữ liệu đi qua tài khoản Claude của người dùng; Claude Code tự lưu bản ghi phiên trên máy | Mặc định tắt, màn đồng ý gọn và lưu thời điểm đồng ý (Q21); công cụ trả dữ liệu tối thiểu; màn đồng ý nói rõ; cần pháp chế xác nhận trách nhiệm của app và hồ sơ Q29 |
 | Lệnh ẩn trong dữ liệu (prompt injection) | Tiêu đề email / item Jira chứa câu lệnh | Công cụ đọc dữ liệu tích hợp mặc định tắt; phiên đã đọc thì mọi thay đổi chờ duyệt (QC-12 mục 6); dữ liệu ngoài chỉ là dữ liệu; rào chắn là bộ công cụ MCP, không dựa vào model; nhóm đánh giá "lệnh ẩn" phải đạt 100% |
 | Tiến trình lạ kết nối MCP local | Phần mềm khác trên máy gọi công cụ của app | MCP chỉ nhận kết nối trên máy, chỉ khi trợ lý bật; xác thực tiến trình hợp lệ: tech chốt |
-| AI thay đổi hàng loạt không qua duyệt | Không còn ngưỡng "> 3 task phải duyệt" (Q46) | Chip "AI" trên từng task; "Hoàn tác tất cả" / "Hoàn tác kế hoạch AI" một chạm; toast cho phiên terminal; hoàn thành / xoá mặc định tắt; tín hiệu hoàn tác theo dõi hằng tuần |
+| AI thay đổi hàng loạt không qua duyệt | Không còn ngưỡng "> 3 task phải duyệt" (Q46) | Chip "AI" trên từng task; "Hoàn tác tất cả" / "Hoàn tác kế hoạch AI" một chạm; toast cho phiên terminal; xoá chỉ vào Thùng rác; tín hiệu hoàn tác theo dõi hằng tuần |
 | Phụ thuộc G01, G02, G04, G05, G08, G11 | Lối vào Cài đặt AI (G01); gợi ý task và chip "AI" (G02, G04); timebox (G05); ritual và nút "Hoàn tác kế hoạch AI" (G08); tạo task từ item và hoạt động công cụ (G11, 1.1) | Hợp đồng giữa nhóm; thiếu nguồn thì agent vẫn chạy với dữ liệu có |
 | Agent áp dụng sai nhiều task | Mất niềm tin | Mọi thay đổi hiện trong Review Plan; "Hoàn tác kế hoạch AI" một chạm; chờ duyệt khi có dữ liệu tích hợp; tín hiệu hoàn tác theo dõi hằng tuần |
 
@@ -463,7 +465,7 @@ AC03: Claude Code chậm hơn ngưỡng của G02, lỗi hoặc hết hạn mứ
 
 - Mốc đầu ngày 04:00 hay 00:00? — Đã chốt 04/11/2026: mặc định 04:00, chỉnh trong 00:00–06:00; AI hiểu "hôm nay / ngày mai" theo hàm ngày làm việc QC-01, bảng ví dụ QC-01 là ca chuẩn (Q2, C33).
 - Planning Agent chờ duyệt rồi mới áp dụng hay áp dụng ngay rồi Undo all như Sunsama? — Đã chốt 04/11/2026: áp dụng ngay kèm "Hoàn tác kế hoạch AI"; kế hoạch có dùng dữ liệu tích hợp thì chờ duyệt (Q31/Q31a). Ngưỡng "chat ≤ 3 task" đã được thay: mọi thay đổi qua MCP áp dụng ngay (Q46, QC-12 mục 5).
-- Trợ lý có được đánh dấu xong task không, hay chỉ người dùng? — Đã chốt 04/11/2026: mặc định không; người dùng bật được công tắc "Cho phép AI hoàn thành và xoá task" (mặc định tắt); task có liên kết tích hợp không bao giờ được AI hoàn thành (Q46, QC-12 mục 4; thay một phần Q20 / ADR-0003).
+- Trợ lý có được đánh dấu xong task không, hay chỉ người dùng? — Đã chốt 04/11/2026: mặc định không, có công tắc riêng (Q46). **Đã chốt lại 06/11/2026 (F4):** bỏ công tắc; khi trợ lý bật, AI luôn được hoàn thành và xoá task (vào Thùng rác); task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (QC-12 mục 4; thay một phần Q20 / ADR-0003).
 - Chọn nhà cung cấp LLM nào? — Đã chốt 04/11/2026: không chọn; trợ lý AI chạy bằng Claude Code CLI của người dùng, app không gọi LLM nào khác (Q33, Q46, ADR-0004).
 - Dữ liệu có cần xử lý / lưu tại Việt Nam không? — Một phần đã chốt 04/11/2026: không bắt buộc lưu tại Việt Nam, cần hồ sơ đánh giá tác động chuyển dữ liệu ra nước ngoài (Q29). Còn mở: khi dữ liệu đi qua Claude Code bằng tài khoản Claude của chính người dùng, app có trách nhiệm gì và có phải đưa vào hồ sơ Q29 không — pháp chế xác nhận trước khi phát hành.
 - Hạn mức chat và số lần chạy agent có khác theo gói không (G12)? — Đã chốt 04/11/2026: không còn hạn mức AI theo gói; người dùng dùng hạn mức của gói Claude của họ; hết hạn mức thì hiện thông báo của Claude Code và chuyển luồng thủ công (Q46, QC-10, QC-12 mục 8; thay C32).
@@ -482,7 +484,7 @@ AC03: Claude Code chậm hơn ngưỡng của G02, lỗi hoặc hết hạn mứ
 - Đã chốt 04/11/2026: Planning Agent lỗi giữa chừng khi đã áp dụng một phần thì giữ phần đã áp dụng, có Hoàn tác cả lượt ("Hoàn tác kế hoạch AI"); chat theo cùng cách (D9, QC-12 mục 5).
 - Đã chốt 04/11/2026: tên hiển thị của trợ lý AI chưa đặt, quyết định khi làm thiết kế Figma; không dùng "Sunny" của Sunsama làm tên sản phẩm (D16).
 - Ngoài QC-12 mục 3, AI có được thêm subtask, sắp thứ tự, đổi priority, gắn objective không (bản nháp trước cho phép)?
-- Một phần đã chốt 04/11/2026: công tắc hoàn thành / xoá áp cho cả subtask; AI không bao giờ hoàn thành hay xoá task có liên kết tích hợp (D10, QC-12 mục 4). Còn mở: công tắc có gồm bỏ hoàn thành không (đang giả định: không, G02 BR-21)?
+- Một phần đã chốt 04/11/2026: hoàn thành / xoá áp cho cả subtask; AI không bao giờ hoàn thành hay xoá task có liên kết tích hợp (D10, QC-12 mục 4); bỏ công tắc (F4, 06/11/2026). Còn mở: MCP có công cụ bỏ hoàn thành không (đang giả định: không, G02 BR-21)?
 - Phiên bản Claude Code tối thiểu được hỗ trợ; app có cho chọn model của Claude Code không?
 - Gợi ý task qua Claude Code có đạt ngưỡng 2 giây của G02 không; nếu không thì đổi ngưỡng hay đổi trải nghiệm (gợi ý đến sau)?
 - Một phần đã chốt 04/11/2026: app không mở tại giờ kết thúc của lịch chung thì soạn khi mở app lần kế tiếp trong ngày (D7). Còn mở: người dùng có nhiều máy Windows thì một ngày chỉ một nháp tự động (đang giả định: có, server giữ khoá user + ngày)?

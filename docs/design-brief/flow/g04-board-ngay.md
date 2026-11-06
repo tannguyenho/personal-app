@@ -67,8 +67,10 @@ flowchart TD
   s1 ==> u2 ==> ok
 
   s1 -->|"A1 · phím T / sidebar Today"| a1["Today view, chưa có mã SCR<br/>task của ngày đang xem + lịch ngày G05"]
-  s1 -->|"A2 · hover header cột ngày ≥ hôm nay"| a2["SCR-02 #4 nút Plan hiện<br/>cột đã qua: không hiện"]
+  s1 -->|"A2 · hover header cột ngày ≥ hôm nay"| a2["SCR-02 #4 nút Plan hiện"]
   a2 -->|"bấm Plan"| a2x{{"→ G08 · UC-01"}}
+  s1 -->|"cột ngày đã qua, IA-20"| ia20["SCR-02 #4, #6 không có nút Plan<br/>và không có + Thêm task"]
+  ia20 -->|"nhấn A"| ia20x{{"→ G02 · UC-01 A6<br/>ô soạn mở ở cột hôm nay"}}
   u2 -->|"A3 · Calendar views"| a3["SCR-01 Calendar view<br/>sự kiện G05, timebox,<br/>projection mờ hơn sự kiện thật"]
   u2 -->|"A4 · Month view"| a4["SCR-01 Month view<br/>mỗi ngày tối đa 3 task, +n"]
   a4 -->|"bấm +n"| a4b["Popover danh sách task của ngày"]
@@ -80,14 +82,14 @@ flowchart TD
   d7 -->|"chưa"| a7b[["Như BR-25: RolloverEnsure<br/>rollover tạm trên máy"]]
   a7b --> s1
   s1 -->|"A8 · timezone thiết bị khác timezone người dùng, EC-02"| a8x{{"→ G01 · UC-06 banner timezone MSG-23 của G01"}}
-  a8x --> a8["Hiệu lực từ ngày làm việc kế tiếp: task giữ ngày dự định,<br/>timebox giữ thời điểm tuyệt đối<br/>SCR-02 card cờ Lệch ngày BR-24 nếu timebox rơi khác ngày"]
-  a8 --> a8m>"MSG-26 · Tooltip<br/>Lệch ngày: timebox ở {ngày timebox}, task dự định {ngày dự định}. Dời task hoặc dời timebox"]
+  a8x --> a8["Hiệu lực từ ngày làm việc kế tiếp: task giữ ngày dự định,<br/>timebox giữ thời điểm tuyệt đối<br/>timebox rơi khác ngày: task vẫn ở cột ngày dự định,<br/>không gắn cờ, không tự sửa F5"]
   s1 -->|"A9 · cửa sổ < 768 px"| a9["SCR-01 1 cột<br/>cuộn ngang / Shift+→/← đổi ngày"]
   s1 -->|"A10 · ngày ngoài khoảng instance lặp đã sinh, C17"| a10["SCR-02 card mờ nhãn Dự kiến BR-23<br/>không kéo được, không tính vào tổng"]
 
   class s1,u2 happy
+  class ia20 alt
+  class ia20x link
   class a1,a2,a3,a4,a4b,a5,a6,a7,d7,a7b,a8,a9,a10 alt
-  class a8m warn
   class a2x,a8x link
   class ok done
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -141,6 +143,41 @@ flowchart TD
   classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
 ```
 
+### Banner trạng thái (SCR-01 #5, IA-17)
+
+Vùng chính chỉ có **một** banner cùng lúc. Nhiều điều kiện cùng đúng thì banner ưu tiên cao nhất hiện; các banner còn lại chờ tới lượt và vào trung tâm thông báo ([G12 UC-09](g12-workspace-billing.md)).
+
+```mermaid
+flowchart TD
+  start(["Có điều kiện cần banner<br/>offline / lịch cần kết nối lại /<br/>rollover lỗi / lệch timezone"])
+  d1{"Đang có banner<br/>ưu tiên cao hơn?"}
+  s1["SCR-01 #5 hiện banner này<br/>thứ tự: offline → lịch cần kết nối lại<br/>→ rollover lỗi → lệch timezone"]
+  q1["Banner chờ tới lượt"]
+  n1{{"→ G12 · UC-09<br/>đồng thời vào trung tâm thông báo"}}
+  d2{"Banner đang hiện<br/>hết điều kiện?"}
+  ok(["Banner kế tiếp trong hàng chờ hiện<br/>hoặc không còn banner"])
+
+  start ==> d1
+  d1 ==>|"không"| s1 ==> d2
+  d1 -->|"có"| q1 --> n1
+  q1 -->|"banner trên hết điều kiện"| s1
+  d2 ==>|"có: có mạng lại, đã kết nối lại,<br/>rollover xong, chọn Giữ / Đổi timezone"| ok
+
+  class start,d1,s1,d2 happy
+  class q1 alt
+  class n1 link
+  class ok done
+  classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
+  classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
+  classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
+  classDef warn fill:#FEF4E2,stroke:#B45309,color:#4A2604
+  classDef ai fill:#F1ECFD,stroke:#6D28D9,color:#2E1065
+  classDef sync fill:#FFFFFF,stroke:#6B7280,stroke-dasharray:4 3,color:#1F2937
+  classDef link fill:#FFFFFF,stroke:#0F766E,stroke-dasharray:4 3,color:#0B3B36
+  classDef done fill:#E6F4F1,stroke:#0F766E,stroke-width:3px,color:#0B3B36
+  classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
+```
+
 ### Đối chiếu
 
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
@@ -152,7 +189,7 @@ flowchart TD
 | A5 | Ẩn task đã xong | Card xong ẩn, tổng giữ | – |
 | A6 | Ngày > 100 task | Danh sách ảo hoá | – |
 | A7 | Qua mốc đầu ngày khi đang mở | Hôm nay mới, cột cũ `DA_QUA`; chưa có kết quả rollover thì như BR-25 | – |
-| A8 | Lệch timezone | Banner của [G01 UC-06](g01-tai-khoan.md); cờ Lệch ngày | G01 MSG-23, MSG-26 |
+| A8 | Lệch timezone | Banner của [G01 UC-06](g01-tai-khoan.md); task giữ cột ngày dự định, không gắn cờ (F5) | G01 MSG-23 |
 | A9 | Cửa sổ < 768 px | 1 cột | – |
 | A10 | Ngày ngoài khoảng instance đã sinh | Instance dự kiến mờ | – |
 | E1 | Mất mạng | Dữ liệu trên máy, banner offline | – (chưa có mã MSG) |
@@ -298,8 +335,7 @@ flowchart TD
   p1 -->|"A2 · task đã timebox"| a2["Giữ giờ, dời timebox sang ngày mới BR-09<br/>timer đang chạy không dừng"]
   a2 --> a2x{{"→ G05 cập nhật sự kiện ngoài"}}
   a2 --> m1
-  p1 -->|"A7 · timebox liên kết sự kiện B8"| a7["BR-09 giả định: timebox liên kết giữ nguyên<br/>card cờ Lệch ngày"]
-  a7 --> a7m>"MSG-26 · Tooltip<br/>Lệch ngày: timebox ở {ngày timebox}, task dự định {ngày dự định}. Dời task hoặc dời timebox"]
+  p1 -->|"A7 · timebox liên kết sự kiện B8"| a7["BR-09: chỉ gỡ liên kết, sự kiện ngoài giữ nguyên<br/>task sang ngày mới không còn timebox đó<br/>QC-05 ngoại lệ, G05 BR-21 f"]
   a7 --> m1
   p1 -->|"A4 · instance lặp, kéo / chọn ngày vào ngày<br/>đã có instance cùng series; chỉ đổi instance này"| a4m>"MSG-23 · Toast cảnh báo<br/>Ngày này đã có {tên series}"]
   a4m --> ok
@@ -314,7 +350,7 @@ flowchart TD
 
   class s0,u1,p1,m1 happy
   class start2,a1,a1d,a1w,a1s,a6,a3,a2,a7,a4d,a4dm,a5,a5e alt
-  class a7m,a4m warn
+  class a4m warn
   class a3x,a2x link
   class ok done
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -344,7 +380,7 @@ flowchart TD
   p1 -.->|"E2 · ngày đích ngoài ± 5 năm"| e2m>"MSG-19 · Toast<br/>Chỉ chọn được ngày trong vòng 5 năm tính từ hôm nay"]
   e2m -.-> fail
   p1 -.->|"E3 · VERSION_CONFLICT<br/>thiết bị khác / job rollover"| e3["Tải lại task, vẽ theo server"]
-  e3 -.-> e3m>"MSG-17 · Toast<br/>Task đã thay đổi trên thiết bị khác, đã cập nhật lại"]
+  e3 -.-> e3m>"MSG-17 · Toast<br/>Task đã thay đổi trên thiết bị khác"]
   e3m -.-> e3e(["Task theo trạng thái server"])
   p1 -.->|"E4 · TASK_DELETED"| e4["Gỡ card"]
   e4 -.-> e4m>"MSG-14 · Toast<br/>Task này đã bị xoá"]
@@ -381,7 +417,7 @@ flowchart TD
 | A4 | Instance lặp vào ngày đã có instance cùng series | Kéo / chọn ngày: vẫn đặt; phím D: bản bị dời vào Lưu trữ (`skipped`) | MSG-23 / MSG-24 |
 | A5 | Hoàn tác / Ctrl+Z | Về cụm vị trí, vị trí cũ, liên kết timebox | – |
 | A6 | Kéo bằng bàn phím | Như kéo thả | MSG-01 |
-| A7 | Timebox liên kết sự kiện | Theo BR-09 `[giả định]`, cờ Lệch ngày | MSG-26 |
+| A7 | Timebox liên kết sự kiện | Gỡ liên kết, sự kiện giữ nguyên (BR-09, QC-05) | – |
 | E1 | Task chưa xong vào ngày < hôm nay | Không thả / server từ chối | MSG-09 |
 | E2 | Ngoài ± 5 năm | Task về chỗ cũ | MSG-19 |
 | E3 | `VERSION_CONFLICT` | Trạng thái server | MSG-17 |
@@ -449,7 +485,7 @@ flowchart TD
   e1 -.-> e1m>"MSG-15 · Toast<br/>Chưa tải / lưu được thay đổi. Thử lại"]
   e1m -.-> fail(["Thứ tự không đổi"])
   p1 -.->|"E2 · VERSION_CONFLICT"| e2["Tải lại ngày"]
-  e2 -.-> e2m>"MSG-17 · Toast<br/>Task đã thay đổi trên thiết bị khác, đã cập nhật lại"]
+  e2 -.-> e2m>"MSG-17 · Toast<br/>Task đã thay đổi trên thiết bị khác"]
 
   class s1,p1,m1 happy
   class s0,a1,a2,a3,a4,a4e alt
@@ -848,7 +884,7 @@ flowchart TD
   s1 ==> u2 ==> p1 ==> ok
 
   k0(["Board · không có ô nhập focus<br/>cài đặt Phím tắt bật"])
-  k0 -->|"A1 · gõ thẳng phím tắt: H, T, P, O, B, Tab, D, S, F,<br/>Shift+F, Shift+C/T/B/A, <, >, Shift+L…"| a1[["Chạy lệnh như bước 4<br/>không mở menu"]]
+  k0 -->|"A1 · gõ thẳng phím tắt: H, T, P, O, B, Tab, D, S, F,<br/>Shift+F, Shift+C/T/B/A, <, >, Shift+L…<br/>Ctrl+\ panel phải, Ctrl+J Trợ lý, Ctrl+, Cài đặt IA-15"| a1[["Chạy lệnh như bước 4<br/>không mở menu"]]
   a1 --> ok
   a1 -->|"A2 · lần đầu dùng phím tắt"| a2m>"MSG-21 · Toast, một lần / tài khoản<br/>Phím tắt đầu tiên của bạn! Nhấn ? để xem tất cả"]
   k0 -->|"A3 · phím ?"| a3["SCR-09 Bảng phím tắt"]
@@ -907,7 +943,7 @@ flowchart TD
 5. **Phím K ở 1.0.** UC-08 A1 và SCR-08 #7 liệt kê "K nghỉ (G07)" không ghi phiên bản; G07 BR-14, BR-17 ghi K là 1.1. Theo UC-08 A5 ("lệnh chưa có ở 1.0 không hiện"), sơ đồ đã bỏ K khỏi danh sách 1.0; đề xuất sửa A1 và SCR-08 #7.
 6. **UC-02 E2:** "khung cột rỗng có MSG-15 'Thử lại'" nhưng MSG-15 khai báo nơi hiện là Toast. Cần chốt MSG-15 nằm trong cột hay là toast.
 7. **UC-03 A4:** kéo / chọn ngày vào ngày đã có instance cùng series hiện MSG-23; SRS không nói MSG-23 thay MSG-01 hay hiện cùng. Nếu thay thì người dùng mất nút "Hoàn tác" của MSG-01.
-8. **UC-03 A7 / BR-09** còn `[giả định]` (câu hỏi mở PRD): kéo task có timebox liên kết sự kiện sang ngày khác. Sơ đồ vẽ theo giả định.
+8. ~~**UC-03 A7 / BR-09** còn `[giả định]`~~ **Đã sửa 06/11/2026:** theo QC-05 (ngoại lệ timebox liên kết sự kiện), chỉ gỡ liên kết, sự kiện ngoài giữ nguyên; đã ghi ngược vào SRS G04 BR-09, UC-03 A7.
 9. **Kéo trong cột (UC-04 A1, A2)** không có toast / MSG; BR-12 nói mọi thao tác BR-10 có Hoàn tác "toast hoặc Ctrl+Z". Cần chốt có toast không.
 10. **UC-04 tiền điều kiện** ghi "workspace không chỉ đọc" thiếu nhãn "(1.1)"; BR-20 nói 1.0 không có chế độ chỉ đọc.
 11. **UC-03 A3** (thả vào panel Backlog) không ghi thông báo; phụ thuộc G06 UC-01.

@@ -102,7 +102,7 @@ Chi tiết ở [quyết định chốt mâu thuẫn](docs/review/quyet-dinh-chot
 - Thùng rác giữ task đã xoá **30 ngày**.
 - Bản 1.0 miễn phí; trial, thanh toán gói cá nhân và chế độ chỉ đọc ở bản 1.1; nhiều thành viên từ 1.2 trở đi (ADR-0002, Q47).
 - Bản 1.0 là app Windows (Flutter) cho một người dùng, có tài khoản và dữ liệu trên cloud; web + macOS ở 1.1, di động ở 1.2 (ADR-0005).
-- Trợ lý AI chạy bằng Claude Code CLI của người dùng, điều khiển app qua MCP local, có từ 1.0; mặc định tắt; thay đổi áp dụng ngay kèm Hoàn tác; chờ duyệt khi dùng dữ liệu tích hợp; hoàn thành / xoá task chỉ khi người dùng bật công tắc (QC-12, ADR-0004).
+- Trợ lý AI chạy bằng Claude Code CLI của người dùng, điều khiển app qua MCP local, có từ 1.0; mặc định tắt; thay đổi áp dụng ngay kèm Hoàn tác; chờ duyệt khi dùng dữ liệu tích hợp; AI được hoàn thành / xoá task (vào Thùng rác), không cần công tắc riêng, trừ task có liên kết tích hợp (QC-12, ADR-0004, F4).
 - Mỗi channel có thể đặt khung giờ riêng (QC-02).
 - Kiến trúc thông tin app Windows 1.0: khung ba vùng (sidebar, vùng chính, panel phải), chi tiết task là dialog, chat AI ở panel phải, × thu về khay (IA-01..IA-20, [`docs/design-brief/00-kien-truc-thong-tin.md`](docs/design-brief/00-kien-truc-thong-tin.md)).
 - Nền tảng design system: điềm tĩnh, design system riêng cho mọi nền tảng, nhấn teal, AI tím, font Inter, icon Lucide, WCAG AA (DS-01..DS-16, [`docs/design-brief/01-nen-tang-design-system.md`](docs/design-brief/01-nen-tang-design-system.md)).

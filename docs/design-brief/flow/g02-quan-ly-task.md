@@ -7,7 +7,7 @@
 
 | UC | Flow | Màn chính | Nhánh A / E (1.0) |
 |---|---|---|---|
-| [UC-01](#uc-01-tạo-task) | Tạo task | SCR-01 Ô soạn task, SCR-02 Task card | 5 / 5 |
+| [UC-01](#uc-01-tạo-task) | Tạo task | SCR-01 Ô soạn task, SCR-N01 Ô thêm nhanh toàn cục, SCR-02 Task card | 7 / 5 |
 | [UC-02](#uc-02-xem-và-sửa-chi-tiết-task) | Xem và sửa chi tiết task | SCR-03 Chi tiết task | 12 / 7 |
 | [UC-03](#uc-03-hoàn-thành--bỏ-hoàn-thành-task) | Hoàn thành / bỏ hoàn thành | SCR-02, SCR-03 | 7 / 3 |
 | [UC-04](#uc-04-xoá-hoàn-tác-và-khôi-phục-task) | Xoá, hoàn tác, khôi phục | SCR-04 Menu "Khác", SCR-05 Thùng rác | 7 / 3 |
@@ -18,13 +18,13 @@
 
 ## UC-01 Tạo task
 
-**Mở đầu:** board, cột ngày D ≥ hôm nay. **Thành công:** task nằm trên cột D (hoặc trong Backlog), tổng thời lượng cột tăng. **Thất bại:** không có task mới, nội dung còn trong ô soạn.
+**Mở đầu:** board, cột ngày D ≥ hôm nay (cột đã qua không có "+ Thêm task", IA-20); hoặc bất kỳ đâu trên Windows với Ctrl+Shift+A (A7). **Thành công:** task nằm trên cột D (hoặc trong Backlog), tổng thời lượng cột tăng. **Thất bại:** không có task mới, nội dung còn trong ô soạn.
 
 ### Happy case
 
 ```mermaid
 flowchart TD
-  start(["Board · cột ngày D"])
+  start(["Board · cột ngày D ≥ hôm nay"])
   u1[/"Bấm + Thêm task<br/>hoặc chọn cột rồi nhấn A"/]
   s1["SCR-01 Ô soạn task<br/>focus ô tiêu đề, ngày = D"]
   u2[/"Gõ tiêu đề"/]
@@ -77,11 +77,13 @@ flowchart TD
   a2 --> a2m>"MSG-07 · Toast<br/>Đã thêm vào Backlog · Mở Backlog"]
   a2m -->|"bấm Mở Backlog"| a2x{{"→ G06 Backlog"}}
   s1 -->|"A3 · Esc khi đã gõ"| a3(["Ô soạn đóng, bản nháp giữ trên máy<br/>mở lại cùng ngày thấy nội dung cũ"])
+  past(["Board · cột ngày đã qua đang chọn<br/>không có nút + Thêm task"]) -->|"A6 · nhấn A, IA-20"| a6["Board cuộn tới cột hôm nay"]
+  a6 --> s1
 
   u3 -.->|"E1 · tiêu đề trống"| e1["Nút tạo disabled<br/>Enter không làm gì"]
   u3 -.->|"E2 · > 500 ký tự"| e2m>"MSG-01 · Inline<br/>Tên task tối đa 500 ký tự"]
   e2m -.-> s1
-  p2 -.->|"E6 · cột D đã qua, PAST_DATE"| e6m>"MSG-20 · Inline<br/>Không thể đặt task chưa xong vào ngày đã qua"]
+  p2 -.->|"E6 · D đã thành ngày qua khi gửi<br/>qua mốc đầu ngày lúc ô soạn đang mở, PAST_DATE"| e6m>"MSG-20 · Inline<br/>Không thể đặt task chưa xong vào ngày đã qua"]
   e6m -.-> fail(["Không tạo, nội dung còn trong ô soạn"])
   p2 -.->|"E3 · mất mạng"| e3["SCR-02 card có dấu chờ đồng bộ<br/>hàng đợi trên máy QC-08"]
   e3 -.->|"có mạng, gửi lại cùng idempotency key"| ok
@@ -90,13 +92,58 @@ flowchart TD
   e4m -.->|"Thử lại"| p2
 
   class s1,u2,u3,p2 happy
-  class a1,a5,a5b,a2,a2m,a3 alt
+  class a1,a5,a5b,a2,a2m,a3,past,a6 alt
   class a4 ai
   class a2x link
   class e1,e2m,e6m,e4,e4m err
   class e3 sync
   class ok done
   class fail fail
+  classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
+  classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
+  classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
+  classDef warn fill:#FEF4E2,stroke:#B45309,color:#4A2604
+  classDef ai fill:#F1ECFD,stroke:#6D28D9,color:#2E1065
+  classDef sync fill:#FFFFFF,stroke:#6B7280,stroke-dasharray:4 3,color:#1F2937
+  classDef link fill:#FFFFFF,stroke:#0F766E,stroke-dasharray:4 3,color:#0B3B36
+  classDef done fill:#E6F4F1,stroke:#0F766E,stroke-width:3px,color:#0B3B36
+  classDef fail fill:#FDECEC,stroke:#B42318,stroke-width:3px,color:#5C1010
+```
+
+### Nhánh thay thế: ô thêm nhanh toàn cục (A7)
+
+Màn: SCR-N01 (chưa có mã trong SRS, mã theo [bản thử brief G02](../_thu-g02-tao-va-chi-tiet-task.md)). Nguồn: UC-01 A7, US1.1 AC07, D11, IA-19.
+
+```mermaid
+flowchart TD
+  start(["Bất kỳ đâu trên Windows<br/>app đang mở, ở nền hoặc ở khay"])
+  u1[/"Nhấn Ctrl+Shift+A"/]
+  d0{"Phím tắt đang bật?<br/>G01 BR-15"}
+  s1["SCR-N01 Ô thêm nhanh toàn cục<br/>cửa sổ nổi nhỏ, giữa màn hình đang dùng<br/>luôn ở trên, ngày = hôm nay"]
+  u2[/"Gõ tiêu đề"/]
+  u3[/"Enter"/]
+  p1[["TaskCreate như bước 6"]]
+  s2["Đã thêm vào Hôm nay<br/>khoảng 1 giây"]
+  ok(["Ô đóng, focus về app trước<br/>cửa sổ chính ở khay thì vẫn ở khay"])
+
+  start ==> u1 ==> d0
+  d0 ==>|"có"| s1 ==> u2 ==> u3 ==> p1 ==> s2 ==> ok
+  d0 -->|"không"| off(["Không có gì xảy ra"])
+  u2 -->|"Shift+Enter"| p2[["TaskCreate, giữ ô mở<br/>ô trống cho task kế tiếp"]]
+  p2 --> u2
+  s1 -->|"Click ra ngoài hoặc Esc"| a3(["Ô đóng, bản nháp giữ<br/>mở lại thấy nội dung cũ"])
+  u3 -.->|"E1 · tiêu đề trống"| e1["Enter không làm gì"]
+  u3 -.->|"E2 · > 500 ký tự"| e2m>"MSG-01 · Inline<br/>Tên task tối đa 500 ký tự"]
+  p1 -.->|"E3 · mất mạng"| e3["Hàng đợi trên máy QC-08<br/>vẫn hiện Đã thêm vào Hôm nay"]
+  e3 -.-> ok
+  p1 -.->|"E4 · lỗi 5xx"| e4m>"MSG-10 · Toast<br/>Chưa lưu được thay đổi. Thử lại"]
+
+  class start,u1,d0,s1,u2,u3,p1,s2 happy
+  class p2,a3 alt
+  class off alt
+  class e1,e2m,e4m err
+  class e3 sync
+  class ok done
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
   classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
@@ -117,12 +164,14 @@ flowchart TD
 | A3 | Esc khi đã gõ | Ô soạn đóng, giữ nháp | – |
 | A4 | Không có gợi ý AI | Về luồng chính, không chờ | – |
 | A5 | Gõ "#" | Chip Channel được gán | – |
+| A6 | Phím A trên cột đã qua | Ô soạn mở ở cột hôm nay (IA-20) | – |
+| A7 | Ctrl+Shift+A toàn cục | Ô thêm nhanh, task vào hôm nay (IA-19) | "Đã thêm vào Hôm nay" (chưa có mã MSG) |
 | E1 | Tiêu đề trống | Nút tạo disabled | – |
 | E2 | > 500 ký tự | Chặn tạo | MSG-01 |
 | E3 | Mất mạng | Card chờ đồng bộ → gửi lại | – |
 | E4 | Lỗi 5xx | Card lỗi, Thử lại | MSG-10 |
 | E5 | Workspace chỉ đọc | Bỏ (1.1) | – |
-| E6 | Cột ngày đã qua | Không tạo | MSG-20 |
+| E6 | Ngày D thành ngày đã qua khi gửi | Không tạo | MSG-20 |
 
 ---
 
@@ -326,10 +375,8 @@ flowchart TD
   a4 --> m1
   a5 --> m1
   a6 --> m1
-  start7(["Trợ lý AI qua MCP local"]) -->|"A7"| d7{"BR-21: công tắc bật,<br/>task không liên kết tích hợp?"}
-  d7 -->|"đủ"| a7["Như bước 2-3, tác nhân ai<br/>chip AI, Hoàn tác"]
+  start7(["Trợ lý AI qua MCP local<br/>trợ lý bật, đã đồng ý BR-21 a"]) -->|"A7"| a7["Như bước 2-3, tác nhân ai<br/>chip AI, Hoàn tác"]
   a7 --> a7x{{"→ G10 receipt và Hoàn tác"}}
-  d7 -->|"TOGGLE_OFF / LINKED_TASK"| a7f(["403 AI_ACTION_FORBIDDEN<br/>task không đổi"])
 
   p1 -.->|"E1 · mất mạng"| e1["Áp ngay trên máy, hàng đợi"]
   e1 -.->|"gửi lên, cụm vị trí đã đổi, 412"| e1m>"MSG-23 · Toast<br/>Task đã thay đổi trên thiết bị khác"]
@@ -340,9 +387,8 @@ flowchart TD
 
   class u1,p1,s1,m1 happy
   class a1,d1,a1r,a2,a2r,a3,a4,a5,a6 alt
-  class start7,d7,a7 ai
+  class start7,a7 ai
   class a7x link
-  class a7f fail
   class e1 sync
   class e1m,e2,e2m,e3m err
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -366,7 +412,8 @@ flowchart TD
 | A4 | Instance lặp ngày tương lai | Xong ở cột ngày đó | MSG-08 |
 | A5 | Hoàn thành trước mốc đầu ngày | Ngày hoàn thành = hôm trước | MSG-08 |
 | A6 | Planned là actual | actual = planned | MSG-08 |
-| A7 | AI hoàn thành | Xong (tác nhân ai) hoặc 403 → [G10](g10-tro-ly-ai.md) | – |
+| A7 | AI hoàn thành (không cần công tắc, F4) | Xong (tác nhân ai) → [G10](g10-tro-ly-ai.md) | – |
+| A7 (phần task có liên kết tích hợp) | 403 `LINKED_TASK` | Bỏ (1.1) | – |
 | E1 | Mất mạng | Hàng đợi; xung đột → trạng thái server | MSG-23 |
 | E2 | TaskComplete lỗi | Trạng thái cũ | MSG-10 |
 | E3 | Task đã bị xoá | – | MSG-22 |
@@ -388,7 +435,7 @@ flowchart TD
   m1>"MSG-09 · Toast ít nhất 5 giây<br/>Đã xoá · Hoàn tác (Ctrl+Z)"]
   ok(["Task biến khỏi board và lịch<br/>nằm trong Thùng rác 30 ngày"])
   u2[/"Tuỳ chọn: Hoàn tác hoặc Ctrl+Z"/]
-  p2[["TaskRestore undo=true<br/>về vị trí cũ, khôi phục timebox,<br/>tạo lại sự kiện ngoài QC-05"]]
+  p2[["TaskRestore undo=true<br/>về vị trí cũ, khôi phục liên kết timebox,<br/>sự kiện ngoài đã bị xoá thì tạo lại QC-05"]]
   ok2(["Task về đúng chỗ cũ"])
 
   start ==> s0 ==> u1 ==> p1 ==> m1 ==> ok
@@ -417,13 +464,13 @@ flowchart TD
   ok(["Task trong Thùng rác"])
   u1 ==> p1 ==> m1 ==> ok
 
-  p1 -->|"A2 · task có timebox"| a2["Timebox tương lai gỡ, sự kiện ngoài bị xoá<br/>timebox quá khứ chỉ gỡ liên kết QC-05"]
+  p1 -->|"A2 · task có timebox"| a2["Timebox thường: tương lai gỡ, sự kiện ngoài bị xoá<br/>quá khứ chỉ gỡ liên kết QC-05"]
   a2 --> m1
+  p1 -->|"A2 · timebox liên kết sự kiện"| a2l["Chỉ gỡ liên kết, sự kiện ngoài giữ nguyên<br/>QC-05 ngoại lệ, G05 BR-21 f"]
+  a2l --> m1
   p1 -->|"A4 · instance lặp"| a4["Ngày gốc vào danh sách ngày ngoại lệ<br/>G03 BR-15, hoàn tác không gỡ"]
   a4 --> m1
-  ai0(["Trợ lý AI qua MCP local"]) -->|"A7"| d7{"BR-21 a, b, c đủ?"}
-  d7 -->|"đủ"| p1
-  d7 -->|"TOGGLE_OFF / LINKED_TASK"| a7f(["403 AI_ACTION_FORBIDDEN<br/>task không đổi"])
+  ai0(["Trợ lý AI qua MCP local<br/>trợ lý bật, đã đồng ý BR-21 a"]) -->|"A7"| p1
   ai1(["Khung chat G10 · Hoàn tác<br/>task do AI tạo"]) -->|"A3"| ok
 
   ok -->|"A1 · toast đã tắt"| a1["SCR-05 Thùng rác<br/>panel Lưu trữ · Thùng rác, tab Thùng rác"]
@@ -442,11 +489,12 @@ flowchart TD
 
   class u1,p1,m1 happy
   class a2,a4,a1,a1p,a6,a1m,ai1 alt
-  class ai0,d7 ai
+  class a2l warn
+  class ai0 ai
   class a5m warn
   class e1m,e3m,e4m err
   class ok done
-  class a7f,e1,e3 fail
+  class e1,e3 fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
   classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
@@ -463,12 +511,13 @@ flowchart TD
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
 | A1 | Khôi phục khi toast đã tắt | SCR-05 → trạng thái trước khi xoá | MSG-13 |
-| A2 | Task có timebox | Xoá theo QC-05; khôi phục không tạo lại timebox | MSG-09 |
+| A2 | Task có timebox | Xoá theo QC-05; timebox liên kết sự kiện chỉ gỡ liên kết, không xoá sự kiện; khôi phục không tạo lại timebox | MSG-09 |
 | A3 | Hoàn tác task AI tạo trong chat | Thùng rác | – |
 | A4 | Xoá instance lặp | Thêm ngày ngoại lệ | MSG-09 |
 | A5 | Khôi phục instance trùng series | Vẫn khôi phục | MSG-13 + MSG-24 |
 | A6 | Khôi phục task Hoàn thành / Lưu trữ / Backlog | Về đúng trạng thái cũ | MSG-13 |
-| A7 | AI xoá | Như xoá thường hoặc 403 | – |
+| A7 | AI xoá (không cần công tắc, F4) | Như xoá thường, vào Thùng rác | – |
+| A7 (phần task có liên kết tích hợp) | 403 `LINKED_TASK` | Bỏ (1.1) | – |
 | E1 | Quá 30 ngày | Gỡ khỏi danh sách | MSG-14 |
 | E2 | (SRS đã bỏ) | – | – |
 | E3 | Lỗi xoá / khôi phục | Trạng thái trước | MSG-10 |

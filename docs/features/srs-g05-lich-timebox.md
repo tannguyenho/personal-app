@@ -10,7 +10,7 @@
 | --- | --- |
 | Mục tiêu | Người dùng thấy sự kiện lịch cạnh task, đặt task vào khung giờ (timebox) bằng kéo thả hoặc phím, timebox tự có trên Google / Outlook và thay đổi trên lịch ngoài phản ánh về app, không trùng, không mất |
 | Actor | Người dùng đã đăng nhập · Hệ thống (job đồng bộ, đẩy timebox) · Google Calendar API · Microsoft Graph |
-| Phạm vi | Kết nối / kết nối lại / ngắt tài khoản lịch, chọn lịch hiển thị và lịch ghi (mặc định, theo channel), hiển thị sự kiện, timebox, timebox liên kết sự kiện, cờ "Lệch ngày", auto-schedule (X, Shift+X — 1.1), lập lịch cứng cho task lặp (1.1), gỡ timebox (Ctrl+X), đồng bộ 2 chiều, cảnh báo xung đột, khối thời gian thực tế |
+| Phạm vi | Kết nối / kết nối lại / ngắt tài khoản lịch, chọn lịch hiển thị và lịch ghi (mặc định, theo channel), hiển thị sự kiện, timebox, timebox liên kết sự kiện, auto-schedule (X, Shift+X — 1.1), lập lịch cứng cho task lặp (1.1), gỡ timebox (Ctrl+X), đồng bộ 2 chiều, cảnh báo xung đột, khối thời gian thực tế |
 | Ngoài phạm vi | Apple / CalDAV (1.1), tạo / sửa sự kiện thường, mời người tham dự, ghi chú cuộc họp, chế độ xem lịch và điều hướng (G04), timer (G07), cài đặt khung giờ channel (G02, QC-02 mục 5). Privacy "Lịch" (người khác xem lịch của mình) → bản sau, 1.2 trở đi ([`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md), Q37, Q47): khuyến nghị người khác chỉ thấy bận / rảnh và timebox, không thấy chi tiết sự kiện lịch ngoài; bản 1 chỉ có một người dùng (Q35) |
 | Nền tảng | App Windows ở 1.0; web, macOS từ 1.1; iOS / Android từ 1.2, dùng cùng đặc tả (Q45, ADR-0005). Luồng OAuth trên app Windows, nơi nhận webhook lịch và cache sự kiện trên máy: tech chốt — `docs/tech/` |
 | Figma | `[chưa có]` |
@@ -29,7 +29,7 @@
 | US-08 | Người dùng | Mất kết nối rồi kết nối lại không bị trùng sự kiện | Lịch sạch, tin được |
 | US-09 | Người dùng (1.1) | Instance của task lặp tự có timebox tại giờ cố định | Không phải kéo mỗi ngày |
 | US-10 | Người lịch dày | Kéo cuộc họp thành task mà không tạo sự kiện trùng | Lịch công ty không bị nhân đôi |
-| US-11 | Người hay đi công tác | Task không nhảy cột khi đổi timezone, được báo khi timebox lệch ngày | Tự quyết dời task hay dời timebox |
+| US-11 | Người hay đi công tác | Task không nhảy cột khi đổi timezone | Tự kéo task hoặc timebox nếu muốn khớp (F5: không còn cờ "Lệch ngày") |
 
 ## 3. Business Rules
 
@@ -49,14 +49,14 @@
 | BR-12 | **Thử lại.** \[TimeboxPush\] lỗi → `sync_status = error`, thử lại backoff 1, 5, 15, 60 phút rồi mỗi giờ `[giả định]`, tối đa 24 giờ; quá 24 giờ dừng, chờ người dùng "Thử lại". 429 → theo `Retry-After`. Ghi nhiều lần cùng block trong 2 giây gộp thành 1 `[giả định]` |
 | BR-13 | **Quy tắc xung đột hai phía (lịch ↔ app)** (Q15). Là quy tắc duy nhất, áp cho UC-04 E2, UC-06 A3, UC-07, UC-08 A4. Chỉ áp cho sự kiện có `appTaskId` của người dùng và timebox còn liên kết (không áp cho timebox `CHI_TRONG_APP`, BR-19). (a) **Giờ / ngày:** lần sửa muộn hơn thắng; "muộn hơn" so `updated` của sự kiện (giờ server nhà cung cấp) với thời điểm server app nhận lần sửa trong app (QC-08) `[giả định cách so]`. Lịch ngoài thắng → cập nhật timebox, `startDate` theo BR-06; task 1 timebox thì planned = thời lượng mới (EC-14). App thắng → ghi đè ra lịch ngoài. (b) **Xoá ở lịch ngoài:** gỡ timebox; task giữ nguyên ngày dự định; task hết timebox thì về projection (EC-13). (c) **Tiêu đề:** app thắng; xếp `timebox.push` ghi đè tiêu đề ở lần đồng bộ kế tiếp. Mô tả / riêng tư / bận: như tiêu đề `[giả định]`. (d) **Chuyển sang lịch khác** (cùng tài khoản): cập nhật `calendarId` của timebox, không coi là xoá. (e) **Đổi thành sự kiện cả ngày:** gỡ timebox như (b), thông báo MSG-31 (C18). Ghi nhật ký tác nhân `integration` ("Google Calendar đã dời timebox…") |
 | BR-14 | **Xung đột với sự kiện ngoài** (EC-16): sự kiện chặn (BR-09; không mang `appTaskId`, ở lịch hiển thị) chồng một phần hoặc toàn bộ timebox → timebox có cờ `XUNG_DOT`; không tự dời. Bản 1.0: gợi ý "Giữ nguyên" và "Mở lịch". Bản 1.1 thêm "Dời sang khe trống" = Shift+X cho task đó (Q17). Hết chồng → bỏ cờ. Timebox liên kết sự kiện không gắn và không gây `XUNG_DOT` (BR-21) |
-| BR-15 | **Thời gian.** Lưu `startsAt` / `endsAt` UTC + IANA timezone. Ngày của timebox = `workday(startsAt)` (QC-01). **Đổi timezone** (EC-02): theo QC-01 mục 3–4 — `startDate` giữ nguyên, timebox giữ thời điểm tuyệt đối, hiển thị theo timezone mới; không tính lại `startDate`; lệch ngày thì gắn cờ theo BR-22 (Q4). Giờ mùa hè (EC-03): thời lượng tính bằng phút thực; giờ không tồn tại → dời tới giờ hợp lệ kế tiếp (MSG-24); giờ lặp lại → lần xuất hiện đầu. **Vắt qua mốc đầu ngày** (EC-04): thuộc ngày làm việc của `startsAt` (QC-01 mục 5); ghi 1 sự kiện liền; lịch app vẽ 2 đoạn |
+| BR-15 | **Thời gian.** Lưu `startsAt` / `endsAt` UTC + IANA timezone. Ngày của timebox = `workday(startsAt)` (QC-01). **Đổi timezone** (EC-02): theo QC-01 mục 3–4 — `startDate` giữ nguyên, timebox giữ thời điểm tuyệt đối, hiển thị theo timezone mới; không tính lại `startDate`; timebox rơi khác ngày dự định thì không gắn cờ, không tự sửa, người dùng tự kéo task hoặc timebox nếu muốn khớp (Q4, F5). Giờ mùa hè (EC-03): thời lượng tính bằng phút thực; giờ không tồn tại → dời tới giờ hợp lệ kế tiếp (MSG-24); giờ lặp lại → lần xuất hiện đầu. **Vắt qua mốc đầu ngày** (EC-04): thuộc ngày làm việc của `startsAt` (QC-01 mục 5); ghi 1 sự kiện liền; lịch app vẽ 2 đoạn |
 | BR-16 | **Mất kết nối** (EC-15): refresh token lỗi / bị thu hồi / mất quyền → tài khoản `CAN_KET_NOI_LAI`; timebox mới / sửa trên lịch đó → `CHO_DONG_BO`; timebox bị gỡ → `CHO_XOA`; dừng poll / webhook. Kết nối lại → đồng bộ lại toàn bộ cửa sổ (có bước so sánh, BR-03) rồi đẩy mọi timebox `CHO_DONG_BO`, `LOI` **và `CHO_XOA`** theo BR-11 (B9) |
 | BR-17 | **Hoàn thành / xoá task** — theo QC-05. Hoàn thành: giữ timebox và sự kiện. Bật "Tự dời khi xong sớm" → chỉ rút ngắn timebox có `startsAt` < thời điểm hoàn thành < `endsAt`: `endsAt` = thời điểm hoàn thành làm tròn lên 5 phút, cập nhật sự kiện; timebox khác của task giữ nguyên (B10). Bỏ hoàn thành trong cùng ngày làm việc → trả `endsAt` cũ (QC-03 mục 4). "Ẩn planned của task xong" chỉ ẩn timebox trong app. Xoá task (G02): timebox tương lai → gỡ, xoá sự kiện ngoài; timebox quá khứ → gỡ liên kết, giữ sự kiện ngoài. Hoàn tác trên toast khôi phục liên kết (BR-25); khôi phục từ Thùng rác không tạo lại timebox |
 | BR-18 | **Khối thực tế.** Bật "Hiện actual trên lịch" → mỗi bản ghi thời gian (QC-07) **có giờ thật** vẽ một khối thực tế trên lịch app (ví dụ "2:01 – 2:02"): nguồn `timer`, `auto_closed`, `ritual`, và `manual` nhập theo khoảng giờ. Bản ghi `manual` nhập theo thời lượng không vẽ (B11). Không ghi ra lịch ngoài `[giả định]` |
 | BR-19 | **Ngắt kết nối.** Thu hồi token ở nhà cung cấp, huỷ webhook, xoá cache sự kiện. Tuỳ chọn "Xoá các sự kiện timebox app đã tạo" (mặc định tắt) `[giả định]`. Timebox trong app giữ nguyên, chuyển `CHI_TRONG_APP` và **tách liên kết**: xoá `externalEventId`, `calendarId` (B9). Sự kiện mồ côi (mang `appBlockId` của timebox đã tách) bị bỏ qua ở mọi lần đồng bộ sau, kể cả khi kết nối lại cùng tài khoản: không áp BR-13, không liên kết lại |
 | BR-20 | **Chế độ chỉ đọc (1.1)** — theo QC-09. API ghi timebox trả 402 `WORKSPACE_READ_ONLY` (MSG-20). Đồng bộ lịch chỉ cập nhật cache hiển thị sự kiện ngoài: không áp BR-13 lên timebox / task, không đẩy timebox ra, không chạy lập lịch cứng (BR-23). Bản 1.0 không có chế độ chỉ đọc |
 | BR-21 | **Timebox liên kết sự kiện** (B8). Timebox có `kind = event_linked` và `linkedEventId`, `calendarId` của sự kiện gốc; tạo qua \[TimeboxLink\] khi task được tạo từ sự kiện lịch (G08 bước Thêm task) `[giả định: chỉ đường này ở 1.0]`. Quy tắc: (a) không bao giờ đẩy ra lịch ngoài, không có `sync_status` đẩy; (b) đi theo sự kiện gốc: sự kiện đổi giờ / ngày → timebox và `startDate` cập nhật như BR-13 (a) phía lịch ngoài; sự kiện bị xoá / đổi thành cả ngày → gỡ timebox, task giữ nguyên; (c) không kéo, đổi thời lượng hay auto-schedule được trong app (MSG-26); Ctrl+X chỉ gỡ liên kết, không đụng sự kiện ngoài; (d) không gắn và không gây `XUNG_DOT`, không bị BR-07 dời; (e) thời gian trống chỉ trừ một lần (sự kiện gốc), G04 không cộng timebox này vào phần đã chiếm; (f) xoá / rollover / đổi ngày task: chỉ gỡ liên kết, không xoá sự kiện ngoài. Các timebox thường khác của cùng task (C19) theo quy tắc thường |
-| BR-22 | **Cờ "Lệch ngày"** (Q4, QC-01 mục 4). Task `KE_HOACH` có timebox mà `workday(startsAt)` ≠ `startDate` → gắn cờ `LECH_NGAY` trên task và timebox; hệ thống không tự sửa. Tính lại cờ khi đổi timezone, khi đổi `startDate`, khi timebox đổi giờ. Người dùng chọn: "Dời task sang {ngày timebox}" (đổi `startDate`, như kéo sang ngày khác của QC-05) hoặc "Dời timebox về {ngày dự định}" (giữ giờ địa phương, đổi ngày). Chỉ banner MSG-23 của G01 thông báo đổi timezone; G05 không có banner riêng |
+| BR-22 | (Bỏ — F5: không còn cờ "Lệch ngày" `LECH_NGAY`, xem BR-15 và QC-01 mục 4. Chỉ banner MSG-23 của G01 thông báo đổi timezone; G05 không có banner riêng) |
 | BR-23 | **Lập lịch cứng cho task lặp (1.1)** (Q7). G05 sở hữu; G03 chỉ lưu `approxTime`. (a) **Bật:** toggle "Lập lịch cứng cho task lặp" trong cài đặt Timebox (SCR-01 #7), mặc định tắt `[giả định]`; áp cho mọi series có `approxTime`. (b) **Cửa sổ:** job `timebox.hardschedule` tạo timebox cho instance `KE_HOACH` có `startDate` trong [hôm nay, hôm nay + N ngày], N = 7 `[giả định]`; chạy khi G03 sinh instance, khi bật toggle, và mỗi ngày tại mốc đầu ngày. (c) **Giờ:** `startsAt` = `approxTime` theo giờ địa phương thuộc ngày làm việc `startDate` (`approxTime` < mốc đầu ngày → ngày lịch kế tiếp, QC-01); thời lượng = planned, trống → 30 phút; lịch đích theo BR-04. (d) **Idempotent:** mỗi instance tối đa một timebox lập lịch cứng (`hardScheduled = true`); đã có thì bỏ qua. (e) **Sửa riêng (Q44):** người dùng kéo / đổi giờ / đổi thời lượng / gỡ timebox lập lịch cứng → đó là sửa riêng instance theo G03 BR-07: instance đặt cờ `customized = true`, không bao giờ tạo lại hay ghi đè timebox. G05 không dùng cờ riêng. (f) **Sửa series** (đổi `approxTime`, planned, quy tắc): timebox của instance chưa sửa riêng (`customized = false`, G03 BR-07) trong cửa sổ được cập nhật theo giờ mới; instance G03 xoá khi đổi quy tắc → timebox xử lý như dòng "Xoá" của QC-05; instance đã tách khỏi series (Q26) giữ timebox. (g) **Dừng series / tắt toggle:** ngừng tạo mới; timebox đã có giữ nguyên, trừ instance bị G03 xoá. (h) **Instance đổi ngày** (D, kéo, rollover, shutdown, backlog) → QC-05; instance tự lưu trữ `stale` → như "Đưa vào backlog" (Q42, QC-05); instance lưu trữ `skipped` (QC-06) → như "Đưa vào backlog" (D6, QC-05). (i) Xung đột với sự kiện chặn → vẫn tạo, gắn `XUNG_DOT` (BR-14), không tự dời `[giả định]`. (j) Không tạo xa hơn 90 ngày (C18); dừng khi chỉ đọc (BR-20). Tác nhân nhật ký `system` |
 | BR-24 | **Sự kiện chưa phân loại** (sự kiện timebox bị đổi thành sự kiện lặp, hoặc dài > 24 giờ ở lịch ngoài): áp BR-13 (a) theo lần xuất hiện đầu / theo giờ mới, không chặn bởi giới hạn 24 giờ `[giả định — chờ PO]` |
 | BR-25 | **Đổi ngày task từ nhóm khác** — theo bảng QC-05 (G06 sở hữu); G05 chỉ thực hiện cột "Timebox" và "Sự kiện trên lịch ngoài". Timebox "quá khứ" = `endsAt` ≤ thời điểm thao tác (rollover: thời điểm rollover). Rollover: timebox quá khứ → gỡ khỏi task (không qua `CHO_XOA`, không gọi DELETE), **giữ** sự kiện ngoài làm lịch sử; timebox tương lai giữ (Q6). Tự lưu trữ `stale` (G06) và lưu trữ do trùng series `skipped` (QC-06; rollover, phím D, shutdown "Ngày mai"): như "Đưa vào backlog" (Q42, D6). Hoàn tác của các đường do người dùng hoặc AI thực hiện → khôi phục timebox và liên kết lại đúng `externalEventId` cũ; sự kiện ngoài đã bị xoá thì tạo lại với giờ cũ (QC-05). **Rollover và tự lưu trữ không có Hoàn tác** (job hệ thống, chỉ ghi nhật ký tác nhân `system`; Q41, QC-05). Timer không bị G05 dừng trong mọi trường hợp |
@@ -88,7 +88,7 @@ Chuyển: `CHUA_KET_NOI` → `DANG_UY_QUYEN` → `DANG_DONG_BO` → `HOAT_DONG` 
 | `CHI_TRONG_APP` (`local`) | Không có lịch ghi (BR-04) hoặc tài khoản đã ngắt (đã tách liên kết, BR-19) | Block bình thường, không icon lịch |
 | `LIEN_KET_SU_KIEN` (`linked`) | Timebox liên kết sự kiện (BR-21); không đẩy | Block viền liền màu lịch gốc, icon liên kết; không kéo được |
 
-Cờ phụ đi kèm mọi trạng thái trên: `XUNG_DOT` (BR-14; không áp cho `LIEN_KET_SU_KIEN`) — viền cam + icon cảnh báo trên block và card; `LECH_NGAY` (BR-22) — nhãn "Lệch ngày" trên block và card. Chuyển: tạo / sửa → `CHO_DONG_BO` → `DA_DONG_BO` hoặc `LOI` (UC-06) · `LOI` → `CHO_DONG_BO` (thử lại) · gỡ → `CHO_XOA` → xoá bản ghi (kể cả khi tài khoản `CAN_KET_NOI_LAI`: giữ `CHO_XOA` tới khi kết nối lại, BR-16) · ngắt kết nối → `CHI_TRONG_APP` · tạo từ sự kiện → `LIEN_KET_SU_KIEN` → xoá bản ghi khi sự kiện gốc bị xoá / gỡ liên kết.
+Cờ phụ đi kèm mọi trạng thái trên: `XUNG_DOT` (BR-14; không áp cho `LIEN_KET_SU_KIEN`) — viền cam + icon cảnh báo trên block và card. Chuyển: tạo / sửa → `CHO_DONG_BO` → `DA_DONG_BO` hoặc `LOI` (UC-06) · `LOI` → `CHO_DONG_BO` (thử lại) · gỡ → `CHO_XOA` → xoá bản ghi (kể cả khi tài khoản `CAN_KET_NOI_LAI`: giữ `CHO_XOA` tới khi kết nối lại, BR-16) · ngắt kết nối → `CHI_TRONG_APP` · tạo từ sự kiện → `LIEN_KET_SU_KIEN` → xoá bản ghi khi sự kiện gốc bị xoá / gỡ liên kết.
 
 ## 5. Use Case
 
@@ -233,10 +233,10 @@ Cờ phụ đi kèm mọi trạng thái trên: `XUNG_DOT` (BR-14; không áp cho
 | A2 | Kéo timebox sang ngày khác | `startDate` = `workday(startsAt)` (BR-06; đã kiểm chứng 10:55–11:55 sang ngày khác); G04 tính lại 2 ngày; ngày quá khứ với task chưa xong → MSG-28 (QC-05) |
 | A3 | Task có nhiều timebox, kéo cạnh một timebox | planned = tổng các timebox (BR-06) |
 | A4 | Hoàn thành task khi thời điểm hoàn thành nằm trong [`startsAt`, `endsAt`], bật "Tự dời khi xong sớm" | Rút `endsAt` theo BR-17 (B10); ngoài khoảng → giữ nguyên |
-| A5 | Xoá task (G02) | Theo dòng "Xoá" của QC-05 (BR-17): timebox tương lai `CHO_XOA` như A1; timebox quá khứ gỡ liên kết, giữ sự kiện |
+| A5 | Xoá task (G02) | Theo dòng "Xoá" của QC-05 (BR-17): timebox tương lai `CHO_XOA` như A1; timebox quá khứ gỡ liên kết, giữ sự kiện. Timebox liên kết sự kiện: chỉ gỡ liên kết, không xoá sự kiện ngoài (BR-21 f) |
 | A6 | Rollover task có timebox quá khứ (G06) | Theo dòng "Rollover" của QC-05 (Q6, BR-25): gỡ timebox khỏi task, **giữ** sự kiện trên lịch ngoài, không gọi DELETE; timebox tương lai giữ; tác nhân `system`. Rollover không có Hoàn tác (Q41, QC-05 ghi chú "Hoàn tác"); người dùng tự kéo task về nếu cần. Tự lưu trữ `stale` (G06) và instance lưu trữ `skipped` trong lượt rollover xử lý như A8, cũng không có Hoàn tác (Q41, Q42, D6) |
-| A7 | Phím D, kéo task sang ngày khác, shutdown "Ngày mai", AI dời ngày (G04, G08, G10) | Theo QC-05: timebox giữ giờ, dời sang ngày mới, cập nhật sự kiện ngoài; timer không dừng. Instance lặp bị phím D / shutdown "Ngày mai" chuyển `LUU_TRU` `skipped` (QC-06 mục 2) → xử lý như A8 (D6), có Hoàn tác theo A9 |
-| A8 | Đưa task vào backlog (G04, G06) | Theo QC-05: timebox tương lai `CHO_XOA` (xoá sự kiện ngoài); timebox quá khứ gỡ liên kết, giữ sự kiện |
+| A7 | Phím D, kéo task sang ngày khác, shutdown "Ngày mai", AI dời ngày (G04, G08, G10) | Theo QC-05: timebox giữ giờ, dời sang ngày mới, cập nhật sự kiện ngoài; timer không dừng. Timebox liên kết sự kiện: chỉ gỡ liên kết, không dời sự kiện ngoài (BR-21 f). Instance lặp bị phím D / shutdown "Ngày mai" chuyển `LUU_TRU` `skipped` (QC-06 mục 2) → xử lý như A8 (D6), có Hoàn tác theo A9 |
+| A8 | Đưa task vào backlog (G04, G06) | Theo QC-05: timebox tương lai `CHO_XOA` (xoá sự kiện ngoài); timebox quá khứ gỡ liên kết, giữ sự kiện. Timebox liên kết sự kiện: chỉ gỡ liên kết, không xoá sự kiện ngoài (BR-21 f) |
 | A9 | Hoàn tác các đường A5, A7, A8 (do người dùng hoặc AI thực hiện) | Khôi phục timebox, liên kết lại `externalEventId` cũ; sự kiện ngoài đã bị xoá → tạo lại với giờ cũ (BR-25). Không áp cho A6 (rollover) và tự lưu trữ: hai đường này không có Hoàn tác (Q41, QC-05) |
 | A10 | Kéo / đổi thời lượng timebox liên kết sự kiện | Không cho; tooltip MSG-26 (BR-21) |
 | A11 | Timebox lập lịch cứng (1.1) bị kéo / đổi giờ / đổi thời lượng / gỡ | Áp như luồng chính / A1; instance thành "sửa riêng" `customized = true` (BR-23 e, Q44) |
@@ -345,12 +345,12 @@ Cờ phụ đi kèm mọi trạng thái trên: `XUNG_DOT` (BR-14; không áp cho
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | A1 | Sự kiện timebox bị xoá trên lịch ngoài (EC-13) | Không thấy `appBlockId` ở lịch khác của tài khoản → BR-13 (b): gỡ timebox; task giữ nguyên ngày dự định, về projection nếu hết timebox; thông báo trong app MSG-14 |
-| A2 | Sự kiện timebox bị dời giờ / ngày (EC-14) | BR-13 (a): lần sửa muộn hơn thắng; lịch ngoài thắng → cập nhật timebox, `startDate`, planned (1 timebox); không thông báo, chỉ ghi nhật ký. Tính lại cờ `LECH_NGAY` (BR-22) |
+| A2 | Sự kiện timebox bị dời giờ / ngày (EC-14) | BR-13 (a): lần sửa muộn hơn thắng; lịch ngoài thắng → cập nhật timebox, `startDate`, planned (1 timebox); không thông báo, chỉ ghi nhật ký |
 | A3 | Sự kiện chặn mới (bận / tentative, BR-09) chồng timebox (EC-16) | Gắn `XUNG_DOT`; card và timebox hiện cảnh báo **SCR-07** (MSG-13). Bản 1.0: "Giữ nguyên" và "Mở lịch". Bản 1.1 thêm "Dời sang khe trống" (UC-05 A5) (Q17) |
 | A4 | Sự kiện mới không chặn: đã từ chối, free, cả ngày (BR-09, EC-17) | Không gắn `XUNG_DOT`. Người dùng từ chối một sự kiện đang gây `XUNG_DOT` → bỏ cờ |
 | A5 | Google 410 / delta hết hiệu lực | `DANG_DONG_BO`, đồng bộ lại toàn bộ cửa sổ; đối chiếu theo `appBlockId`, không tạo trùng; bước so sánh: timebox `DA_DONG_BO` không còn sự kiện → như A1 (BR-03, B9) |
 | A6 | Sự kiện timebox bị đổi tiêu đề / mô tả / riêng tư / bận ngoài app | BR-13 (c): app thắng; xếp `timebox.push` ghi đè ở lần đồng bộ kế tiếp |
-| A7 | Timezone người dùng đổi (EC-02) | Theo QC-01 mục 3–4 (Q4): không đổi `startsAt` / `endsAt`, **không** tính lại `startDate`; tính lại cờ `LECH_NGAY` (BR-22); G04 vẽ lại. Không hiện banner riêng (chỉ MSG-23 của G01) |
+| A7 | Timezone người dùng đổi (EC-02) | Theo QC-01 mục 3–4 (Q4): không đổi `startsAt` / `endsAt`, **không** tính lại `startDate`, không gắn cờ (F5); G04 vẽ lại. Không hiện banner riêng (chỉ MSG-23 của G01) |
 | A8 | Sự kiện chuyển sang ngày có giờ mùa hè (EC-03) | Giữ thời điểm tuyệt đối do lịch ngoài gửi; hiển thị theo giờ địa phương |
 | A9 | Sự kiện timebox bị đổi thành sự kiện cả ngày (C18) | BR-13 (e): gỡ timebox, task giữ nguyên; MSG-31 |
 | A10 | Sự kiện timebox bị chuyển sang lịch khác cùng tài khoản | BR-13 (d): cập nhật `calendarId` của timebox; không gỡ, không tạo sự kiện mới. Lịch mới chỉ đọc → timebox giữ liên kết, lần ghi sau lỗi theo UC-06 E4 |
@@ -468,34 +468,7 @@ Cờ phụ đi kèm mọi trạng thái trên: `XUNG_DOT` (BR-14; không áp cho
 
 ### UC-11 Xử lý cờ "Lệch ngày"
 
-| **Mục** | **Nội dung** |
-| --- | --- |
-| Tiền điều kiện | Task `KE_HOACH` có cờ `LECH_NGAY` (BR-22); workspace không chỉ đọc |
-| Hậu điều kiện thành công | `workday(startsAt)` của mọi timebox bằng `startDate`; cờ bỏ |
-| Hậu điều kiện thất bại | Cờ giữ nguyên |
-
-**Luồng chính**
-
-| **Bước** | **Actor** | **Mô tả** |
-| --- | --- | --- |
-| 1 | Người dùng | Bấm nhãn "Lệch ngày" trên card / block / SCR-06 → popover MSG-30 |
-| 2 | Người dùng | Chọn "Dời task sang {ngày timebox}" hoặc "Dời timebox về {ngày dự định}" |
-| 3 | Hệ thống | Dời task: đổi `startDate` như "kéo sang ngày khác" (QC-05). Dời timebox: \[TimeboxSet\] giữ giờ địa phương, đổi ngày; đẩy sự kiện (UC-06) |
-| 4 | Hệ thống | Tính lại cờ; toast Hoàn tác |
-
-**Luồng thay thế**
-
-| **Mã** | **Điều kiện** | **Xử lý** |
-| --- | --- | --- |
-| A1 | Người dùng không xử lý | Cờ giữ nguyên; hệ thống không tự sửa (Q4) |
-| A2 | "Dời task" tới ngày đã có instance cùng series | Cảnh báo theo QC-06 (đường thủ công) |
-| A3 | Timebox liên kết sự kiện | Chỉ có "Dời task" (BR-21) |
-
-**Luồng lỗi**
-
-| **Mã** | **Điều kiện** | **Xử lý** |
-| --- | --- | --- |
-| E1 | Ngày đích < hôm nay với task chưa xong | MSG-28 (QC-05) |
+(Bỏ — F5: không còn cờ "Lệch ngày"; người dùng tự kéo task hoặc timebox nếu muốn khớp, QC-01 mục 4.)
 
 ## 6. Điểm vào
 
@@ -509,7 +482,6 @@ Cờ phụ đi kèm mọi trạng thái trên: `XUNG_DOT` (BR-14; không áp cho
 | Chi tiết task → mục Timebox | ✓ | ✓ | ✓ | SCR-06 |
 | Banner "Cần kết nối lại" / thông báo (G12; ở app Windows là thông báo trong app và thông báo Windows, có từ 1.0 — D12) | ✓ | ✓ | ✓ | SCR-09, UC-08 |
 | Daily planning → kéo sự kiện lịch thành task (G08) | ✓ | ✓ | ✓ | UC-10 |
-| Nhãn "Lệch ngày" trên card / block / chi tiết | ✓ | ✓ | ✓ | UC-11 |
 | Cài đặt → Lịch → "Lập lịch cứng cho task lặp" (1.1) | ✓ (từ 1.1) | ✓ | ✓ | UC-09 |
 | Trợ lý AI qua MCP local: timebox / gỡ timebox, dời ngày (G10, QC-12) | ✓ (khi trợ lý AI bật) | Tech chốt — `docs/tech/` | Tech chốt — `docs/tech/` | Áp như thao tác của người dùng, tác nhân AI, có Hoàn tác (QC-12 mục 5) |
 
@@ -567,7 +539,7 @@ Cờ phụ đi kèm mọi trạng thái trên: `XUNG_DOT` (BR-14; không áp cho
 | 4 | Biểu tượng đồng bộ | Icon | Theo 4.2; `LOI` bấm "Thử ngay" |
 | 5 | Cảnh báo xung đột | Icon cam | Mở SCR-07 |
 | 6 | ✓ | Checkbox | Hoàn thành task (G02) |
-| 7 | Nhãn "Lệch ngày" | Badge | Hiện khi `LECH_NGAY` (BR-22); bấm → UC-11 |
+| 7 | (Bỏ — F5: không còn nhãn "Lệch ngày") | – | – |
 | 8 | Icon liên kết sự kiện | Icon | Chỉ timebox `LIEN_KET_SU_KIEN`; thân và cạnh không kéo được, tooltip MSG-26 (BR-21) |
 
 ### SCR-06 Timebox trên card và chi tiết task
@@ -578,7 +550,7 @@ Cờ phụ đi kèm mọi trạng thái trên: `XUNG_DOT` (BR-14; không áp cho
 | 2 | Mục Timebox trong chi tiết task | Text + icon lịch | "Thứ Năm, 5/11 · 10:55–11:55 · 1 giờ"; tên lịch ghi; trạng thái 4.2 |
 | 3 | "Gỡ khỏi lịch" | Button | Ctrl+X → UC-04 A1 |
 | 4 | "Tự xếp lịch" | Button | 1.1; chỉ hiện khi chưa có timebox; X → UC-05 |
-| 5 | "Lệch ngày" | Badge + popover | MSG-30, hai lựa chọn của UC-11 |
+| 5 | (Bỏ — F5: không còn nhãn "Lệch ngày") | – | – |
 
 ### SCR-07 Popover xung đột
 
@@ -617,7 +589,7 @@ Cờ phụ đi kèm mọi trạng thái trên: `XUNG_DOT` (BR-14; không áp cho
 | \[ChannelCalendarUpdate\] `PATCH /channels/{id}` `[giả định]` | writeCalendarId (khung giờ channel thuộc API cài đặt channel của G02, QC-02 mục 5) | Channel | 5s / 2 lần |
 | \[CalendarDisconnect\] `DELETE /calendar/accounts/{id}` | deleteAppEvents (bool) | 204 | 10s / 1 lần |
 | \[CalendarEvents\] `GET /calendar/events?from&to` | from, to (≤ 42 ngày) | Event[] {id, calendarId, title, startsAt, endsAt, allDay, busy, appTaskId?, appBlockId?} | 5s / 1 lần |
-| \[TimeboxSet\] `PUT /tasks/{id}/timebox` | startsAt, endsAt, calendarId?, skipReschedule?, blockId? (trống = thêm timebox mới, C19), version, Idempotency-Key | Task + blocks[] {blockId, kind (`app` / `event_linked`), startsAt, endsAt, calendarId, syncStatus, conflict, dayMismatch, hardScheduled}, tasksRescheduled[] | 5s / 2 lần cùng key |
+| \[TimeboxSet\] `PUT /tasks/{id}/timebox` | startsAt, endsAt, calendarId?, skipReschedule?, blockId? (trống = thêm timebox mới, C19), version, Idempotency-Key | Task + blocks[] {blockId, kind (`app` / `event_linked`), startsAt, endsAt, calendarId, syncStatus, conflict, hardScheduled}, tasksRescheduled[] | 5s / 2 lần cùng key |
 | \[TimeboxDelete\] `DELETE /tasks/{id}/timebox` | blockId? (trống = mọi timebox) | Task | 5s / 2 lần |
 | \[TimeboxLink\] `POST /tasks/{id}/timebox/link` `[giả định]` | calendarId, eventId, Idempotency-Key | Task + block {kind: `event_linked`} | 5s / 2 lần cùng key |
 | Job `timebox.hardschedule` (1.1) | userId, seriesId? | createdCount, updatedCount | Khi sinh instance, khi bật toggle, mỗi mốc đầu ngày; idempotent theo instance |
@@ -702,7 +674,7 @@ Cờ phụ đi kèm mọi trạng thái trên: `XUNG_DOT` (BR-14; không áp cho
 | MSG-27 | Toast | Chỉ tạo được timebox trong 90 ngày tới |
 | MSG-28 | Toast | Không đặt task chưa xong vào ngày đã qua |
 | MSG-29 | Toast | Timebox này đã bị gỡ trên thiết bị khác hoặc trên lịch ngoài |
-| MSG-30 | Popover | Lệch ngày: timebox ở {ngày timebox}, task ở {ngày dự định} · Dời task sang {ngày timebox} · Dời timebox về {ngày dự định} |
+| MSG-30 | – | (Bỏ — F5: không còn cờ "Lệch ngày") |
 | MSG-31 | Thông báo trong app | Timebox của "{tiêu đề}" đã được gỡ vì sự kiện được đổi thành cả ngày trên {tên lịch} |
 
 Bản EN: `[chờ bổ sung]`.
@@ -716,6 +688,6 @@ Bản EN: `[chờ bổ sung]`.
 | Độ tin cậy | 0 sự kiện trùng `appBlockId`; job `timebox.push`, `calendar.sync` idempotent; lỗi đồng bộ > 2% trong 10 phút → cảnh báo vận hành |
 | Bảo mật | Token OAuth mã hoá AES-256-GCM, không trả về client, thu hồi khi ngắt kết nối / xoá tài khoản (G01); webhook xác thực bằng channel token / `clientState`; scope tối thiểu (BR-02); không ghi notes ra ngoài; channel riêng tư luôn Private |
 | Log / audit | \[ActivityLog\] cho tạo / dời / gỡ timebox, tác nhân `user` / `integration` / `system`; log hệ thống không chứa tiêu đề task, tiêu đề sự kiện |
-| Tracking | Sự kiện: `calendar_connect_started` (provider), `calendar_connected`, `calendar_connect_failed` (lý do), `calendar_reconnected`, `calendar_disconnected`, `calendar_visibility_changed`, `timebox_created` (cách: kéo / X / Shift+X), `timebox_moved`, `timebox_resized`, `timebox_removed`, `auto_schedule_no_slot`, `timebox_push_failed`, `external_event_deleted_timebox_removed`, `conflict_shown`, `conflict_resolved` (giữ / mở lịch / dời — 1.1), `timebox_linked_created`, `day_mismatch_shown`, `day_mismatch_resolved` (dời task / dời timebox), `hard_schedule_created` (1.1), `hard_schedule_detached` (1.1) |
+| Tracking | Sự kiện: `calendar_connect_started` (provider), `calendar_connected`, `calendar_connect_failed` (lý do), `calendar_reconnected`, `calendar_disconnected`, `calendar_visibility_changed`, `timebox_created` (cách: kéo / X / Shift+X), `timebox_moved`, `timebox_resized`, `timebox_removed`, `auto_schedule_no_slot`, `timebox_push_failed`, `external_event_deleted_timebox_removed`, `conflict_shown`, `conflict_resolved` (giữ / mở lịch / dời — 1.1), `timebox_linked_created`, `hard_schedule_created` (1.1), `hard_schedule_detached` (1.1) |
 | Accessibility | WCAG 2.1 AA; timebox làm được không cần kéo (X, lệnh "Timebox…" trong command menu, nhập giờ trong chi tiết task); block có nhãn đọc màn hình "{tiêu đề}, {giờ bắt đầu} đến {giờ kết thúc}, {trạng thái đồng bộ}"; xung đột không chỉ dùng màu |
 | Tuân thủ nhà cung cấp | Đạt yêu cầu xác minh Google OAuth (scope nhạy cảm) trước khi mở cho người dùng ngoài danh sách thử nghiệm; tuân thủ chính sách dữ liệu người dùng Google API |

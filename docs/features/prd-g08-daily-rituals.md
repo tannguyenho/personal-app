@@ -139,6 +139,8 @@ AC05: Mở cho ngày tương lai qua nút "Plan" trên cột ngày được; ng�
 
 AC06: Ritual mở trước mốc đầu ngày (ví dụ 03:55) được hoàn tất cho ngày cũ tới tối đa 2 giờ sau mốc; trong lúc đó có banner nhắc thời gian còn lại.
 
+AC07: Phiên Daily planning đầu tiên, mở ngay sau onboarding (G01 US2.2), ở **chế độ có hướng dẫn**: đầu mỗi bước có một dòng lời dẫn ngắn, khái niệm lần đầu gặp có tooltip (G01 US2.3), không có "Bỏ qua bước này"; task vừa tạo ở onboarding đã có trong danh sách. Các lần sau là Daily planning thường (F3, 06/11/2026).
+
 ### US1.2 Xem lại hôm qua
 
 User Story: Là người dùng, tôi muốn quyết định nhanh từng việc chưa xong từ hôm qua, để danh sách hôm nay không phình vì việc cũ.
