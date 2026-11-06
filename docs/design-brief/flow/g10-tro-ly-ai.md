@@ -376,7 +376,7 @@ flowchart TD
   a10 --> p4
   p2 -->|"A9 · task không tìm thấy / khớp nhiều task"| a9["Trợ lý hỏi lại<br/>liệt kê tối đa 5 task khớp"]
   a9 -->|"chọn task"| p2
-  p2 -->|"A4 · yêu cầu bị cấm BR-02"| a4m>"MSG-07 · Khung chat<br/>Mình không thể {xoá task / đánh dấu xong task / gửi tin ra ngoài / đổi cài đặt}. Bạn có thể tự làm: {cách làm}"]
+  p2 -->|"A4 · yêu cầu bị cấm BR-02"| a4m>"MSG-07 · Khung chat<br/>Mình không thể {xoá vĩnh viễn / gửi tin ra ngoài / đổi cài đặt / hoàn thành hay xoá task đồng bộ từ công cụ khác}. Bạn có thể tự làm: {cách làm}"]
   a4m --> a4(["Không tạo đề xuất"])
   p2 -->|"A8 · quá 10 giây chưa xong"| a8["SCR-04 #4 Vẫn đang xử lý… + Dừng"]
   a8 -->|"chờ tiếp"| p4
@@ -1173,8 +1173,11 @@ flowchart TD
   p3 -->|"A3 · khung chat của app cũng đang chạy"| a3[["Hai phiên độc lập, xung đột theo QC-08<br/>phiên bản cũ nhận VERSION_CONFLICT"]]
   a3 --> p2
   p3 -->|"A4 · hành động bị cấm / công cụ không có"| a4[["Trả AI_ACTION_FORBIDDEN<br/>kèm MSG-07 dạng chữ"]]
-  a4 --> a4m>"MSG-07 · Claude Code báo lại trong terminal<br/>Mình không thể {xoá task / đánh dấu xong task / gửi tin ra ngoài / đổi cài đặt}. Bạn có thể tự làm: {cách làm}"]
+  a4 --> a4m>"MSG-07 · Claude Code báo lại trong terminal<br/>Mình không thể {xoá vĩnh viễn / gửi tin ra ngoài / đổi cài đặt / hoàn thành hay xoá task đồng bộ từ công cụ khác}. Bạn có thể tự làm: {cách làm}"]
   m1 -->|"Xem"| a2s["SCR-12 Hoạt động AI"]
+  p3 -->|"cửa sổ app ẩn ở khay / thu nhỏ, IA-21"| hid["MSG-29 không bật toast<br/>vào trung tâm thông báo, badge tăng"]
+  hid --> hidx{{"→ G12 · UC-09 A5"}}
+  hid -->|"bấm dòng, cửa sổ lên trước"| a2s
   m1 -->|"A2 · Hoàn tác trên toast"| a2{{"→ UC-04 thay đổi của phiên"}}
   a2s -->|"A2 · Hoàn tác tất cả"| a2
 
@@ -1190,6 +1193,8 @@ flowchart TD
   e5 -.-> e4e
 
   class start happy
+  class hid alt
+  class hidx link
   class p1,p2,p3,a5,a3,a4 ai
   class m1 happy
   class a4m,a2s alt
@@ -1216,6 +1221,7 @@ flowchart TD
 | A3 | Khung chat của app cũng đang chạy | Hai phiên độc lập, QC-08 | – |
 | A4 | Hành động bị cấm / không có công cụ | AI_ACTION_FORBIDDEN, Claude Code báo lại | MSG-07 (dạng chữ) |
 | A5 | Ngày tương đối trong khung mơ hồ | Claude Code hỏi lại (không bảo đảm), server chặn PAST_DATE | – |
+| – | Cửa sổ app ẩn ở khay / thu nhỏ (IA-21, F6) | MSG-29 vào trung tâm thông báo ([G12 UC-09](g12-workspace-billing.md#uc-09-trung-tâm-thông-báo) A5), bấm dòng mở SCR-12 | MSG-29 |
 | E1 | App không mở / chưa đăng nhập | Không kết nối được | – |
 | E2 | Trợ lý tắt / chưa đồng ý | Từ chối kết nối | MSG-30 |
 | E3 | Tắt trợ lý / rút đồng ý / đóng app giữa phiên | Phiên bị cắt, giữ thay đổi đã áp dụng | MSG-30 (khi tắt trợ lý, BR-16) |

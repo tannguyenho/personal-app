@@ -132,6 +132,7 @@ Home board tự giảm số cột ngày hiện được khi cửa sổ hẹp l�
 - **Thu nhỏ** (nút −): như mọi app Windows, timer vẫn chạy (G07 BR-23).
 - **Mở lại cửa sổ**: luôn vào Home ở hôm nay với view cuối; panel phải như lần trước. Có timer đang chạy cũng vào Home, không vào Focus. Wizard ritual tự mở thì thay vùng chính.
 - **Bấm thông báo Windows**: đưa cửa sổ lên trước (kể cả từ khay) và mở đúng đích như bấm dòng đó trong trung tâm thông báo (IA-10).
+- **Toast khi cửa sổ đang ẩn** (IA-21, F6): Toast phát sinh khi cửa sổ app không hiện (ẩn ở khay hoặc thu nhỏ) không bật lên; nội dung toast vào **trung tâm thông báo** (G12 SCR-11) thành một dòng chưa đọc, chuông tăng badge. Dòng này tạo trên máy, không đồng bộ sang thiết bị khác `[giả định]`. Bấm dòng → mở đúng đích như IA-10. Nút có thời hạn của toast (ví dụ "Hoàn tác" ≥ 5 giây) không mang theo; thao tác còn hoàn tác được ở nơi khác thì làm ở đó (ví dụ G10 SCR-12 Hoạt động AI, Thùng rác G02).
 
 ## 8. Phím tắt điều hướng và Esc
 
@@ -220,6 +221,7 @@ Chỉ ghi điểm vào cấp app (từ khung, phím, khay, thông báo). Điểm
 | IA-18 | Mở lại app vào Home hôm nay, view cuối; nhớ trạng thái panel phải; timer chạy vẫn vào Home | Q18 |
 | IA-19 | Ô thêm nhanh toàn cục như mục 6 | Q19 |
 | IA-20 | Cột ngày đã qua không có "+ Thêm task" / "Plan"; A trên cột đã qua mở ô soạn ở hôm nay | Q20 |
+| IA-21 | Toast phát sinh khi cửa sổ app đang ẩn ở khay / thu nhỏ không bật lên mà vào trung tâm thông báo (mục 7) | F6 (06/11/2026) |
 
 ## 13. Đã sửa ngược vào PRD / SRS
 
