@@ -126,7 +126,6 @@ Chi tiết ở [`docs/tech/01`](docs/tech/01-quyet-dinh-tech-stack-va-api.md) v�
 - Cổng thanh toán (gợi ý Stripe cho thẻ quốc tế, VNPay / MoMo cho nội địa) và định nghĩa các gói giá: chốt trước khi làm 1.1.
 - Chính sách hoàn tiền khi xoá tài khoản giữa kỳ (chờ pháp chế).
 - AI trên web và di động: chốt trước khi làm 1.1.
-- Gói Figma Education có chạy được plugin Codegen trong Dev Mode không ([ADR-0008](docs/adr/0008-hop-dong-design-code-thay-code-connect.md)).
 - Các giá trị còn gắn `[giả định]` và câu hỏi mở còn lại ở mục 10 của từng PRD.
 
 ## Tài liệu liên quan
@@ -150,7 +149,7 @@ flutter pub get
 | Test logic dùng chung (gồm ca chuẩn QC-01) | `cd packages/core && dart test` |
 | Test backend | `cd apps/server && dart test` |
 | Chạy backend | xem [`apps/server/README.md`](apps/server/README.md) |
-| Sinh lại token từ `tokens.json` | `cd packages/ds_tokens && dart run tool/generate.dart` |
+| Sinh lại token và hợp đồng component từ `tokens.json`, `components.json` | `cd packages/ds_tokens && dart run tool/generate.dart` |
 | Chạy app Windows | `cd apps/desktop && flutter run -d windows` |
 
 CI ở `.github/workflows/ci.yml`: định dạng, analyze, test cả 4 package, chạy migration trên Postgres, build image server, build app Windows.

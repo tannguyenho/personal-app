@@ -36,7 +36,7 @@ jobs:
       - name: Test wakeup_server
         working-directory: apps/server
         run: dart test
-      - name: Test wakeup_ds_tokens (token khớp tokens.json)
+      - name: Test wakeup_ds_tokens (code khớp tokens.json, components.json)
         working-directory: packages/ds_tokens
         run: flutter test
 

@@ -203,9 +203,9 @@ Webhook nhận qua `api.wakeup.tannguyenho.tech` sau Caddy.
 Code Connect **không dùng được** trên gói Figma hiện tại (Education). Đã chạy thử ngày 05/11/2026: CLI template với `label: Flutter`, `language: dart` parse đúng, nhưng mọi lệnh Code Connect đều bị từ chối vì cần gói Organization / Enterprise. Thay bằng lớp hợp đồng design ↔ code (Q35, Q40, ADR-0008):
 
 1. **Token 1-1.** Script Plugin API xuất toàn bộ Variables (collection, mode, alias) ra `packages/ds_tokens/tokens.json`. Bộ sinh code map tên 1-1: bỏ tên collection, các đoạn còn lại nối camelCase, `color/bg/primary` → `DsColors.bgPrimary`. Mỗi mode (light / dark) là một `ThemeExtension`; alias giữ là tham chiếu, không làm phẳng.
-2. **Component 1-1.** Script Plugin API xuất component set (tên, property, variant, giá trị mặc định, slot) ra `components.json`. Bộ sinh code tạo enum và kiểu tham số Dart (`DsButtonVariant { primary, secondary }`); widget bắt buộc dùng các kiểu này. Quy ước tên: component `Button` ↔ widget `DsButton`, property / variant trùng tên tham số, slot ↔ `child` / `leading`.
+2. **Component 1-1.** Script Plugin API (`packages/ds_tokens/figma/export_components.js`) xuất component set (tên, property, variant, giá trị mặc định, slot) ra `components.json`. Bộ sinh code tạo enum (`DsButtonVariant { primary, secondary }`) và lớp `DsButtonBase extends StatelessWidget` chứa tên tham số, kiểu, giá trị mặc định; widget `DsButton` bắt buộc `extends` lớp này, nên đổi tên / xoá property trong Figma làm code biên dịch lỗi. Quy ước tên: DS component `Button` ↔ widget `DsButton`; Snowflake giữ tên Figma, không tiền tố (`TaskCard` ↔ `TaskCard`, chốt 08/11/2026), xuất từ file Snowflake ra `snowflakes.json`; property / variant trùng tên tham số, slot / instance swap ↔ `Widget?`; element `--...` và snowflake `Base / ...` không sinh widget; property `state` chỉ sinh enum. Chi tiết và ca chuẩn: [`packages/ds_tokens/README.md`](../../packages/ds_tokens/README.md), `test/naming_cases.json`.
 3. **CI chặn lệch**: so `tokens.json` / `components.json` với code đã sinh; lệch thì báo đỏ. Lint cấm `Color(0x…)` và số khoảng cách cứng bên ngoài `ds_tokens`.
-4. **Plugin Codegen** riêng hiện snippet Dart trong Dev Mode Inspect. Nếu gói Education chặn plugin codegen thì nâng lên gói Organization để dùng Code Connect.
+4. **Plugin Codegen** riêng hiện snippet Dart trong Dev Mode Inspect. Đã xác minh ngày 08/11/2026: gói Education chạy được plugin Codegen dạng development trong Dev Mode, không cần nâng gói. Plugin đặt ở `tools/figma-codegen/`, theo dõi ở issue #31.
 5. **Description** của mỗi component ghi tên widget và đường dẫn file `.dart`, để AI đọc qua Figma MCP.
 6. **Widgetbook** cho thư viện widget, kèm golden test để so hình.
 
@@ -238,7 +238,6 @@ File sandbox: [Wakeup – Code Connect pilot](https://www.figma.com/design/zWidv
 | AI trên web và di động (Q37) | Làm 1.1 |
 | Cách phát hiện Claude Code đăng nhập bằng gói hay API key, cho phương án dự phòng (ADR-0009) | Làm G10 |
 | Chạy thử lại Code Connect trên team Figma thật của Wakeup (`0.1 [App] Multiverse`, xem [`docs/design-system/`](../design-system/00-knowledge-base-components-snowflakes.md)); nếu team đó thuộc gói Organization thì xem lại ADR-0008 | Dựng thư viện widget |
-| Gói Education có chạy được plugin Codegen trong Dev Mode không (ADR-0008) | Dựng thư viện widget |
 | Hồ sơ Nghị định 13/2023: VPS Singapore, Sentry, Resend, R2 là bên xử lý ở nước ngoài | Phát hành 1.0 |
 | Phiên bản Claude Code tối thiểu | Làm G10 |
 | Danh sách công cụ MCP và schema chi tiết | Làm G10 (thiết kế trong code, theo SRS G10 mục 3.1) |

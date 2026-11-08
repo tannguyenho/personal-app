@@ -14,7 +14,7 @@ Design system trên Figma phải map 1-1 với code Flutter: token và component
 ## Consequences
 
 - Lớp hợp đồng vẫn giữ lại nếu sau này nâng gói và bật Code Connect.
-- Cần xác minh gói Education có cho chạy plugin Codegen trong Dev Mode không; nếu không thì nâng gói Organization.
+- Đã xác minh ngày 08/11/2026: gói Education chạy được plugin Codegen dạng development (import từ manifest) trong Dev Mode. Không cần nâng gói Organization để có snippet Dart; plugin theo dõi ở issue #31.
 - Quy ước tên Figma trở thành ràng buộc kỹ thuật: đổi tên variant trong Figma là thay đổi API của widget.
 - File sandbox: https://www.figma.com/design/zWidv5HFfFRIR9IrrFFObb
 - Lần chạy thử làm trên team "1. Test Init" (gói Education). File thật của Wakeup nằm ở team `0.1 [App] Multiverse` ([`docs/design-system/`](../design-system/00-knowledge-base-components-snowflakes.md)). Cần chạy thử lại ở team đó; nếu team thuộc gói Organization và Code Connect chạy được thì xem lại ADR này (vẫn giữ lớp hợp đồng sinh code).

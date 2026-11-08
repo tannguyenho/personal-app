@@ -1,4 +1,7 @@
-/// Token design system của Wakeup, sinh từ Figma Variables (ADR-0008).
+/// Token và hợp đồng component của design system Wakeup, sinh từ Figma
+/// (ADR-0008).
 library;
 
 export 'src/ds_colors.g.dart';
+export 'src/ds_components.g.dart';
+export 'src/snowflake_components.g.dart';
