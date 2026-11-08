@@ -1,0 +1,49 @@
+{
+    "_note": "Ca chuẩn đổi tên Figma → Dart (ADR-0008). Bộ sinh Dart (tool/naming.dart) và plugin Codegen (#31) cùng phải cho đúng các kết quả này.",
+    "componentClassName": [
+        { "in": "Button", "out": "DsButton" },
+        { "in": "List Item", "out": "DsListItem" },
+        { "in": "ListItem", "out": "DsListItem" },
+        { "in": "Sheet / Bottom / Inset", "out": "DsSheetBottomInset" },
+        { "in": "Screen Slot / Mobile", "out": "DsScreenSlotMobile" },
+        { "in": "URL Field", "out": "DsUrlField" }
+    ],
+    "isExportedComponent": [
+        { "in": "Button", "out": true },
+        { "in": "--card / Price Label", "out": false },
+        { "in": ".Internal", "out": false },
+        { "in": "_Internal", "out": false }
+    ],
+    "propertyName": [
+        { "in": "label#1:0", "out": "label" },
+        { "in": "variant", "out": "variant" },
+        { "in": "iconLeading#12:34", "out": "iconLeading" },
+        { "in": "Show icon", "out": "showIcon" },
+        { "in": "URL", "out": "url" }
+    ],
+    "propertyNameInvalid": ["key", "default", "2col", "build"],
+    "enumTypeName": [
+        { "component": "Button", "property": "variant", "out": "DsButtonVariant" },
+        { "component": "Button", "property": "size", "out": "DsButtonSize" },
+        { "component": "List Item", "property": "device", "out": "DsListItemDevice" }
+    ],
+    "enumValueName": [
+        { "in": "primary", "out": "primary" },
+        { "in": "primary-solid", "out": "primarySolid" },
+        { "in": "mobile-app", "out": "mobileApp" },
+        { "in": "2xl", "out": "v2xl" },
+        { "in": "default", "out": "defaultValue" },
+        { "in": "values", "out": "valuesValue" },
+        { "in": "name", "out": "nameValue" }
+    ],
+    "isBooleanVariant": [
+        { "in": ["true", "false"], "out": true },
+        { "in": ["False", "True"], "out": true },
+        { "in": ["yes", "no"], "out": false },
+        { "in": ["primary", "secondary"], "out": false }
+    ],
+    "isInteractionState": [
+        { "in": "state", "out": true },
+        { "in": "variant", "out": false }
+    ]
+}

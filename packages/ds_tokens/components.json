@@ -1,0 +1,39 @@
+{
+    "components": [
+        {
+            "name": "Button",
+            "key": "a369e0b390d10fcc9a5f93727ff316a8554a8321",
+            "description": "Wakeup DsButton (Flutter: apps/desktop/lib/ds/ds_button.dart)",
+            "properties": [
+                {
+                    "name": "label#1:0",
+                    "type": "TEXT",
+                    "default": "Button"
+                },
+                {
+                    "name": "disabled#1:5",
+                    "type": "BOOLEAN",
+                    "default": false
+                },
+                {
+                    "name": "variant",
+                    "type": "VARIANT",
+                    "default": "primary",
+                    "options": [
+                        "primary",
+                        "secondary"
+                    ]
+                },
+                {
+                    "name": "size",
+                    "type": "VARIANT",
+                    "default": "md",
+                    "options": [
+                        "md",
+                        "sm"
+                    ]
+                }
+            ]
+        }
+    ]
+}

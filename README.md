@@ -149,7 +149,7 @@ flutter pub get
 | Test logic dùng chung (gồm ca chuẩn QC-01) | `cd packages/core && dart test` |
 | Test backend | `cd apps/server && dart test` |
 | Chạy backend | xem [`apps/server/README.md`](apps/server/README.md) |
-| Sinh lại token từ `tokens.json` | `cd packages/ds_tokens && dart run tool/generate.dart` |
+| Sinh lại token và hợp đồng component từ `tokens.json`, `components.json` | `cd packages/ds_tokens && dart run tool/generate.dart` |
 | Chạy app Windows | `cd apps/desktop && flutter run -d windows` |
 
 CI ở `.github/workflows/ci.yml`: định dạng, analyze, test cả 4 package, chạy migration trên Postgres, build image server, build app Windows.

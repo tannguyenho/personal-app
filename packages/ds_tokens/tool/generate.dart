@@ -1,15 +1,21 @@
-// Đọc tokens.json, ghi lib/src/ds_colors.g.dart.
+// Đọc tokens.json và components.json, ghi lib/src/ds_colors.g.dart và
+// lib/src/ds_components.g.dart.
 // Chạy trong packages/ds_tokens: `dart run tool/generate.dart`.
 import 'dart:convert';
 import 'dart:io';
 
+import 'components_generator.dart';
 import 'generator.dart';
 
+Map<String, Object?> _readJson(String path) =>
+    jsonDecode(File(path).readAsStringSync()) as Map<String, Object?>;
+
 void main() {
-  final tokens = jsonDecode(
-    File('tokens.json').readAsStringSync(),
-  ) as Map<String, Object?>;
-  final out = File('lib/src/ds_colors.g.dart');
-  out.writeAsStringSync(generateColors(tokens));
-  stdout.writeln('Đã ghi ${out.path}');
+  final colors = File('lib/src/ds_colors.g.dart')
+    ..writeAsStringSync(generateColors(_readJson('tokens.json')));
+  stdout.writeln('Đã ghi ${colors.path}');
+
+  final components = File('lib/src/ds_components.g.dart')
+    ..writeAsStringSync(generateComponents(_readJson('components.json')));
+  stdout.writeln('Đã ghi ${components.path}');
 }
