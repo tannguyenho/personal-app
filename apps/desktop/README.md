@@ -6,7 +6,7 @@ App Windows của Wakeup (Flutter). Quyết định kỹ thuật: [`docs/tech/01
 lib/
   main.dart            # điểm vào: nạp dữ liệu múi giờ, ProviderScope
   app/                 # MaterialApp, router, provider dùng chung
-  ds/                  # thư viện widget design system (ADR-0008)
+  ds/                  # thư viện widget design system (ADR-0008); xem ở apps/widgetbook
   features/<nhóm>/     # theo nhóm tính năng G01..G10: data/, domain/, ui/
 ```
 

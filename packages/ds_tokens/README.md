@@ -13,6 +13,10 @@ Token design system và hợp đồng component của Wakeup, sinh 1-1 từ Figm
 
 `tokens.json` và `components.json` hiện là dữ liệu mẫu lấy từ file sandbox [Wakeup – Code Connect pilot](https://www.figma.com/design/zWidv5HFfFRIR9IrrFFObb). Thay bằng bản xuất từ file design system thật khi có. `snowflakes.json` đang rỗng: Figma MCP chưa có quyền chạy script trên file Snowflake, cần xuất từ tài khoản có quyền edit.
 
+## Font
+
+Inter 4.1 (SIL OFL 1.1, `fonts/inter/OFL.txt`), weight 400 / 500 / 600, khai báo trong `pubspec.yaml` của package này (DS-05). Dùng `fontFamily: DsFont.family, package: DsFont.package`; `DsTheme` của app đã đặt sẵn.
+
 ## Token
 
 Bỏ tên collection, các đoạn còn lại nối camelCase: `color/bg/primary` → `DsColors.bgPrimary`. Mỗi mode (light / dark) là một hằng `DsColors`. Alias trong Figma giữ là tham chiếu tới token gốc trong code.

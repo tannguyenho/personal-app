@@ -11,6 +11,8 @@ abstract final class DsTheme {
   static ThemeData _build(Brightness brightness, DsColors colors) {
     return ThemeData(
       brightness: brightness,
+      fontFamily: DsFont.family,
+      package: DsFont.package,
       colorScheme: ColorScheme.fromSeed(
         seedColor: colors.bgPrimary,
         brightness: brightness,

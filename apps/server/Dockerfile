@@ -4,9 +4,10 @@ WORKDIR /src
 COPY pubspec.yaml pubspec.lock ./
 COPY packages/core packages/core
 COPY apps/server apps/server
-# Workspace khai báo cả app desktop và ds_tokens (Flutter); image server chỉ
-# cần core + server nên thu gọn danh sách workspace trước khi pub get.
-RUN sed -i '/packages\/ds_tokens/d; /apps\/desktop/d' pubspec.yaml \
+# Workspace còn khai báo các package Flutter (desktop, widgetbook, ds_tokens);
+# image server chỉ cần core + server nên giữ đúng hai mục đó trong danh sách
+# workspace trước khi pub get (thêm thành viên mới không làm hỏng image).
+RUN sed -i '/^  - /{/packages\/core$\|apps\/server$/!d}' pubspec.yaml \
  && dart pub get \
  && dart compile exe apps/server/bin/server.dart -o /src/server
 
