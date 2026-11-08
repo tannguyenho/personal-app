@@ -88,18 +88,47 @@ String _lowerCamel(String input) {
 String stripPropertyId(String figmaName) =>
     figmaName.replaceFirst(RegExp(r'#[^#]*$'), '');
 
-/// Element có dạng `--parent / Tên`: cấu phần nội bộ, không sinh widget.
-/// Tên bắt đầu bằng `.` hoặc `_`: Figma không publish.
-bool isExportedComponent(String figmaName) {
-  final name = figmaName.trim();
-  return !(name.startsWith('--') ||
-      name.startsWith('.') ||
-      name.startsWith('_'));
+/// Tầng của component (docs/design-system): DS component ở team
+/// `0. [Design System] Multiverse`, Snowflake ở `[Library] Snowflake`.
+enum ComponentTier {
+  /// Widget có tiền tố `Ds`: `Button` → `DsButton`.
+  ds('Ds'),
+
+  /// Widget giữ đúng tên Figma, không tiền tố: `TaskCard` → `TaskCard`.
+  snowflake('');
+
+  const ComponentTier(this.prefix);
+
+  /// Tiền tố tên widget.
+  final String prefix;
 }
 
-/// Tên component → tên widget: `Button` → `DsButton`,
-/// `List Item` → `DsListItem`, `Sheet / Bottom / Inset` → `DsSheetBottomInset`.
-String componentClassName(String figmaName) {
+/// Có sinh widget cho component này không.
+/// - Element `--parent / Tên`: cấu phần nội bộ, không sinh.
+/// - Tên bắt đầu bằng `.` hoặc `_`: Figma không publish, không sinh.
+/// - Snowflake `Base / Tên`: component nền để dựng snowflake khác, không sinh.
+bool isExportedComponent(
+  String figmaName, [
+  ComponentTier tier = ComponentTier.ds,
+]) {
+  final name = figmaName.trim();
+  if (name.startsWith('--') || name.startsWith('.') || name.startsWith('_')) {
+    return false;
+  }
+  if (tier == ComponentTier.snowflake && RegExp(r'^Base\s*/').hasMatch(name)) {
+    return false;
+  }
+  return true;
+}
+
+/// Tên component → tên widget.
+/// DS: `Button` → `DsButton`, `List Item` → `DsListItem`,
+/// `Sheet / Bottom / Inset` → `DsSheetBottomInset`.
+/// Snowflake: `TaskCard` → `TaskCard`, `Rollover Badge` → `RolloverBadge`.
+String componentClassName(
+  String figmaName, [
+  ComponentTier tier = ComponentTier.ds,
+]) {
   final words = _words(figmaName);
   if (words.isEmpty) throw FormatException('Tên component rỗng', figmaName);
   final pascal = words.map(_upperFirst).join();
@@ -109,7 +138,7 @@ String componentClassName(String figmaName) {
       figmaName,
     );
   }
-  return 'Ds$pascal';
+  return '${tier.prefix}$pascal';
 }
 
 /// Tên property → tên tham số: `label#12:3` → `label`, `iconLeading` giữ
@@ -127,9 +156,14 @@ String propertyName(String figmaName) {
   return name;
 }
 
-/// Tên enum của một variant property: `Button` + `type` → `DsButtonType`.
-String enumTypeName(String componentFigmaName, String propertyFigmaName) =>
-    componentClassName(componentFigmaName) +
+/// Tên enum của một variant property: `Button` + `type` → `DsButtonType`;
+/// snowflake `TaskCard` + `state` → `TaskCardState`.
+String enumTypeName(
+  String componentFigmaName,
+  String propertyFigmaName, [
+  ComponentTier tier = ComponentTier.ds,
+]) =>
+    componentClassName(componentFigmaName, tier) +
     _upperFirst(propertyName(propertyFigmaName));
 
 /// Giá trị variant (kebab-case) → giá trị enum: `primary-solid` →

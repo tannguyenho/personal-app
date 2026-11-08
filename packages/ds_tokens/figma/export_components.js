@@ -1,5 +1,6 @@
-// Xuất component (component set và component đứng riêng) của file design
-// system ra JSON cho packages/ds_tokens/components.json (ADR-0008). Chạy bằng
+// Xuất component (component set và component đứng riêng) ra JSON (ADR-0008):
+// chạy trên file design system → packages/ds_tokens/components.json; chạy trên
+// file ❄️ [Snowflake] Wakeup → packages/ds_tokens/snowflakes.json. Chạy bằng
 // Plugin API: qua Figma MCP `use_figma`, hoặc dán vào một plugin riêng. Kết
 // quả trả về là chuỗi JSON.
 //
@@ -10,7 +11,8 @@
 //   instance.componentProperties.
 // - VARIANT có `options` theo đúng thứ tự trong Figma.
 // - INSTANCE_SWAP: `default` là tên component mặc định.
-// Lọc element (`--...`) và component ẩn (`.`/`_`) là việc của bộ sinh Dart,
+// Lọc element (`--...`), component ẩn (`.`/`_`) và `Base / ...` của snowflake
+// là việc của bộ sinh Dart,
 // script này xuất tất cả.
 // Tải từng trang bằng page.loadAsync(): `use_figma` không cho gọi
 // figma.loadAllPagesAsync().

@@ -43,7 +43,55 @@ void main() {
     },
   );
 
+  test(
+    'code sinh ra khớp snowflakes.json (chạy `dart run tool/generate.dart`)',
+    () {
+      final expected = generateComponents(
+        _json('snowflakes.json'),
+        tier: ComponentTier.snowflake,
+      );
+      final actual = File('lib/src/snowflake_components.g.dart')
+          .readAsStringSync();
+      expect(
+        actual,
+        expected,
+        reason: 'snowflakes.json đã đổi mà chưa sinh lại code',
+      );
+    },
+  );
+
   group('ca tên chuẩn dùng chung với plugin Codegen', () {
+    test('snowflakeClassName', () {
+      for (final c in _cases('snowflakeClassName')) {
+        expect(
+          componentClassName(c['in']! as String, ComponentTier.snowflake),
+          c['out'],
+          reason: '$c',
+        );
+      }
+    });
+    test('isExportedSnowflake', () {
+      for (final c in _cases('isExportedSnowflake')) {
+        expect(
+          isExportedComponent(c['in']! as String, ComponentTier.snowflake),
+          c['out'],
+          reason: '$c',
+        );
+      }
+    });
+    test('snowflakeEnumTypeName', () {
+      for (final c in _cases('snowflakeEnumTypeName')) {
+        expect(
+          enumTypeName(
+            c['component']! as String,
+            c['property']! as String,
+            ComponentTier.snowflake,
+          ),
+          c['out'],
+          reason: '$c',
+        );
+      }
+    });
     test('componentClassName', () {
       for (final c in _cases('componentClassName')) {
         expect(componentClassName(c['in']! as String), c['out'], reason: '$c');
@@ -176,6 +224,43 @@ void main() {
       expect(code, contains('final Widget? iconLeading;'));
       expect(code, contains('required this.placeholder'));
       expect(code, isNot(contains('enum DsInputError')));
+    });
+
+    test('snowflake giữ tên Figma, không tiền tố; bỏ Base / ...', () {
+      final code = generateComponents({
+        'components': [
+          {
+            'name': 'TaskCard',
+            'properties': [
+              {
+                'name': 'state',
+                'type': 'VARIANT',
+                'default': 'default',
+                'options': ['default', 'hover'],
+              },
+              {'name': 'title#3:1', 'type': 'TEXT', 'default': 'Viết báo cáo'},
+            ],
+          },
+          {'name': 'Base / TaskRow', 'properties': <Object?>[]},
+        ],
+      }, tier: ComponentTier.snowflake);
+      expect(code, contains('Sinh từ snowflakes.json'));
+      expect(code, contains('enum TaskCardState'));
+      expect(
+        code,
+        contains('abstract class TaskCardBase extends StatelessWidget'),
+      );
+      expect(code, contains('Widget `TaskCard` phải `extends` lớp này.'));
+      expect(code, contains('required this.title'));
+      expect(code, isNot(contains('DsTaskCard')));
+      expect(code, isNot(contains('TaskRow')));
+    });
+
+    test('danh sách rỗng chỉ sinh phần đầu file', () {
+      final code = generateComponents({
+        'components': <Object?>[],
+      }, tier: ComponentTier.snowflake);
+      expect(code, isNot(contains('import')));
     });
 
     test('báo lỗi khi hai component ra cùng tên widget', () {

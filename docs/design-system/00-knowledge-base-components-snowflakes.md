@@ -176,6 +176,7 @@ Không ép cấu trúc bên trong. File mặc định:
 | DS component | Tên chung, tiếng Anh, PascalCase, không chứa thuật ngữ nghiệp vụ | `Button`, `ListItem`, `DatePicker` |
 | Snowflake | Tiếng Anh, PascalCase, **được phép** chứa thuật ngữ nghiệp vụ | `TaskCard`, `TimeboxBlock`, `RolloverBadge` |
 | Base của snowflake | `Base / <Tên>` | `Base / TaskRow` |
+| Widget Flutter tương ứng | DS component thêm tiền tố `Ds`; Snowflake giữ đúng tên, không tiền tố; Base và element không có widget riêng ([`packages/ds_tokens`](../../packages/ds_tokens/README.md)) | `Button` → `DsButton`, `TaskCard` → `TaskCard` |
 | Page | Emoji ở page nhóm; sub-page dùng `→ ` (mũi tên), Title Case | `→ Task Card` |
 | Component | **Cấm** emoji, cấm chữ `Recipe` | — |
 

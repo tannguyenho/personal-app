@@ -7,10 +7,11 @@ Token design system và hợp đồng component của Wakeup, sinh 1-1 từ Figm
 1. **Xuất từ Figma** bằng Plugin API (Figma MCP `use_figma` hoặc plugin riêng), trên file design system:
    - `figma/export_variables.js` → lưu kết quả vào `tokens.json`.
    - `figma/export_components.js` → lưu kết quả vào `components.json`.
-2. **Sinh code:** `dart run tool/generate.dart` → `lib/src/ds_colors.g.dart`, `lib/src/ds_components.g.dart`.
-3. **Kiểm tra:** `flutter test` báo đỏ nếu `tokens.json` hoặc `components.json` đổi mà chưa sinh lại code. CI chạy bước này.
+   - `figma/export_components.js` chạy trên file [❄️ [Snowflake] Wakeup](https://www.figma.com/design/gIBgLQIAiWUjZ1wHb04tZb) → lưu vào `snowflakes.json`.
+2. **Sinh code:** `dart run tool/generate.dart` → `lib/src/ds_colors.g.dart`, `lib/src/ds_components.g.dart`, `lib/src/snowflake_components.g.dart`.
+3. **Kiểm tra:** `flutter test` báo đỏ nếu một trong ba file JSON đổi mà chưa sinh lại code. CI chạy bước này.
 
-`tokens.json` và `components.json` hiện là dữ liệu mẫu lấy từ file sandbox [Wakeup – Code Connect pilot](https://www.figma.com/design/zWidv5HFfFRIR9IrrFFObb). Thay bằng bản xuất từ file design system thật khi có.
+`tokens.json` và `components.json` hiện là dữ liệu mẫu lấy từ file sandbox [Wakeup – Code Connect pilot](https://www.figma.com/design/zWidv5HFfFRIR9IrrFFObb). Thay bằng bản xuất từ file design system thật khi có. `snowflakes.json` đang rỗng: Figma MCP chưa có quyền chạy script trên file Snowflake, cần xuất từ tài khoản có quyền edit.
 
 ## Token
 
@@ -48,8 +49,9 @@ Tên Figma theo quy ước của skill `uxf-component-manager`: component Title 
 
 | Figma | Dart |
 |---|---|
-| Component `Button`, `List Item`, `Sheet / Bottom / Inset` | `DsButton`, `DsListItem`, `DsSheetBottomInset` |
-| Element `--card / Price Label`, component `.x` / `_x` | Không sinh |
+| DS component `Button`, `List Item`, `Sheet / Bottom / Inset` | `DsButton`, `DsListItem`, `DsSheetBottomInset` |
+| Snowflake `TaskCard`, `Rollover Badge` | `TaskCard`, `RolloverBadge` (giữ tên Figma, không tiền tố) |
+| Element `--card / Price Label`, component `.x` / `_x`, snowflake `Base / TaskRow` | Không sinh |
 | Property `label#1:0` | Tham số `label` (bỏ hậu tố id của Figma) |
 | `VARIANT` `size = sm \| md` | `enum DsButtonSize { sm, md }`, mặc định lấy từ Figma |
 | `VARIANT` chỉ có `true` / `false` | `bool` |
@@ -65,4 +67,8 @@ Bộ sinh báo lỗi (không sinh code) khi: hai component ra cùng tên widget,
 
 `test/naming_cases.json` là nguồn sự thật cho quy tắc tên. Test Dart (`test/components_test.dart`) và test của plugin Codegen cùng đọc file này, để snippet trong Dev Mode luôn khớp code đã sinh. Sửa quy tắc tên thì sửa file này trước.
 
-Chưa có: hợp đồng cho Snowflake (chờ chốt quy ước tên widget snowflake, #31).
+### Snowflake
+
+Chốt ngày 08/11/2026: widget snowflake giữ đúng tên Figma, không tiền tố (`TaskCard` ↔ `TaskCard`, lớp hợp đồng `TaskCardBase`, enum `TaskCardState`). Tiền tố `Ds` chỉ dành cho DS component. Các quy tắc map khác giống DS component.
+
+Vì không có tiền tố, tên snowflake có thể trùng widget của Flutter (`Badge`, `Chip`, `Card`…). Snowflake mang thuật ngữ nghiệp vụ nên ít khi trùng; nếu trùng thì đổi tên trong Figma, đừng `hide` khi import.

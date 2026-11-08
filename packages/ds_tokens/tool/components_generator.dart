@@ -1,4 +1,5 @@
-// Sinh lớp hợp đồng component từ components.json (ADR-0008).
+// Sinh lớp hợp đồng component từ components.json (DS component) và
+// snowflakes.json (Snowflake) (ADR-0008).
 // Không import Flutter để chạy được bằng `dart run tool/generate.dart`.
 //
 // Mỗi component Figma sinh ra:
@@ -60,23 +61,31 @@ String _docLines(String text, String indent) => text
     )
     .join('\n');
 
-/// Sinh `ds_components.g.dart` từ nội dung components.json.
-String generateComponents(Map<String, Object?> json) {
+/// Sinh code từ nội dung components.json (DS component, mặc định) hoặc
+/// snowflakes.json (`tier: ComponentTier.snowflake`).
+String generateComponents(
+  Map<String, Object?> json, {
+  ComponentTier tier = ComponentTier.ds,
+}) {
+  final source = tier == ComponentTier.ds
+      ? 'components.json'
+      : 'snowflakes.json';
   final components =
       (json['components']! as List<Object?>)
           .cast<Map<String, Object?>>()
-          .where((c) => isExportedComponent(c['name']! as String))
+          .where((c) => isExportedComponent(c['name']! as String, tier))
           .toList()
         ..sort(
-          (a, b) =>
-              componentClassName(a['name']! as String)
-                  .compareTo(componentClassName(b['name']! as String)),
+          (a, b) => componentClassName(
+            a['name']! as String,
+            tier,
+          ).compareTo(componentClassName(b['name']! as String, tier)),
         );
 
   final classNames = <String, String>{};
   for (final c in components) {
     final figmaName = c['name']! as String;
-    final cls = componentClassName(figmaName);
+    final cls = componentClassName(figmaName, tier);
     final other = classNames[cls];
     if (other != null) {
       throw FormatException(
@@ -88,19 +97,25 @@ String generateComponents(Map<String, Object?> json) {
 
   final out = StringBuffer()
     ..writeln('// GENERATED CODE - DO NOT MODIFY BY HAND.')
-    ..writeln('// Sinh từ components.json bằng `dart run tool/generate.dart`.')
+    ..writeln('// Sinh từ $source bằng `dart run tool/generate.dart`.');
+  if (components.isEmpty) return out.toString();
+  out
     ..writeln()
     ..writeln("import 'package:flutter/widgets.dart';");
 
   for (final c in components) {
-    _writeComponent(out, c);
+    _writeComponent(out, c, tier);
   }
   return out.toString();
 }
 
-void _writeComponent(StringBuffer out, Map<String, Object?> c) {
+void _writeComponent(
+  StringBuffer out,
+  Map<String, Object?> c,
+  ComponentTier tier,
+) {
   final figmaName = c['name']! as String;
-  final cls = componentClassName(figmaName);
+  final cls = componentClassName(figmaName, tier);
   final description = (c['description'] as String?) ?? '';
   final properties = ((c['properties'] as List<Object?>?) ?? const [])
       .cast<Map<String, Object?>>();
@@ -137,7 +152,7 @@ void _writeComponent(StringBuffer out, Map<String, Object?> c) {
           );
           continue;
         }
-        final enumName = enumTypeName(figmaName, pFigma);
+        final enumName = enumTypeName(figmaName, pFigma, tier);
         final values = <String, String>{};
         final valueNames = <String>{};
         for (final o in options) {
