@@ -1,0 +1,16 @@
+{
+  "name": "wakeup-figma-codegen",
+  "private": true,
+  "description": "Plugin Figma Codegen: hiện snippet Flutter (Dart) trong Dev Mode (#31, ADR-0008).",
+  "scripts": {
+    "build": "esbuild src/code.ts --bundle --target=es2017 --format=iife --outfile=dist/code.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "1.142.0",
+    "esbuild": "0.28.2",
+    "typescript": "5.9.3",
+    "vitest": "5.1.0"
+  }
+}

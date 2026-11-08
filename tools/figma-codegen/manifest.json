@@ -1,0 +1,32 @@
+{
+  "name": "Wakeup Flutter Codegen",
+  "id": "wakeup-flutter-codegen",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "documentAccess": "dynamic-page",
+  "editorType": ["dev"],
+  "capabilities": ["codegen"],
+  "codegenLanguages": [{ "label": "Flutter", "value": "flutter" }],
+  "codegenPreferences": [
+    {
+      "itemType": "select",
+      "propertyName": "defaults",
+      "label": "Giá trị mặc định",
+      "options": [
+        { "label": "Ẩn", "value": "hide", "isDefault": true },
+        { "label": "Hiện", "value": "show" }
+      ],
+      "includedLanguages": ["flutter"]
+    },
+    {
+      "itemType": "select",
+      "propertyName": "highlight",
+      "label": "Tô màu cú pháp",
+      "options": [
+        { "label": "Không", "value": "PLAINTEXT", "isDefault": true },
+        { "label": "Gần đúng (TypeScript)", "value": "TYPESCRIPT" }
+      ],
+      "includedLanguages": ["flutter"]
+    }
+  ]
+}
