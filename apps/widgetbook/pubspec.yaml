@@ -1,0 +1,24 @@
+name: wakeup_widgetbook
+description: Widgetbook cho thư viện widget design system của Wakeup (ADR-0008).
+publish_to: none
+version: 0.1.0+1
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+  flutter: ^3.47.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  wakeup_desktop: any
+  wakeup_ds_tokens: any
+  widgetbook: ^3.25.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

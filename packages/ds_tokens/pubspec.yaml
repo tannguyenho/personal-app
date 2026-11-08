@@ -15,3 +15,16 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+
+flutter:
+  # Inter 4.1 (SIL OFL 1.1, fonts/inter/OFL.txt), DS-05. App dùng qua
+  # DsFont.family + DsFont.package.
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: fonts/inter/Inter-Regular.ttf
+          weight: 400
+        - asset: fonts/inter/Inter-Medium.ttf
+          weight: 500
+        - asset: fonts/inter/Inter-SemiBold.ttf
+          weight: 600

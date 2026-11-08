@@ -14,7 +14,7 @@ env:
 
 jobs:
   core-server-tokens:
-    name: core, server, ds_tokens (Linux)
+    name: core, server, ds_tokens, widgetbook (Linux)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
           files=$(git ls-files '*.dart' | grep -v '\.g\.dart$' | grep -v '^apps/desktop/windows/')
           dart format --output=none --set-exit-if-changed $files
       - run: dart analyze --fatal-infos packages/core apps/server
-      - run: flutter analyze --fatal-infos packages/ds_tokens
+      - run: flutter analyze --fatal-infos packages/ds_tokens apps/widgetbook
       - name: Test wakeup_core (gồm ca chuẩn QC-01)
         working-directory: packages/core
         run: dart test
@@ -39,6 +39,16 @@ jobs:
       - name: Test wakeup_ds_tokens (code khớp tokens.json, components.json)
         working-directory: packages/ds_tokens
         run: flutter test
+      - name: Golden test thư viện widget (Widgetbook, chỉ chạy trên Linux)
+        working-directory: apps/widgetbook
+        run: flutter test
+      - name: Lưu ảnh lệch khi golden test đỏ
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-failures
+          path: apps/widgetbook/test/failures/
+          if-no-files-found: ignore
 
   migrations:
     name: migration (Postgres)

@@ -4,4 +4,5 @@ library;
 
 export 'src/ds_colors.g.dart';
 export 'src/ds_components.g.dart';
+export 'src/ds_font.dart';
 export 'src/snowflake_components.g.dart';

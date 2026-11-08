@@ -34,6 +34,7 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
 ├── apps/
 │   ├── desktop/                        # app Flutter Windows (wakeup_desktop)
 │   ├── server/                         # backend Dart shelf + migration (wakeup_server)
+│   ├── widgetbook/                     # Widgetbook + golden test thư viện widget (wakeup_widgetbook)
 │   └── web-mini/                       # trang web tối giản
 ├── packages/
 │   ├── core/                           # logic dùng chung app + server (wakeup_core)
@@ -153,9 +154,11 @@ flutter pub get
 | Chạy backend | xem [`apps/server/README.md`](apps/server/README.md) |
 | Sinh lại token và hợp đồng component từ `tokens.json`, `components.json` | `cd packages/ds_tokens && dart run tool/generate.dart` |
 | Chạy app Windows | `cd apps/desktop && flutter run -d windows` |
+| Xem Widgetbook trên trình duyệt | `cd apps/widgetbook && flutter run -d chrome` |
+| Golden test thư viện widget (Linux) | `cd apps/widgetbook && flutter test` (`--update-goldens` để cập nhật ảnh) |
 | Build và test plugin Figma Codegen (Node 22) | `cd tools/figma-codegen && npm ci && npm test && npm run build` |
 
-CI ở `.github/workflows/ci.yml`: định dạng, analyze, test cả 4 package, chạy migration trên Postgres, build image server, build app Windows, test và kiểm `dist/` của plugin Figma Codegen.
+CI ở `.github/workflows/ci.yml`: định dạng, analyze, test cả 4 package, chạy migration trên Postgres, build image server, build app Windows, golden test Widgetbook (Linux), test và kiểm `dist/` của plugin Figma Codegen.
 
 ## Cách cập nhật tài liệu
 

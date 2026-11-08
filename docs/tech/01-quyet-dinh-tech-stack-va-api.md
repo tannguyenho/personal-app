@@ -37,6 +37,7 @@ apps/
   desktop/        # app Flutter Windows (wakeup_desktop)
     lib/ds/       # thư viện widget design system (ADR-0008)
   server/         # backend shelf (wakeup_server), migration ở db/migrations
+  widgetbook/     # Widgetbook (web) + golden test cho lib/ds của desktop
   web-mini/       # trang web tối giản, HTML tĩnh do Caddy phục vụ
 packages/
   core/           # wakeup_core: logic nghiệp vụ, DTO, lệnh, mã lỗi dùng chung
@@ -207,7 +208,7 @@ Code Connect **không dùng được** trên gói Figma hiện tại (Education)
 3. **CI chặn lệch**: so `tokens.json` / `components.json` với code đã sinh; lệch thì báo đỏ. Lint cấm `Color(0x…)` và số khoảng cách cứng bên ngoài `ds_tokens`.
 4. **Plugin Codegen** riêng hiện snippet Dart trong Dev Mode Inspect. Đã xác minh ngày 08/11/2026: gói Education chạy được plugin Codegen dạng development trong Dev Mode, không cần nâng gói. Plugin ở [`tools/figma-codegen/`](../../tools/figma-codegen/README.md) (issue #31): đóng gói sẵn `components.json` / `snowflakes.json`, dùng chung ca tên `naming_cases.json` với bộ sinh Dart; CI kiểm `dist/code.js` khớp mã nguồn.
 5. **Description** của mỗi component ghi tên widget và đường dẫn file `.dart`, để AI đọc qua Figma MCP.
-6. **Widgetbook** cho thư viện widget, kèm golden test để so hình.
+6. **Widgetbook** cho thư viện widget, kèm golden test để so hình: `apps/widgetbook` (chạy web), golden chụp đúng use case trong Widgetbook, chỉ chạy trên Linux (CI ubuntu là nguồn chuẩn). Font Inter đóng gói trong `packages/ds_tokens/fonts/` (DS-05), golden nạp font thật.
 
 File sandbox: [Wakeup – Code Connect pilot](https://www.figma.com/design/zWidv5HFfFRIR9IrrFFObb) (team "1. Test Init"), giữ lại làm nền cho script xuất hợp đồng và plugin codegen (Q41).
 
