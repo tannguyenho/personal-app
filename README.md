@@ -37,7 +37,9 @@ Bên ngoài vòng ngày là vòng tuần: Weekly planning (đặt objective vào
 │   └── web-mini/                       # trang web tối giản
 ├── packages/
 │   ├── core/                           # logic dùng chung app + server (wakeup_core)
-│   └── ds_tokens/                      # token design system sinh từ Figma (wakeup_ds_tokens)
+│   └── ds_tokens/                      # token và hợp đồng component sinh từ Figma (wakeup_ds_tokens)
+├── tools/
+│   └── figma-codegen/                  # plugin Figma: snippet Flutter trong Dev Mode
 ├── deploy/                             # Docker Compose, Caddy, sao lưu
 └── docs/
     ├── 00-danh-muc-nhom-tinh-nang.md   # danh mục 12 nhóm, trạng thái từng tài liệu
@@ -151,8 +153,9 @@ flutter pub get
 | Chạy backend | xem [`apps/server/README.md`](apps/server/README.md) |
 | Sinh lại token và hợp đồng component từ `tokens.json`, `components.json` | `cd packages/ds_tokens && dart run tool/generate.dart` |
 | Chạy app Windows | `cd apps/desktop && flutter run -d windows` |
+| Build và test plugin Figma Codegen (Node 22) | `cd tools/figma-codegen && npm ci && npm test && npm run build` |
 
-CI ở `.github/workflows/ci.yml`: định dạng, analyze, test cả 4 package, chạy migration trên Postgres, build image server, build app Windows.
+CI ở `.github/workflows/ci.yml`: định dạng, analyze, test cả 4 package, chạy migration trên Postgres, build image server, build app Windows, test và kiểm `dist/` của plugin Figma Codegen.
 
 ## Cách cập nhật tài liệu
 

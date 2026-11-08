@@ -24,10 +24,16 @@ void main() {
     },
   );
 
-  test('tên token map 1-1 sang tên trường', () {
-    expect(fieldName('color/bg/primary'), 'bgPrimary');
-    expect(fieldName('color/text/onPrimary'), 'textOnPrimary');
-    expect(fieldName('color/brand/500'), 'brand500');
+  test('tên token map 1-1 sang tên trường (ca chung với plugin Codegen)', () {
+    final cases =
+        ((jsonDecode(File('test/naming_cases.json').readAsStringSync())
+                    as Map<String, Object?>)['tokenFieldName']!
+                as List<Object?>)
+            .cast<Map<String, Object?>>();
+    expect(cases, isNotEmpty);
+    for (final c in cases) {
+      expect(fieldName(c['in']! as String), c['out'], reason: '$c');
+    }
   });
 
   test('alias giữ đúng giá trị của token gốc ở từng mode', () {

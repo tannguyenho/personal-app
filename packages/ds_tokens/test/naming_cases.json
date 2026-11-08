@@ -197,5 +197,19 @@
             "in": "variant",
             "out": false
         }
+    ],
+    "tokenFieldName": [
+        {
+            "in": "color/bg/primary",
+            "out": "bgPrimary"
+        },
+        {
+            "in": "color/text/onPrimary",
+            "out": "textOnPrimary"
+        },
+        {
+            "in": "color/brand/500",
+            "out": "brand500"
+        }
     ]
 }
