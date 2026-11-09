@@ -70,13 +70,14 @@ Nhóm G10 lo các tính năng trên cùng việc phát hiện Claude Code, MCP l
 - MCP server local: bộ công cụ đọc / ghi để Claude Code (do app gọi hoặc người dùng mở trong terminal) điều khiển app, cùng rào chắn (QC-12 mục 3–6).
 - Đồng ý dùng AI lần đầu: trợ lý AI mặc định tắt; lần đầu bật phải qua màn đồng ý gọn, nói rõ dữ liệu nào được đưa cho Claude Code; app lưu thời điểm đồng ý (Q21, QC-12 mục 7).
 - Planning Agent (Beta "Agentic Daily Planning"): thiết lập 1 lần, "Plan my day", kế hoạch áp dụng ngay rồi hiện Review Plan (Re-plan, "Hoàn tác kế hoạch AI", Submit feedback), nối vào bước Daily plan của G08; kế hoạch dùng dữ liệu tích hợp thì chờ duyệt (Q31/Q31a, QC-12 mục 6).
-- Khung chat trợ lý (nút ✨ góc dưới), giao diện như chat thường: hỏi đáp về kế hoạch, ra lệnh tạo / sửa / dời / sắp / timebox task, Lịch sử, Cuộc trò chuyện mới (Q39).
+- Khung chat trợ lý (nút ✨ "Trợ lý" ở cụm dưới sidebar, C42), giao diện như chat thường: hỏi đáp về kế hoạch, ra lệnh tạo / sửa / dời / sắp / timebox task, Lịch sử, Cuộc trò chuyện mới (Q39).
 - Điều khiển app từ Claude Code trong terminal riêng khi app đang mở: cùng công cụ, cùng rào chắn, cùng chip AI và Hoàn tác (QC-12 mục 3).
 - Highlights AI cuối ngày: nháp tự động tại giờ kết thúc của lịch chung vào các ngày có trong lịch làm việc; app không mở lúc đó thì soạn khi mở app lần kế tiếp trong ngày (Q39, D7, QC-02), từ task đã xong và (khi người dùng bật) hoạt động trên công cụ đã kết nối; người dùng duyệt trước khi lưu.
 - Gợi ý thời lượng và channel khi tạo task qua Claude Code (Q33): G02 sở hữu trải nghiệm, G10 cung cấp lời gọi AI.
 - Rào chắn: AI hoàn thành / xoá task không cần công tắc (F4), xoá chỉ vào Thùng rác; task có liên kết tích hợp không bao giờ được AI hoàn thành hay xoá (D10); mọi thay đổi áp dụng ngay kèm chip AI, nhật ký và Hoàn tác; công cụ đọc dữ liệu tích hợp mặc định tắt, khi đã đọc thì các thay đổi sau lần đọc đầu tiên trong phiên đó chờ duyệt (QC-12 mục 4–6, D8).
 - Nhóm cài đặt AI và Beta trong trang Cài đặt, gồm trạng thái Claude Code, hướng dẫn dùng trong terminal và các công tắc riêng.
 - Bộ đánh giá chất lượng AI và thu tín hiệu (Submit feedback, Hoàn tác).
+- "Biên nhận" và hỏi lại (chốt 09/11/2026, B46): màn Hoạt động AI và chip "AI" cho biết AI đã làm gì, hoàn tác được; AI hỏi lại khi không chắc (ngày mơ hồ, task khớp nhiều hoặc không tìm thấy) thay vì đoán.
 
 ## 3.2 Ngoài phạm vi
 
@@ -88,6 +89,7 @@ Nhóm G10 lo các tính năng trên cùng việc phát hiện Claude Code, MCP l
 - AI gửi tin ra ngoài (email, Slack, Teams), đổi cài đặt, kết nối / ngắt tích hợp, xoá vĩnh viễn → không làm, ở mọi phiên bản (ADR-0003, QC-12). AI hoàn thành / xoá task (vào Thùng rác) không cần công tắc (QC-12 mục 4, F4).
 - Agent tự chạy nền không có người dùng (tự lập kế hoạch lúc 06:00) → bản sau.
 - Nhập bằng giọng nói → bản sau `[giả định]`.
+- "Rules" (luật người dùng đặt cho AI, như Sunsama) → bản 1.1 (chốt 09/11/2026, B46).
 - AI cho workspace nhiều người (lập kế hoạch nhóm, tóm tắt cho quản lý) → bản sau (Q35, `docs/02-tinh-nang-ban-sau.md`).
 
 # 4. Nguyên tắc sản phẩm
@@ -180,7 +182,7 @@ AC05: Claude Code chưa sẵn sàng (chưa cài, chưa đăng nhập, phiên b�
 
 User Story: Là Linh, tôi muốn nói điều quan trọng hôm nay rồi để agent xếp ngày quanh các cuộc họp, để không mất 15 phút kéo thả mỗi sáng.
 
-AC01: Trong Daily planning (G08) có ô "Điều quan trọng nhất hôm nay là gì?" và nút "Plan my day".
+AC01: Ở đầu bước 1 của wizard Daily planning (G08) có ô "Điều quan trọng nhất hôm nay là gì?" và nút "Plan my day". Chạy xong → Review Plan rồi nhảy thẳng tới bước Daily plan; lỗi hoặc bấm Dừng → về bước 1 (chốt 09/11/2026, B28).
 
 AC02: Khi chạy, màn hình hiện các bước tiến độ (đọc lịch, đọc việc từ công cụ, xếp khối thời gian); bước đầu tiên hiện ≤ 10 giây.
 
@@ -208,7 +210,7 @@ AC06: Một dòng không áp dụng được vì task vừa đổi ở nơi khá
 
 AC01: Claude Code lỗi, bị đóng giữa chừng, hết hạn mức Claude, hoặc > 10 giây chưa có bước đầu tiên → thông báo (hết hạn mức: hiện đúng thông báo của Claude Code) và chuyển sang luồng Daily planning thủ công (G08) ở bước 1 (EC-39).
 
-AC02: Nội dung ô "Điều quan trọng nhất" được giữ, đưa vào ô "Obstacles / ghi chú" của bản kế hoạch.
+AC02: Nội dung ô "Điều quan trọng nhất" được giữ, đưa vào ô "Trở ngại" của bản kế hoạch (G08; C32).
 
 AC03: Agent lỗi giữa chừng → các thay đổi đã áp dụng trước đó trong lượt được giữ, thông báo nêu số thay đổi đã áp dụng kèm "Hoàn tác kế hoạch AI" để hoàn tác cả lượt (D9); thay đổi đang chờ duyệt của lượt bị huỷ.
 
@@ -233,6 +235,8 @@ AC02: Bấm "Hoàn tác" → chip gạch ngang "Đã hoàn tác"; task do AI t�
 AC03: Yêu cầu hành động không có công cụ (ví dụ "gửi kế hoạch cho sếp", "bật chế độ tối", "ngắt Jira"), hoặc hoàn thành / xoá task có liên kết tích hợp (D10) → trợ lý từ chối, nói cách tự làm (Ctrl+Backspace, tích ✓ / phím C, Chia sẻ trong G08, Cài đặt).
 
 AC04: Yêu cầu dời ngày áp dụng như người dùng kéo task sang ngày khác (QC-05 dòng "AI dời ngày"): timebox giữ giờ và dời theo, timer không dừng, số ngày bị hoãn reset; không đặt task chưa xong vào ngày đã qua.
+
+AC05: Một thay đổi không thực hiện được (task vừa đổi hoặc bị xoá ở nơi khác) → chip của task đó hiện "Không thực hiện được", khung chat có một dòng báo số thay đổi bị bỏ qua; các thay đổi khác vẫn áp dụng (chốt 09/11/2026, B43).
 
 ### US2.3 Ngày giờ tương đối luôn đúng
 
@@ -316,7 +320,7 @@ AC06: Hoàn tác "hoàn thành" của AI = bỏ hoàn thành theo QC-03 mục 4 
 
 ### US5.1 Kiểm soát AI trong Cài đặt
 
-AC01: Cài đặt → Trợ lý AI: trạng thái Claude Code (Sẵn sàng · phiên bản / Chưa cài / Chưa đăng nhập / Phiên bản cũ, nút "Kiểm tra lại"), Trợ lý (bật / tắt, mặc định tắt), Cho AI đọc dữ liệu từ công cụ đã kết nối (mặc định tắt), Dùng Claude Code trong terminal (hướng dẫn), Gợi ý channel, Gợi ý thời lượng (G02), Ngôn ngữ tóm tắt, Tóm tắt tự động, thời điểm đã đồng ý; Cài đặt → Beta: Agentic Daily Planning. G01 đặt lối vào nhóm AI và Beta trong khung trang Cài đặt.
+AC01: Cài đặt → Trợ lý AI: trạng thái Claude Code (Sẵn sàng · phiên bản / Chưa cài / Chưa đăng nhập / Phiên bản cũ, nút "Kiểm tra lại"), Trợ lý (bật / tắt, mặc định tắt), Cho AI đọc dữ liệu từ công cụ đã kết nối (mặc định tắt, 1.1), Dùng trợ lý từ terminal (hướng dẫn, chữ phụ "chạy bằng Claude Code"; B42), Gợi ý channel, Gợi ý thời lượng (G02), Ngôn ngữ tóm tắt, Tóm tắt tự động, thời điểm đã đồng ý; Cài đặt → Beta: Agentic Daily Planning. G01 đặt lối vào nhóm AI và Beta trong khung trang Cài đặt.
 
 AC02: Tắt trợ lý → ẩn nút ✨, không gọi Claude Code cho chat, Planning Agent, highlights và gợi ý task; MCP local ngừng nhận kết nối, phiên terminal đang mở nhận lỗi "Trợ lý AI đang tắt trong app" (QC-12 mục 7).
 
@@ -324,7 +328,7 @@ AC03: Workspace chỉ đọc (QC-09, 1.1) → không gọi Claude Code cho mọi
 
 ### US5.2 Gửi phản hồi
 
-AC01: Review Plan, câu trả lời của trợ lý và nháp highlights có nút "Hữu ích" / "Chưa tốt" `[giả định]` và "Gửi phản hồi" (ô chữ tuỳ chọn).
+AC01: Review Plan, câu trả lời của trợ lý và nháp highlights có nút "Hữu ích" / "Chưa tốt" `[giả định]` và "Gửi phản hồi" (ô chữ tuỳ chọn). "Hữu ích" chỉ ghi đánh giá; "Chưa tốt" mở form góp ý; gửi xong luôn hiện lời cảm ơn, kể cả khi lưu lỗi và hệ thống thử lại nền (C46).
 
 AC02: Phản hồi và lần hoàn tác được thu làm tín hiệu chất lượng, không kèm dữ liệu task nếu người dùng không tích "Đính kèm cuộc trò chuyện".
 
@@ -342,7 +346,7 @@ User Story: Là người dùng thận trọng với AI, tôi muốn biết dữ 
 
 AC01: Trợ lý AI mặc định tắt với mọi người dùng (Q21).
 
-AC02: Lần đầu bật trợ lý AI (bấm ✨, "Plan my day", "Soạn bằng AI", hoặc bật toggle "Trợ lý" trong Cài đặt) → mở màn đồng ý gọn (QC-12 mục 7): dữ liệu nào được đưa cho Claude Code (tiêu đề, ghi chú, thời lượng, ngày, trạng thái task; channel; sự kiện lịch: tiêu đề, giờ; objective; dữ liệu công cụ tích hợp chỉ khi bật riêng); Claude Code chạy bằng tài khoản Claude của bạn và xử lý dữ liệu theo điều khoản của Anthropic; app không gửi dữ liệu cho nhà cung cấp AI nào khác; Claude Code có thể tự lưu bản ghi phiên trên máy; Claude Code mở trong terminal cũng điều khiển được app; link chính sách quyền riêng tư; nút "Đồng ý và bật" / "Để sau".
+AC02: Lần đầu bật trợ lý AI (bấm ✨, "Plan my day", "Soạn bằng AI", hoặc bật toggle "Trợ lý" trong Cài đặt) → mở màn đồng ý gọn (QC-12 mục 7): dữ liệu nào được đưa cho Claude Code (tiêu đề, ghi chú, thời lượng, ngày, trạng thái task; channel; sự kiện lịch: tiêu đề, giờ; objective; dữ liệu công cụ tích hợp chỉ khi bật riêng); Claude Code chạy bằng tài khoản Claude của bạn và xử lý dữ liệu theo điều khoản của Anthropic; app không gửi dữ liệu cho nhà cung cấp AI nào khác; Claude Code có thể tự lưu bản ghi phiên trên máy; Claude Code mở trong terminal cũng điều khiển được app; link chính sách quyền riêng tư; nút "Đồng ý và bật" / "Để sau". Tiêu đề màn là "Bật trợ lý AI", kèm chữ phụ nhỏ "chạy bằng Claude Code" (ADR-0004; chốt 09/11/2026, B42).
 
 AC03: "Đồng ý và bật" → lưu thời điểm đồng ý, bật trợ lý, mở MCP local, tiếp tục đúng thao tác người dùng vừa bấm. "Để sau" → trợ lý giữ tắt, không có lời gọi Claude Code nào.
 
@@ -374,7 +378,7 @@ AC01: Khi app khởi động, khi mở Cài đặt → Trợ lý AI và khi bấ
 
 AC02: Sẵn sàng → Cài đặt → Trợ lý AI hiện "Claude Code · phiên bản {x} · Sẵn sàng"; tính năng AI hiện (vẫn cần bật trợ lý và đồng ý).
 
-AC03: Chưa cài → mọi điểm vào AI (✨, "Plan my day", "Soạn bằng AI", gợi ý task) bị ẩn; Cài đặt → Trợ lý AI và chỗ của "Plan my day" hiện thẻ "Cài Claude Code để bật trợ lý AI" kèm link hướng dẫn và nút "Kiểm tra lại" (QC-12 mục 2).
+AC03: Chưa cài → mọi điểm vào AI (✨, "Plan my day", "Soạn bằng AI", gợi ý task) bị ẩn; Cài đặt → Trợ lý AI và chỗ của "Plan my day" hiện thẻ "Cài đặt để dùng trợ lý AI" với nội dung "Cài Claude Code để bật trợ lý AI", kèm link hướng dẫn và nút "Kiểm tra lại" (QC-12 mục 2; chốt 09/11/2026, B42, B44).
 
 AC04: Đã cài nhưng chưa đăng nhập → thẻ "Đăng nhập Claude Code để bật trợ lý AI" kèm hướng dẫn đăng nhập. Phiên bản cũ → thẻ "Cập nhật Claude Code lên phiên bản {tối thiểu} trở lên".
 
@@ -388,13 +392,15 @@ AC02: Claude Code báo hết hạn mức của gói Claude → app hiện nguyê
 
 AC03: Mất mạng (Claude Code không tới được dịch vụ của Anthropic) → thông báo mất kết nối, luồng thủ công vẫn dùng được.
 
+AC04: Ngoài các lỗi trên, app có đủ 6 trạng thái lỗi riêng: đăng nhập Claude Code hết hạn, tài khoản Claude bị chặn, hết hạn mức (kèm giờ có lại lượt), đang thử lại, câu trả lời bị cắt, mất kết nối giữa Claude Code và app. Mọi trạng thái giữ thay đổi đã áp dụng và nội dung đã nhập. Chữ của các trạng thái này chốt sau khi thử thật trên Windows (#24) (chốt 09/11/2026, B45).
+
 ## UC8. Điều khiển app từ Claude Code trong terminal
 
 ### US8.1 Dùng Claude Code trong terminal riêng
 
 User Story: Là Minh, tôi đang làm việc trong terminal với Claude Code và muốn nói "dời hết việc review sang chiều mai" mà không phải mở khung chat của app.
 
-AC01: Cài đặt → Trợ lý AI có mục "Dùng Claude Code trong terminal" với hướng dẫn kết nối Claude Code tới MCP local của app (lệnh / cấu hình: tech chốt). Chỉ dùng được khi app đang mở, đã đăng nhập, trợ lý bật và đã đồng ý; ngược lại Claude Code nhận lỗi "Trợ lý AI đang tắt trong app" hoặc không thấy công cụ của app.
+AC01: Cài đặt → Trợ lý AI có mục "Dùng trợ lý từ terminal" (chữ phụ "chạy bằng Claude Code"; B42) với hướng dẫn kết nối Claude Code tới MCP local của app (lệnh / cấu hình: tech chốt). Chỉ dùng được khi app đang mở, đã đăng nhập, trợ lý bật và đã đồng ý; ngược lại Claude Code nhận lỗi "Trợ lý AI đang tắt trong app", lỗi "cần đồng ý" (chưa đồng ý; app đồng thời hiện thông báo mở màn đồng ý, C45), hoặc không thấy công cụ của app.
 
 AC02: Phiên terminal dùng đúng bộ công cụ và rào chắn như khung chat (mục 5): hoàn thành / xoá như khung chat (F4), chỉ đọc dữ liệu tích hợp khi bật.
 
@@ -484,6 +490,10 @@ AC03: Claude Code chậm hơn ngưỡng của G02, lỗi hoặc hết hạn mứ
 - Đã chốt 04/11/2026: Planning Agent lỗi giữa chừng khi đã áp dụng một phần thì giữ phần đã áp dụng, có Hoàn tác cả lượt ("Hoàn tác kế hoạch AI"); chat theo cùng cách (D9, QC-12 mục 5).
 - Đã chốt 04/11/2026: tên hiển thị của trợ lý AI chưa đặt, quyết định khi làm thiết kế Figma; không dùng "Sunny" của Sunsama làm tên sản phẩm (D16).
 - Ngoài QC-12 mục 3, AI có được thêm subtask, sắp thứ tự, đổi priority, gắn objective không (bản nháp trước cho phép)?
+- Có học theo các tính năng AI của Sunsama không (#18)? — **Chốt 09/11/2026 (B46):** có "biên nhận" (màn Hoạt động AI, chip AI) và AI hỏi lại khi không chắc ở 1.0; "Rules" (luật người dùng đặt cho AI) để 1.1 (mục 3.1, 3.2).
+- Claude Code chưa sẵn sàng thì sao (có cho đồng ý trước khi cài không)? — **Chốt 09/11/2026 (B44):** ẩn mọi điểm vào AI, thay bằng thẻ hướng dẫn cài; không tới màn đồng ý khi chưa sẵn sàng.
+- Bộ trạng thái lỗi của trợ lý (#18)? — **Chốt 09/11/2026 (B45):** đủ 6 trạng thái (US7.2 AC04); chữ chốt sau khi thử thật trên Windows (#24).
+- Nhãn có chữ "Claude Code"? — **Chốt 09/11/2026 (B42):** "Dùng trợ lý từ terminal", "Bật trợ lý AI", "Cài đặt để dùng trợ lý AI"; "chạy bằng Claude Code" chỉ là chữ phụ nhỏ (ADR-0004).
 - Một phần đã chốt 04/11/2026: hoàn thành / xoá áp cho cả subtask; AI không bao giờ hoàn thành hay xoá task có liên kết tích hợp (D10, QC-12 mục 4); bỏ công tắc (F4, 06/11/2026). Còn mở: MCP có công cụ bỏ hoàn thành không (đang giả định: không, G02 BR-21)?
 - Phiên bản Claude Code tối thiểu được hỗ trợ; app có cho chọn model của Claude Code không?
 - Gợi ý task qua Claude Code có đạt ngưỡng 2 giây của G02 không; nếu không thì đổi ngưỡng hay đổi trải nghiệm (gợi ý đến sau)?
