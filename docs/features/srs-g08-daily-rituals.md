@@ -186,7 +186,7 @@ Các bước dưới đây là **đề xuất, chưa kiểm chứng trên Sunsam
 | A6 | Bấm "Bỏ qua bước này từ lần sau" | Như UC-01 A10 (không áp cho bước Chia sẻ, Hoàn tất, BR-18) |
 | A7 | Từ 1.0, trợ lý AI bật (QC-12) và G10 đã soạn nháp highlights tại giờ kết thúc của lịch chung, hoặc khi mở app lần kế tiếp trong ngày (Q39, D7) | Bước 3 điền nháp AI, nhãn "Nháp AI"; chưa có nháp, lỗi / chậm > 10 giây → dùng danh sách sinh sẵn của BR-17 |
 | A8 | Qua mốc đầu ngày khi đang làm (ví dụ bắt đầu 03:50, mốc 04:00) | BR-21: rollover cho D của người dùng hoãn; danh sách bước 2 không đổi dưới tay người dùng; hoàn tất được cho D tới 06:00, wizard hiện MSG-30; hoàn tất → rollover chạy ngay cho task còn lại. Quá 06:00 → `QUA_HAN`, rollover chạy, wizard đóng với MSG-31 |
-| A9 | Thao tác "Ngày mai" đưa instance lặp vào ngày đã có instance cùng series | QC-06 mục 2: instance được đưa vào → `LUU_TRU` lý do `skipped`, toast Hoàn tác; timebox xử lý như "Đưa vào backlog" (QC-05, D6) |
+| A9 | Thao tác "Ngày mai" đưa instance lặp vào ngày đã có instance cùng series | QC-06 mục 2: instance được đưa vào → `LUU_TRU` lý do `skipped`, toast Hoàn tác dùng nội dung G04 MSG-24 (nhóm sở hữu chữ: G04); timebox xử lý như "Đưa vào backlog" (QC-05, D6) |
 | A10 | Chọn "Bỏ qua hôm nay" ở lời nhắc MSG-02 | Phiên → `BO_QUA` (C24); không nhắc lại trong ngày |
 | A11 | Phiên bị sửa / hoàn tất ở thiết bị khác | Như UC-01 A12, A13 (BR-26) |
 | A12 | Bấm "Để tự chuyển sang mai" ở bước 2 (SCR-09 #4) | Không đổi task nào chưa chọn, không toast; \[RitualUpdate\] `current_step = 3`, sang bước 3. Task còn lại để rollover (G06) chuyển sang hôm sau (BR-16, chốt 09/11/2026, B33) |

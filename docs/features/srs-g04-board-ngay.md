@@ -354,7 +354,7 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 | 3 | Hệ thống | Sau 250 ms ngừng gõ, gọi \[TaskSearch\] (BR-16) |
 | 4 | Hệ thống | Hiện kết quả: tiêu đề tô sáng từ khoá, ngày, channel, trạng thái xong, nhãn "Lưu trữ" với task `LUU_TRU` (C17) |
 | 5 | Người dùng | Bấm kết quả hoặc ↑/↓ + Enter |
-| 6 | Hệ thống | Mở chi tiết task (G02); cuộn board tới ngày của task (task backlog → mở panel Backlog, G06) |
+| 6 | Hệ thống | Mở chi tiết task (G02); cuộn board tới ngày của task (task backlog → mở panel Backlog, G06 SCR-09; task lưu trữ → chi tiết chỉ xem G06 SCR-08) |
 
 **Luồng thay thế**
 
@@ -435,7 +435,7 @@ Chuyển trạng thái do hệ thống tính lại (UC-05) mỗi khi task của 
 | 1 | Sidebar trái | Nav | Trên: Home, Today, Backlog (G06), Focus (G07); đường kẻ; Daily planning, Daily shutdown (G08). Cụm dưới cùng: ✨ Trợ lý (G10), chuông thông báo (G12 SCR-11), avatar (menu Cài đặt · Phím tắt · Đăng xuất · Thoát app) ([IA](../design-brief/00-kien-truc-thong-tin.md) IA-01, IA-14) |
 | 2 | Thanh công cụ | Toolbar | SCR-03 |
 | 3 | Vùng cột ngày | Scroll ngang | Cột SCR-02 rộng tối thiểu 200 px; tải thêm 7 ngày khi còn 2 cột tới mép; cột hôm nay có nền nhấn. Cửa sổ hẹp thì bớt số cột và cuộn ngang, không có chế độ 1 cột ở 1.0 (UC-01 A9, B01) |
-| 4 | Panel phải | Panel | Biểu tượng Calendar (Shift+C); Tasks (Shift+T, **SCR-11**) — task của ngày đang xem, chỉ hiện khi vùng chính là Calendar view (IA-13); Backlog (Shift+B); Lưu trữ · Thùng rác — một panel hai tab, Shift+A mở tab Lưu trữ (IA-09); Search; Trợ lý (Ctrl+J, G10 SCR-04, IA-08); tích hợp (G11, 1.1+); nút +. < / > hoặc Ctrl+\ ẩn hiện panel (IA-15); nhớ trạng thái trên máy (IA-18); Esc không đóng panel (IA-16). Cửa sổ < 1280 px: panel thành lớp trượt (IA-11). Không có "Latest updates" (C36) |
+| 4 | Panel phải | Panel | Biểu tượng Calendar (Shift+C); Tasks (Shift+T, **SCR-11**) — task của ngày đang xem, chỉ hiện khi vùng chính là Calendar view (IA-13); Backlog (Shift+B, G06 SCR-09); Lưu trữ · Thùng rác — một panel hai tab, Shift+A mở tab Lưu trữ (IA-09); Search; Trợ lý (Ctrl+J, G10 SCR-04, IA-08); tích hợp (G11, 1.1+); nút +. < / > hoặc Ctrl+\ ẩn hiện panel (IA-15); nhớ trạng thái trên máy (IA-18); Esc không đóng panel (IA-16). Cửa sổ < 1280 px: panel thành lớp trượt (IA-11). Không có "Latest updates" (C36) |
 | 5 | Banner trạng thái | Banner | Tối đa **một** banner cùng lúc, thứ tự ưu tiên: offline (MSG-30) → workspace chỉ đọc (MSG-20, bản 1.1) → lịch cần kết nối lại (G05 SCR-09) → rollover lỗi (MSG-27) → lệch timezone (G01 MSG-23) → nhắc ritual (G08 SCR-12). Banner offline ở đây là banner offline duy nhất của app; wizard ritual không có banner offline riêng (chốt 09/11/2026, A5). Banner chờ tới lượt và đồng thời vào trung tâm thông báo (IA-17) |
 
 ### SCR-02 Cột ngày

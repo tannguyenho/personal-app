@@ -109,7 +109,7 @@ Bảng ví dụ dùng làm ca kiểm thử chuẩn (cả cho bộ đánh giá AI
 2. **Không reset** (`firstPlannedDate` giữ nguyên) khi task bị đẩy sang ngày sau theo kiểu thụ động: rollover, phím D, shutdown chọn "Ngày mai" (kể cả "Áp dụng cho tất cả").
 3. **Reset** (`firstPlannedDate` = ngày dự định mới) khi người dùng đặt ngày có chủ đích hoặc task rời luồng ngày: chọn ngày bằng bộ chọn ngày, kéo sang ngày khác, "Hoãn 1 tuần", phím S, đưa vào backlog, hoàn thành, khôi phục từ Lưu trữ hoặc Thùng rác.
 4. **Hiển thị.** Card hiện nhãn "Dời {n} ngày" khi n ≥ 1. Bước "Xem lại hôm qua" của Daily planning lấy task có n ≥ 1.
-5. **Tự lưu trữ.** Khi n ≥ **4** `[giả định]`, rollover chuyển task sang `LUU_TRU` với lý do `stale`.
+5. **Tự lưu trữ.** Khi n ≥ **4** `[giả định]`, rollover chuyển task sang `LUU_TRU` với lý do `stale`. Ngưỡng cố định, không chỉnh trên giao diện ở 1.0 (chốt 09/11/2026, B10). Task có ít nhất một subtask đã tích hoặc đã có thời gian thực tế được tính là có hoạt động và không bị tự lưu trữ (B11).
 6. **Chế độ chỉ đọc (1.1).** Các ngày workspace bị đóng băng không tính vào n (QC-09).
 
 ## QC-05. Đổi ngày task
@@ -140,7 +140,7 @@ Mọi đường làm thay đổi ngày dự định hoặc đưa task ra khỏi 
 ## QC-06. Instance trùng series trong một ngày
 
 1. Một ngày làm việc **đã có instance** của series S khi có instance của S mà ngày gốc hoặc ngày dự định bằng ngày đó, ở trạng thái `KE_HOACH` hoặc `HOAN_THANH`.
-2. **Đường tự động hoặc hàng loạt** đưa một instance của S vào ngày đã có instance của S: instance được đưa vào chuyển sang `LUU_TRU` với lý do `skipped`, kèm toast Hoàn tác (rollover thì không có toast, chỉ ghi nhật ký). Các đường này gồm: rollover, phím D, shutdown "Ngày mai".
+2. **Đường tự động hoặc hàng loạt** đưa một instance của S vào ngày đã có instance của S: instance được đưa vào chuyển sang `LUU_TRU` với lý do `skipped`, kèm toast Hoàn tác (rollover thì không có toast, chỉ ghi nhật ký). Các đường này gồm: rollover, phím D, shutdown "Ngày mai". **Ngoại lệ ở rollover** (chốt 09/11/2026, B08): instance đã sửa riêng (`customized`) hoặc đã có thời gian thực tế không chuyển `skipped` mà rollover như task thường, kể cả khi ngày đích đã có instance của S; nó không làm instance khác thành `skipped`. Phím D và shutdown giữ như trên.
 3. **Đường thủ công từng task** (kéo thả, chọn ngày, khôi phục): vẫn cho đặt, kèm cảnh báo "Ngày này đã có {tên series}". Thông báo gốc là **G03 MSG-21**; các nhóm khác (G02 MSG-24, G04 MSG-23, G06 MSG-21) giữ mã riêng nhưng dùng đúng nội dung này.
 
 ## QC-07. Bản ghi thời gian

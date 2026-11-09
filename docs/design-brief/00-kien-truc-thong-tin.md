@@ -81,7 +81,7 @@ Banner thấp hơn chờ tới lượt và đồng thời vào trung tâm thông
 |---|---|---|---|
 | Calendar | Shift+C | Lưới lịch một ngày, kéo task vào để timebox | G05 SCR-04 |
 | Tasks | Shift+T | Danh sách task của ngày đang xem, để kéo lên lưới lịch. **Chỉ hiện khi vùng chính là Calendar view** (IA-13) | G04 SCR-11 |
-| Backlog | Shift+B | Panel Backlog gọn, kéo task ra board | G06 |
+| Backlog | Shift+B | Panel Backlog gọn, kéo task ra board | G06 SCR-09 |
 | Lưu trữ · Thùng rác | Shift+A (tab Lưu trữ); lệnh "Task đã xoá gần đây" (tab Thùng rác) | Một panel hai tab (IA-09) | G06 SCR-05, G02 SCR-05 |
 | Search | Ctrl+F | Tìm task | G04 SCR-07 |
 | Trợ lý | Ctrl+J; ✨ ở sidebar; Ctrl+K "Hỏi trợ lý" | Khung chat. Chưa đồng ý → dialog đồng ý (G10 SCR-10). Claude Code chưa sẵn sàng → thẻ hướng dẫn cài (G10 SCR-11) ngay trong mục này (IA-08) | G10 SCR-04, SCR-05, SCR-11 |

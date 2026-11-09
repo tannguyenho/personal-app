@@ -392,6 +392,8 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 
 ### SCR-03 Chi tiết task
 
+Có biến thể **chỉ xem** cho task đang ở Lưu trữ: G06 SCR-08 (chốt 09/11/2026, C08).
+
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
 | 1 | Header thuộc tính | Toolbar | Channel · Priority · Ngày dự định (UC-02 A11) · Due · "+ Subtask" · menu … (SCR-04) · mở rộng · đóng |
