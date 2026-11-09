@@ -128,7 +128,7 @@ Home board tự giảm số cột ngày hiện được khi cửa sổ hẹp l�
 
 - **Bấm ×** luôn thu app về khay, có timer hay không. Lần đầu thu về khay, app hiện một thông báo: "App vẫn chạy ở khay hệ thống". Cài đặt Chung có lựa chọn "Bấm × để thoát hẳn" (mặc định tắt).
   - Lý do: phím toàn cục (D11), nhắc ritual bằng thông báo Windows (D12) và MCP local cho Claude Code trong terminal (G10 UC-11) đều cần app đang chạy.
-- **Biểu tượng khay** đổi khi có timer đang chạy (D13). Menu chuột phải: Mở app · Thêm task (Ctrl+Shift+A) · Bật / dừng timer (kèm tên task) · Thoát.
+- **Biểu tượng khay** đổi khi có timer đang chạy (D13). Menu chuột phải: Mở app · Thêm task (Ctrl+Shift+A) · "Bật timer: {task kế tiếp hôm nay}" khi chưa có timer, "Dừng timer: {tiêu đề}" khi đang có timer (chốt 09/11/2026, B23, C25) · Thoát.
 - **Tự chạy khi Windows khởi động**: bật mặc định, chạy ẩn ở khay; tắt được trong Cài đặt Chung.
 - **Thu nhỏ** (nút −): như mọi app Windows, timer vẫn chạy (G07 BR-23).
 - **Mở lại cửa sổ**: luôn vào Home ở hôm nay với view cuối; panel phải như lần trước. Có timer đang chạy cũng vào Home, không vào Focus. Wizard ritual tự mở thì thay vùng chính.
@@ -193,7 +193,7 @@ Chỉ ghi điểm vào cấp app (từ khung, phím, khay, thông báo). Điểm
 | G04 Board ngày | Mở app → Home hôm nay · H · T · Tab · Ctrl+F · Ctrl+K · ? |
 | G05 Lịch và timebox | Panel phải → Calendar (Shift+C) · Calendar view trong Home · panel Tasks (Shift+T) khi ở Calendar view · Cài đặt → Lịch · onboarding bước "Kết nối lịch" · banner cần kết nối lại |
 | G06 Backlog, rollover, lưu trữ | Sidebar Backlog / B (trang) · panel phải Backlog (Shift+B) · panel Lưu trữ (Shift+A) · toast "Xem Lưu trữ" |
-| G07 Focus và timer | Sidebar Focus / F (toàn cửa sổ) · Space trên task · Ctrl+Shift+Space · khay → Bật / dừng timer · biểu tượng khay khi có timer · thông báo timer > 4 giờ |
+| G07 Focus và timer | Sidebar Focus / F (toàn cửa sổ) · Space trên task · Ctrl+Shift+Space · khay → Bật timer (task kế tiếp hôm nay) / Dừng timer · biểu tượng khay khi có timer · thông báo timer > 4 giờ |
 | G08 Daily planning, shutdown | Sidebar / P / O → wizard ở vùng chính · nút "Plan" trên cột ngày ≥ hôm nay · tự mở một lần / ngày · thông báo Windows nhắc ritual · banner nhắc (G08 SCR-12) |
 | G10 Trợ lý AI | ✨ ở sidebar / Ctrl+J / Ctrl+K "Hỏi trợ lý" → mục Trợ lý ở panel phải · "Plan my day" trong wizard · Cài đặt → Trợ lý AI, Hoạt động AI · toast khi Claude Code trong terminal đổi app |
 | G12 phần 1.0 | 🔔 ở sidebar → popover · thông báo Windows · Cài đặt → Thông báo, Workspace |

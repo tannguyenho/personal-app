@@ -2,7 +2,7 @@
 
 # PRD Lịch & timebox (ứng dụng lập kế hoạch ngày)
 
-> **Bản nháp.** Con số đánh dấu `[giả định]` dùng để dựng flow, cần PO xác nhận trước khi dùng. Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md), gồm vòng 7: instance lưu trữ `skipped` xử lý timebox như "Đưa vào backlog" (D6); bản 1.1 vẫn một người dùng, nhiều thành viên từ 1.2 trở đi (Q47). Quy tắc dùng chung (ngày làm việc QC-01, lịch làm việc và khung giờ channel QC-02, đổi ngày task QC-05, bản ghi thời gian QC-07, chế độ chỉ đọc QC-09, quyền theo gói QC-10) xem [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); PRD này chỉ tham chiếu, không định nghĩa lại. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026 (badge giờ timebox màu cam "10:55" trên card; chi tiết task "Thursday, Nov 5 · 10:55–11:55 · 1 hr" kèm icon lịch; kéo block sang ngày khác đổi ngày bắt đầu; block thời gian thực tế "2:01 – 2:02" trên lịch; panel "Calendars", nút zoom 1x); chỗ khác Sunsama có chủ đích được ghi rõ.
+> **Bản nháp.** Con số đánh dấu `[giả định]` dùng để dựng flow, cần PO xác nhận trước khi dùng. Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md), gồm vòng 7: instance lưu trữ `skipped` xử lý timebox như "Đưa vào backlog" (D6); bản 1.1 vẫn một người dùng, nhiều thành viên từ 1.2 trở đi (Q47); và theo [câu hỏi chốt 09/11/2026](../review/cau-hoi-chot-flow-2026-11-09.md) (B17–B22, C17–C24). Quy tắc dùng chung (ngày làm việc QC-01, lịch làm việc và khung giờ channel QC-02, đổi ngày task QC-05, bản ghi thời gian QC-07, chế độ chỉ đọc QC-09, quyền theo gói QC-10) xem [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); PRD này chỉ tham chiếu, không định nghĩa lại. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026 (badge giờ timebox màu cam "10:55" trên card; chi tiết task "Thursday, Nov 5 · 10:55–11:55 · 1 hr" kèm icon lịch; kéo block sang ngày khác đổi ngày bắt đầu; block thời gian thực tế "2:01 – 2:02" trên lịch; panel "Calendars", nút zoom 1x); chỗ khác Sunsama có chủ đích được ghi rõ.
 
 # 1. Bối cảnh và vấn đề
 
@@ -42,8 +42,8 @@ Lịch là nơi thời gian thật của người dùng được quyết định
 ## 3.1 Trong phạm vi (MVP)
 
 - Nền tảng (Q45, ADR-0005): bản 1.0 là app Windows; web và macOS từ 1.1; iOS / Android từ 1.2, dùng cùng đặc tả. Cách app Windows mở trang OAuth của Google / Microsoft và nhận kết quả, cách nhận webhook lịch: tech chốt — `docs/tech/`.
-- Kết nối Google Calendar (OAuth) và Outlook qua Microsoft Graph; nhiều tài khoản lịch trên một người dùng. Số tối đa đọc từ bảng quyền theo gói (QC-10), không viết cứng; giá trị 5 `[giả định]`.
-- Chọn lịch hiển thị, màu lịch, lịch mặc định ghi timebox, lịch ghi timebox theo channel.
+- Kết nối Google Calendar (OAuth) và Outlook qua Microsoft Graph; nhiều tài khoản lịch trên một người dùng, tối đa **5** tài khoản, áp cả ở 1.0 như giới hạn kỹ thuật; số này đọc từ bảng quyền theo gói (QC-10), không viết cứng (B17).
+- Chọn lịch hiển thị, màu lịch, lịch mặc định ghi timebox (chỉ ở Cài đặt → Lịch, B18), lịch ghi timebox theo channel.
 - Hiển thị sự kiện trong Calendar views (G04) và panel Calendar (Shift+C); bộ lọc "Calendars"; zoom.
 - Timebox: kéo task vào lịch, kéo timebox đổi giờ / ngày, kéo cạnh đổi thời lượng, gỡ timebox (Ctrl+X). Một task có thể có nhiều timebox (C19). Chỉ tạo timebox trong 90 ngày tới (C18).
 - **Timebox liên kết sự kiện** (B8): timebox của task tạo từ một sự kiện có sẵn trên lịch ngoài (G08); đi theo sự kiện gốc, không bao giờ tạo sự kiện mới.
@@ -181,7 +181,7 @@ AC03: Panel "Calendars" trong Calendar views cho bật / tắt nhanh từng lị
 
 User Story: Là người nhiều vai, tôi muốn timebox của mỗi channel ghi vào đúng lịch, để lịch khách hàng nào chỉ chứa việc của khách hàng đó.
 
-AC01: Có một lịch mặc định ghi timebox; chỉ chọn được lịch có quyền ghi.
+AC01: Có một lịch mặc định ghi timebox, chọn ở Cài đặt → Lịch (một chỗ duy nhất; màn lịch của từng tài khoản không có lựa chọn này); chỉ chọn được lịch có quyền ghi hoặc "Không ghi ra lịch ngoài" (B18).
 
 AC02: Mỗi channel có thể chọn lịch ghi riêng; không chọn thì dùng lịch mặc định. Lịch đích được ghi cố định trên timebox từ lần đẩy đầu; đổi lịch ghi của channel / mặc định chỉ áp cho timebox chưa đẩy lần nào (B9).
 
@@ -215,9 +215,13 @@ AC02: Kéo cạnh dưới timebox đổi thời lượng → cập nhật thời
 
 AC03: Mỗi thay đổi cập nhật sự kiện trên lịch ngoài ≤ 10 giây.
 
+AC04: Kéo timebox sang ngày khác đúng lúc task vừa được sửa ở thiết bị khác → báo câu xung đột chung "Task đã thay đổi trên thiết bị khác" (QC-08 mục 2) và tải lại task (B21).
+
+AC05: Mất mạng → dời, đổi thời lượng, gỡ timebox vẫn chạy ngay trên máy, có dấu "Chờ đồng bộ"; có mạng thì gửi lên (QC-08 mục 7, C22).
+
 ### US3.3 Gỡ timebox
 
-AC01: Ctrl+X hoặc nút "Gỡ khỏi lịch" trong chi tiết task → xoá timebox, xoá sự kiện ngoài; task về projection (G04); có toast Hoàn tác.
+AC01: "Gỡ khỏi lịch" trên một timebox → chỉ gỡ timebox đó và xoá sự kiện ngoài của nó, các timebox khác của task giữ nguyên. Ctrl+X trên task → gỡ mọi timebox của task (B22). Task hết timebox thì về projection (G04); có toast Hoàn tác.
 
 AC02: Xoá task (G02) → theo dòng "Xoá" của QC-05: timebox tương lai bị gỡ và xoá sự kiện ngoài; timebox quá khứ chỉ gỡ liên kết, giữ sự kiện ngoài.
 
@@ -247,7 +251,7 @@ User Story: Là người lịch dày, tôi muốn kéo cuộc họp thành task 
 
 AC01: Task tạo từ sự kiện lịch (Daily planning, G08) có timebox liên kết sự kiện, giờ bằng giờ sự kiện; app không tạo sự kiện mới (B8).
 
-AC02: Sự kiện gốc đổi giờ / ngày → timebox đi theo. Sự kiện gốc bị xoá → gỡ timebox, task giữ nguyên.
+AC02: Sự kiện gốc đổi giờ / ngày → timebox đi theo. Sự kiện gốc bị xoá hoặc đổi thành cả ngày → gỡ timebox, task giữ nguyên, thông báo trong app đúng lý do (bị xoá / đổi thành cả ngày, C18).
 
 AC03: Timebox liên kết sự kiện không kéo / đổi thời lượng được trong app; tooltip hướng dẫn sửa trên lịch ngoài.
 
@@ -303,7 +307,7 @@ User Story: Là người lịch dày, tôi muốn biết khi có cuộc họp m�
 
 AC01: Sự kiện bận hoặc tentative mới chồng khung timebox → card và timebox hiện cảnh báo xung đột; không tự dời (EC-16, C18).
 
-AC02: Bản 1.0: cảnh báo chỉ có "Giữ nguyên" và "Mở lịch" (Q17). Bản 1.1 thêm "Dời sang khe trống" (chạy như Shift+X).
+AC02: Bản 1.0: cảnh báo chỉ có "Giữ nguyên" và "Mở lịch" (Q17). (1.1) thêm "Dời sang khe trống" (chạy như Shift+X), ẩn hẳn ở 1.0 (QC-13 mục 6, C17).
 
 AC03: Cuộc họp được dời / xoá khỏi khung → cảnh báo tự mất.
 
@@ -365,9 +369,14 @@ AC08: Không tạo timebox cho ngày quá 90 ngày (C18) hoặc khi workspace �
 # 10. Câu hỏi mở
 
 - Ai nộp hồ sơ xác minh Google OAuth, khi nào; có ra mắt 1.0 khi chưa xác minh không?
+- **Chốt 09/11/2026 (B18):** lịch ghi timebox mặc định chỉ chọn ở Cài đặt → Lịch, có lựa chọn "Không ghi ra lịch ngoài"; màn lịch của từng tài khoản bỏ phần này.
+- **Chốt 09/11/2026 (B19):** đổi giờ một timebox mà sự kiện không còn trên lịch ngoài → gỡ timebox và báo trong app như khi sự kiện bị xoá.
+- **Chốt 09/11/2026 (B20):** có lệnh "Timebox…" trong command menu (G04) để timebox bằng bàn phím.
+- **Chốt 09/11/2026 (B21):** kéo timebox sang ngày khác bị xung đột với thiết bị khác → báo câu xung đột chung (QC-08 mục 2) và tải lại.
+- **Chốt 09/11/2026 (B22):** task có nhiều timebox: "Gỡ khỏi lịch" trên một timebox chỉ gỡ timebox đó; Ctrl+X trên task gỡ hết.
 - Đã chốt 04/11/2026: auto-schedule (X / Shift+X) giữ ở 1.1; nút "Dời sang khe trống" ẩn ở 1.0, cảnh báo xung đột chỉ có "Giữ nguyên" và "Mở lịch" (Q17).
 - Đã chốt 04/11/2026: một task được nhiều timebox; kéo task đã có timebox thì thêm timebox mới (C19).
-- Số tài khoản lịch tối đa: Đã chốt 04/11/2026 là đọc từ bảng quyền theo gói của G12 (QC-10); con số 5 vẫn `[giả định]`. Còn mở: bản 1.0 (miễn phí, không giới hạn) có áp giới hạn kỹ thuật này không?
+- Số tài khoản lịch tối đa: Đã chốt 04/11/2026 là đọc từ bảng quyền theo gói của G12 (QC-10). **Chốt 09/11/2026 (B17):** bản 1.0 có áp giới hạn kỹ thuật **5** tài khoản lịch; số này đọc từ bảng quyền nên sau này đổi được.
 - Ngắt kết nối: Đã chốt 04/11/2026 là tách liên kết, bỏ qua sự kiện mồ côi (B9). Còn mở: có cho tuỳ chọn xoá các sự kiện app đã tạo không (hiện `[giả định]` có, mặc định tắt)?
 - Đã chốt 04/11/2026: "Tự dời khi xong sớm" = rút ngắn timebox, chỉ khi thời điểm hoàn thành nằm trong khoảng giờ của nó (B10).
 - Khối thời gian thực tế có ghi ra lịch ngoài không? (hiện `[giả định]` không)

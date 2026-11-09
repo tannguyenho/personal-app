@@ -185,11 +185,11 @@ Mọi đường làm thay đổi ngày dự định hoặc đưa task ra khỏi 
 
 ## QC-10. Quyền theo gói (bản 1.1)
 
-Bản 1.0 miễn phí, không giới hạn, gắn nhãn Beta. Từ 1.1, các nhóm đọc hạn mức từ bảng cấu hình của G12; không nhóm nào viết cứng con số trong logic.
+Bản 1.0 miễn phí, không giới hạn, gắn nhãn Beta; ngoại lệ duy nhất là giới hạn kỹ thuật số tài khoản lịch kết nối (5, chốt 09/11/2026, B17). Từ 1.1, các nhóm đọc hạn mức từ bảng cấu hình của G12; không nhóm nào viết cứng con số trong logic.
 
 | Quyền | Trial / trả phí | Nhóm dùng |
 |---|---|---|
-| Số tài khoản lịch kết nối | 5 `[giả định]` | G05 |
+| Số tài khoản lịch kết nối | 5 (áp cả ở 1.0, chốt 09/11/2026, B17) | G05 |
 | Số tích hợp kết nối | Không giới hạn `[giả định]` | G11 |
 
 Trợ lý AI **không có hạn mức theo gói**: AI chạy bằng Claude Code CLI trên máy người dùng và dùng hạn mức của gói Claude của chính họ (QC-12).
