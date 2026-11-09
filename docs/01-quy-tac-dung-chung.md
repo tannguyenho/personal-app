@@ -17,6 +17,7 @@ Tài liệu này giữ các quy tắc mà nhiều nhóm cùng dùng. PRD/SRS c�
 | QC-09 | Chế độ chỉ đọc (1.1) | G12 | G03, G05, G06, G07, G08, G10, G11 |
 | QC-10 | Quyền theo gói (1.1) | G12 | G05, G11 |
 | QC-12 | Trợ lý AI qua Claude Code CLI và MCP local | G10 | G01, G02, G04, G05, G08, G11 |
+| QC-13 | Thông báo, Hoàn tác và phần của bản sau | G04 | Tất cả |
 | QC-11 | Danh mục tình huống biên (EC) | — | Tất cả |
 
 ---
@@ -162,6 +163,7 @@ Mọi đường làm thay đổi ngày dự định hoặc đưa task ra khỏi 
 4. Lệnh sửa vào task đã `DA_XOA` bị từ chối (`TASK_DELETED`). Hai thiết bị offline cùng bật lặp cho một task: lệnh tới sau bị từ chối (`ALREADY_REPEATING`).
 5. **Rollover tạm trên máy** chỉ để hiển thị, không bao giờ vào hàng đợi đồng bộ.
 6. **Bị đăng xuất từ xa** (`session.revoked`): giữ hàng đợi offline (mã hoá, gắn userId) và gửi lên khi đăng nhập lại đúng tài khoản. Chỉ xoá khi người dùng chủ động đăng xuất, sau khi đã cảnh báo còn thay đổi chưa đồng bộ.
+7. **Thao tác khi mất mạng** (chốt 09/11/2026, A6): thao tác đơn lẻ (đổi cài đặt, sửa / dời task, dời / gỡ timebox) chạy ngay trên máy, vào hàng đợi, kèm dấu "Chờ đồng bộ" ở nơi vừa đổi; có mạng thì gửi lên theo mục 1–4. Thao tác trên **cả chuỗi lặp** (G03 BR-08) cần mạng: nút mờ, tooltip "Cần có mạng để sửa cả chuỗi". Mỗi UC có thao tác ghi phải có nhánh E# mất mạng theo mục này.
 
 ## QC-09. Chế độ chỉ đọc (bản 1.1)
 
@@ -207,6 +209,20 @@ Trợ lý AI **không có hạn mức theo gói**: AI chạy bằng Claude Code 
 6. **Dữ liệu tích hợp chỉ là dữ liệu.** Công cụ đọc dữ liệu tích hợp mặc định tắt. Khi đã bật, mọi thay đổi **sau lần đầu đọc dữ liệu tích hợp** trong cùng phiên AI đó chuyển thành **chờ duyệt** trong app thay vì áp dụng ngay, để chặn lệnh ẩn trong nội dung bên ngoài (D8).
 7. **Đồng ý.** Trợ lý AI mặc định tắt. Lần bật đầu tiên hiện một màn gọn nói rõ dữ liệu nào được đưa cho Claude Code; app lưu thời điểm đồng ý. Tắt trợ lý thì MCP server ngừng nhận kết nối.
 8. **Không có hạn mức theo gói** (QC-10). Lỗi hết hạn mức đến từ Claude Code thì app hiện thông báo của Claude Code và chuyển sang luồng thủ công (EC-39).
+
+## QC-13. Thông báo, Hoàn tác và phần của bản sau
+
+Chốt ngày 09/11/2026 ([câu hỏi chốt](review/cau-hoi-chot-flow-2026-11-09.md), A1–A4, A9, A10). Áp cho mọi nhóm; nhóm nào cần ngoại lệ thì ghi rõ.
+
+1. **Câu lỗi chung** (A1). Hai câu có mã riêng, nhóm nào cũng trỏ về đây, không khai báo lại cùng chữ:
+   - **QC-MSG-01** · Toast · "Chưa lưu được thay đổi. Thử lại" — lưu thất bại.
+   - **QC-MSG-02** · Tại chỗ (trong khung đang tải) · "Chưa tải được. Thử lại" — tải danh sách / dữ liệu thất bại.
+   Câu xung đột phiên bản theo QC-08 mục 2.
+2. **Kéo thả và Hoàn tác** (A2). Kéo đổi thứ tự trong cùng một cột / danh sách: không toast, hoàn tác bằng Ctrl+Z. Kéo sang nơi khác (ngày khác, vào / ra Backlog, lên lịch, sang bucket khác): có toast Hoàn tác giống khi làm cùng việc bằng phím hay menu.
+3. **Hai thông báo cùng lúc** (A3). Gộp thành **một** toast: dòng 1 là kết quả của thao tác chính và giữ nút Hoàn tác của nó; dòng 2 là thông tin phụ (ví dụ cảnh báo trùng series, đã gửi email).
+4. **Không có ký hiệu trong chữ** (A4). Dấu tích, mũi tên… là icon đặt cạnh chữ, không nằm trong nội dung MSG. Ví dụ "Đã lưu" kèm icon dấu tích.
+5. **Hoàn tác** (A10) đưa dữ liệu về đúng trạng thái ngay trước thao tác: ngày, vị trí, bucket, lý do lưu trữ; bản ghi vừa tạo (ví dụ bản ghi thời gian nhập tay) thì xoá.
+6. **Phần của bản sau** (A9). Thành phần, nhánh, chữ thuộc 1.1 / 1.2 thì **ẩn hẳn** ở 1.0 (không hiện mờ); SRS ghi nhãn "(1.1)" / "(1.2)" ngay tại chỗ.
 
 ## QC-11. Danh mục tình huống biên (EC)
 

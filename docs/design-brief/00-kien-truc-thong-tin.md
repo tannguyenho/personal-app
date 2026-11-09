@@ -65,10 +65,11 @@ Mục ritual có chấm nhắc và nhãn "Đang dở" (G08 điểm vào). "Tuầ
 | Planning Agent (trong wizard Daily planning) | Nút "Plan my day" | Nhập và chạy, rồi Review Plan, đều nằm trong wizard; không nằm trong chat | G10 SCR-02, SCR-03 |
 
 **Banner** nằm ở đầu vùng chính, **tối đa một** cùng lúc, theo thứ tự ưu tiên (IA-17):
-1. Offline (G04 SCR-01 #5)
+1. Offline (G04 SCR-01 #5) — banner offline duy nhất của app; wizard ritual không có banner offline riêng (chốt 09/11/2026, A5)
 2. Lịch cần kết nối lại (G05 SCR-09)
-3. Rollover lỗi (G04 MSG-27)
+3. Rollover lỗi (G06 MSG-25, G04 MSG-27 cùng nội dung; F2)
 4. Lệch timezone (G01 SCR-13)
+5. Nhắc ritual (G08 SCR-12) — luôn sau mọi banner lỗi và offline (A5)
 
 Banner thấp hơn chờ tới lượt và đồng thời vào trung tâm thông báo. Banner gói (G12 SCR-01) từ 1.1 thì xếp sau offline.
 

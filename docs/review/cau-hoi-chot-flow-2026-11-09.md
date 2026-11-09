@@ -2,7 +2,7 @@
 
 > **Nguồn:** mục "Ghi chú cho brief" cuối 10 file [`docs/design-brief/flow/`](../design-brief/flow/README.md) (89 ghi chú còn mở) và các câu "Cần chốt thêm" trong issue brief #12, #13, #16, #17, #18, #19 (18 câu).
 > **Đã loại:** các điểm đã sửa trước đây: G04 ghi chú 8 và G05 BR-21 (timebox liên kết sự kiện, QC-05); G06 hai ghi chú về banner rollover thất bại (F2, G06 BR-24); "Lệch ngày" (F5); công tắc AI hoàn thành / xoá (F4).
-> **Sau khi chốt:** ghi quyết định vào file này (cột "Chốt"), sửa SRS / PRD / QC và flow trong cùng commit, rồi viết brief.
+> **Trạng thái:** **PO đã chốt ngày 09/11/2026**: A đồng ý hết, B theo phương án đề xuất, C đồng ý (bảng cuối file). Đã ghi vào QC-08 mục 7, QC-13, IA (banner), SRS / PRD và flow của từng nhóm.
 
 ## Cách trả lời
 
@@ -335,8 +335,57 @@ Ngưỡng theo từng ngày đã có sẵn: Q48 tính theo thời gian trống c
 
 ## Kết quả chốt
 
-Điền sau khi PO trả lời: mã, phương án chọn, ngày, ghi chú. Mục nào chốt khác đề xuất thì ghi rõ lý do để brief và SRS sửa đúng.
+PO trả lời ngày 09/11/2026: "A đồng ý hết, B theo đề xuất, C đồng ý".
 
-| Mã | Chốt | Ngày | Ghi chú |
+| Mã | Chốt | Ngày | Câu hỏi |
 |---|---|---|---|
-| | | | |
+| A1–A10 | Đồng ý tất cả (QC-08 mục 7, QC-13, IA mục 3 banner) | 09/11/2026 | |
+| B01 | A (đề xuất) | 09/11/2026 | Cửa sổ hẹp thì board chuyển 1 cột ở mốc nào |
+| B02 | A (đề xuất) | 09/11/2026 | Ctrl+F khi đang gõ trong một ô nhập |
+| B03 | A (đề xuất) | 09/11/2026 | Lỗi tải một ngày (MSG-15) hiện ở đâu |
+| B04 | A (đề xuất) | 09/11/2026 | Có cho đánh dấu xong task ở cột ngày đã qua, và có "bản mờ" ở cột cũ không |
+| B05 | A (đề xuất) | 09/11/2026 | Có mức cảnh báo "sắp chạm ngưỡng" không |
+| B06 | A (đề xuất) | 09/11/2026 | Toast sau phím Z (đưa vào Backlog) có nút "Hoàn tác" không |
+| B07 | A (đề xuất) | 09/11/2026 | Toast tự lưu trữ (MSG-11) khi rollover chạy ngay lúc mở app thì hiện khi nào |
+| B08 | A (đề xuất) | 09/11/2026 | Instance lặp bị lỡ nhưng đã sửa riêng hoặc đã có thời gian thực tế: có được miễn tự lưu trữ (QC-06) không |
+| B09 | A (đề xuất) | 09/11/2026 | Instance bị bỏ qua (`skipped`) có hiện trong Lưu trữ không |
+| B10 | A (đề xuất) | 09/11/2026 | Có cho chỉnh ngưỡng tự lưu trữ trên giao diện không |
+| B11 | A (đề xuất) | 09/11/2026 | Subtask đã tích hoặc thời gian thực tế có tính là "có hoạt động" (nên không bị tự lưu trữ) không |
+| B12 | A (đề xuất) | 09/11/2026 | Có khôi phục thẳng từ Lưu trữ vào Backlog được không |
+| B13 | A (đề xuất) | 09/11/2026 | Backlog có mức ưu tiên (priority) riêng không |
+| B14 | A (đề xuất) | 09/11/2026 | "Dừng lặp" xử lý các instance tương lai thế nào |
+| B15 | A (đề xuất) | 09/11/2026 | Đổi tần suất hoặc dừng lặp từ danh sách chuỗi lặp trong Cài đặt |
+| B16 | A (đề xuất) | 09/11/2026 | Nút Trước / Sau giữa các lần lặp khi chuỗi đã dừng |
+| B17 | A (đề xuất) | 09/11/2026 | Ở 1.0 có giới hạn số tài khoản lịch không |
+| B18 | A (đề xuất) | 09/11/2026 | "Lịch ghi mặc định" chọn ở đâu |
+| B19 | A (đề xuất) | 09/11/2026 | Đổi giờ một timebox mà sự kiện không còn trên lịch ngoài (lỗi 404) |
+| B20 | A (đề xuất) | 09/11/2026 | Có lệnh "Timebox…" trong command menu không |
+| B21 | A (đề xuất) | 09/11/2026 | Kéo timebox sang ngày khác đúng lúc thiết bị khác cũng vừa sửa task |
+| B22 | A (đề xuất) | 09/11/2026 | Task có nhiều timebox, bấm "Gỡ khỏi lịch" |
+| B23 | A (đề xuất) | 09/11/2026 | Menu khay khi chưa có timer nào chạy |
+| B24 | A (đề xuất) | 09/11/2026 | Timer tự đóng sau 24 giờ thì màn hỏi giờ dừng (SCR-06) hiện khi nào |
+| B25 | A (đề xuất) | 09/11/2026 | Trong Focus mode, xong một task rồi bấm "Bắt đầu" |
+| B26 | A (đề xuất) | 09/11/2026 | Lượt timer dưới 10 giây bị bỏ, có báo người dùng không |
+| B27 | A (đề xuất) | 09/11/2026 | Các nút trong nhắc "timer chạy quá 4 giờ" (MSG-11) |
+| B28 | A (đề xuất) | 09/11/2026 | Nút "Plan my day" (Planning Agent) nằm ở đâu trong wizard |
+| B29 | A (đề xuất) | 09/11/2026 | Cột ngày xa hơn hôm nay + 7 ngày |
+| B30 | A (đề xuất) | 09/11/2026 | "Gửi bản sao cho chính tôi" có tính là gửi email (để hiện MSG-10) không |
+| B31 | A (đề xuất) | 09/11/2026 | Có "chế độ buổi tối" không, tức mở Daily planning sau 15:00 thì mặc định lên kế hoạch cho ngày mai |
+| B32 | B (đề xuất) | 09/11/2026 | Bước "Xem lại hôm qua" khi hôm qua đã làm Daily shutdown |
+| B33 | A (đề xuất) | 09/11/2026 | Daily shutdown có bước xử lý từng task chưa xong không |
+| B34 | A (đề xuất) | 09/11/2026 | Có tách highlights khỏi ghi chú suy ngẫm riêng không |
+| B35 | A (đề xuất) | 09/11/2026 | Làm lại ritual trong cùng ngày thì ghi chú cũ xử lý thế nào |
+| B36 | A (đề xuất) | 09/11/2026 | Onboarding có bắt nhập ít nhất 1 task không |
+| B37 | A (đề xuất) | 09/11/2026 | Xoá tài khoản khi tài khoản chỉ đăng nhập bằng Google / Microsoft |
+| B38 | A (đề xuất) | 09/11/2026 | Đổi mật khẩu hoặc đổi email có đăng xuất mọi thiết bị khác không |
+| B39 | A (đề xuất) | 09/11/2026 | Link đặt lại mật khẩu hết hạn, bấm "Gửi link mới" (MSG-18) |
+| B40 | A (đề xuất) | 09/11/2026 | Bản xuất dữ liệu bị lỗi |
+| B41 | A (đề xuất) | 09/11/2026 | Nút ở bước nhập liệu của onboarding khi ô chưa hợp lệ |
+| B42 | A (đề xuất) | 09/11/2026 | Đặt lại các nhãn đang có chữ "Claude Code" |
+| B43 | A (đề xuất) | 09/11/2026 | Một thay đổi của AI không thực hiện được |
+| B44 | A (đề xuất) | 09/11/2026 | Claude Code chưa sẵn sàng (chưa cài, chưa đăng nhập…) |
+| B45 | A (đề xuất) | 09/11/2026 | Bộ trạng thái lỗi của trợ lý |
+| B46 | A (đề xuất) | 09/11/2026 | Có học theo các tính năng AI của Sunsama không |
+| B47 | A (đề xuất) | 09/11/2026 | Có nút "Xoá workspace" không |
+| B48 | A (đề xuất) | 09/11/2026 | Trang huỷ đăng ký email có link "Mở cài đặt thông báo", mà 1.0 chưa có web app |
+| C01–C52 | Đồng ý tất cả | 09/11/2026 | |
