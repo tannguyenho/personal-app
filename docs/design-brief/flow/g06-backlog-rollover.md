@@ -1,6 +1,6 @@
 # Flow G06 Backlog, rollover và lưu trữ
 
-> **Nguồn:** [srs-g06](../../features/srs-g06-backlog-rollover.md) (commit `8fac830`) · **Brief:** `[chờ]`
+> **Nguồn:** [srs-g06](../../features/srs-g06-backlog-rollover.md) (commit `8fac830`, sửa theo [chốt 09/11/2026](../../review/cau-hoi-chot-flow-2026-11-09.md)) · **Brief:** `[chờ]`
 > **Quy ước:** [_quy-uoc.md](_quy-uoc.md) · **FigJam:** `[chờ]`
 
 ## Mục lục
@@ -8,11 +8,11 @@
 | UC | Flow | Màn chính | Nhánh A / E (1.0) |
 |---|---|---|---|
 | [UC-01](#uc-01-chuyển-task-vào-backlog) | Chuyển task vào backlog | SCR-02 Menu chọn bucket, SCR-03 Menu Ngày dự định | 5 / 4 |
-| [UC-02](#uc-02-xem-và-tổ-chức-backlog) | Xem và tổ chức backlog | SCR-01 Trang Backlog, SCR-04 Tạo / sửa folder | 8 / 4 |
-| [UC-03](#uc-03-đưa-task-từ-backlog-ra-ngày) | Đưa task từ backlog ra ngày | SCR-01, SCR-03 | 5 / 3 |
-| [UC-04](#uc-04-rollover-hằng-ngày-job-rollover) | Rollover hằng ngày (job) | SCR-07 Nhãn "Dời {n} ngày" trên board | 10 / 3 |
-| [UC-05](#uc-05-tự-lưu-trữ-trong-job-rollover) | Tự lưu trữ (trong job) | SCR-05 Panel Lưu trữ | 3 / 0 |
-| [UC-06](#uc-06-xem-lưu-trữ-khôi-phục-và-xoá-tất-cả) | Xem Lưu trữ, khôi phục, xoá tất cả | SCR-05, SCR-06 Xác nhận "Xoá tất cả" | 7 / 3 |
+| [UC-02](#uc-02-xem-và-tổ-chức-backlog) | Xem và tổ chức backlog | SCR-01 Trang Backlog, SCR-09 Panel Backlog gọn, SCR-04 Tạo / sửa folder | 9 / 4 |
+| [UC-03](#uc-03-đưa-task-từ-backlog-ra-ngày) | Đưa task từ backlog ra ngày | SCR-01, SCR-03 | 6 / 3 |
+| [UC-04](#uc-04-rollover-hằng-ngày-job-rollover) | Rollover hằng ngày (job) | SCR-07 Nhãn "Dời {n} ngày" trên board | 11 / 3 |
+| [UC-05](#uc-05-tự-lưu-trữ-trong-job-rollover) | Tự lưu trữ (trong job) | SCR-05 Panel Lưu trữ | 4 / 0 |
+| [UC-06](#uc-06-xem-lưu-trữ-khôi-phục-và-xoá-tất-cả) | Xem Lưu trữ, khôi phục, xoá tất cả | SCR-05, SCR-06 Xác nhận "Xoá tất cả", SCR-08 Chi tiết task chỉ xem | 9 / 3 |
 | [UC-07](#uc-07-đảm-bảo-rollover-theo-yêu-cầu-rolloverensure) | Đảm bảo rollover theo yêu cầu | Không có màn riêng; board (G04), Daily planning (G08) | 4 / 2 |
 
 ---
@@ -31,7 +31,7 @@ flowchart TD
   u2[/"Bấm một bucket<br/>hoặc phím 1, 2, 3, 4, 5, 0"/]
   p1[["TaskMove backlogBucket<br/>ẩn task khỏi cột ngay, cập nhật lạc quan"]]
   p2[["Server áp BR-02<br/>G05 xử lý timebox, sự kiện ngoài theo QC-05"]]
-  m1>"MSG-01 · Toast ít nhất 5 giây<br/>{tiêu đề} đã chuyển vào {bucket} trong Backlog · Mở task · Đóng"]
+  m1>"MSG-01 · Toast ít nhất 5 giây<br/>{tiêu đề} đã chuyển vào {bucket} trong Backlog · Hoàn tác · Mở task · Đóng"]
   ok(["Task trong bucket đã chọn<br/>tổng thời lượng ngày cập nhật"])
 
   start ==> u1 ==> s1 ==> u2 ==> p1 ==> p2 ==> m1 ==> ok
@@ -57,13 +57,13 @@ flowchart TD
   s1["SCR-02 Menu chọn bucket"]
   u2[/"Chọn bucket"/]
   p1[["TaskMove backlogBucket"]]
-  m1>"MSG-01 · Toast<br/>{tiêu đề} đã chuyển vào {bucket} trong Backlog · Mở task · Đóng"]
+  m1>"MSG-01 · Toast<br/>{tiêu đề} đã chuyển vào {bucket} trong Backlog · Hoàn tác · Mở task · Đóng"]
   ok(["Task trong bucket đã chọn"])
   u1 ==> s1 ==> u2 ==> p1 ==> m1 ==> ok
 
   u1 -->|"A1 · Shift+Z hoặc SCR-03 Lên đầu backlog"| a1[["TaskMove next_week, position top BR-03<br/>bỏ qua SCR-02"]]
   a1 --> a1m>"MSG-02 · Toast<br/>Đã đưa #quot;{tiêu đề}#quot; lên đầu Backlog · Hoàn tác"]
-  start2(["Board · task card"]) -->|"A2 · kéo vào trang / panel Backlog"| a2["Thả vào bucket hoặc folder nào<br/>thì chuyển vào đó"]
+  start2(["Board · task card"]) -->|"A2 · kéo vào SCR-01 / SCR-09 Backlog"| a2["Thả vào bucket hoặc folder nào<br/>thì chuyển vào đó, toast như phím Z QC-13"]
   a2 --> p1
   s1 -->|"A5 · Esc"| a5(["SCR-02 đóng, không đổi"])
   m1 -->|"A3 · bấm Mở task"| a3x{{"→ G02 · UC-02"}}
@@ -127,9 +127,9 @@ flowchart TD
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
 | A1 | Shift+Z / Lên đầu backlog | Đầu bucket Tuần tới | MSG-02 |
-| A2 | Kéo vào trang / panel Backlog | Bucket / folder nơi thả | – |
+| A2 | Kéo vào trang / panel Backlog | Bucket / folder nơi thả, toast có Hoàn tác (A2 chốt 09/11/2026) | MSG-01 |
 | A3 | Bấm Mở task | Chi tiết task → [G02 UC-02](g02-quan-ly-task.md#uc-02-xem-và-sửa-chi-tiết-task) | – |
-| A4 | Hoàn tác / Ctrl+Z | Cụm vị trí cũ, timebox, sự kiện ngoài tạo lại | – |
+| A4 | Hoàn tác trên MSG-01 / MSG-02 / Ctrl+Z | Cụm vị trí cũ, timebox, sự kiện ngoài tạo lại | – |
 | A5 | Esc khi SCR-02 mở | Không đổi | – |
 | E1 | Mất mạng | Hàng đợi, đồng bộ sau | – |
 | E2 | Task đã bị xoá ở thiết bị khác | Gỡ khỏi màn hình | MSG-20 |
@@ -185,16 +185,18 @@ flowchart TD
   a2 --> s1
   s1 -->|"A3 · Thêm task trên đầu trang"| a3["SCR-01 ô soạn G02, không có ngày<br/>bucket, folder = cái đang mở, mặc định Tuần tới"]
   a3 --> a3x{{"→ G02 · UC-01 · TaskCreate"}}
-  s1 -->|"A6 · kéo task giữa bucket / folder / thứ tự"| a6[["TaskMove backlogBucket, folderId,<br/>afterId / beforeId"]]
+  s1 -->|"A6 · kéo task giữa bucket / folder / thứ tự"| a6[["TaskMove backlogBucket, folderId,<br/>afterId / beforeId<br/>sang bucket khác: MSG-01 có Hoàn tác<br/>cùng bucket: không toast, Ctrl+Z"]]
   s1 -->|"A7 · bấm nút biểu đồ"| a7["SCR-01 tổng thời lượng<br/>theo bucket và channel"]
   s1 -->|"A8 · bucket rỗng"| a8m>"MSG-04 · Empty state<br/>Chưa có task nào"]
+  a9s(["Panel phải → Backlog hoặc Shift+B"]) -->|"A9 · BacklogList"| a9["SCR-09 Panel Backlog gọn<br/>cùng 6 bucket, không có phần lọc<br/>kéo task ra board"]
 
-  p1 -.->|"E4 · BacklogList lỗi"| e4["SCR-01 dữ liệu lưu trên máy"]
-  e4 -.-> e4m>"MSG-17 · Toast<br/>Chưa lưu được thay đổi. Thử lại"]
+  p1 -.->|"E4 · BacklogList lỗi"| e4["SCR-01 / SCR-09 dữ liệu lưu trên máy"]
+  a9 -.->|"E4"| e4
+  e4 -.-> e4m>"QC-MSG-02 · Tại chỗ<br/>Chưa tải được. Thử lại"]
   e4m -.->|"Thử lại"| p1
 
   class p1,s1 happy
-  class a1,a2,a3,a6,a7,a8m alt
+  class a1,a2,a3,a6,a7,a8m,a9s,a9 alt
   class a3x link
   class e4,e4m err
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -253,13 +255,14 @@ flowchart TD
 | A3 | Thêm task | Ô soạn không ngày → [G02 UC-01](g02-quan-ly-task.md#uc-01-tạo-task) | – |
 | A4 | Thêm folder | SCR-04 → folder mới | – |
 | A5 | Đổi tên / xoá folder | SCR-04; xoá: hộp xác nhận, task ở lại backlog | MSG-08 |
-| A6 | Kéo task giữa bucket / folder / thứ tự | Vị trí mới | – |
+| A6 | Kéo task giữa bucket / folder / thứ tự | Vị trí mới; sang bucket khác có toast Hoàn tác, cùng bucket thì không (QC-13) | MSG-01 (sang bucket khác) |
 | A7 | Nút biểu đồ | Tổng thời lượng theo bucket, channel | – |
 | A8 | Bucket rỗng | Empty state | MSG-04 |
+| A9 | Shift+B / panel phải → Backlog | SCR-09 Panel Backlog gọn (C09) | – |
 | E1 | Tên folder rỗng / > 50 ký tự | Chặn | MSG-05 |
 | E2 | Tên folder trùng | Chặn | MSG-06 |
 | E3 | Folder thứ 51 | Chặn | MSG-07 |
-| E4 | BacklogList lỗi | Dữ liệu trên máy, Thử lại | MSG-17 |
+| E4 | BacklogList lỗi | Dữ liệu trên máy, Thử lại | QC-MSG-02 |
 
 ---
 
@@ -275,11 +278,12 @@ flowchart TD
   u1[/"Kéo task vào cột ngày D<br/>ở panel ngày SCR-01 hoặc board G04"/]
   p1[["TaskMove startDate D, afterId / beforeId<br/>hiện task ở cột D ngay"]]
   p2[["Server áp BR-05: bucket, folder = null<br/>reset số ngày bị hoãn; day.recomputed cho D"]]
+  m1>"MSG-03 · Toast<br/>Đã chuyển #quot;{tiêu đề}#quot; sang {ngày} · Hoàn tác"]
   ok(["Task Kế hoạch trên cột D<br/>tổng thời lượng ngày D cập nhật"])
 
-  start ==> u1 ==> p1 ==> p2 ==> ok
+  start ==> u1 ==> p1 ==> p2 ==> m1 ==> ok
 
-  class start,u1,p1,p2 happy
+  class start,u1,p1,p2,m1 happy
   class ok done
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
@@ -299,15 +303,16 @@ flowchart TD
   start(["SCR-01 · task Backlog"])
   u1[/"Kéo vào cột ngày D"/]
   p1[["TaskMove startDate, BR-05"]]
+  m3>"MSG-03 · Toast<br/>Đã chuyển #quot;{tiêu đề}#quot; sang {ngày} · Hoàn tác"]
   ok(["Task Kế hoạch trên cột D"])
-  start ==> u1 ==> p1 ==> ok
+  start ==> u1 ==> p1 ==> m3 ==> ok
 
   start -->|"A1 · phím S"| a1["startDate = hôm nay"]
   start -->|"A2 · SCR-03 Menu Ngày dự định → chọn ngày"| a2["SCR-03 lịch chọn ngày<br/>ngày < hôm nay disabled"]
   a1 --> p1
   a2 --> p1
-  p1 -->|"A1 / A2"| m3>"MSG-03 · Toast<br/>Đã chuyển #quot;{tiêu đề}#quot; sang {ngày} · Hoàn tác"]
-  m3 --> ok
+  m3 -->|"A6 · Hoàn tác / Ctrl+Z"| a6[["TaskMove undoToken<br/>về đúng bucket, folder, vị trí cũ QC-13"]]
+  a6 --> a6e(["Task về lại Backlog như trước"])
   start -->|"A3 · kéo vào lịch"| a3[["startDate = ngày làm việc của ô QC-01<br/>tạo timebox theo G05"]]
   a3 --> a3x{{"→ G05 · UC-03"}}
   a4s(["G08 Daily planning · bucket tới kỳ"]) -->|"A4"| p1
@@ -321,8 +326,8 @@ flowchart TD
   p1 -.->|"E4 · VERSION_CONFLICT"| e4m>"MSG-23 · Toast<br/>Task đã thay đổi trên thiết bị khác"]
   e4m -.-> e4(["Task vẽ theo server"])
 
-  class start,u1,p1 happy
-  class a1,a2,m3,a3,a4s alt
+  class start,u1,p1,m3 happy
+  class a1,a2,a3,a4s,a6,a6e alt
   class a5m warn
   class a3x link
   class e1m,e3m,e4m err
@@ -346,8 +351,9 @@ flowchart TD
 | A1 | Phím S | Hôm nay | MSG-03 |
 | A2 | Menu Ngày dự định → chọn ngày | Ngày chọn | MSG-03 |
 | A3 | Kéo vào lịch | Ngày của ô, timebox → [G05 UC-03](g05-lich-timebox.md#uc-03-timebox-task-bằng-kéo-thả) | – |
-| A4 | Ritual đưa task tới kỳ ra ngày | Như luồng chính → [G08 UC-01](g08-daily-rituals.md#uc-01-daily-planning-luồng-thủ-công); phần G09 Weekly planning: Bỏ (1.1) | – |
+| A4 | Ritual đưa task tới kỳ ra ngày | Như luồng chính → [G08 UC-01](g08-daily-rituals.md#uc-01-daily-planning-luồng-thủ-công); phần G09 Weekly planning (1.1): Bỏ (1.1) | – |
 | A5 | Instance lặp, D đã có instance cùng series | Vẫn đặt, cảnh báo | MSG-21 |
+| A6 | Hoàn tác / Ctrl+Z | Về đúng bucket, folder, vị trí cũ (QC-13 mục 5) | – |
 | E1 | TaskMove lỗi | Về bucket cũ | MSG-17 |
 | E2 | Workspace chỉ đọc | Bỏ (1.1) | – |
 | E3 | D < hôm nay | Về bucket cũ | MSG-24 |
@@ -409,6 +415,8 @@ flowchart TD
   a7 -->|"ritual.shutdown.closed<br/>hoặc tới mốc + 2 giờ"| p2
   a7 --> a7x{{"→ G08 · UC-02"}}
   p3 -->|"A6 · không có task thoả BR-06"| a6(["Lượt XONG, số liệu 0"])
+  p3 -->|"A12 · instance lặp quá khứ đã sửa riêng<br/>hoặc có thời gian thực tế"| a12["Không lưu trữ skipped BR-11<br/>rollover như task thường"]
+  a12 --> p4
   p4 -->|"A5 · task đang chạy timer"| a5["Rollover bình thường, timer không dừng"]
   p4 -->|"A10 · hôm nay không có trong lịch, ví dụ Thứ Bảy"| a10["Vẫn chạy; số ngày bị hoãn không tăng<br/>nếu hôm nay không có trong lịch của task BR-10"]
   a5 --> p5
@@ -421,7 +429,7 @@ flowchart TD
   a2s(["Người dùng đổi timezone / mốc đầu ngày trong ngày"]) -->|"A2"| a2["Hiệu lực từ ngày làm việc kế tiếp<br/>hôm nay rollover theo cài đặt cũ, đã XONG không chạy lại"]
 
   class start,p2,p3,p4,p5,p6 happy
-  class a1,a7,a5,a10,a3,a11,a4s,a2s,a2 alt
+  class a1,a7,a5,a10,a3,a11,a4s,a2s,a2,a12 alt
   class a4 sync
   class a7x,a11x,a4x link
   class ok,a6 done
@@ -485,6 +493,7 @@ flowchart TD
 | A9 | Lượt `DANG_CHAY` hết lease | Nhận lại, chạy từ bước 2 | – |
 | A10 | Hôm nay không có trong lịch | Vẫn chạy, n không tăng | – |
 | A11 | Muốn trả lại kết quả | Không Hoàn tác → [G04 UC-03](g04-board-ngay.md#uc-03-di-chuyển-task-giữa-các-ngày), [UC-01](#uc-01-chuyển-task-vào-backlog) | – |
+| A12 | Instance lặp quá khứ đã sửa riêng / có thời gian thực tế | Không `skipped`, rollover như task thường (B08) | – |
 | E1 | Lỗi CSDL | Rollback, `LOI`, lần 3 `THAT_BAI` | – |
 | E2 | G05 gỡ timebox lỗi | Không chặn, G05 thử lại | – |
 | E3 | `THAT_BAI` | Chạy bù khi mở app → [UC-07](#uc-07-đảm-bảo-rollover-theo-yêu-cầu-rolloverensure) | – |
@@ -495,7 +504,7 @@ Instance lặp trong rollover (BR-11): xem [G03 UC-06](g03-task-lap-lai.md#uc-06
 
 ## UC-05 Tự lưu trữ (trong job `rollover`)
 
-**Mở đầu:** job rollover, sau UC-04 bước 4; task có số ngày bị hoãn ≥ 4, Tự lưu trữ bật. **Thành công:** task ở Lưu trữ, không còn trên hôm nay. **Thất bại:** như UC-04 (rollback cả lượt).
+**Mở đầu:** job rollover, sau UC-04 bước 4; task có số ngày bị hoãn ≥ 4 (ngưỡng cố định), Tự lưu trữ bật, task không có hoạt động. **Thành công:** task ở Lưu trữ, không còn trên hôm nay. **Thất bại:** như UC-04 (rollback cả lượt).
 
 ### Happy case
 
@@ -505,8 +514,8 @@ flowchart TD
   p1[["Task bị hoãn ≥ 4, Tự lưu trữ bật<br/>Lưu trữ: archivedAt = now, archiveReason = stale BR-12"]]
   p2[["Timebox như Đưa vào backlog BR-12<br/>nhật ký: Lưu trữ: bị hoãn {n} ngày"]]
   p3[["Cộng archivedCount vào rollover_runs"]]
-  u1[/"Người dùng mở app lần kế tiếp"/]
-  m1>"MSG-11 · Toast<br/>Đã lưu trữ {n} task bị hoãn từ {ngưỡng} ngày trở lên · Xem Lưu trữ"]
+  u1[/"Mở app: lượt chạy lúc mở app UC-07 thì toast ngay khi xong<br/>lượt do job chạy trước thì toast lần mở app kế tiếp"/]
+  m1>"MSG-11 · Toast<br/>Đã lưu trữ {n} task bị hoãn từ {ngưỡng} ngày làm việc trở lên · Xem Lưu trữ"]
   ok(["Task rời hôm nay, nằm trong SCR-05 Lưu trữ"])
   x1{{"→ UC-06"}}
 
@@ -533,17 +542,18 @@ flowchart TD
 flowchart TD
   start(["Job rollover · task bị hoãn ≥ ngưỡng"])
   p1[["Lưu trữ stale BR-12"]]
-  m1>"MSG-11 · Toast<br/>Đã lưu trữ {n} task bị hoãn từ {ngưỡng} ngày trở lên · Xem Lưu trữ"]
+  m1>"MSG-11 · Toast<br/>Đã lưu trữ {n} task bị hoãn từ {ngưỡng} ngày làm việc trở lên · Xem Lưu trữ"]
   start ==> p1 ==> m1
 
   start -->|"A1 · Tự lưu trữ tắt"| a1(["Task Kế hoạch hôm nay<br/>SCR-07 nhãn Dời {n} ngày"])
   start -->|"A2 · task đang chạy timer"| a2(["Không lưu trữ ở lượt này<br/>xét lại ở lượt ngày sau"])
+  start -->|"A4 · có subtask đã tích<br/>hoặc có thời gian thực tế"| a4(["Không lưu trữ BR-12<br/>task Kế hoạch hôm nay, SCR-07 nhãn Dời {n} ngày"])
   m1 -->|"A3 · muốn trả lại task"| a3["Không có Hoàn tác Q41<br/>timebox, sự kiện ngoài đã gỡ không tạo lại"]
   a3 --> a3x{{"→ UC-06 Khôi phục"}}
 
   class start,p1,m1 happy
   class a3 alt
-  class a1,a2 done
+  class a1,a2,a4 done
   class a3x link
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
@@ -563,13 +573,14 @@ flowchart TD
 | A1 | Tự lưu trữ tắt | Kế hoạch hôm nay, nhãn "Dời {n} ngày" | – |
 | A2 | Task đang chạy timer | Không lưu trữ lượt này | – |
 | A3 | Muốn trả lại task | Không Hoàn tác → [UC-06](#uc-06-xem-lưu-trữ-khôi-phục-và-xoá-tất-cả) | – |
+| A4 | Task có subtask đã tích / thời gian thực tế | Không lưu trữ, Kế hoạch hôm nay (B11) | – |
 | (lỗi) | Không có E#; lỗi lượt xử lý như UC-04 E1 | Rollback cả lượt | – |
 
 ---
 
 ## UC-06 Xem Lưu trữ, khôi phục và xoá tất cả
 
-**Mở đầu:** người dùng đã đăng nhập. **Thành công:** khôi phục → task Kế hoạch hôm nay, số ngày bị hoãn = 0; xoá tất cả → mọi task Lưu trữ vào Thùng rác; toggle Tự lưu trữ được lưu. **Thất bại:** Lưu trữ không đổi.
+**Mở đầu:** người dùng đã đăng nhập. **Thành công:** khôi phục → task Kế hoạch hôm nay (hoặc vào Backlog), số ngày bị hoãn = 0; xoá tất cả → mọi task Lưu trữ vào Thùng rác; toggle Tự lưu trữ được lưu. **Thất bại:** Lưu trữ không đổi.
 
 ### Happy case
 
@@ -578,10 +589,10 @@ flowchart TD
   start(["Panel phải → Lưu trữ<br/>hoặc Shift+A"])
   p1[["ArchiveList, mới lưu trữ nhất trước"]]
   s1["SCR-05 Panel Lưu trữ<br/>mỗi dòng có nhãn lý do"]
-  m0>"MSG-12 / MSG-13 · Nhãn<br/>Bị hoãn từ {ngưỡng} ngày làm việc trở lên<br/>Bị bỏ qua · đã có lần lặp hôm nay"]
-  u1[/"Bấm Khôi phục trên một dòng"/]
+  m0>"MSG-12 / MSG-13 · Nhãn<br/>Bị hoãn từ {ngưỡng} ngày làm việc trở lên<br/>Đã bỏ qua"]
+  u1[/"Bấm Khôi phục trên một dòng<br/>chọn Khôi phục vào hôm nay"/]
   p2[["TaskRestore from archive, áp BR-14<br/>startDate = hôm nay, reset số ngày bị hoãn"]]
-  m1>"MSG-14 · Toast<br/>Đã khôi phục #quot;{tiêu đề}#quot; về hôm nay · Hoàn tác"]
+  m1>"MSG-14 · Toast<br/>Đã khôi phục #quot;{tiêu đề}#quot; về {hôm nay / ngày} · Hoàn tác"]
   ok(["Task ở đầu danh sách hôm nay"])
 
   start ==> p1 ==> s1 ==> m0 ==> u1 ==> p2 ==> m1 ==> ok
@@ -604,9 +615,9 @@ flowchart TD
 ```mermaid
 flowchart TD
   s1["SCR-05 Panel Lưu trữ"]
-  u1[/"Bấm Khôi phục"/]
+  u1[/"Khôi phục vào hôm nay"/]
   p2[["TaskRestore from archive, BR-14"]]
-  m1>"MSG-14 · Toast<br/>Đã khôi phục #quot;{tiêu đề}#quot; về hôm nay · Hoàn tác"]
+  m1>"MSG-14 · Toast<br/>Đã khôi phục #quot;{tiêu đề}#quot; về {hôm nay / ngày} · Hoàn tác"]
   ok(["Task ở đầu hôm nay"])
   s1 ==> u1 ==> p2 ==> m1 ==> ok
 
@@ -617,20 +628,28 @@ flowchart TD
   a1p --> a1t>"MSG-16 · Toast<br/>Đã chuyển {n} task vào Thùng rác · Hoàn tác"]
   s1 -->|"A2 · bật / tắt Tự lưu trữ"| a2[["SettingsUpdate autoArchive G01<br/>áp từ lượt rollover kế tiếp"]]
   s1 -->|"A3 · kéo dòng vào cột ngày D"| a3[["TaskRestore from archive, startDate = D<br/>D ≥ hôm nay"]]
-  a3 --> a3e(["Task Kế hoạch trên cột D"])
+  a3 -->|"MSG-14 có Hoàn tác QC-13"| a3e(["Task Kế hoạch trên cột D"])
   s1 -->|"A4 · Lưu trữ rỗng"| a4m>"MSG-19 · Empty state<br/>Không có task nào được lưu trữ<br/>Xoá tất cả disabled"]
   s1 -->|"A5 · cuộn hết trang"| a5[["ArchiveList tải tiếp theo cursor, 50 dòng"]]
   a5 --> s1
   p2 -->|"A6 · instance lặp, ngày đã có instance cùng series"| a6m>"MSG-21 · Toast cảnh báo<br/>Ngày này đã có {tên series}"]
   a3 -->|"A6"| a6m
   a6m --> ok
-  a7s(["Kết quả tìm kiếm G04 · task lưu trữ"]) -->|"A7"| a7["G02 SCR-03 Chi tiết task ở chế độ xem<br/>có nút Khôi phục"]
+  a7s(["Kết quả tìm kiếm G04 · task lưu trữ"]) -->|"A7"| a7["SCR-08 Chi tiết task chỉ xem<br/>nút Khôi phục, hai lựa chọn"]
   a7 --> p2
+  s1 -->|"A8 · Khôi phục vào Backlog"| a8[["TaskRestore from archive, backlogBucket next_week<br/>BR-14, đầu bucket Tuần tới"]]
+  a7 -->|"A8"| a8
+  a8 --> a8m>"MSG-26 · Toast<br/>Đã khôi phục #quot;{tiêu đề}#quot; vào Backlog · Hoàn tác"]
+  a8m --> a8e(["Task ở đầu bucket Tuần tới"])
+  m1 -->|"A9 · Hoàn tác / Ctrl+Z"| a9[["TaskMove undoToken<br/>về Lưu trữ với lý do cũ QC-13"]]
+  a8m -->|"A9"| a9
+  a1t -->|"A9"| a9
+  a9 --> a9e(["Task về lại SCR-05 như trước"])
 
   class s1,u1,p2,m1 happy
-  class a1,a1m,a1p,a1t,a2,a3,a4m,a5,a7s,a7 alt
+  class a1,a1m,a1p,a1t,a2,a3,a4m,a5,a7s,a7,a8,a8m,a9 alt
   class a6m warn
-  class ok,a3e done
+  class ok,a3e,a8e,a9e done
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
   classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
@@ -686,11 +705,13 @@ flowchart TD
 |---|---|---|---|
 | A1 | Xoá tất cả | SCR-06 → mọi task Lưu trữ vào Thùng rác | MSG-15, MSG-16 |
 | A2 | Bật / tắt Tự lưu trữ | Áp từ lượt rollover kế tiếp | – |
-| A3 | Kéo dòng vào cột ngày D | Task Kế hoạch trên D | – |
+| A3 | Kéo dòng vào cột ngày D | Task Kế hoạch trên D, toast Hoàn tác (QC-13) | MSG-14 |
 | A4 | Lưu trữ rỗng | Empty state, Xoá tất cả disabled | MSG-19 |
 | A5 | Cuộn hết trang | Tải thêm 50 dòng | – |
 | A6 | Khôi phục instance vào ngày đã có instance cùng series | Vẫn khôi phục | MSG-21 |
-| A7 | Mở task lưu trữ từ tìm kiếm | Chi tiết chế độ xem → Khôi phục ([G04 UC-07](g04-board-ngay.md#uc-07-tìm-kiếm-task)) | MSG-14 |
+| A7 | Mở task lưu trữ từ tìm kiếm | SCR-08 chi tiết chỉ xem → Khôi phục ([G04 UC-07](g04-board-ngay.md#uc-07-tìm-kiếm-task)) | MSG-14 / MSG-26 |
+| A8 | Khôi phục vào Backlog | Đầu bucket Tuần tới (B12) | MSG-26 |
+| A9 | Hoàn tác trên MSG-14 / MSG-26 / MSG-16 | Về lại Lưu trữ với lý do cũ (QC-13 mục 5) | – |
 | E1 | Task đã bị xoá ở thiết bị khác | Gỡ dòng | MSG-20 |
 | E2 | TaskRestore / ArchiveDeleteAll lỗi | Lưu trữ giữ nguyên | MSG-17 |
 | E3 | Workspace chỉ đọc | Bỏ (1.1) | – |
@@ -712,7 +733,7 @@ flowchart TD
   d1{"Trạng thái lượt?"}
   p3[["Chạy UC-04 bước 2-7 trong request"]]
   p4[["Trả date, status, rolledCount,<br/>archivedCount, skippedCount"]]
-  ok(["Board lấy kết quả server làm chuẩn"])
+  ok(["Board lấy kết quả server làm chuẩn<br/>archivedCount lớn hơn 0 thì hiện MSG-11 ngay"])
 
   start ==> p1 ==> p2 ==> d1
   d1 ==>|"XONG"| p4
@@ -792,14 +813,15 @@ flowchart TD
 - [x] Mọi nút màn hình có mã SCR; mọi nút thông báo có mã MSG.
 
 **Ghi chú cho brief G06**
-- MSG-01 (toast sau Z) chỉ có "Mở task · Đóng", không có "Hoàn tác"; nhưng BR-17 nói Z luôn có toast Hoàn tác và UC-01 A4 "Bấm Hoàn tác / Ctrl+Z". Cần thêm "Hoàn tác" vào MSG-01 hoặc ghi rõ chỉ có Ctrl+Z. Sơ đồ vẽ nhánh A4 từ MSG-01 theo UC-01.
-- Lỗi `ROLLOVER_FAILED` có hai thông báo cùng chữ: G06 MSG-25 (UC-07 E1) và G04 MSG-27 (G04 BR-25, banner trên board); G08 lại hiện MSG-32 khi nhận `THAT_BAI`. Cần chốt nhóm nào sở hữu banner trên board.
-- UC-07 E1 trả mã lỗi `ROLLOVER_FAILED`, nhưng bảng API cũng liệt kê `status = THAT_BAI` trong response ("client không tự retry khi nhận `THAT_BAI`"). Chưa rõ khi nào client nhận lỗi, khi nào nhận `THAT_BAI`, và giao diện khác nhau thế nào.
-- UC-02 E4 dùng MSG-17 "Chưa lưu được thay đổi. Thử lại" cho lỗi **tải** BacklogList; chữ không đúng ngữ cảnh. Đề xuất thêm MSG lỗi tải.
-- MSG-14 (khôi phục) và MSG-16 (xoá tất cả) có "Hoàn tác", MSG-03 (đưa ra ngày) cũng vậy, nhưng UC-03 / UC-06 không có A# mô tả Hoàn tác làm gì (về lại Lưu trữ với lý do cũ? về bucket cũ?). Chưa vẽ.
-- UC-01 A2 (kéo vào Backlog) và luồng chính UC-03 (kéo ra ngày) không nói có toast / Hoàn tác hay không, trong khi Z, S, menu đều có.
-- MSG-11 viết "bị hoãn từ {ngưỡng} ngày", MSG-12 viết "từ {ngưỡng} ngày làm việc"; theo BR-10 số ngày bị hoãn đếm theo lịch của task. Nên thống nhất chữ.
-- UC-06 A7 mở "chi tiết ở chế độ xem" cho task lưu trữ nhưng không có mã SCR; sơ đồ tạm ghi G02 SCR-03 chế độ xem.
-- UC-05 bước 4: MSG-11 hiện "lần mở app kế tiếp", nhưng nếu lượt chạy ngay trong \[RolloverEnsure\] lúc mở app thì chưa rõ toast hiện ngay hay đợi lần mở sau.
-- UC-03 A4 gộp G08 (1.0) và G09 Weekly planning (bản 1.1); sơ đồ chỉ vẽ G08.
-- IA (00-kien-truc-thong-tin) có panel Backlog gọn ở panel phải (Shift+B), SRS UC-02 chỉ nói phím B / sidebar mở SCR-01. Brief cần nói panel gọn dùng màn nào.
+- ~~MSG-01 (toast sau Z) không có "Hoàn tác" trong khi BR-17 nói Z luôn có toast Hoàn tác~~ **Đã sửa 09/11/2026 (B06):** MSG-01 thêm "Hoàn tác"; UC-01 bước 6, A4 và sơ đồ UC-01 sửa theo.
+- ~~Lỗi `ROLLOVER_FAILED` có hai thông báo cùng chữ (G06 MSG-25, G04 MSG-27), G08 lại hiện MSG-32 khi `THAT_BAI`~~ **Đã sửa trước 09/11/2026 (F2, BR-24):** chỉ một banner MSG-25 ở mọi nơi; G04 MSG-27 dùng đúng nội dung này; MSG-32 chỉ cho trạng thái đang chờ.
+- ~~UC-07 E1 trả `ROLLOVER_FAILED` nhưng API cũng trả `status = THAT_BAI`; chưa rõ giao diện khác nhau thế nào~~ **Đã sửa trước 09/11/2026 (F2, BR-24 b):** `ROLLOVER_FAILED` và `THAT_BAI` hiển thị như nhau, banner MSG-25 có "Thử lại".
+- ~~UC-02 E4 dùng MSG-17 (câu lỗi lưu) cho lỗi tải BacklogList~~ **Đã sửa 09/11/2026 (C07, A1):** UC-02 E4 dùng QC-MSG-02 "Chưa tải được. Thử lại" tại chỗ; MSG-17 trỏ về QC-MSG-01.
+- ~~MSG-14, MSG-16, MSG-03 có "Hoàn tác" nhưng không A# nào nói Hoàn tác làm gì~~ **Đã sửa 09/11/2026 (A10):** thêm UC-03 A6 (về đúng bucket, folder, vị trí cũ) và UC-06 A9 (về lại Lưu trữ với lý do cũ); BR-14, BR-15 ghi rõ. Đã vẽ.
+- ~~UC-01 A2 (kéo vào Backlog) và UC-03 (kéo ra ngày) không nói có toast / Hoàn tác~~ **Đã sửa 09/11/2026 (A2):** kéo vào Backlog có MSG-01, kéo ra ngày có MSG-03, kéo từ Lưu trữ ra ngày có MSG-14, kéo sang bucket khác có MSG-01; cùng bucket thì không toast (BR-17, QC-13 mục 2).
+- ~~MSG-11 viết "từ {ngưỡng} ngày", MSG-12 viết "từ {ngưỡng} ngày làm việc"~~ **Đã sửa 09/11/2026 (C06):** MSG-11 viết "ngày làm việc" như MSG-12.
+- ~~UC-06 A7 mở "chi tiết ở chế độ xem" nhưng không có mã SCR~~ **Đã sửa 09/11/2026 (C08):** thêm SCR-08 Chi tiết task chỉ xem, có nút "Khôi phục" hai lựa chọn.
+- ~~UC-05 bước 4: lượt chạy trong \[RolloverEnsure\] lúc mở app thì MSG-11 hiện ngay hay đợi lần mở sau~~ **Đã sửa 09/11/2026 (B07):** hiện ngay khi lượt chạy xong; lượt do job chạy trước thì hiện lần mở app kế tiếp (UC-05 bước 4, UC-07 bước 5).
+- ~~UC-03 A4 gộp G08 (1.0) và G09 Weekly planning (1.1)~~ **Đã sửa 09/11/2026 (A9):** SRS ghi "G09 Weekly planning (1.1)"; sơ đồ chỉ vẽ G08.
+- ~~IA có panel Backlog gọn (Shift+B) nhưng SRS chỉ có SCR-01~~ **Đã sửa 09/11/2026 (C09):** thêm SCR-09 Panel Backlog gọn (cùng bucket với SCR-01, bỏ phần lọc) và UC-02 A9.
+- Mới 09/11/2026 (B08, B09, B11, B12): instance lặp đã sửa riêng / có thời gian thực tế không bị `skipped` (UC-04 A12); MSG-13 thành "Đã bỏ qua"; task có hoạt động không bị tự lưu trữ (UC-05 A4); khôi phục vào Backlog (UC-06 A8, MSG-26). Bucket đích khi khôi phục vào Backlog vẫn là `[giả định]` ("Tuần tới", đầu bucket).

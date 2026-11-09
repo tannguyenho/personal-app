@@ -7,6 +7,8 @@
 > Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). Quy tắc `QC-xx` ở [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md); G03 sở hữu **QC-06** (instance trùng series trong một ngày). Thuật ngữ (series, instance, ngày gốc, ngày ngoại lệ) theo [`CONTEXT.md`](../../CONTEXT.md).
 >
 > Cập nhật thêm theo vòng 5–6: quy tắc `WEEKDAYS` hiển thị là "Thứ Hai–Thứ Sáu", quy tắc lặp không theo lịch làm việc (Q43); sửa giờ timebox của instance là sửa riêng (Q44); bản 1.0 là app Windows cho một người dùng (Q35, Q45, [ADR-0005](../adr/0005-nen-tang-windows-truoc.md)).
+>
+> Cập nhật theo [câu hỏi chốt 09/11/2026](../review/cau-hoi-chot-flow-2026-11-09.md): B08, B14–B16, C10–C16, A1, A3, A6 (QC-08 mục 7, QC-13).
 
 # 1. Bối cảnh và vấn đề
 
@@ -152,6 +154,8 @@ AC08: Hai thiết bị offline cùng bật lặp một task → chỉ một seri
 
 AC09: Ô Lặp hiện lựa chọn "Thứ Hai–Thứ Sáu" (không phải "Ngày làm việc"). Quy tắc này luôn sinh Thứ Hai đến Thứ Sáu, bất kể lịch làm việc hay khung giờ channel của task (Q43).
 
+AC10: Đã có 200 series đang lặp → lỗi hiện ngay dưới ô Lặp; chữ "Quản lý mọi task lặp" là link mở Cài đặt → Task lặp lại (chốt 09/11/2026, C16).
+
 ### US1.2 Ngày không tồn tại ở mọi tháng / năm
 
 AC01: Monthly ngày 31 → tháng 30 ngày sinh vào ngày 30, tháng 2 sinh vào 28 (hoặc 29 năm nhuận); tháng sau quay lại ngày 31.
@@ -177,6 +181,10 @@ AC04: Không sinh instance cho ngày đã qua, kể cả khi job ngừng chạy 
 AC01: Chi tiết instance có banner: "Task này lặp lại {mô tả quy tắc}. Đây là lần {thứ n} của series." + "Sửa series" + Trước / Sau.
 
 AC02: Trước / Sau mở instance liền kề theo ngày; instance đầu thì Trước disabled; chưa sinh tới thì Sau hiện ngày lần kế tiếp.
+
+AC03: Series đã dừng → banner "Series này đã dừng lặp"; Trước / Sau vẫn hiện, bỏ qua các instance đã xoá (chốt 09/11/2026, B16).
+
+AC04: Mở một instance đã bị xoá ở thiết bị khác → thông báo "Task hoặc series này không còn tồn tại", card được gỡ khỏi board (C11).
 
 ### US2.3 Sửa một instance
 
@@ -206,6 +214,10 @@ AC03: Toast nêu số instance thay đổi và số instance được giữ, có
 
 AC04: Instance bị ảnh hưởng đang chạy timer → timer dừng; Hoàn tác không chạy lại timer (C13).
 
+AC05: Số instance được giữ là dòng 2 của cùng toast, không phải toast thứ hai (QC-13 mục 3, A3).
+
+AC06: Mất mạng → mọi thao tác trên cả series (Dừng lặp, Đổi tần suất, Cập nhật theo task này, Xoá và dừng lặp, Đặt giờ bắt đầu) mờ, tooltip "Cần có mạng để sửa cả chuỗi" (QC-08 mục 7, A6, C10). Sửa một instance vẫn làm được khi mất mạng.
+
 ### US3.2 Cập nhật mọi instance chưa xong theo task này
 
 AC01: Tiêu đề, notes, channel, thời lượng, priority, subtask của instance đang mở được chép sang series và mọi instance chưa xong từ hôm nay.
@@ -218,7 +230,7 @@ AC04: Instance đã sửa riêng (kể cả đã sửa giờ timebox, Q44) cũng
 
 ### US3.3 Đặt giờ bắt đầu
 
-AC01: Đặt hoặc xoá giờ "khoảng" cho series; áp cho mọi instance chưa xong từ hôm nay.
+AC01: Đặt hoặc xoá giờ "khoảng" cho series qua bộ chọn giờ bước 15 phút có "Xoá giờ" (SRS G03 SCR-07, C12); áp cho mọi instance chưa xong từ hôm nay.
 
 AC02: Bản 1.0 không tạo timebox. "Lập lịch cứng cho task lặp" do G05 đặc tả (SRS G05 BR-23 / UC-09), phát hành bản 1.1 (Q7).
 
@@ -228,15 +240,15 @@ AC03: Instance đã có timebox (người dùng tự timebox) → chỉ đổi g
 
 ### US4.1 Dừng lặp
 
-AC01: "Sửa series" → "Dừng lặp": không sinh thêm instance; instance chưa xong sau hôm nay bị xoá mềm; instance hôm nay và trước đó giữ nguyên `[giả định]`.
+AC01: "Sửa series" → "Dừng lặp": không sinh thêm instance; instance tương lai chưa động tới bị xoá mềm; instance tương lai đã dời, đã sửa riêng (kể cả sửa giờ timebox) hoặc đã có thời gian thực tế được giữ; instance hôm nay và trước đó giữ nguyên (chốt 09/11/2026, B14).
 
-AC02: Toast có Hoàn tác; banner instance còn lại đổi thành "Series đã dừng lặp".
+AC02: Toast có Hoàn tác, dòng 2 nêu số instance được giữ (A3); banner instance còn lại đổi thành "Series đã dừng lặp".
 
 AC03: Instance đang chạy timer bị ảnh hưởng → dừng timer; instance đã có thời gian thực tế được giữ, không xoá (C13).
 
 ### US4.2 Xoá mọi instance chưa xong và dừng lặp
 
-AC01: Hiện xác nhận có số instance sẽ xoá (khác Sunsama về mức hỏi; thao tác hàng loạt nên hỏi `[giả định]`).
+AC01: Hiện xác nhận có số instance sẽ xoá (khác Sunsama về mức hỏi; thao tác hàng loạt nên hỏi `[giả định]`); nút xác nhận là "Xoá và dừng lặp" (C13).
 
 AC02: Mọi instance chưa xong vào Thùng rác (G02) và ngày gốc của chúng thành ngày ngoại lệ; instance đã xong, đã có thời gian thực tế, trong Lưu trữ giữ nguyên; series dừng; toast có Hoàn tác (C12, C13).
 
@@ -252,7 +264,9 @@ AC03: Series chưa có instance hôm nay → chỉ instance cũ mới nhất rol
 
 AC04: Khôi phục instance "bị bỏ qua" từ Lưu trữ được (G06); hôm nay đã có instance thì vẫn khôi phục, kèm cảnh báo "Ngày này đã có {tên series}" (QC-06).
 
-AC05: Phím D hoặc shutdown "Ngày mai" đưa instance vào ngày đã có instance → instance đó vào Lưu trữ lý do "bị bỏ qua", có toast Hoàn tác (QC-06).
+AC05: Phím D hoặc shutdown "Ngày mai" đưa instance vào ngày đã có instance → instance đó vào Lưu trữ lý do "bị bỏ qua", có toast Hoàn tác (QC-06). Chữ toast do G04 (phím D) và G08 (shutdown) định nghĩa (C15).
+
+AC06: Instance cũ chưa xong nhưng đã sửa riêng hoặc đã có thời gian thực tế không vào Lưu trữ "bị bỏ qua"; được giữ và rollover như task thường, kể cả khi hôm nay đã có instance (chốt 09/11/2026, B08).
 
 ## UC6. Quản lý mọi task lặp
 
@@ -260,9 +274,11 @@ AC05: Phím D hoặc shutdown "Ngày mai" đưa instance vào ngày đã có ins
 
 AC01: "Sửa series" → "Quản lý mọi task lặp" (hoặc Cài đặt → Task lặp lại) liệt kê series: tiêu đề, quy tắc, giờ "khoảng", channel, lần kế tiếp, trạng thái.
 
-AC02: Từ mỗi dòng: mở instance kế tiếp, đổi tần suất, dừng lặp.
+AC02: Từ mỗi dòng: mở instance kế tiếp, đổi tần suất (mở picker ngay trên dòng), dừng lặp (hộp xác nhận ngay trên dòng); không cần mở instance trước (chốt 09/11/2026, B15).
 
 AC03: Lọc "Đang lặp" / "Đã dừng".
+
+AC04: Tải danh sách lỗi → "Chưa tải được. Thử lại" tại chỗ (QC-MSG-02, C14). Mất mạng → đổi tần suất, dừng lặp trên dòng mờ, tooltip "Cần có mạng để sửa cả chuỗi" (A6).
 
 # 8. Chỉ số theo dõi `[giả định]`
 
@@ -290,7 +306,7 @@ AC03: Lọc "Đang lặp" / "Đã dừng".
 
 - Có cần ngày kết thúc series / số lần lặp ở 1.0 không?
 - Instance mới có sao chép priority và subtask không (Sunsama chưa kiểm chứng)?
-- "Dừng lặp" có xoá instance tương lai đã sinh hay giữ lại?
+- "Dừng lặp" có xoá instance tương lai đã sinh hay giữ lại? **Chốt 09/11/2026 (B14):** xoá các instance tương lai chưa động tới; giữ instance đã dời, đã sửa riêng hoặc đã có thời gian thực tế (US4.1 AC01).
 - Xoá mọi instance chưa xong có cần hộp xác nhận hay chỉ toast Hoàn tác như xoá thường (G02)?
 - Monthly theo "thứ N" có lựa chọn "cuối cùng" không?
 - Đã chốt 04/11/2026: "hôm nay" là ngày làm việc, mốc đầu ngày mặc định 04:00, chỉnh trong 00:00–06:00 (Q2, QC-01).
@@ -303,4 +319,7 @@ AC03: Lọc "Đang lặp" / "Đã dừng".
 - Đã chốt 04/11/2026: nhãn quy tắc `WEEKDAYS` là "Thứ Hai–Thứ Sáu", không phải "Ngày làm việc"; quy tắc lặp không theo lịch làm việc (Q43).
 - Đã chốt 04/11/2026: bản 1.0 là app Windows (Flutter), một người dùng; task lặp giao cho người khác để bản sau (Q35, Q45).
 - Có cần quy tắc lặp "theo lịch làm việc" (sinh vào các ngày có trong lịch làm việc chung hoặc khung giờ channel) ở bản sau không? Q43 chỉ chốt 1.0 không có.
-- "Dừng lặp" có xoá instance tương lai đã dời hoặc sửa riêng không, hay giữ như khi đổi tần suất (Q26)?
+- "Dừng lặp" có xoá instance tương lai đã dời hoặc sửa riêng không, hay giữ như khi đổi tần suất (Q26)? **Chốt 09/11/2026 (B14):** giữ, như khi đổi tần suất; instance vẫn gắn series đã dừng.
+- **Chốt 09/11/2026 (B15):** đổi tần suất và dừng lặp làm ngay trên dòng của "Quản lý mọi task lặp", không cần mở instance (US6.1 AC02).
+- **Chốt 09/11/2026 (B16):** series đã dừng vẫn hiện Trước / Sau, bỏ qua instance đã xoá (US2.2 AC03).
+- **Chốt 09/11/2026 (B08):** instance bị lỡ đã sửa riêng hoặc đã có thời gian thực tế không bị lưu trữ "bị bỏ qua", rollover như task thường (US5.1 AC06).

@@ -7,6 +7,8 @@
 > Đã cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). Quy tắc `QC-xx` ở [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md). G03 sở hữu **QC-06** (instance trùng series trong một ngày); trạng thái instance theo QC-03 (G02); "hôm nay" là ngày làm việc (QC-01).
 >
 > Cập nhật thêm theo vòng 5–6: nhãn `WEEKDAYS` là "Thứ Hai–Thứ Sáu" và quy tắc lặp không theo lịch làm việc (Q43, BR-01, BR-03); sửa giờ timebox của instance là sửa riêng `customized` (Q44, BR-07, bảng phạm vi); bản 1.0 là app Windows cho một người dùng (Q35, Q45, [ADR-0005](../adr/0005-nen-tang-windows-truoc.md)).
+>
+> Cập nhật theo [câu hỏi chốt 09/11/2026](../review/cau-hoi-chot-flow-2026-11-09.md): B08 (phần instance bị lỡ), B14–B16, C10–C16; quy tắc chung A1, A3, A6 theo **QC-08 mục 7** (mất mạng) và **QC-13** (QC-MSG-01 lỗi lưu, QC-MSG-02 lỗi tải, gộp hai thông báo thành một toast).
 
 ## 1. Tổng quan
 
@@ -43,32 +45,32 @@
 | BR-05 | **Trường sao chép.** Instance mới lấy từ mẫu của series: tiêu đề, notes, channel, `plannedMin`, `approxTime`; priority và subtask (chưa xong) `[giả định]`. Không sao chép comment, objective, timebox, thời gian thực tế, nhật ký; ngoại lệ: series đã được "Gắn cho cả series" với một objective thì instance sinh ra có ngày dự định trong tuần của objective đó được chép `objectiveId` (G09 BR-25). Mẫu = ảnh chụp task lúc bật lặp, chỉ đổi qua BR-08 (c) và khi channel của mẫu bị xoá (G02 BR-14, C10) |
 | BR-06 | **Giờ.** Instance không cố định giờ, hiện projection (G04). `approxTime` chỉ hiện trên card. **Bản 1.0 không tạo timebox cho instance.** Lập lịch cứng cho task lặp (cửa sổ 7 ngày `[giả định]`) do G05 sở hữu, phát hành bản 1.1 (Q7), đặc tả ở G05 BR-23 / UC-09; G03 chỉ lưu `approxTime` làm đầu vào |
 | BR-07 | **Sửa một instance** chỉ đổi instance đó, không hỏi phạm vi, không đổi mẫu. Dời ngày instance giữ ngày gốc (`seriesDate`); mọi đường đổi ngày áp QC-06 (BR-16). Hoàn thành / xoá instance theo G02; hoàn thành giữ nguyên ngày dự định (G02 BR-08 d, Q12); xoá → ngày gốc thành ngày ngoại lệ (BR-15). Không ảnh hưởng instance khác. Xoá instance đầu không dừng series. Sửa riêng một trường thuộc BR-05 (trừ tích / bỏ tích subtask) đặt cờ `customized = true` `[giả định]`. **Sửa giờ timebox** của instance (đổi giờ bắt đầu / kết thúc hoặc thời lượng của timebox, kể cả kéo trên lịch; đổi giờ sự kiện ở lịch ngoài được đồng bộ về theo G05 cũng tính `[giả định]`) đặt `customized = true` (Q44), ở 1.0 với timebox người dùng tự tạo và từ 1.1 với timebox lập lịch cứng (G05 BR-23 e). Đặt mới hoặc gỡ timebox cũng đặt cờ này `[giả định]`. Cờ chỉ bật, không tự tắt. Dời ngày được nhận biết qua `startDate` ≠ `seriesDate`. Hệ quả với bảng phạm vi: instance `customized` (kể cả chỉ vì sửa giờ timebox) nằm ở cột "đã dời / sửa riêng" |
-| BR-08 | **Sửa series** (menu "Sửa series"), phạm vi từng thao tác theo **bảng phạm vi** dưới đây (C12). (a) **Dừng lặp**: `stoppedAt` = now, không sinh thêm. (b) **Đổi tần suất**: cập nhật quy tắc, so khớp theo **ngày gốc** (Q26), rồi chạy UC-02 sinh ngày mới. (c) **Cập nhật mọi instance chưa xong theo task này**: chép trường BR-05 của instance đang mở vào mẫu và các instance trong phạm vi; subtask gộp theo tiêu đề để giữ tiến độ (C12). (d) **Xoá mọi instance chưa xong và dừng lặp**: xoá mềm các instance trong phạm vi, dừng series; cần xác nhận `[giả định]`. (e) **Đặt giờ bắt đầu**: đặt / xoá `approxTime` cho mẫu và các instance trong phạm vi. (f) **Quản lý mọi task lặp**: mở SCR-05. Mọi thao tác (a)–(e) không đụng instance `LUU_TRU`, `DA_XOA` (C12) và áp BR-17 cho instance có timer hoặc thời gian thực tế (C13) |
+| BR-08 | **Sửa series** (menu "Sửa series"), phạm vi từng thao tác theo **bảng phạm vi** dưới đây (C12). (a) **Dừng lặp**: `stoppedAt` = now, không sinh thêm; xoá mềm các instance tương lai chưa động tới; giữ instance đã dời, đã sửa riêng hoặc đã có thời gian thực tế (chốt 09/11/2026, B14). (b) **Đổi tần suất**: cập nhật quy tắc, so khớp theo **ngày gốc** (Q26), rồi chạy UC-02 sinh ngày mới. (c) **Cập nhật mọi instance chưa xong theo task này**: chép trường BR-05 của instance đang mở vào mẫu và các instance trong phạm vi; subtask gộp theo tiêu đề để giữ tiến độ (C12). (d) **Xoá mọi instance chưa xong và dừng lặp**: xoá mềm các instance trong phạm vi, dừng series; cần xác nhận `[giả định]`. (e) **Đặt giờ bắt đầu**: đặt / xoá `approxTime` cho mẫu và các instance trong phạm vi. (f) **Quản lý mọi task lặp**: mở SCR-05. "Đổi tần suất" (b) và "Dừng lặp" (a) cũng làm được ngay trên dòng của SCR-05, không cần mở instance (B15). Thao tác (a)–(e) cần mạng; mất mạng thì nút mờ, tooltip MSG-27 (QC-08 mục 7, A6) Mọi thao tác (a)–(e) không đụng instance `LUU_TRU`, `DA_XOA` (C12) và áp BR-17 cho instance có timer hoặc thời gian thực tế (C13) |
 | BR-09 | Mọi thao tác BR-08 (a)–(e) có Hoàn tác trong toast ≥ 5 giây; Hoàn tác trả quy tắc, mẫu và các instance bị ảnh hưởng về như trước: instance bị xoá hẳn được tạo lại, instance bị tách được gắn lại series, liên kết timebox và sự kiện ngoài khôi phục theo QC-05. Hoàn tác **không** chạy lại timer đã bị dừng (BR-17) |
-| BR-10 | **Instance bị bỏ lỡ**: theo QC-06 (BR-16), G06 thực thi trong rollover. Series đã có instance hôm nay (QC-06 mục 1, B5) → instance quá khứ chưa xong chuyển `LUU_TRU`, `archiveReason = skipped`, chỉ ghi nhật ký (EC-30). Series chưa có instance hôm nay → chỉ instance quá khứ mới nhất (ngày gốc lớn nhất) rollover, các instance cũ hơn → `skipped` `[giả định]`. Instance được rollover tính số ngày bị hoãn như task thường (QC-04) |
+| BR-10 | **Instance bị bỏ lỡ**: theo QC-06 (BR-16), G06 thực thi trong rollover. Series đã có instance hôm nay (QC-06 mục 1, B5) → instance quá khứ chưa xong chuyển `LUU_TRU`, `archiveReason = skipped`, chỉ ghi nhật ký (EC-30). Series chưa có instance hôm nay → chỉ instance quá khứ mới nhất (ngày gốc lớn nhất) rollover, các instance cũ hơn → `skipped` `[giả định]`. Instance được rollover tính số ngày bị hoãn như task thường (QC-04). **Miễn** (chốt 09/11/2026, B08): instance quá khứ chưa xong đã sửa riêng (`customized`) hoặc đã có thời gian thực tế không chuyển `skipped`, giữ lại và rollover như task thường (G06 BR-11), kể cả khi hôm nay đã có instance của series |
 | BR-11 | "Hôm nay" là ngày làm việc theo QC-01. Đổi timezone không đổi ngày dự định và ngày gốc đã sinh (QC-01 mục 4) |
 | BR-12 | Tối đa 200 series `DANG_LAP` / người dùng `[giả định]`. Series đã dừng không bật lại; bật Lặp lại trên một instance của series đã dừng → tạo series mới từ instance đó |
 | BR-13 | Nhật ký (\[ActivityLog\], G02): bật lặp, đổi quy tắc, áp mẫu, dừng ghi trên instance thực hiện; instance do job sinh ghi tác nhân `system` "Tạo từ series {tiêu đề}"; instance bị tách ghi "Tách khỏi series do đổi tần suất"; thêm ngày ngoại lệ ghi trên series |
 | BR-14 | Series thuộc người dùng tạo; chỉ người đó xem và sửa. Bản 1 chỉ một người dùng; workspace nhiều thành viên và giao task để bản sau (Q35, G12) |
 | BR-15 | **Ngày ngoại lệ** (Q26). Series lưu danh sách `exceptionDates`. Người dùng xoá một instance (G02 UC-04, BR-08 d) → ngày gốc của instance đó thêm vào danh sách, **vĩnh viễn**: khôi phục instance từ Thùng rác, Hoàn tác, hay Thùng rác xoá vĩnh viễn sau 30 ngày đều không gỡ ngày ngoại lệ. Instance do hệ thống xoá hẳn khi đổi quy tắc (BR-08 b) không tạo ngày ngoại lệ. Job không bao giờ sinh instance cho ngày ngoại lệ (BR-04). Instance đã tách khỏi series bị xoá không tạo ngày ngoại lệ |
-| BR-16 | **Instance trùng series trong một ngày**: G03 sở hữu quy tắc **QC-06**. "Ngày đã có instance" theo QC-06 mục 1 (B5). Đường tự động / hàng loạt (rollover G06, phím D G04, shutdown "Ngày mai" G08) → instance được đưa vào chuyển `LUU_TRU` lý do `skipped`, toast Hoàn tác (rollover chỉ ghi nhật ký). Đường thủ công từng task (kéo thả, chọn ngày G04; khôi phục G02, G06) → cho phép, cảnh báo "Ngày này đã có {tên series}" — thông báo gốc là G03 MSG-21; G02 MSG-24, G04 MSG-23, G06 MSG-21 dùng lại nội dung này. Nhóm sở hữu từng đường thực thi, G03 không tự chặn |
-| BR-17 | **Timer và thời gian thực tế khi đổi hoặc dừng series** (C13). Instance trong phạm vi BR-08 (a), (b), (d) đang chạy timer → dừng timer (G07) trước khi áp thao tác. Instance có bản ghi thời gian (kể cả vừa dừng timer) → **không xoá**: giữ lại; với (b) nếu ngày gốc không khớp quy tắc mới thì tách khỏi series như instance đã dời / sửa riêng. Toast nêu số instance được giữ (MSG-24) |
+| BR-16 | **Instance trùng series trong một ngày**: G03 sở hữu quy tắc **QC-06**. "Ngày đã có instance" theo QC-06 mục 1 (B5). Đường tự động / hàng loạt (rollover G06, phím D G04, shutdown "Ngày mai" G08) → instance được đưa vào chuyển `LUU_TRU` lý do `skipped`, toast Hoàn tác (rollover chỉ ghi nhật ký). Chữ toast do nhóm sở hữu đường đó định nghĩa: phím D là G04 MSG-24, shutdown "Ngày mai" là G08 (UC-02 A9); G03 không định nghĩa lại (C15). Đường thủ công từng task (kéo thả, chọn ngày G04; khôi phục G02, G06) → cho phép, cảnh báo "Ngày này đã có {tên series}" — thông báo gốc là G03 MSG-21; G02 MSG-24, G04 MSG-23, G06 MSG-21 dùng lại nội dung này. Nhóm sở hữu từng đường thực thi, G03 không tự chặn |
+| BR-17 | **Timer và thời gian thực tế khi đổi hoặc dừng series** (C13). Instance trong phạm vi BR-08 (a), (b), (d) đang chạy timer → dừng timer (G07) trước khi áp thao tác. Instance có bản ghi thời gian (kể cả vừa dừng timer) → **không xoá**: giữ lại; với (b) nếu ngày gốc không khớp quy tắc mới thì tách khỏi series như instance đã dời / sửa riêng. Toast nêu số instance được giữ (MSG-24): MSG-24 là dòng 2 của cùng toast với MSG-07 / MSG-09 / MSG-11, không phải toast riêng (QC-13 mục 3, A3) |
 
 **Bảng phạm vi sửa series** (BR-08; C12, C13, Q26). "Gắn series" = instance còn `seriesId` của series này. "Hôm nay", "tương lai" so theo ngày dự định của instance.
 
 | **Thao tác** | **`KE_HOACH` tương lai, chưa dời, chưa sửa riêng (kể cả chưa sửa giờ timebox), không có thời gian thực tế** | **`KE_HOACH` tương lai đã dời / sửa riêng (gồm sửa giờ timebox, Q44) / có thời gian thực tế** | **`KE_HOACH` hôm nay** | **`KE_HOACH` quá khứ (chưa rollover)** | **`HOAN_THANH`** | **`LUU_TRU`, `DA_XOA`** | **Mẫu** |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| (a) Dừng lặp | Xoá mềm `[giả định]` | Đã dời / sửa riêng: xoá mềm `[giả định]`. Có thời gian thực tế: giữ (BR-17) | Giữ | Giữ | Giữ | Không đụng | Giữ, series `DA_DUNG` |
+| (a) Dừng lặp | Xoá mềm (B14) | Giữ, vẫn gắn series đã dừng (B14, BR-17) | Giữ | Giữ | Giữ | Không đụng | Giữ, series `DA_DUNG` |
 | (b) Đổi tần suất | Ngày gốc khớp quy tắc mới → giữ; không khớp → **xoá hẳn**, không tạo ngày ngoại lệ (BR-15) | Ngày gốc khớp → giữ; không khớp → giữ và **tách khỏi series** (Q26, BR-17), banner MSG-25 | Giữ (EC-29) | Giữ (EC-29) | Giữ | Không đụng | Quy tắc mới |
 | (c) Cập nhật theo task này | Chép trường BR-05; subtask gộp theo tiêu đề | Như cột trước (ghi đè cả phần sửa riêng); timebox giữ nguyên vì không thuộc BR-05; cờ `customized` giữ | Như cột trước | Giữ | Giữ | Không đụng | Chép trường BR-05 |
-| (d) Xoá mọi instance chưa xong và dừng | Xoá mềm, tạo ngày ngoại lệ (BR-15) | Xoá mềm; có thời gian thực tế → giữ (BR-17) | Như cột trước | Như cột trước | Giữ | Không đụng | Giữ, series `DA_DUNG` |
+| (d) Xoá mọi instance chưa xong và dừng lặp | Xoá mềm, tạo ngày ngoại lệ (BR-15) | Xoá mềm; có thời gian thực tế → giữ (BR-17) | Như cột trước | Như cột trước | Giữ | Không đụng | Giữ, series `DA_DUNG` |
 | (e) Đặt giờ bắt đầu | Đặt / xoá `approxTime` | Như cột trước; instance có timebox giữ nguyên timebox, không dời theo `approxTime` | Như cột trước | Giữ | Giữ | Không đụng | Đặt / xoá `approxTime` |
 
 **Gộp subtask theo tiêu đề** ở (c) (C12): subtask trên instance có cùng tiêu đề với subtask của mẫu mới → giữ trạng thái xong và thời gian thực tế, cập nhật thời lượng và thứ tự; subtask mới trong mẫu → thêm ở `CHUA_XONG`; subtask không còn trong mẫu → gỡ nếu chưa xong và chưa có thời gian thực tế, ngược lại giữ `[giả định]`.
 
 Instance bị xoá mềm, xoá hẳn hay tách có timebox → xử lý timebox theo QC-05 dòng "Xoá" (tách: giữ timebox như task thường).
 
-**Hệ quả của Q44 (sửa giờ timebox = sửa riêng).** Instance chỉ khác mẫu ở giờ timebox vẫn thuộc cột "đã dời / sửa riêng": (a) Dừng lặp → xoá mềm `[giả định]`, timebox theo QC-05 dòng "Xoá"; (b) Đổi tần suất, ngày gốc không khớp → **không** bị xoá hẳn mà được giữ, tách khỏi series cùng timebox (MSG-24, MSG-25); (c) Cập nhật theo task này → nội dung bị ghi đè, timebox giữ; (d) Xoá mọi instance chưa xong → xoá mềm, timebox theo QC-05 dòng "Xoá"; (e) Đặt giờ bắt đầu → chỉ đổi `approxTime`. Từ bản 1.1, lập lịch cứng (G05 BR-23) không ghi đè timebox của instance `customized`.
+**Hệ quả của Q44 (sửa giờ timebox = sửa riêng).** Instance chỉ khác mẫu ở giờ timebox vẫn thuộc cột "đã dời / sửa riêng": (a) Dừng lặp → giữ cùng timebox (B14); (b) Đổi tần suất, ngày gốc không khớp → **không** bị xoá hẳn mà được giữ, tách khỏi series cùng timebox (MSG-24, MSG-25); (c) Cập nhật theo task này → nội dung bị ghi đè, timebox giữ; (d) Xoá mọi instance chưa xong → xoá mềm, timebox theo QC-05 dòng "Xoá"; (e) Đặt giờ bắt đầu → chỉ đổi `approxTime`. Từ bản 1.1, lập lịch cứng (G05 BR-23) không ghi đè timebox của instance `customized`.
 
 ## 4. Trạng thái
 
@@ -77,7 +79,7 @@ Instance bị xoá mềm, xoá hẳn hay tách có timebox → xử lý timebox 
 | **Trạng thái** | **Điều kiện** | **Hiển thị** |
 | --- | --- | --- |
 | `DANG_LAP` | `stoppedAt` trống | Banner "Task này lặp lại {quy tắc}"; biểu tượng lặp trên card; job sinh instance |
-| `DA_DUNG` | `stoppedAt` có giá trị | Banner "Series đã dừng lặp" trên instance còn lại; trong SCR-05 ở bộ lọc "Đã dừng"; job bỏ qua |
+| `DA_DUNG` | `stoppedAt` có giá trị | Banner "Series đã dừng lặp" trên instance còn lại, Trước / Sau vẫn hiện (B16); trong SCR-05 ở bộ lọc "Đã dừng"; job bỏ qua |
 
 Chuyển trạng thái: `DANG_LAP` → `DA_DUNG` (UC-05, BR-08 a, d). `DA_DUNG` → `DANG_LAP` chỉ qua Hoàn tác trong toast; sau đó không bật lại (BR-12). Đổi tần suất, áp mẫu, đặt giờ không đổi trạng thái series.
 
@@ -90,7 +92,7 @@ Instance dùng đúng bộ trạng thái task của **QC-03** (G02), không có 
 | `KE_HOACH` | Có ngày gốc (`seriesDate`) không đổi khi dời | Card trên cột ngày dự định, giờ projection hoặc `approxTime`, biểu tượng lặp |
 | `BACKLOG` | Instance bị đưa vào backlog vẫn giữ ngày gốc | Panel Backlog (G06), biểu tượng lặp |
 | `HOAN_THANH` | Hoàn thành giữ nguyên ngày dự định (G02 BR-08 d) | Như task xong (G02); không bị BR-08 thay đổi |
-| `LUU_TRU` | Lý do `skipped` khi áp QC-06 đường tự động (BR-16); `stale` khi bị hoãn lâu (QC-04) | Chỉ trong Lưu trữ (G06), nhãn lý do theo G06: `skipped` G06 MSG-13, `stale` G06 MSG-12; BR-08 không đụng |
+| `LUU_TRU` | Lý do `skipped` khi áp QC-06 đường tự động (BR-16); `stale` khi bị hoãn lâu (QC-04) | Chỉ trong Lưu trữ (G06), nhãn lý do theo G06: `skipped` G06 MSG-13 "Đã bỏ qua" (G06 B09), `stale` G06 MSG-12; BR-08 không đụng |
 | `DA_XOA` | Ngày gốc đã thành ngày ngoại lệ nếu do người dùng xoá (BR-15) | Thùng rác (G02); BR-08 không đụng |
 
 Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` = null, giữ `detachedFromSeriesId` để tra cứu, BR-08 b), `customized` (BR-07).
@@ -134,9 +136,9 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | --- | --- | --- |
 | E1 | `interval` ngoài 1–99 | MSG-02 tại ô, nút Lưu disabled |
 | E2 | `WEEKLY` không chọn thứ nào | MSG-03, nút Lưu disabled |
-| E3 | Đã có 200 series đang lặp | MSG-14 có link "Quản lý mọi task lặp" |
+| E3 | Đã có 200 series đang lặp | MSG-14 hiện ngay dưới ô Lặp (SCR-01 #10); "Quản lý mọi task lặp" là link mở Cài đặt → Task lặp lại (SCR-05, UC-07) (chốt 09/11/2026, C16) |
 | E4 | Mất mạng | Lưu vào hàng đợi (QC-08); card có biểu tượng "chờ đồng bộ"; instance chỉ hiện khi server sinh xong |
-| E5 | \[SeriesCreate\] lỗi 5xx / timeout | MSG-12 có "Thử lại"; task không đổi |
+| E5 | \[SeriesCreate\] lỗi 5xx / timeout | MSG-12 (QC-MSG-01) có "Thử lại"; task không đổi |
 | E6 | (1.1) Workspace chỉ đọc (QC-09) | MSG-13, không tạo |
 | E7 | Task đã `HOAN_THANH` | Mục "Lặp lại" disabled, tooltip MSG-22; API trả 409 `TASK_COMPLETED` (BR-02, C14) |
 | E8 | Task đã được bật lặp trên thiết bị khác (lệnh offline tới sau) | 409 `ALREADY_REPEATING`; bỏ lệnh khỏi hàng đợi, tải lại task và series, MSG-23 (QC-08 mục 4) |
@@ -199,8 +201,8 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | A1 | Bấm "Trước" / "Sau" | Mở chi tiết instance liền kề; instance đầu → "Trước" disabled |
 | A2 | Lần kế tiếp chưa được sinh (ngoài 60 ngày) | "Sau" disabled, tooltip MSG-20 |
 | A3 | Bấm "Sửa series" | Mở **SCR-03** (UC-04, UC-05) |
-| A4 | Dời instance sang ngày khác | Theo G04 và QC-05; giữ ngày gốc (BR-07). Ngày đích đã có instance của cùng series → áp QC-06 (BR-16): kéo thả / chọn ngày cho phép kèm MSG-21; phím D → instance chuyển `LUU_TRU` lý do `skipped`, toast Hoàn tác |
-| A5 | Series `DA_DUNG` | Banner MSG-15; không có Trước / Sau tới instance đã xoá |
+| A4 | Dời instance sang ngày khác | Theo G04 và QC-05; giữ ngày gốc (BR-07). Ngày đích đã có instance của cùng series → áp QC-06 (BR-16): kéo thả / chọn ngày cho phép kèm MSG-21; phím D → instance chuyển `LUU_TRU` lý do `skipped`, toast Hoàn tác là G04 MSG-24 (G03 không định nghĩa, C15) |
+| A5 | Series `DA_DUNG` | Banner MSG-15; Trước / Sau vẫn hiện, bỏ qua các instance đã xoá (chốt 09/11/2026, B16) |
 | A6 | Hoàn thành instance ở ngày tương lai | Giữ nguyên ngày dự định (G02 BR-08 d, Q12) |
 | A7 | Xoá instance | Theo G02 UC-04 A4; ngày gốc thành ngày ngoại lệ (BR-15) |
 | A8 | Instance đã tách khỏi series | Banner MSG-25 thay SCR-02; không có "Sửa series", Trước / Sau |
@@ -210,14 +212,15 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| E1 | Lỗi khi lưu | Như G02 UC-02 E4: trả trường về giá trị cũ, hiện MSG-10 của G02 |
+| E1 | Lỗi khi lưu | Như G02 UC-02 E4: trả trường về giá trị cũ, hiện QC-MSG-01 (G02 MSG-10 dùng câu này, QC-13 mục 1, A1) |
 | E2 | Instance liền kề đã bị xoá khi bấm Trước / Sau | Bỏ qua, mở instance kế tiếp còn tồn tại |
+| E3 | Mở instance đã bị xoá ở thiết bị khác (404 `NOT_FOUND`) | MSG-17; không mở chi tiết (đang mở thì đóng), gỡ card khỏi board (chốt 09/11/2026, C11) |
 
 ### UC-04 Sửa series: đổi tần suất, đặt giờ, áp nội dung
 
 | **Mục** | **Nội dung** |
 | --- | --- |
-| Tiền điều kiện | Series `DANG_LAP`; người dùng đang mở một instance |
+| Tiền điều kiện | Series `DANG_LAP`; người dùng đang mở một instance, hoặc (chỉ "Đổi tần suất") đang ở danh sách SCR-05 (A7, B15); có mạng (E4) |
 | Hậu điều kiện thành công | Quy tắc / giờ / mẫu cập nhật; instance bị ảnh hưởng cập nhật theo BR-08 (b), (c), (e) và bảng phạm vi |
 | Hậu điều kiện thất bại | Series và instance không đổi |
 
@@ -236,11 +239,12 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | A1 | "Cập nhật mọi instance chưa xong theo task này" | Gọi \[SeriesApplyFrom\] với id instance đang mở; áp BR-08 (c) theo bảng phạm vi, subtask gộp theo tiêu đề; toast MSG-08 |
-| A2 | "Đặt giờ bắt đầu" | Mở chọn giờ (bước 15 phút) + "Xoá giờ"; \[SeriesUpdate\] `approxTime`; áp BR-08 (e); toast MSG-18 |
+| A2 | "Đặt giờ bắt đầu" | Mở **SCR-07** bộ chọn giờ bắt đầu (bước 15 phút + "Xoá giờ", C12); \[SeriesUpdate\] `approxTime`; áp BR-08 (e); toast MSG-18 |
 | A3 | Bấm Hoàn tác | Gọi \[SeriesUpdate\] / \[SeriesApplyFrom\] với `undoToken`; khôi phục theo BR-09 |
 | A4 | Quy tắc mới giống quy tắc cũ | Đóng SCR-01, không gọi API |
 | A5 | Có instance quá khứ, hôm nay, đã xong, `LUU_TRU` hoặc `DA_XOA` (EC-29, C12) | Giữ nguyên |
-| A6 | Có instance tương lai đã dời, sửa riêng (gồm sửa giờ timebox, Q44), đang chạy timer hoặc có thời gian thực tế mà ngày gốc không khớp quy tắc mới | Dừng timer nếu đang chạy; giữ instance và tách khỏi series (BR-08 b, BR-17); toast MSG-07 kèm MSG-24 |
+| A6 | Có instance tương lai đã dời, sửa riêng (gồm sửa giờ timebox, Q44), đang chạy timer hoặc có thời gian thực tế mà ngày gốc không khớp quy tắc mới | Dừng timer nếu đang chạy; giữ instance và tách khỏi series (BR-08 b, BR-17); một toast hai dòng: dòng 1 MSG-07 kèm Hoàn tác, dòng 2 MSG-24 (QC-13 mục 3, A3) |
+| A7 | Từ SCR-05, menu dòng → "Đổi tần suất" | Mở SCR-01 với quy tắc của series ngay trên dòng, không mở instance; tiếp bước 3–5 (chốt 09/11/2026, B15). "Cập nhật theo task này" và "Đặt giờ bắt đầu" chỉ có trong SCR-03 |
 
 **Luồng lỗi**
 
@@ -248,13 +252,14 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | --- | --- | --- |
 | E1 | Version lệch (series vừa sửa ở thiết bị khác) | 412 → tải lại series, MSG-16, giữ SCR-01 mở với quy tắc mới nhất |
 | E2 | Vi phạm BR-01 | MSG-02 / MSG-03 |
-| E3 | Lỗi 5xx / timeout | MSG-12; series không đổi |
+| E3 | Lỗi 5xx / timeout | MSG-12 (QC-MSG-01); series không đổi |
+| E4 | Mất mạng | Các mục (a)–(e) trong SCR-03 và "Đổi tần suất" trên dòng SCR-05 mờ, tooltip MSG-27; không gọi API (QC-08 mục 7, chốt 09/11/2026, C10 / A6) |
 
 ### UC-05 Dừng lặp / xoá mọi instance chưa xong
 
 | **Mục** | **Nội dung** |
 | --- | --- |
-| Tiền điều kiện | Series `DANG_LAP` |
+| Tiền điều kiện | Series `DANG_LAP`; có mạng (E3) |
 | Hậu điều kiện thành công | Series `DA_DUNG`; instance bị xoá mềm hoặc giữ theo BR-08 (a) hoặc (d) và bảng phạm vi |
 | Hậu điều kiện thất bại | Series `DANG_LAP`, instance không đổi |
 
@@ -263,23 +268,25 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | **Bước** | **Actor** | **Mô tả** |
 | --- | --- | --- |
 | 1 | Người dùng | SCR-03 → "Dừng lặp" |
-| 2 | Hệ thống | Gọi \[SeriesStop\]; server đặt `stoppedAt`, áp BR-08 (a) theo bảng phạm vi (xoá mềm instance tương lai chưa xong, trừ instance có thời gian thực tế) |
-| 3 | Hệ thống | Gỡ instance khỏi board; timebox của instance bị xoá xử lý theo QC-05 dòng "Xoá"; toast MSG-09 có Hoàn tác |
+| 2 | Hệ thống | Gọi \[SeriesStop\]; server đặt `stoppedAt`, áp BR-08 (a) theo bảng phạm vi: xoá mềm instance tương lai chưa động tới; giữ instance đã dời, đã sửa riêng hoặc đã có thời gian thực tế (B14) |
+| 3 | Hệ thống | Gỡ instance bị xoá khỏi board; timebox của instance bị xoá xử lý theo QC-05 dòng "Xoá"; toast MSG-09 có Hoàn tác; có instance được giữ thì MSG-24 là dòng 2 của cùng toast (QC-13 mục 3, A3) |
 
 **Luồng thay thế**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | "Xoá mọi instance chưa xong và dừng lặp" | Mở **SCR-04** (MSG-10, số instance) → "Xoá và dừng" → \[SeriesStop\] `deleteIncomplete=true`; áp BR-08 (d); toast MSG-11 có Hoàn tác |
-| A2 | Instance trong phạm vi đang chạy timer | Dừng timer (G07); instance đã có thời gian thực tế → giữ, không xoá (BR-17, C13); toast kèm MSG-24 |
+| A1 | "Xoá mọi instance chưa xong và dừng lặp" | Mở **SCR-04** (MSG-10, số instance) → "Xoá và dừng lặp" (C13) → \[SeriesStop\] `deleteIncomplete=true`; áp BR-08 (d); toast MSG-11 có Hoàn tác |
+| A2 | Instance trong phạm vi đang chạy timer | Dừng timer (G07); instance đã có thời gian thực tế → giữ, không xoá (BR-17, C13); một toast hai dòng: dòng 1 MSG-09 / MSG-11 kèm Hoàn tác, dòng 2 MSG-24 (QC-13 mục 3, A3) |
 | A3 | Bấm Hoàn tác | Khôi phục các instance và đặt lại series `DANG_LAP` (BR-09); timer đã dừng không chạy lại |
+| A4 | Từ SCR-05, menu dòng → "Dừng lặp" | Mở **SCR-08** (MSG-28) ngay trên dòng, không mở instance; "Dừng lặp" → bước 2–3; "Huỷ" đóng, không đổi (chốt 09/11/2026, B15) |
 
 **Luồng lỗi**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
 | E1 | Series đã dừng ở thiết bị khác | 409 `SERIES_STOPPED` → MSG-15, làm mới |
-| E2 | Lỗi 5xx / timeout | MSG-12; không xoá instance nào |
+| E2 | Lỗi 5xx / timeout | MSG-12 (QC-MSG-01); không xoá instance nào |
+| E3 | Mất mạng | "Dừng lặp", "Xoá mọi instance chưa xong và dừng lặp" trong SCR-03 và "Dừng lặp" trên dòng SCR-05 mờ, tooltip MSG-27; không gọi API (QC-08 mục 7, C10 / A6) |
 
 ### UC-06 Xử lý instance trùng series trong một ngày (QC-06; rollover G06, phím D G04, shutdown G08)
 
@@ -304,9 +311,10 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | A1 | Series chưa có instance hôm nay | Instance quá khứ mới nhất rollover theo G06; instance cũ hơn → `skipped` `[giả định]` (BR-10) |
 | A2 | Series `DA_DUNG` | Không áp BR-10; instance rollover như task thường (G06) |
 | A3 | Người dùng khôi phục instance `skipped` từ Lưu trữ, hoặc instance từ Thùng rác, vào ngày đã có instance | Đường thủ công (QC-06 mục 3): cho phép, cảnh báo MSG-21 (G06 / G02 hiển thị) |
-| A4 | Phím D (G04) hoặc shutdown "Ngày mai" (G08, kể cả "Áp dụng cho tất cả") đưa instance vào ngày đã có instance | Đường tự động / hàng loạt (QC-06 mục 2): instance được đưa vào chuyển `LUU_TRU` lý do `skipped`, toast Hoàn tác (G04 / G08 hiển thị) |
+| A4 | Phím D (G04) hoặc shutdown "Ngày mai" (G08, kể cả "Áp dụng cho tất cả") đưa instance vào ngày đã có instance | Đường tự động / hàng loạt (QC-06 mục 2): instance được đưa vào chuyển `LUU_TRU` lý do `skipped`, toast Hoàn tác: G04 MSG-24 / G08 UC-02 A9; G03 không định nghĩa chữ (C15) |
 | A5 | Kéo thả hoặc chọn ngày (G04) đưa instance vào ngày đã có instance | Đường thủ công: cho phép, cảnh báo MSG-21 |
 | A6 | Instance đã tách khỏi series | Không áp QC-06 (không còn thuộc series) |
+| A7 | Instance quá khứ chưa xong đã sửa riêng (`customized`) hoặc đã có thời gian thực tế | Không chuyển `skipped`; rollover như task thường theo G06, kể cả khi hôm nay đã có instance của series (BR-10, chốt 09/11/2026, B08) |
 
 **Luồng lỗi**
 
@@ -328,8 +336,8 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | --- | --- | --- |
 | 1 | Người dùng | SCR-03 → "Quản lý mọi task lặp" hoặc Cài đặt → "Task lặp lại" |
 | 2 | Hệ thống | Gọi \[SeriesList\] (`status=active` mặc định); mở **SCR-05** |
-| 3 | Người dùng | Chọn một dòng: "Mở lần kế tiếp", "Đổi tần suất" hoặc "Dừng lặp" |
-| 4 | Hệ thống | Chuyển sang UC-03 / UC-04 / UC-05 tương ứng |
+| 3 | Người dùng | Menu dòng: "Mở lần kế tiếp", "Đổi tần suất" hoặc "Dừng lặp" |
+| 4 | Hệ thống | "Mở lần kế tiếp" → UC-03. "Đổi tần suất" → SCR-01 ngay trên dòng (UC-04 A7). "Dừng lặp" → SCR-08 ngay trên dòng (UC-05 A4). Không cần mở instance (chốt 09/11/2026, B15) |
 
 **Luồng thay thế**
 
@@ -342,7 +350,9 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| E1 | \[SeriesList\] lỗi | MSG-12 có "Thử lại" |
+| E1 | \[SeriesList\] lỗi | QC-MSG-02 "Chưa tải được. Thử lại" tại chỗ trong SCR-05; giữ dữ liệu lần cuối nếu có (QC-13 mục 1, chốt 09/11/2026, C14) |
+| E2 | Mất mạng | Hiện dữ liệu lần cuối; "Đổi tần suất", "Dừng lặp" trên dòng mờ, tooltip MSG-27 (QC-08 mục 7, C10 / A6) |
+| E3 | "Mở lần kế tiếp" / "Mở instance cuối" khi instance hoặc series đã bị xoá ở thiết bị khác (404 `NOT_FOUND`) | MSG-17; tải lại danh sách (C11) |
 
 ## 6. Điểm vào
 
@@ -369,6 +379,7 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | 7 | "Lưu" | Button | – | Disabled khi vi phạm BR-01 |
 | 8 | Ngày đầu tuần | Hint | – | Hiện khi Hằng tuần, N ≥ 2: MSG-26 (BR-03, UC-01 A7) |
 | 9 | Lần đầu | Hint | – | "Lần đầu: {ngày}" = `anchorDate` dự kiến (BR-02) |
+| 10 | Lỗi giới hạn series | Inline | – | MSG-14 ngay dưới ô Lặp (#1); "Quản lý mọi task lặp" là link mở Cài đặt → Task lặp lại (SCR-05) (UC-01 E3, C16) |
 
 ### SCR-02 Banner series (đầu chi tiết instance)
 
@@ -376,7 +387,7 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | --- | --- | --- | --- |
 | 1 | Mô tả | Text | MSG-06; series dừng → MSG-15; instance đã tách → MSG-25 (UC-03 A8) |
 | 2 | "Sửa series" | Link | Mở SCR-03; ẩn khi series `DA_DUNG` hoặc instance đã tách |
-| 3 | "Trước" / "Sau" | Button | UC-03 A1, A2; ẩn khi instance đã tách |
+| 3 | "Trước" / "Sau" | Button | UC-03 A1, A2; ẩn khi instance đã tách; series `DA_DUNG` vẫn hiện, bỏ qua instance đã xoá (UC-03 A5, B16) |
 
 ### SCR-03 Menu "Sửa series"
 
@@ -386,8 +397,9 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | 2 | Đổi tần suất | Menu item | UC-04 |
 | 3 | Cập nhật mọi instance chưa xong theo task này | Menu item | UC-04 A1 |
 | 4 | Xoá mọi instance chưa xong và dừng lặp | Menu item (nguy hiểm) | UC-05 A1, mở SCR-04 |
-| 5 | Đặt giờ bắt đầu | Menu item | UC-04 A2 |
+| 5 | Đặt giờ bắt đầu | Menu item | UC-04 A2, mở SCR-07 |
 | 6 | Quản lý mọi task lặp | Menu item | UC-07 |
+| 7 | Trạng thái mất mạng | Trạng thái | Mục #1–#5 mờ, tooltip MSG-27; #6 vẫn mở được (UC-04 E4, UC-05 E3) |
 
 ### SCR-04 Xác nhận xoá instance chưa xong
 
@@ -403,8 +415,9 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | --- | --- | --- | --- |
 | 1 | Bộ lọc | Tabs | "Đang lặp" (mặc định) / "Đã dừng" |
 | 2 | Danh sách series | List | Mỗi dòng: tiêu đề, mô tả quy tắc, giờ "khoảng", #channel, lần kế tiếp; sắp theo lần kế tiếp |
-| 3 | Thao tác dòng | Menu | Mở lần kế tiếp · Đổi tần suất · Dừng lặp |
+| 3 | Thao tác dòng | Menu | Mở lần kế tiếp (UC-03) · Đổi tần suất (mở SCR-01 ngay trên dòng, UC-04 A7) · Dừng lặp (mở SCR-08, UC-05 A4); không cần mở instance (B15). Mất mạng: Đổi tần suất, Dừng lặp mờ, tooltip MSG-27 |
 | 4 | Trạng thái rỗng | Empty state | MSG-19 |
+| 5 | Lỗi tải | Tại chỗ | QC-MSG-02 có "Thử lại" (UC-07 E1) |
 
 ### SCR-06 Dấu lặp trên task card
 
@@ -412,6 +425,26 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | --- | --- | --- | --- |
 | 1 | Biểu tượng lặp | Icon | Hiện trên card instance; tooltip mô tả quy tắc |
 | 2 | Giờ | Text | `approxTime` nếu có, ngược lại giờ projection (G04) |
+
+### SCR-07 Bộ chọn giờ bắt đầu
+
+Chốt 09/11/2026, C12. Popover mở từ SCR-03 #5 (UC-04 A2).
+
+| **#** | **Thành phần** | **Loại** | **Hành vi** |
+| --- | --- | --- | --- |
+| 1 | Danh sách giờ | List | Bước 15 phút; giờ hiện tại của series được đánh dấu; chọn → \[SeriesUpdate\] `approxTime` |
+| 2 | "Xoá giờ" | Button | \[SeriesUpdate\] `approxTime` = null |
+| 3 | Đóng | Esc / bấm ra ngoài | Đóng, không đổi |
+
+### SCR-08 Xác nhận dừng lặp (từ danh sách)
+
+Chốt 09/11/2026, B15. Dialog mở từ menu dòng của SCR-05 (UC-05 A4).
+
+| **#** | **Thành phần** | **Loại** | **Hành vi** |
+| --- | --- | --- | --- |
+| 1 | Nội dung | Text | MSG-28 |
+| 2 | "Dừng lặp" | Button | \[SeriesStop\]; toast MSG-09 |
+| 3 | "Huỷ" | Button | Đóng, không thay đổi |
 
 ## 8. API
 
@@ -435,11 +468,12 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | `LIMIT_SERIES` | MSG-14 |
 | `SERIES_STOPPED` (409) | MSG-15 |
 | `VERSION_CONFLICT` (412) | MSG-16 |
-| `NOT_FOUND` (task / series đã xoá) | MSG-17 |
+| `NOT_FOUND` (task / series đã xoá ở thiết bị khác; UC-03 E3, UC-07 E3) | MSG-17 |
 | `TASK_COMPLETED` (409) | MSG-22 |
 | `ALREADY_REPEATING` (409) | MSG-23 |
 | `WORKSPACE_READ_ONLY` (402, từ 1.1) | MSG-13 |
-| 5xx / timeout | MSG-12 |
+| 5xx / timeout khi lưu | MSG-12 (QC-MSG-01) |
+| 5xx / timeout khi tải \[SeriesList\] | QC-MSG-02 (UC-07 E1) |
 
 ## 9. Danh sách thông báo
 
@@ -456,9 +490,9 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | MSG-09 | Toast | Đã dừng lặp "{tiêu đề}" · Hoàn tác |
 | MSG-10 | Dialog | Xoá {n} lần chưa xong của "{tiêu đề}" và dừng lặp? Các lần đã xong và các lần đã có thời gian thực tế được giữ lại. Task xoá nằm trong Thùng rác 30 ngày |
 | MSG-11 | Toast | Đã xoá {n} lần và dừng lặp · Hoàn tác |
-| MSG-12 | Toast | Chưa lưu được thay đổi. Thử lại |
+| MSG-12 | Toast | Chưa lưu được thay đổi. Thử lại (dùng QC-MSG-01, QC-13 mục 1) |
 | MSG-13 | Banner | (1.1) Gói dùng thử đã hết. Nâng cấp để tiếp tục thêm và sửa task |
-| MSG-14 | Inline | Bạn đã có {n} task lặp đang chạy, tối đa {max}. Dừng bớt trong "Quản lý mọi task lặp" |
+| MSG-14 | Inline (dưới ô Lặp, SCR-01 #10) | Bạn đã có {n} task lặp đang chạy, tối đa {max}. Dừng bớt trong "Quản lý mọi task lặp" (chữ trong ngoặc kép là link mở Cài đặt → Task lặp lại) |
 | MSG-15 | Banner | Series này đã dừng lặp |
 | MSG-16 | Toast | Series vừa được sửa trên thiết bị khác, đã tải lại |
 | MSG-17 | Toast | Task hoặc series này không còn tồn tại |
@@ -468,9 +502,11 @@ Thuộc tính, không phải trạng thái: **tách khỏi series** (`seriesId` 
 | MSG-21 | Toast | Ngày này đã có {tên series} |
 | MSG-22 | Tooltip / Toast | Task đã hoàn thành không bật lặp được |
 | MSG-23 | Toast | Task này đã được đặt lặp lại trên thiết bị khác, đã tải lại |
-| MSG-24 | Toast | {k} lần đã dời, sửa riêng hoặc có thời gian thực tế được giữ lại |
+| MSG-24 | Dòng 2 của toast MSG-07 / MSG-09 / MSG-11 (QC-13 mục 3) | {k} lần đã dời, sửa riêng hoặc có thời gian thực tế được giữ lại |
 | MSG-25 | Banner | Lần này đã tách khỏi series "{tiêu đề}" do đổi tần suất |
 | MSG-26 | Hint | Tuần tính từ {thứ}; giữ cố định cho task lặp này |
+| MSG-27 | Tooltip (nút mờ khi mất mạng) | Cần có mạng để sửa cả chuỗi (QC-08 mục 7, C10) |
+| MSG-28 | Dialog | Dừng lặp "{tiêu đề}"? {n} lần sắp tới sẽ bị xoá. Các lần đã dời, sửa riêng hoặc có thời gian thực tế được giữ lại (B14, B15) |
 
 Bản EN: `[chờ bổ sung]`.
 
@@ -481,7 +517,7 @@ Bản EN: `[chờ bổ sung]`.
 | Nền tảng | App Windows (Flutter) ở 1.0 (Q45, ADR-0005); job sinh instance chạy trên server (dữ liệu trên cloud), không phụ thuộc app đang mở. Kiến trúc cụ thể do tech chốt (`docs/tech/`) |
 | Hiệu năng | \[SeriesCreate\] p95 ≤ 500 ms (gồm sinh 14 ngày đầu); instance 60 ngày hiện đủ trên board ≤ 5 giây; job sinh ≤ 50 ms / series |
 | Toàn vẹn | Khoá duy nhất `(series_id, series_date)` trên instance còn gắn series (BR-04); ngày ngoại lệ lưu trên series, độc lập vòng đời task (BR-15); job idempotent, chạy lại không tạo trùng; thao tác series trong một giao dịch |
-| Offline | Bật lặp, sửa instance chạy được khi mất mạng (hàng đợi, QC-08); hai thiết bị cùng bật lặp một task → lệnh tới sau bị từ chối `ALREADY_REPEATING`; thao tác series (BR-08) cần mạng, nút disabled kèm tooltip khi offline |
+| Offline | Bật lặp, sửa instance chạy được khi mất mạng (hàng đợi, QC-08); hai thiết bị cùng bật lặp một task → lệnh tới sau bị từ chối `ALREADY_REPEATING`; thao tác series (BR-08) cần mạng, nút mờ kèm tooltip MSG-27 khi offline (QC-08 mục 7; UC-04 E4, UC-05 E3, UC-07 E2) |
 | Đồng bộ | Instance mới, thay đổi series hiện trên thiết bị khác ≤ 5 giây (`task.upserted`, `day.recomputed`) |
 | Bảo mật | Chỉ chủ series đọc / sửa (BR-14); kiểm tra quyền trên cả series và task trong mọi API |
 | Log / audit | \[ActivityLog\] theo BR-13; log job: số series, số instance tạo, lỗi; không chứa tiêu đề / notes |
