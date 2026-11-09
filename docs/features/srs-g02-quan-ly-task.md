@@ -330,7 +330,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | A6 | Sửa khung giờ đã bật | Như A5; khung mới là khung chờ, có hiệu lực từ ngày làm việc kế tiếp; hôm nay vẫn dùng khung cũ (BR-24); MSG-27 |
 | A7 | Tắt "Khung giờ riêng" | \[ChannelUpdate\] `workWindow = null`; từ ngày làm việc kế tiếp task của channel dùng lịch chung (BR-24); MSG-27 |
 | A8 | Lịch làm việc chung (G01) đổi | Channel không bật khung riêng theo lịch chung mới (theo hiệu lực của G01); channel đã bật khung riêng không đổi (BR-22) |
-| A9 | Khung giờ được sửa trên thiết bị khác khi đang mở | Nhận giá trị mới qua realtime, gộp cả khối `workWindow` (BR-22); đang sửa dở → giữ bản đang sửa, hiện MSG-12 khi rời phần "Khung giờ" |
+| A9 | Khung giờ được sửa trên thiết bị khác khi đang mở | Nhận giá trị mới qua realtime, gộp cả khối `workWindow` (BR-22); đang sửa dở → giữ bản đang sửa, hiện MSG-28 khi rời phần "Khung giờ" (chốt 09/11/2026, C01) |
 
 **Luồng lỗi**
 
@@ -502,7 +502,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | MSG-07 | Toast | Đã thêm vào Backlog · Mở Backlog |
 | MSG-08 | Toast | Đã hoàn thành "{tiêu đề}" · Hoàn tác |
 | MSG-09 | Toast | Đã xoá · Hoàn tác (Ctrl+Z) |
-| MSG-10 | Toast | Chưa lưu được thay đổi. Thử lại |
+| MSG-10 | Toast | Chưa lưu được thay đổi. Thử lại (dùng QC-MSG-01, QC-13 mục 1; chốt 09/11/2026, A1) |
 | MSG-11 | Banner | (1.1) Gói dùng thử đã hết. Nâng cấp để tiếp tục thêm và sửa task |
 | MSG-12 | Inline | Task vừa được cập nhật trên thiết bị khác |
 | MSG-13 | Toast | Đã khôi phục "{tiêu đề}" về {ngày / Backlog · {bucket} / Lưu trữ} |
@@ -520,6 +520,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | MSG-25 | Inline | Giờ kết thúc phải sau giờ bắt đầu (cùng nội dung G01 MSG-20) |
 | MSG-26 | Inline | Chọn ít nhất 1 ngày cho khung giờ của channel |
 | MSG-27 | Inline dưới phần Khung giờ | Áp dụng từ ngày làm việc kế tiếp ({ngày}) (cùng nội dung G01 MSG-24) |
+| MSG-28 | Inline dưới phần Khung giờ | Khung giờ của channel này vừa được sửa trên thiết bị khác (UC-06 A9; chốt 09/11/2026, C01) |
 
 Bản EN: `[chờ bổ sung]`.
 

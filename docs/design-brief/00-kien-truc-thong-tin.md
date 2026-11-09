@@ -42,7 +42,7 @@ Thứ tự từ trên xuống (IA-14):
 | Nhóm | Mục | Phím | Mở |
 |---|---|---|---|
 | View hằng ngày | Home | H | Home board ở hôm nay, view cuối (G04 SCR-01) |
-| | Today | T | Today view: danh sách task và lịch của ngày (G04 UC-01 A1, G05 SCR-04) |
+| | Today | T | Today view: danh sách task và lịch của ngày (G04 SCR-10, G05 SCR-04) |
 | | Backlog | B | Trang Backlog đầy đủ (G06 SCR-01) |
 | | Focus | F | Focus mode, toàn cửa sổ (G07 SCR-03, IA-03) |
 | Ritual (sau đường kẻ) | Daily planning | P | Wizard ở vùng chính (G08 SCR-01 … SCR-07, IA-07) |
@@ -58,14 +58,14 @@ Mục ritual có chấm nhắc và nhãn "Đang dở" (G08 điểm vào). "Tuầ
 | Màn | Đi tới bằng | Ghi chú | Nguồn |
 |---|---|---|---|
 | Home board | Mở app; H; sidebar | 6 view: Board, Calendar 1 ngày, 3 ngày, Weekdays, Week, Month; Tab xoay vòng. Luôn mở ở hôm nay (IA-18) | G04 SCR-01 … SCR-03, BR-13 |
-| Today view | T; sidebar | | G04 UC-01 A1 |
+| Today view | T; sidebar | | G04 SCR-10 |
 | Trang Backlog | B; sidebar | Khác panel Backlog ở panel phải: trang đầy đủ có folder, bucket | G06 SCR-01 |
 | Wizard Daily planning | P; sidebar; nút "Plan" trên header cột ngày ≥ hôm nay; tự mở một lần / ngày; lời nhắc | Sidebar và panel phải vẫn dùng được, để kéo từ Backlog / Lịch vào. Không thoát bằng Esc, chỉ bằng × (IA-16). × lưu tiến độ, về Home | G08 SCR-01 … SCR-07 |
 | Wizard Daily shutdown | O; sidebar; lời nhắc | Như trên | G08 SCR-07 … SCR-11 |
 | Planning Agent (trong wizard Daily planning) | Nút "Plan my day" | Nhập và chạy, rồi Review Plan, đều nằm trong wizard; không nằm trong chat | G10 SCR-02, SCR-03 |
 
 **Banner** nằm ở đầu vùng chính, **tối đa một** cùng lúc, theo thứ tự ưu tiên (IA-17):
-1. Offline (G04 SCR-01 #5) — banner offline duy nhất của app; wizard ritual không có banner offline riêng (chốt 09/11/2026, A5)
+1. Offline (G04 SCR-01 #5, MSG-30) — banner offline duy nhất của app; wizard ritual không có banner offline riêng (chốt 09/11/2026, A5)
 2. Lịch cần kết nối lại (G05 SCR-09)
 3. Rollover lỗi (G06 MSG-25, G04 MSG-27 cùng nội dung; F2)
 4. Lệch timezone (G01 SCR-13)
@@ -80,7 +80,7 @@ Banner thấp hơn chờ tới lượt và đồng thời vào trung tâm thông
 | Mục | Phím | Nội dung | Nguồn |
 |---|---|---|---|
 | Calendar | Shift+C | Lưới lịch một ngày, kéo task vào để timebox | G05 SCR-04 |
-| Tasks | Shift+T | Danh sách task của ngày đang xem, để kéo lên lưới lịch. **Chỉ hiện khi vùng chính là Calendar view** (IA-13) | Mới, ghi vào G04 |
+| Tasks | Shift+T | Danh sách task của ngày đang xem, để kéo lên lưới lịch. **Chỉ hiện khi vùng chính là Calendar view** (IA-13) | G04 SCR-11 |
 | Backlog | Shift+B | Panel Backlog gọn, kéo task ra board | G06 |
 | Lưu trữ · Thùng rác | Shift+A (tab Lưu trữ); lệnh "Task đã xoá gần đây" (tab Thùng rác) | Một panel hai tab (IA-09) | G06 SCR-05, G02 SCR-05 |
 | Search | Ctrl+F | Tìm task | G04 SCR-07 |
@@ -96,7 +96,7 @@ Banner thấp hơn chờ tới lượt và đồng thời vào trung tâm thông
 | < 1024 px | Thu thành cột icon | Lớp trượt |
 | Tối thiểu | 800 × 600 | |
 
-Home board tự giảm số cột ngày hiện được khi cửa sổ hẹp lại. Cài đặt ở cửa sổ hẹp theo G01 SCR-06 (cột trái thành danh sách, có nút ←).
+Home board tự giảm số cột ngày hiện được khi cửa sổ hẹp lại; cột ngày tối thiểu 200 px, thiếu chỗ thì cuộn ngang. Bản 1.0 không có chế độ 1 cột (chốt 09/11/2026, B01). Cài đặt ở cửa sổ hẹp theo G01 SCR-06 (cột trái thành danh sách, có nút ←).
 
 ## 5. Dialog, lớp phủ và popover
 
@@ -172,8 +172,8 @@ Gom theo nơi hiện. Mã SCR là của SRS từng nhóm; `SCR-N` là màn mới
 | Nơi | Màn |
 |---|---|
 | Toàn cửa sổ | G01 SCR-01 … SCR-05 · G07 SCR-03 |
-| Vùng chính | G04 SCR-01 … SCR-03 (Home, 6 view) · Today view · G06 SCR-01 · G08 SCR-01 … SCR-11 · G10 SCR-02, SCR-03, SCR-07 (trong wizard) |
-| Panel phải | G05 SCR-04 (Calendar) · Tasks (SCR-N, G04) · Backlog (G06) · G06 SCR-05 + G02 SCR-05 (Lưu trữ · Thùng rác) · G04 SCR-07 · G10 SCR-04, SCR-05, SCR-11 |
+| Vùng chính | G04 SCR-01 … SCR-03 (Home, 6 view) · G04 SCR-10 (Today view) · G06 SCR-01 · G08 SCR-01 … SCR-11 · G10 SCR-02, SCR-03, SCR-07 (trong wizard) |
+| Panel phải | G05 SCR-04 (Calendar) · G04 SCR-11 (Tasks) · Backlog (G06) · G06 SCR-05 + G02 SCR-05 (Lưu trữ · Thùng rác) · G04 SCR-07 · G10 SCR-04, SCR-05, SCR-11 |
 | Dialog / lớp phủ | G02 SCR-03 · G01 SCR-06 … SCR-16 (Cài đặt, chứa cả G02 SCR-06, G03 SCR-05, G05 SCR-01 … 03, G08 SCR-13, G10 SCR-09, SCR-12, G12 SCR-10, SCR-12) · G10 SCR-01, SCR-10 · G04 SCR-08, SCR-09 · các xác nhận ở mục 5 |
 | Popover | G12 SCR-11 · các popover ở mục 5 |
 | Trên card / trong chi tiết | G02 SCR-01, SCR-02 · G03 SCR-02, SCR-06 · G05 SCR-05, SCR-06 · G06 SCR-07 · G07 SCR-01 |

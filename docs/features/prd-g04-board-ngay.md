@@ -5,6 +5,8 @@
 > **Bản nháp.** Con số đánh dấu `[giả định]` dùng để dựng flow, cần PO xác nhận trước khi dùng. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026 (tooltip "Total: Time planned", nút "Plan" khi hover cột, projection lùi "My job" 9:00 → 9:45 khi thêm task 0:45 lên đầu, cảnh báo "Only 8:00 available" khi đặt task 9 giờ, popover ngày, thông báo tìm kiếm rỗng, toast "Your first keyboard shortcut!"); chỗ khác Sunsama có chủ đích được ghi rõ.
 >
 > **Quy tắc dùng chung:** PRD này tham chiếu [`01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md) (QC-01 ngày làm việc, QC-02 lịch làm việc và khung giờ channel, QC-03 trạng thái task, QC-04 số ngày bị hoãn, QC-05 đổi ngày task, QC-06 instance trùng series, QC-08 đồng bộ, QC-09 chỉ đọc bản 1.1), không định nghĩa lại. Thuật ngữ theo [`CONTEXT.md`](../../CONTEXT.md). Cập nhật theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md) vòng 7: sức chứa ngày không còn lấy min với ngưỡng khối lượng, ngưỡng chỉ là giới hạn riêng của lịch chung (Q48); "Hoãn 1 tuần" = max(ngày dự định, hôm nay) + 7 ngày, rơi vào ngày nghỉ thì giữ nguyên (D5); số ngày bị hoãn theo lịch hiện tại của task (D4).
+>
+> Cập nhật theo [câu hỏi chốt 09/11/2026](../review/cau-hoi-chot-flow-2026-11-09.md) (B01–B05, B20, B29, A2, A3, A5): xem mục 10.
 
 # 1. Bối cảnh và vấn đề
 
@@ -44,7 +46,7 @@ Board ngày (Home) là màn hình người dùng mở nhiều nhất: mỗi cộ
 ## 3.1 Trong phạm vi (MVP)
 
 - Nền tảng: app Windows (Flutter) ở 1.0 (Q45, ADR-0005). Web và macOS từ 1.1, iOS / Android từ 1.2 dùng cùng đặc tả. Chi tiết kỹ thuật (lưu trên máy, tính nền): tech chốt — `docs/tech/`.
-- Home board: cột ngày cuộn ngang vô hạn; header cột có thứ, ngày, thanh tiến độ, "Thêm task", tổng thời lượng, nút "Plan" khi hover.
+- Home board: cột ngày cuộn ngang vô hạn; header cột có thứ, ngày, thanh tiến độ, "Thêm task", tổng thời lượng, nút "Plan" khi hover (cột từ hôm nay tới hôm nay + 7 ngày, B29).
 - Today view: một ngày + lịch của ngày đó.
 - Chế độ xem (phím Tab): Board, Calendar 1 ngày, 3 ngày, Weekdays, Week, Month.
 - Điều hướng ngày: popover chọn ngày, Hôm nay / Ngày sau / Ngày trước, chip ngày đang xem có × để về hôm nay.
@@ -134,7 +136,7 @@ AC02: Header cột hiện tên thứ, ngày, thanh tiến độ (thời lượng
 
 AC03: Hover tổng thời lượng hiện tooltip "Tổng: thời lượng kế hoạch".
 
-AC04: Hover header cột hôm nay hoặc ngày tương lai hiện nút "Plan", bấm mở Daily planning của ngày đó (G08).
+AC04: Hover header cột từ hôm nay tới hôm nay + 7 ngày hiện nút "Plan", bấm mở Daily planning của ngày đó (G08). Cột đã qua và cột xa hơn hôm nay + 7 ngày không có nút (G08 BR-02; chốt 09/11/2026, B29).
 
 AC05: "Hôm nay" là ngày làm việc theo QC-01: lúc 02:00 ngày 05/11, mốc đầu ngày 04:00, hôm nay vẫn là 04/11 (dùng bảng ví dụ của QC-01 làm ca kiểm thử).
 
@@ -143,6 +145,14 @@ AC06: Lần mở app đầu tiên trong ngày làm việc, board gọi "đảm b
 AC07: Ngày ở xa, ngoài khoảng instance lặp đã sinh, hiện instance lặp dự kiến dạng mờ, nhãn "Dự kiến" (C17); không tính vào tổng `[giả định]`.
 
 AC08: Card có số ngày bị hoãn ≥ 1 hiện nhãn "Dời {n} ngày" (QC-04); n chỉ đếm ngày có trong lịch **hiện tại** của task, nên đổi lịch, khung giờ channel hoặc channel có thể làm n thay đổi (QC-04 mục 1, Q32, D4).
+
+AC09: Cửa sổ hẹp (tối thiểu 800 px) → board bớt số cột hiện được, mỗi cột rộng tối thiểu 200 px, cuộn ngang; không có chế độ 1 cột ở 1.0 (chốt 09/11/2026, B01).
+
+AC10: Mất mạng → board hiện dữ liệu trên máy kèm banner "Đang offline"; đây là banner offline duy nhất của app, wizard ritual không có banner riêng (chốt 09/11/2026, A5).
+
+AC11: Không tải được một ngày → lỗi hiện ngay trong cột đó (khung rỗng, chữ lỗi, nút "Thử lại"), không dùng toast (chốt 09/11/2026, B03).
+
+AC12: Cột ngày đã qua không nhận task chưa xong, nên không kéo task vào ngày cũ để đánh dấu xong; không có bản mờ chỉ chỗ task đã bị dời đi ở 1.0 (chốt 09/11/2026, B04).
 
 ### US1.4 Đổi timezone
 
@@ -186,7 +196,7 @@ User Story: Là người dùng, tôi muốn kéo task sang ngày khác hoặc l�
 
 AC01: Kéo task sang cột khác → ngày dự định = ngày cột đó, task nằm đúng vị trí thả; nhật ký ghi "đặt ngày dự định thành {ngày}".
 
-AC02: Kéo trong cột → đổi vị trí; các cột liên quan tính lại tổng, projection ngay.
+AC02: Kéo trong cột → đổi vị trí; các cột liên quan tính lại tổng, projection ngay. Không có toast; Ctrl+Z hoàn tác (QC-13 mục 2; chốt 09/11/2026, A2).
 
 AC03: Kéo sang ngày khác đặt lại số ngày bị hoãn về 0 (QC-04). Task đã timebox giữ giờ, dời timebox sang ngày mới; timer đang chạy không dừng (QC-05).
 
@@ -194,9 +204,11 @@ AC04: Kéo sang ngày khác có toast "Đã chuyển sang {ngày} · Hoàn tác"
 
 AC05: Kéo task chưa xong vào ngày đã qua bị chặn; server cũng từ chối với mọi đường (QC-05, C15).
 
-AC06: Kéo instance lặp vào ngày đã có instance cùng series → vẫn đặt, kèm cảnh báo "Ngày này đã có {tên series}" (QC-06).
+AC06: Kéo instance lặp vào ngày đã có instance cùng series → vẫn đặt; **một** toast: dòng 1 "Đã chuyển… · Hoàn tác", dòng 2 cảnh báo "Ngày này đã có {tên series}" (QC-06; QC-13 mục 3; chốt 09/11/2026, A3).
 
 AC07: Thay đổi đồng thời trên thiết bị khác (hoặc do rollover) → lệnh trên phiên bản cũ bị từ chối, người dùng thấy "Task đã thay đổi trên thiết bị khác" (QC-08).
+
+AC08: Thả task vào panel Backlog → toast của G06 có "Hoàn tác", như khi bấm Z (QC-13 mục 2; chốt 09/11/2026, A2, B06).
 
 ### US3.2 Di chuyển bằng phím
 
@@ -204,7 +216,7 @@ AC01: D chuyển task sang ngày làm việc kế tiếp **theo lịch của tas
 
 AC05: Ví dụ phím D (lịch chung Thứ Hai–Thứ Sáu; `#Cá nhân` có khung Thứ Hai–Chủ Nhật 19:00–22:00; `#Công ty` không đặt khung): Thứ Sáu 06/11 nhấn D trên task `#Công ty` → Thứ Hai 09/11; trên task `#Cá nhân` → Thứ Bảy 07/11.
 
-AC02: Ctrl+↑/↓ lên / xuống một vị trí; Ctrl+Shift+↑/↓ lên đầu / xuống cuối ngày.
+AC02: Ctrl+↑/↓ lên / xuống một vị trí; Ctrl+Shift+↑/↓ lên đầu / xuống cuối ngày. Như kéo trong cột: không có toast, Ctrl+Z hoàn tác (A2).
 
 AC03: Lệnh áp vào task đang chọn; không có task chọn thì áp vào task đang hover.
 
@@ -262,6 +274,8 @@ AC10: **Ngưỡng khối lượng** (cài đặt G01) chỉ là giới hạn ri�
 
 AC11: Ví dụ (Thứ Năm 05/11, lịch chung 09:00–17:00, `#Cá nhân` 19:00–22:00, ngưỡng 8 giờ, không có sự kiện; sức chứa 11:00): `#Công ty` 6:00 + `#Cá nhân` 3:00 → không quá tải; `#Công ty` 9:00 → quá tải do vượt ngưỡng dù còn trong sức chứa; `#Công ty` 7:00 + `#Cá nhân` 5:00 = 12:00 → quá tải do vượt sức chứa. Thứ Bảy 07/11, `#Cá nhân` 4:00 → quá tải (sức chứa 3:00), ngưỡng không áp.
 
+AC12: Chỉ có một mức cảnh báo là quá tải; không có mức vàng "sắp chạm ngưỡng", để giao diện điềm tĩnh (DS-01; chốt 09/11/2026, B05).
+
 ## UC5. Lọc và tìm kiếm
 
 ### US5.1 Lọc theo channel
@@ -276,7 +290,7 @@ AC03: Tổng thời lượng và cảnh báo khối lượng vẫn tính trên t
 
 User Story: Là người dùng, tôi muốn gõ vài chữ là tìm ra task cũ, để không tạo trùng việc.
 
-AC01: Ctrl+F mở panel Search bên phải, con trỏ nằm sẵn trong ô tìm.
+AC01: Ctrl+F mở panel Search bên phải, con trỏ nằm sẵn trong ô tìm; kể cả khi đang gõ trong một ô nhập, vì ô nhập trong app không có tìm trong ô (chốt 09/11/2026, B02).
 
 AC02: Lọc theo Ngày (Mọi lúc, Tuần trước, Tháng trước) và Channel; kết quả tô sáng từ khoá.
 
@@ -300,6 +314,8 @@ AC02: Lệnh nhóm theo: Thao tác task, Lên lịch task, Thứ tự task, Đi�
 
 AC03: Lệnh theo ngữ cảnh: có task đang chọn / hover thì nhóm Thao tác task hiện trên cùng; không có thì nhóm này ẩn.
 
+AC04: Nhóm Lên lịch task có lệnh "Timebox…" để timebox task không cần kéo; chọn ngày, giờ theo G05 (DS-08; chốt 09/11/2026, B20).
+
 ### US6.2 Bảng phím tắt và lần đầu dùng phím tắt
 
 AC01: Phím ? mở bảng phím tắt theo nhóm.
@@ -314,7 +330,7 @@ AC01: Phím một ký tự không chạy khi ô nhập đang focus.
 
 AC02: Gõ ≥ 4 ký tự trong 1 giây ngoài ô nhập → phím tắt một ký tự tạm khoá 1 giây (EC-25: trên Sunsama gõ nhầm làm bật timer, vào màn nghỉ, đổi trạng thái xong).
 
-AC03: Lệnh có tác dụng phụ (D, S, Ctrl+↑/↓, sắp lại) có toast Hoàn tác và Ctrl+Z.
+AC03: Lệnh có tác dụng phụ (D, S, sắp lại) có toast Hoàn tác và Ctrl+Z. Ctrl+↑/↓ chỉ đổi chỗ trong cột nên không có toast, hoàn tác bằng Ctrl+Z (QC-13 mục 2; chốt 09/11/2026, A2).
 
 # 8. Chỉ số theo dõi `[giả định]`
 
@@ -337,7 +353,7 @@ AC03: Lệnh có tác dụng phụ (D, S, Ctrl+↑/↓, sắp lại) có toast H
 | Rollover (G06) | Job rollover lỗi làm hôm nay thiếu việc dở | Gọi "đảm bảo rollover" khi mở app (B6) |
 | Ngày rất nhiều task (EC-40) | 500 task / ngày làm board giật, projection chậm | Ảo hoá danh sách; projection tính nền, không chặn giao diện (cơ chế: tech chốt — `docs/tech/`), chỉ tính lại ngày bị đổi |
 | Đồng bộ nhiều thiết bị | Hai máy kéo cùng task, hoặc máy offline kéo task mà server đã rollover | Theo QC-08: thứ tự server nhận, cụm vị trí ghi nguyên khối, lệnh trên phiên bản cũ bị từ chối; thiết bị thua nhận realtime và vẽ lại |
-| Phím tắt trùng hệ điều hành / ô nhập | Trên Windows, Tab và Ctrl+F có nghĩa sẵn trong ô nhập và khi chuyển focus | Chỉ xử lý khi board focus; Tab trong ô nhập giữ hành vi chuẩn. Phím trùng trình duyệt xử lý khi có bản web (1.1) |
+| Phím tắt trùng hệ điều hành / ô nhập | Trên Windows, Tab và Ctrl+F có nghĩa sẵn trong ô nhập và khi chuyển focus | Chỉ xử lý khi board focus; Tab trong ô nhập giữ hành vi chuẩn. Ctrl+F luôn mở Search, kể cả khi đang gõ, vì ô nhập trong app không có tìm trong ô (B02). Phím trùng trình duyệt xử lý khi có bản web (1.1) |
 | Tìm kiếm không dấu | Chuẩn hoá tiếng Việt (đ/Đ, tổ hợp dấu) | Chỉ mục lưu bản bỏ dấu; bộ test tiếng Việt |
 | Đổi timezone (EC-02) | "Hôm nay" đổi khi người dùng bay sang múi giờ khác | Theo QC-01: có hiệu lực từ ngày làm việc kế tiếp; banner duy nhất là G01 MSG-23; task giữ ngày dự định, timebox giữ thời điểm tuyệt đối; lệch thì không gắn cờ, không tự sửa, người dùng tự kéo (F5) |
 
@@ -362,3 +378,11 @@ AC03: Lệnh có tác dụng phụ (D, S, Ctrl+↑/↓, sắp lại) có toast H
 - Đã chốt 04/11/2026: bỏ công thức min(ngưỡng, thời gian trống còn lại). Sức chứa = thời gian trống trong hợp lịch chung và các khung channel; quá tải khi planned của task chưa xong > sức chứa; ngưỡng khối lượng chỉ là giới hạn riêng của lịch chung, áp cho task không có khung channel (Q48, QC-02 mục 7).
 - Projection khi có nhiều lịch: SRS tạm xếp mỗi task vào khe trống sớm nhất trong lịch của task theo thứ tự hiển thị; task ở ngày không có trong lịch của task tạm xếp từ giờ bắt đầu mặc định 09:00 và mang cờ "Vượt giờ làm". Cần PO xác nhận.
 - Instance lặp dự kiến ở ngày xa (C17) có tính vào tổng thời lượng và cảnh báo quá tải không? SRS tạm không tính.
+- **Chốt 09/11/2026 (B01):** không có chế độ 1 cột ở 1.0; cột ngày rộng tối thiểu 200 px, cửa sổ hẹp thì cuộn ngang. Bỏ mốc 768 px.
+- **Chốt 09/11/2026 (B02):** Ctrl+F luôn mở Search, kể cả khi đang gõ trong ô nhập.
+- **Chốt 09/11/2026 (B03):** lỗi tải một ngày hiện ngay trong cột đó, khung rỗng có nút "Thử lại"; không dùng toast.
+- **Chốt 09/11/2026 (B04):** giữ chặn task chưa xong ở ngày đã qua (`PAST_DATE`), nên không đánh dấu xong bằng cách kéo task vào cột cũ; không có bản mờ (breadcrumb) ở cột cũ ở 1.0. Rollover đã chuyển việc dở sang hôm nay nên cột cũ chỉ còn việc đã xong.
+- **Chốt 09/11/2026 (B05):** chỉ một mức cảnh báo "quá tải", không có mức vàng "sắp chạm ngưỡng" (DS-01).
+- **Chốt 09/11/2026 (B20):** command menu có lệnh "Timebox…"; hành vi timebox thuộc G05.
+- **Chốt 09/11/2026 (B29):** nút "Plan" chỉ có ở cột từ hôm nay tới hôm nay + 7 ngày (G08 BR-02).
+- **Chốt 09/11/2026 (A2, A3, A5):** kéo đổi chỗ trong cột không có toast, Ctrl+Z hoàn tác; kéo sang ngày khác hoặc vào Backlog có toast Hoàn tác. Cảnh báo trùng series gộp vào toast "Đã chuyển…" thành một toast, giữ Hoàn tác. Banner offline của board là banner offline duy nhất của app.

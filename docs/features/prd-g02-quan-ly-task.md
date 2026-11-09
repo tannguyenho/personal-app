@@ -352,3 +352,4 @@ AC10: Số ngày bị hoãn của task tính theo lịch **hiện tại** của 
 - Đã chốt 04/11/2026: đổi khung giờ channel có hiệu lực từ ngày làm việc kế tiếp (D2).
 - Đã chốt 04/11/2026: channel hệ thống "Chưa phân loại" không có khung giờ riêng, luôn theo lịch chung (D3).
 - Đã chốt 04/11/2026: phím toàn cục Ctrl+Shift+A (thêm task) có ở 1.0 trên app Windows (D11).
+- **Chốt 09/11/2026 (A1, C01):** câu lỗi lưu "Chưa lưu được thay đổi. Thử lại" (SRS MSG-10) là câu chung QC-MSG-01 (QC-13); khung giờ channel bị sửa trên thiết bị khác có câu riêng (SRS MSG-28), không dùng câu "Task vừa được cập nhật…".
