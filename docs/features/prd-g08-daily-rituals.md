@@ -2,9 +2,9 @@
 
 # PRD Daily planning & Daily shutdown (ứng dụng lập kế hoạch ngày)
 
-> **Bản nháp.** Con số đánh dấu `[giả định]` dùng để dựng flow, cần PO xác nhận trước khi dùng. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026: bản Daily plan liệt kê cả task đã xong hôm nay; hoàn tất ritual tạo task "Daily planning" đã xong ở #work, notes chứa bản kế hoạch, có thời gian thực tế; mở task này hiện "Use keyboard shortcut P to enter daily planning". Thứ tự 6 bước Daily planning lấy từ help center Sunsama (luồng thủ công, bản Legacy). **Các bước chi tiết của Daily shutdown trên Sunsama chưa kiểm chứng**; luồng shutdown trong tài liệu này là đề xuất, cần kiểm chứng trước khi chốt thiết kế. Chỗ khác Sunsama có chủ đích được ghi rõ.
+> **Bản nháp.** Con số đánh dấu `[giả định]` dùng để dựng flow, cần PO xác nhận trước khi dùng. Hành vi tham chiếu đã kiểm chứng trên Sunsama ngày 04/11/2026: bản Daily plan liệt kê cả task đã xong hôm nay; hoàn tất ritual tạo task "Daily planning" đã xong ở #work, notes chứa bản kế hoạch, có thời gian thực tế; mở task này hiện "Use keyboard shortcut P to enter daily planning". Help center Sunsama mô tả Daily planning thủ công (bản Legacy) có **5 chặng**: Reflect on yesterday → Add tasks → Check predicted workload → Finalize → Share your plan / Daily plan. Ta tách chặng cuối thành hai bước "Daily plan" và "Chia sẻ" (màn Chia sẻ dùng chung cho hai ritual), nên có 6 bước; đây là lựa chọn của ta, không phải của Sunsama (C35, [research](../research/sunsama-daily-rituals.md)). **Các bước chi tiết của Daily shutdown trên Sunsama chưa kiểm chứng**; luồng shutdown trong tài liệu này là đề xuất, cần kiểm chứng trước khi chốt thiết kế. Chỗ khác Sunsama có chủ đích được ghi rõ.
 >
-> Đã sửa theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md). Quy tắc dùng chung (`QC-xx`) xem [`docs/01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md): ngày làm việc (QC-01), lịch làm việc và khung giờ channel (QC-02), số ngày bị hoãn (QC-04), đổi ngày task (QC-05), instance trùng series (QC-06), bản ghi thời gian (QC-07), chế độ chỉ đọc (QC-09, bản 1.1), trợ lý AI qua Claude Code CLI (QC-12). Thuật ngữ xem [`CONTEXT.md`](../../CONTEXT.md).
+> Đã sửa theo [quyết định chốt 04/11/2026](../review/quyet-dinh-chot-2026-11-04.md) và [câu hỏi chốt 09/11/2026](../review/cau-hoi-chot-flow-2026-11-09.md) (A3, A5, B28–B35, C31–C35). Quy tắc dùng chung (`QC-xx`) xem [`docs/01-quy-tac-dung-chung.md`](../01-quy-tac-dung-chung.md): ngày làm việc (QC-01), lịch làm việc và khung giờ channel (QC-02), số ngày bị hoãn (QC-04), đổi ngày task (QC-05), instance trùng series (QC-06), bản ghi thời gian (QC-07), chế độ chỉ đọc (QC-09, bản 1.1), trợ lý AI qua Claude Code CLI (QC-12). Thuật ngữ xem [`CONTEXT.md`](../../CONTEXT.md).
 
 # 1. Bối cảnh và vấn đề
 
@@ -45,7 +45,7 @@ Ritual là vòng lặp tạo khác biệt của sản phẩm: mở đầu ngày 
 
 - Nền tảng (Q45, ADR-0005): bản 1.0 là app Windows; web và macOS từ 1.1; iOS / Android từ 1.2, dùng cùng đặc tả. Nhắc ritual ở 1.0 bằng thông báo Windows và thông báo trong app (kênh theo G12, D12).
 - Daily planning thủ công 6 bước: Xem lại hôm qua → Thêm task cho hôm nay → Kiểm tra khối lượng → Chốt → Daily plan → Chia sẻ.
-- Daily shutdown 5 bước (đề xuất, chưa kiểm chứng): Việc đã xong → Xử lý task chưa xong → Highlights (biên tập tay; khi trợ lý AI bật thì điền sẵn nháp AI do G10 soạn) → Chia sẻ → Hoàn tất.
+- Daily shutdown 5 bước (đề xuất, chưa kiểm chứng): Việc đã xong → Xử lý task chưa xong (có "Để tự chuyển sang mai" để bỏ qua cả bước) → Highlights (biên tập tay; khi trợ lý AI bật thì điền sẵn nháp AI do G10 soạn) và ô ghi chú riêng → Chia sẻ → Hoàn tất.
 - Tự kích hoạt Daily planning tối đa 1 lần / ngày; nhắc Daily shutdown theo giờ; chỉ vào ngày làm việc theo **lịch chung** (QC-02 mục 8). Khung giờ channel không làm ritual mở thêm vào ngày nghỉ của lịch chung.
 - Nút "Hoàn tác kế hoạch AI" ở bước Daily plan (1.0, chỉ hiện khi trợ lý AI bật và Planning Agent đã áp dụng kế hoạch cho ngày đó).
 - Lưu tiến độ ritual: thoát giữa chừng, mở lại về đúng bước đang làm. Ritual vắt qua mốc đầu ngày được hoàn tất cho ngày cũ trong 2 giờ.
@@ -96,7 +96,7 @@ Bản kế hoạch / highlights chỉ gửi đi khi bấm "Bắt đầu ngày" h
 | Mẹo khối lượng | Văn bản | Khoảng 5,5 giờ cho ngày 9–5 có nghỉ trưa | Chỉ gợi ý, không chặn |
 | Bước ẩn ("Bỏ qua bước này từ lần sau") | Theo từng bước, trừ bước Chia sẻ (mọi ritual) và Hoàn tất (shutdown) | Không ẩn bước nào | Đã chốt (C24) |
 | Nội dung bản kế hoạch ("Tuỳ chỉnh") | 5 tuỳ chọn | Phân bổ thời gian: bật; subtask, task riêng tư, channel, task xong hôm trước: tắt `[giả định]` | Chọn nội dung, không phải chọn bước |
-| Ô "Trở ngại" / Highlights | 0–5.000 ký tự | Trống / sinh sẵn | |
+| Ô "Trở ngại" / Highlights / Ghi chú riêng | 0–5.000 ký tự | Trống / sinh sẵn / trống | Ghi chú riêng chỉ mình người dùng thấy, không bao giờ gửi đi (B34) |
 | Đích chia sẻ | Tối đa 10 / người dùng; 20 email chia sẻ / ngày | Không có | Email ở 1.0; Slack / Teams 1.2 |
 | Thời gian ritual tính vào actual | Tối đa 120 phút / lần | | Bỏ khoảng không tương tác > 5 phút; chỉ ghi khi không có timer đang chạy (QC-07, đã chốt) |
 | Mốc đầu ngày | 00:00–06:00 | 04:00 | Đã chốt (QC-01). Xác định "hôm nay", "hôm qua" của ritual |
@@ -135,11 +135,15 @@ AC03: Ritual đang làm dở → mở lại đúng bước đang làm, giữ d�
 
 AC04: Ritual hôm nay đã hoàn tất → mở bản kế hoạch đã chốt ở chế độ xem, có nút "Lên kế hoạch lại". Lên kế hoạch lại rồi bỏ dở tới hết ngày → ritual vẫn là "đã hoàn tất" với nội dung cũ; chuỗi ngày và analytics không bị ảnh hưởng.
 
-AC05: Mở cho ngày tương lai qua nút "Plan" trên cột ngày được; ngày đã qua chỉ xem bản đã có.
+AC05: Mở cho ngày tương lai qua nút "Plan" trên cột ngày được, tối đa tới hôm nay + 7 ngày; cột xa hơn không có nút "Plan" (B29). Ngày đã qua chỉ xem bản đã có.
 
 AC06: Ritual mở trước mốc đầu ngày (ví dụ 03:55) được hoàn tất cho ngày cũ tới tối đa 2 giờ sau mốc; trong lúc đó có banner nhắc thời gian còn lại.
 
 AC07: Phiên Daily planning đầu tiên, mở ngay sau onboarding (G01 US2.2), ở **chế độ có hướng dẫn**: đầu mỗi bước có một dòng lời dẫn ngắn, khái niệm lần đầu gặp có tooltip (G01 US2.3), không có "Bỏ qua bước này"; task vừa tạo ở onboarding đã có trong danh sách. Các lần sau là Daily planning thường (F3, 06/11/2026).
+
+AC08: Không có chế độ buổi tối ở 1.0: phím P, sidebar và tự mở luôn mở ngày hôm nay; muốn lên kế hoạch ngày mai thì bấm "Plan" trên cột ngày mai (B31).
+
+AC09: Bản 1.0, trợ lý AI bật: đầu bước 1 có nút "Plan my day" (Planning Agent, G10). Chạy xong thì nhảy thẳng tới bước Daily plan; lỗi hoặc bấm Dừng thì về lại bước 1 (B28).
 
 ### US1.2 Xem lại hôm qua
 
@@ -152,6 +156,8 @@ AC02: Mỗi task có 4 thao tác: Giữ hôm nay (mặc định), Dời (phím D
 AC03: Thao tác áp dụng ngay, có toast Hoàn tác. Instance lặp bị dời vào ngày đã có instance cùng series → QC-06.
 
 AC04: Không có task nào → "Không còn việc nào từ hôm qua", nút Tiếp.
+
+AC05: Daily shutdown của ngày làm việc trước đó đã hoàn tất → bỏ qua bước này, mở thẳng bước Thêm task, vì việc xem lại đã làm lúc shutdown; thanh bước vẫn cho bấm vào xem (B32).
 
 ### US1.3 Thêm task cho hôm nay
 
@@ -223,6 +229,8 @@ AC04: Lựa chọn đích được nhớ cho lần sau, riêng cho từng loại
 
 AC05: Gửi lỗi không chặn hoàn tất ritual; thông báo trong app có nút "Thử lại".
 
+AC06: "Gửi bản sao cho chính tôi" tính là một đích email (B30). Có ít nhất một đích email thì toast hoàn tất gộp hai dòng: dòng 1 "Đã lưu vào task…", dòng 2 "Đang gửi tới {n} nơi nhận" (QC-13 mục 3, A3).
+
 ## UC3. Daily shutdown
 
 ### US3.1 Mở Daily shutdown
@@ -247,11 +255,17 @@ AC01: Mỗi task chưa xong của hôm nay: Ngày mai (mặc định `[giả đ�
 
 AC02: Áp dụng ngay, có toast Hoàn tác. Task để "Ngày mai" **không** bị đặt lại số ngày bị hoãn (QC-04), nên vẫn hiện nhãn "Dời n ngày" và vẫn tự lưu trữ khi bị hoãn quá lâu. Timebox giữ giờ, dời sang ngày mới; timer không dừng (QC-05). Instance lặp trùng series ở ngày đích → QC-06.
 
+AC03: Nút "Để tự chuyển sang mai" bỏ qua cả bước: task chưa chọn giữ nguyên, rollover (G06) chuyển sang hôm sau như mọi ngày (B33).
+
+AC04: Không còn task nào dở → "Không còn việc nào dở", nút Tiếp (C33).
+
 ### US3.4 Highlights
 
 AC01: Trợ lý AI tắt (hoặc máy chưa có Claude Code): sinh sẵn danh sách task đã xong dạng gạch đầu dòng, người dùng sửa tay.
 
 AC02: Từ 1.0, trợ lý AI bật (Q39, Q46, QC-12): G10 soạn nháp highlights qua Claude Code CLI vào các ngày trong lịch làm việc, tại giờ kết thúc của lịch chung (app không mở lúc đó thì soạn khi mở app lần kế tiếp trong ngày, D7), từ task xong (và hoạt động ở công cụ kết nối khi có tích hợp từ 1.1 và người dùng bật công tắc dữ liệu tích hợp, QC-12 mục 6). Bước Highlights điền sẵn nháp này, gắn nhãn "Nháp AI"; người dùng sửa và duyệt trước khi lưu, bản chia sẻ chỉ gửi khi bấm "Hoàn tất". Chưa có nháp (shutdown mở sớm hơn giờ soạn, AI lỗi hoặc chậm) → dùng danh sách sinh sẵn của AC01.
+
+AC03: Highlights và ghi chú suy ngẫm riêng là hai ô tách nhau (B34). Highlights chia sẻ được; ghi chú riêng chỉ mình người dùng thấy, không có trong bản xem trước, email, Slack / Teams hay notes của task ghi chép.
 
 ### US3.5 Hoàn tất
 
@@ -275,7 +289,7 @@ AC03: Hết 2 giờ chưa hoàn tất → ritual ngày cũ coi như bỏ lỡ, k
 
 AC01: Hoàn tất ritual tạo 1 task "Daily planning" hoặc "Daily shutdown" đã xong, ngày = ngày của ritual, channel = channel cho task ritual.
 
-AC02: Notes chứa nội dung đã chốt (bản kế hoạch + trở ngại, hoặc việc đã xong + highlights).
+AC02: Notes chứa nội dung đã chốt (bản kế hoạch + trở ngại, hoặc việc đã xong + highlights; không có ghi chú riêng).
 
 AC03: Thời gian thực tế = thời gian làm ritual, tối đa 120 phút `[giả định]`; chỉ ghi khi người dùng không có timer đang chạy, để không đếm cùng một khoảng thời gian hai lần (QC-07); không ảnh hưởng timer đang chạy.
 
@@ -283,7 +297,7 @@ AC04: Mở task hiện gợi ý "Dùng phím P để vào Daily planning" (O v�
 
 AC05: Mở xem, chuyển bước rồi thoát, hoặc bỏ qua ritual → không tạo task (EC-26).
 
-AC06: Lên kế hoạch lại trong cùng ngày → cập nhật task ghi chép cũ, không tạo task thứ hai; thời gian cộng dồn.
+AC06: Lên kế hoạch lại / làm lại trong cùng ngày → mở lại nội dung lần trước để sửa; hoàn tất thì ghi đè nội dung cũ trong task ghi chép, không tạo task thứ hai, không nối thêm; thời gian cộng dồn (B35).
 
 AC07: Task ghi chép ritual không tính vào mọi phép đếm số task (số task xong, ngưỡng "ít dữ liệu" và tỉ lệ hoàn thành của G09); thời gian của nó vẫn tính vào giờ thực tế.
 
@@ -342,5 +356,13 @@ AC03: Bật lại bước đã ẩn từ danh sách bước đã ẩn.
 - Đã chốt 04/11/2026: ritual vắt qua mốc đầu ngày được hoàn tất cho ngày cũ trong 2 giờ; rollover chờ phiên shutdown; lên kế hoạch lại bỏ dở thì giữ bản cũ (Q18).
 - Đã chốt 04/11/2026: không cho ẩn bước Chia sẻ; shutdown có "Bỏ qua hôm nay"; G08 khai báo điểm mở rộng cho G09 (C24).
 - Lên kế hoạch lại rồi hoàn tất: analytics G09 dùng ảnh chụp lần đầu hay lần cuối? (Đề xuất: lần đầu `[giả định]`.)
-- "Bỏ dở" phiên shutdown sau mốc đầu ngày có bao gồm việc đóng wizard (Esc / ×) không, hay chỉ "Bỏ qua hôm nay"? (Đề xuất: có, `[giả định]`.)
+- "Bỏ dở" phiên shutdown sau mốc đầu ngày có bao gồm việc đóng wizard (×) không, hay chỉ "Bỏ qua hôm nay"? (Đề xuất: có, `[giả định]`.) **Chốt 09/11/2026 (C31):** Esc không thoát wizard, chỉ ×; phần còn lại vẫn mở.
 - Timer bắt đầu hoặc dừng giữa lúc làm ritual: bản ghi `ritual` có bị cắt phần chồng không, hay chỉ xét lúc hoàn tất? (Hiện chỉ xét lúc hoàn tất.)
+- **Chốt 09/11/2026 (B28):** nút "Plan my day" nằm ở đầu bước 1 của wizard Daily planning; chạy xong nhảy thẳng tới bước Daily plan; lỗi hoặc bấm Dừng thì về bước 1.
+- **Chốt 09/11/2026 (B29):** Daily planning chỉ cho ngày từ hôm nay tới hôm nay + 7; cột xa hơn không có nút "Plan"; API từ chối thì báo câu lỗi riêng.
+- **Chốt 09/11/2026 (B30):** "Gửi bản sao cho chính tôi" tính là đích email, có dòng "Đang gửi tới {n} nơi nhận".
+- Có "chế độ buổi tối" (mở Daily planning sau 15:00 thì mặc định lên kế hoạch cho ngày mai) không? **Chốt 09/11/2026 (B31):** không ở 1.0; lên kế hoạch ngày mai bằng nút "Plan" trên cột ngày mai.
+- **Chốt 09/11/2026 (B32):** bước "Xem lại hôm qua" bị bỏ qua khi hôm qua đã hoàn tất Daily shutdown.
+- **Chốt 09/11/2026 (B33):** Daily shutdown giữ bước xử lý từng task chưa xong, thêm nút "Để tự chuyển sang mai" để bỏ qua cả bước, task còn lại để rollover xử lý.
+- **Chốt 09/11/2026 (B34):** tách hai ô: highlights (chia sẻ được) và ghi chú suy ngẫm riêng (chỉ mình thấy, không bao giờ gửi đi).
+- **Chốt 09/11/2026 (B35):** làm lại ritual trong cùng ngày mở lại ghi chú lần trước để sửa, hoàn tất thì ghi đè.

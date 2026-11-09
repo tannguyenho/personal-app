@@ -46,7 +46,7 @@ G12 lo hai mảng: **kinh doanh** (trial, thanh toán gói cá nhân, chế đ�
 Bản 1.0 (miễn phí, nhãn Beta):
 
 - Nền tảng: **app Windows (Flutter)**, một người dùng, tài khoản và dữ liệu trên cloud (Q35, Q45, ADR-0005). Web và macOS từ bản 1.1, iOS / Android từ bản 1.2, dùng cùng đặc tả.
-- Workspace cá nhân: mỗi tài khoản một workspace, là chủ sở hữu; đổi tên workspace. Không có trial, Billing, chế độ chỉ đọc.
+- Workspace cá nhân: mỗi tài khoản một workspace, là chủ sở hữu; đổi tên workspace. Không có nút "Xoá workspace": muốn xoá thì xoá tài khoản (G01) (B47). Không có trial, Billing, chế độ chỉ đọc.
 - Cài đặt Thông báo (bật / tắt theo sự kiện × kênh), trung tâm thông báo trong app, thông báo hệ thống của Windows (D12: nhắc ritual, nhắc timer > 4 giờ), email có link huỷ đăng ký 1 chạm.
 
 Bản 1.1:
@@ -59,7 +59,7 @@ Bản 1.1:
 Bản sau (1.2 trở đi; nhiều thành viên — Q35, Q37, Q47, xem [`docs/02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md); đặc tả giữ nguyên, chưa làm ở bản 1):
 
 - Nhật ký "Team changes" và audit log hành động quản trị.
-- Mời thành viên qua email và link mời chung, trong giới hạn ghế đã mua; vai trò Chủ sở hữu / Quản trị / Thành viên; đổi vai trò, xoá thành viên, rời workspace, chuyển quyền sở hữu, xoá workspace; nhận lời mời khi đã có workspace.
+- Mời thành viên qua email và link mời chung, trong giới hạn ghế đã mua; vai trò Chủ sở hữu / Quản trị / Thành viên; đổi vai trò, xoá thành viên, rời workspace, chuyển quyền sở hữu, xoá workspace (xét lại ở 1.2, B47); nhận lời mời khi đã có workspace.
 - Privacy: 5 loại dữ liệu × "Chỉ mình tôi" / "Thành viên"; "Tắt mời qua link".
 - Giao task (task được giao vào bucket "Tuần sau", đặt lên đầu — Q36), follow task.
 
@@ -261,7 +261,7 @@ AC01: Chủ sở hữu chuyển quyền cho một thành viên (xác nhận lạ
 
 AC02: Chủ sở hữu muốn rời workspace hoặc xoá tài khoản (G01) khi còn thành viên khác → chặn tới khi chuyển quyền hoặc xoá workspace (EC-36).
 
-AC03: Xoá workspace chỉ chủ sở hữu, phải gõ tên workspace để xác nhận; huỷ gói, mọi thành viên bị đăng xuất.
+AC03: Xoá workspace chỉ chủ sở hữu, phải gõ tên workspace để xác nhận; huỷ gói, mọi thành viên bị đăng xuất. Xét lại ở 1.2; bản 1.0 và 1.1 không có nút này, workspace một người xoá bằng cách xoá tài khoản (G01) (B47).
 
 ## UC4. Quyền riêng tư (bản sau — xem `docs/02-tinh-nang-ban-sau.md`, Q35, Q37)
 
@@ -297,17 +297,23 @@ AC02: Bỏ theo dõi bất cứ lúc nào; người giao tự động follow `[g
 
 AC01: Cài đặt → Thông báo hiện bảng sự kiện × kênh (Trong app, Email, Desktop — thông báo hệ thống Windows từ 1.0 (D12), Mobile từ 1.2); mỗi ô là một công tắc; sự kiện / kênh chưa phát hành ở bản hiện tại không hiện.
 
-AC02: Ô bắt buộc (từ 1.1: email sắp xoá dữ liệu workspace chỉ đọc; email trial sắp hết, gia hạn lỗi `[giả định]`) hiện khoá kèm giải thích.
+AC02: Ô bắt buộc (từ 1.1: email sắp xoá dữ liệu workspace chỉ đọc; email trial sắp hết, gia hạn lỗi `[giả định]`) hiện khoá kèm giải thích. Ở 1.0 không có ô bắt buộc nào nên phần này ẩn (C49).
 
 ### US6.2 Trung tâm thông báo
 
-AC01: Biểu tượng chuông có badge số chưa đọc (tối đa "99+"); mở danh sách mới nhất trước; bấm một thông báo mở đúng nơi liên quan và đánh dấu đã đọc.
+AC01: Biểu tượng chuông ở cụm dưới sidebar có badge số chưa đọc (tối đa "99+"); bấm mở danh sách dạng popover cạnh chuông, mới nhất trước (C50); bấm một thông báo mở đúng nơi liên quan và đánh dấu đã đọc.
 
 AC02: "Đánh dấu tất cả đã đọc"; thông báo mới hiện ≤ 5 giây không cần tải lại.
+
+AC03: Mỗi loại thông báo của 1.0 mở đúng một màn theo bảng "Loại thông báo 1.0 → màn được mở" trong SRS (UC-09); thông báo thanh toán là 1.1 (C51).
+
+AC04: Email bị trả về cứng → ngừng gửi email tới địa chỉ đó và báo trong app, có mã thông báo riêng (C52).
 
 ### US6.3 Huỷ đăng ký email 1 chạm
 
 AC01: Mọi email thông báo (trừ email bắt buộc) có link "Huỷ nhận loại email này"; bấm là tắt ngay, không cần đăng nhập, có trang xác nhận và nút "Bật lại".
+
+AC02: Ở 1.0 trang xác nhận không có link "Mở cài đặt thông báo" vì chưa có web app; link bật từ 1.1 (B48).
 
 # 8. Chỉ số theo dõi `[giả định]`
 
@@ -356,3 +362,5 @@ AC01: Mọi email thông báo (trừ email bắt buộc) có link "Huỷ nhận 
 - Đã chốt hướng 04/11/2026 (bản sau): thành viên tạo channel riêng tư; channel chung chỉ Chủ sở hữu / Quản trị — khuyến nghị, chờ chốt khi làm (Q35, `docs/02-tinh-nang-ban-sau.md`). Bản 1 một người dùng nên G02 cho tạo channel tự do.
 - Đã chốt hướng 04/11/2026 (bản sau): Privacy "Lịch" ở "Thành viên" → người khác chỉ thấy bận / rảnh và timebox, không thấy chi tiết sự kiện của lịch ngoài — khuyến nghị, chờ chốt khi làm (Q37). G05 cần đặc tả khi làm.
 - ADR-0002 xếp workspace nhiều thành viên cùng 1.1 với thanh toán; Q35 dời sang "bản sau" mà chưa nêu số phiên bản. Gói 1.1 khi chỉ một người dùng có còn tính theo ghế không? — Đã chốt 04/11/2026: bản 1.1 có trial và thanh toán gói cá nhân cho một người dùng, không tính ghế, checkout không chọn số ghế; nhiều thành viên, ghế và mọi thứ liên quan để bản 1.2 trở đi; ADR-0002 đã sửa (Q47).
+- Có nút "Xoá workspace" không? **Chốt 09/11/2026 (B47):** không có ở 1.0 và 1.1; workspace một người xoá bằng cách xoá tài khoản (G01); xét lại ở 1.2 khi có nhiều thành viên.
+- Trang huỷ đăng ký email có link "Mở cài đặt thông báo" trong khi 1.0 chưa có web app? **Chốt 09/11/2026 (B48):** ẩn link ở 1.0, bật khi có web (1.1).
