@@ -60,7 +60,7 @@ Mục ritual có chấm nhắc và nhãn "Đang dở" (G08 điểm vào). "Tuầ
 | Home board | Mở app; H; sidebar | 6 view: Board, Calendar 1 ngày, 3 ngày, Weekdays, Week, Month; Tab xoay vòng. Luôn mở ở hôm nay (IA-18) | G04 SCR-01 … SCR-03, BR-13 |
 | Today view | T; sidebar | | G04 SCR-10 |
 | Trang Backlog | B; sidebar | Khác panel Backlog ở panel phải: trang đầy đủ có folder, bucket | G06 SCR-01 |
-| Wizard Daily planning | P; sidebar; nút "Plan" trên header cột ngày ≥ hôm nay; tự mở một lần / ngày; lời nhắc | Sidebar và panel phải vẫn dùng được, để kéo từ Backlog / Lịch vào. Không thoát bằng Esc, chỉ bằng × (IA-16). × lưu tiến độ, về Home | G08 SCR-01 … SCR-07 |
+| Wizard Daily planning | P; sidebar; nút "Plan" trên header cột từ hôm nay tới hôm nay + 7 ngày (B29); tự mở một lần / ngày; lời nhắc | Sidebar và panel phải vẫn dùng được, để kéo từ Backlog / Lịch vào. Không thoát bằng Esc, chỉ bằng × (IA-16). × lưu tiến độ, về Home | G08 SCR-01 … SCR-07 |
 | Wizard Daily shutdown | O; sidebar; lời nhắc | Như trên | G08 SCR-07 … SCR-11 |
 | Planning Agent (trong wizard Daily planning) | Nút "Plan my day" | Nhập và chạy, rồi Review Plan, đều nằm trong wizard; không nằm trong chat | G10 SCR-02, SCR-03 |
 
