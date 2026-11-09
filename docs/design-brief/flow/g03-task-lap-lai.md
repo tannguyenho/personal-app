@@ -673,7 +673,7 @@ flowchart TD
   a1 --> ok
   p1 -->|"A2 · series Đã dừng"| a2["Không áp BR-10<br/>rollover như task thường"]
   p1 -->|"A6 · instance đã tách khỏi series"| a6["Không áp QC-06<br/>rollover như task thường"]
-  p1 -->|"A7 · instance đã sửa riêng<br/>hoặc có thời gian thực tế"| a7["Không lưu trữ skipped BR-10<br/>rollover như task thường"]
+  p1 -->|"A7 · instance đã sửa riêng<br/>hoặc có thời gian thực tế"| a7["Không lưu trữ skipped BR-10, chỉ ở rollover<br/>rollover vào hôm nay như task thường<br/>không làm instance khác thành skipped"]
   a2 --> x1{{"→ G06 · UC-04"}}
   a6 --> x1
   a7 --> x1
@@ -739,7 +739,7 @@ flowchart TD
 | A4 | Phím D / shutdown "Ngày mai" | Lưu trữ `skipped`, toast Hoàn tác của G04 / G08 → [G04 UC-03](g04-board-ngay.md#uc-03-di-chuyển-task-giữa-các-ngày), [G08 UC-02](g08-daily-rituals.md#uc-02-daily-shutdown) | G04 MSG-24 / G08 UC-02 A9 (C15) |
 | A5 | Kéo thả / chọn ngày | Cho phép → [G04 UC-03](g04-board-ngay.md#uc-03-di-chuyển-task-giữa-các-ngày) | MSG-21 |
 | A6 | Instance đã tách | Không áp QC-06 | – |
-| A7 | Instance đã sửa riêng / có thời gian thực tế | Không `skipped`, rollover như task thường (B08) → [G06 UC-04](g06-backlog-rollover.md#uc-04-rollover-hằng-ngày-job-rollover) | – |
+| A7 | Instance đã sửa riêng / có thời gian thực tế | Không `skipped`, rollover vào hôm nay như task thường kể cả khi đã có instance cùng series; không làm instance khác thành `skipped`; chỉ ở rollover (B08, ngoại lệ QC-06) → [G06 UC-04](g06-backlog-rollover.md#uc-04-rollover-hằng-ngày-job-rollover) | – |
 | E1 | Lỗi giữa chừng | Rollback, thử lại theo G06 → [G06 UC-07](g06-backlog-rollover.md#uc-07-đảm-bảo-rollover-theo-yêu-cầu-rolloverensure) | – |
 
 ---

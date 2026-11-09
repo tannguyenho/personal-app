@@ -46,7 +46,7 @@
 | BR-08 | **Priority khi rollover** về Normal, trừ các mức có trong tập "Giữ priority khi rollover" (cấu hình theo tập mức, C16; mặc định tập rỗng) |
 | BR-09 | **Timebox khi rollover:** theo dòng "Rollover" của QC-05. Timebox quá khứ (`endsAt` ≤ thời điểm rollover) bị gỡ liên kết khỏi task, sự kiện trên lịch ngoài **giữ lại** làm lịch sử (G05 không xoá); task về projection (G04). Timebox tương lai giữ nguyên. Timer đang chạy không dừng. Bản ghi thời gian giữ ở ngày làm việc của `startedAt` (QC-07) |
 | BR-10 | **Số ngày bị hoãn** (thay `rolloverCount` trong toàn bộ SRS này): định nghĩa, các đường giữ hoặc reset theo QC-04. G06 lưu `firstPlannedDate` trong cụm vị trí (QC-03 mục 2); số ngày bị hoãn là giá trị suy ra (`postponedDays`), không lưu bộ đếm riêng. `postponedDays` = số ngày D có `firstPlannedDate` < D ≤ hôm nay và D có trong **lịch của task** (khung giờ channel của task nếu có, ngược lại lịch chung — QC-02 mục 6, QC-04 mục 1, Q32). Tính theo lịch **hiện tại** của task (D4, QC-04 mục 1): đổi lịch chung, khung channel hoặc channel của task thì n tính lại ngay trên toàn bộ khoảng từ `firstPlannedDate`, có thể tăng hoặc giảm. Ví dụ ở mục 3.1 |
-| BR-11 | **Instance lặp khi rollover** (đường tự động của QC-06, G03 định nghĩa): series đã có instance trong hôm nay (định nghĩa QC-06 mục 1) → instance quá khứ chưa xong không rollover mà chuyển `LUU_TRU`, `archiveReason = skipped`; không có toast, chỉ ghi nhật ký. Timebox, sự kiện ngoài, timer của instance `skipped` theo dòng "lưu trữ do trùng series (`skipped`)" của QC-05, tức như "Đưa vào backlog" (D6): timebox tương lai bị gỡ và sự kiện ngoài bị xoá; timebox quá khứ chỉ gỡ liên kết, sự kiện giữ; timer không dừng; timebox liên kết sự kiện theo ngoại lệ của QC-05. Áp như nhau cho mọi đường lưu trữ `skipped` (rollover ở đây; phím D — G04, shutdown "Ngày mai" — G08). Series chưa có instance hôm nay → instance quá khứ mới nhất (ngày gốc lớn nhất) rollover trước và trở thành instance đã có của hôm nay; các instance cũ hơn là instance được đưa vào ngày đã có instance nên chuyển `skipped` (QC-06 mục 2, G03 BR-10, EC-30). Không trường hợp nào instance đã có ở hôm nay bị lưu trữ. **Ngoại lệ** (chốt 09/11/2026, B08): instance quá khứ chưa xong đã sửa riêng (`customized`, G03 BR-07) hoặc đã có thời gian thực tế (bản ghi thời gian, QC-07 mục 5) **không** chuyển `skipped`; instance đó rollover như task thường (BR-07 → BR-10, BR-12), kể cả khi hôm nay đã có instance của series |
+| BR-11 | **Instance lặp khi rollover** (đường tự động của QC-06, G03 định nghĩa): series đã có instance trong hôm nay (định nghĩa QC-06 mục 1) → instance quá khứ chưa xong không rollover mà chuyển `LUU_TRU`, `archiveReason = skipped`; không có toast, chỉ ghi nhật ký. Timebox, sự kiện ngoài, timer của instance `skipped` theo dòng "lưu trữ do trùng series (`skipped`)" của QC-05, tức như "Đưa vào backlog" (D6): timebox tương lai bị gỡ và sự kiện ngoài bị xoá; timebox quá khứ chỉ gỡ liên kết, sự kiện giữ; timer không dừng; timebox liên kết sự kiện theo ngoại lệ của QC-05. Áp như nhau cho mọi đường lưu trữ `skipped` (rollover ở đây; phím D — G04, shutdown "Ngày mai" — G08). Series chưa có instance hôm nay → instance quá khứ mới nhất (ngày gốc lớn nhất) rollover trước và trở thành instance đã có của hôm nay; các instance cũ hơn là instance được đưa vào ngày đã có instance nên chuyển `skipped` (QC-06 mục 2, G03 BR-10, EC-30). Không trường hợp nào instance đã có ở hôm nay bị lưu trữ. **Ngoại lệ** (chốt 09/11/2026, B08): instance quá khứ chưa xong đã sửa riêng (`customized`, G03 BR-07) hoặc đã có thời gian thực tế (bản ghi thời gian, QC-07 mục 5) **không** chuyển `skipped`; instance đó rollover vào hôm nay như task thường (BR-07 → BR-10, BR-12), kể cả khi hôm nay đã có instance của cùng series (ngoại lệ của QC-06); instance được miễn không tính là "instance đã có" khi xét các instance còn lại, nên không làm instance khác thành `skipped`. Ngoại lệ chỉ áp cho rollover; phím D (G04) và shutdown "Ngày mai" (G08) giữ QC-06 mục 2 |
 | BR-12 | **Tự lưu trữ.** Sau BR-07, nếu bật Tự lưu trữ (mặc định bật `[giả định]`) và số ngày bị hoãn ≥ 4 `[giả định]` (QC-04 mục 5) → `LUU_TRU`, `archiveReason = stale`. Ngưỡng cố định theo cấu hình hệ thống, không chỉnh trên giao diện ở 1.0 (chốt 09/11/2026, B10). **Task có hoạt động không bị tự lưu trữ** (B11): task có ít nhất một subtask đã tích hoặc đã có thời gian thực tế (bản ghi thời gian, QC-07 mục 5) ở lại `KE_HOACH` hôm nay, nhãn "Dời {n} ngày" vẫn hiện. Timebox, sự kiện ngoài, timer theo dòng "Tự lưu trữ (`stale`)" của QC-05, tức như "Đưa vào backlog" (Q42): timebox tương lai bị gỡ và sự kiện ngoài bị xoá; timebox quá khứ chỉ gỡ liên kết, sự kiện giữ; timer không dừng; timebox liên kết sự kiện theo ngoại lệ của QC-05. Không có Hoàn tác (Q41); khôi phục qua UC-06 không tạo lại timebox. Không tính vào khối lượng ngày |
 | BR-13 | **Idempotent.** Mỗi người dùng một bản ghi `rollover_runs(user_id, date)` UNIQUE; đã `XONG` thì bỏ qua (EC-06) |
 | BR-14 | **Khôi phục từ Lưu trữ.** Hai lựa chọn (chốt 09/11/2026, B12): **"Khôi phục vào hôm nay"** (mặc định) và **"Khôi phục vào Backlog"**. Cả hai: `archivedAt`, `archiveReason` = null; số ngày bị hoãn reset (QC-04 mục 3). Vào hôm nay: `startDate` = hôm nay, vào đầu danh sách hôm nay. Kéo vào ngày D: D ≥ hôm nay (QC-05). Instance lặp vào ngày đã có instance cùng series: cho phép, cảnh báo MSG-21 (QC-06 mục 3). Vào Backlog: theo BR-02, bucket `next_week`, đầu bucket `[giả định]` (như Shift+Z, BR-03). Hoàn tác trả task về Lưu trữ với `archivedAt`, `archiveReason` cũ (QC-13 mục 5, A10) |
@@ -186,6 +186,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | E2 | Tên folder trùng | MSG-06 |
 | E3 | Folder thứ 51 | MSG-07 |
 | E4 | \[BacklogList\] lỗi | Dữ liệu lưu trên máy + QC-MSG-02 "Chưa tải được. Thử lại" tại chỗ trong SCR-01 / SCR-09 (QC-13 mục 1, chốt 09/11/2026, C07) |
+| E5 | Mất mạng khi thêm task, tạo / đổi tên / xoá folder hoặc kéo task (A3–A6) | Chạy ngay trên máy, vào hàng đợi, dấu "Chờ đồng bộ" ở task / folder vừa đổi; có mạng thì gửi lên (QC-08 mục 7, A6). Server từ chối khi gửi lên (tên trùng, quá 50 folder) → bỏ thay đổi trên máy, MSG-06 / MSG-07 |
 
 ### UC-03 Đưa task từ backlog ra ngày
 
@@ -223,6 +224,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | E2 | Workspace chỉ đọc (bản 1.1, QC-09) | MSG-18 |
 | E3 | D < hôm nay (server, `PAST_DATE`) | Trả task về bucket cũ, MSG-24 |
 | E4 | `VERSION_CONFLICT` (QC-08) | Vẽ theo server, MSG-23 |
+| E5 | Mất mạng | Task hiện ở cột D ngay trên máy, vào hàng đợi, dấu "Chờ đồng bộ" trên card; có mạng thì gửi lên với cùng idempotency key; bị từ chối thì theo E3 / E4 (QC-08 mục 7, A6) |
 
 ### UC-04 Rollover hằng ngày (job `rollover`)
 
@@ -259,7 +261,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | A9 | Lượt `DANG_CHAY` hết lease (worker chết) | Lượt job kế tiếp hoặc \[RolloverEnsure\] nhận lại, chạy từ bước 2 (BR-18) |
 | A10 | Hôm nay không có trong lịch chung hoặc lịch của task (ví dụ Thứ Bảy) | Vẫn chạy như luồng chính (BR-06, Q32); số ngày bị hoãn của task không tăng nếu hôm nay không có trong lịch của task (BR-10); tự lưu trữ xét theo n như thường (BR-12) |
 | A11 | Người dùng muốn trả lại kết quả rollover | Không có Hoàn tác (Q41, BR-16); người dùng kéo / chọn ngày (G04) hoặc đưa vào backlog (UC-01) |
-| A12 | Instance lặp quá khứ chưa xong đã sửa riêng (`customized`) hoặc đã có thời gian thực tế | Không chuyển `skipped`; rollover như task thường ở bước 4–5, kể cả khi hôm nay đã có instance của series (BR-11, chốt 09/11/2026, B08) |
+| A12 | Instance lặp quá khứ chưa xong đã sửa riêng (`customized`) hoặc đã có thời gian thực tế | Không chuyển `skipped`; rollover vào hôm nay như task thường ở bước 4–5, kể cả khi hôm nay đã có instance của cùng series; không làm instance khác thành `skipped`. Chỉ áp cho rollover (BR-11, ngoại lệ của QC-06, chốt 09/11/2026, B08) |
 
 **Luồng lỗi**
 
@@ -334,6 +336,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | E2 | \[TaskRestore\] / \[ArchiveDeleteAll\] lỗi | Lưu trữ giữ nguyên, MSG-17 |
 | E3 | Workspace chỉ đọc (bản 1.1, QC-09) | Chỉ xem; "Khôi phục", "Xoá tất cả" disabled, MSG-18 |
 | E4 | D < hôm nay (server, `PAST_DATE`) | Task ở lại Lưu trữ, MSG-24 |
+| E5 | Mất mạng khi khôi phục (bước 4, A3, A8) hoặc bật / tắt Tự lưu trữ (A2) | Chạy ngay trên máy, vào hàng đợi, dấu "Chờ đồng bộ" ở task / công tắc vừa đổi; có mạng thì gửi lên; bị từ chối thì theo E1 / E4 (QC-08 mục 7, A6). "Xoá tất cả" là thao tác hàng loạt nên cần mạng: nút mờ, tooltip MSG-27 `[giả định]` |
 
 ### UC-07 Đảm bảo rollover theo yêu cầu (\[RolloverEnsure\])
 
@@ -431,7 +434,7 @@ Chuyển: `CHO` → `CHO_SHUTDOWN` → `CHO` (phiên shutdown hoàn tất / bỏ
 | --- | --- | --- | --- |
 | 1 | Tiêu đề + mô tả | Header | "Lưu trữ" · mô tả MSG-12 |
 | 2 | "Tự lưu trữ" | Toggle | UC-06 A2 |
-| 3 | "Xoá tất cả" | Button (nguy hiểm) | Mở SCR-06; disabled khi rỗng |
+| 3 | "Xoá tất cả" | Button (nguy hiểm) | Mở SCR-06; disabled khi rỗng; mất mạng thì mờ, tooltip MSG-27 (UC-06 E5) |
 | 4 | Danh sách task | List | Mỗi dòng: tiêu đề, #channel, thời lượng, ngày lưu trữ, nhãn lý do theo `archiveReason` (MSG-12 / MSG-13; MSG-22 bỏ ở 1.0 — Q34). Gồm cả instance `skipped`, nhãn "Đã bỏ qua" (B09). Bấm dòng → SCR-08 |
 | 5 | "Khôi phục" | Button (theo dòng) + menu | Hai lựa chọn: "Khôi phục vào hôm nay" (UC-06 bước 3) · "Khôi phục vào Backlog" (UC-06 A8) (B12) |
 | 6 | Trạng thái rỗng | Empty state | MSG-19 |
@@ -539,6 +542,7 @@ API dưới đây là hợp đồng nghiệp vụ tham khảo; kiểu API, tên,
 | MSG-24 | Toast | Không thể đặt task chưa xong vào ngày đã qua |
 | MSG-25 | Banner | Chưa chuyển được việc dở từ hôm trước sang hôm nay. Thử lại (BR-24; G04 MSG-27 dùng nội dung này) |
 | MSG-26 | Toast | Đã khôi phục "{tiêu đề}" vào Backlog · Hoàn tác (B12) |
+| MSG-27 | Tooltip (nút mờ khi mất mạng) | Cần có mạng để xoá tất cả (UC-06 E5) `[giả định]` |
 
 Bản EN: `[chờ bổ sung]`.
 

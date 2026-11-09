@@ -389,3 +389,20 @@ PO trả lời ngày 09/11/2026: "A đồng ý hết, B theo đề xuất, C đ�
 | B47 | A (đề xuất) | 09/11/2026 | Có nút "Xoá workspace" không |
 | B48 | A (đề xuất) | 09/11/2026 | Trang huỷ đăng ký email có link "Mở cài đặt thông báo", mà 1.0 chưa có web app |
 | C01–C52 | Đồng ý tất cả | 09/11/2026 | |
+
+## Điểm phát sinh khi ghi vào tài liệu (cần PO xem)
+
+Khi ghi quyết định vào SRS / PRD / flow, một số chỗ quyết định chưa nói đủ. Tài liệu đang theo cách dưới đây, gắn `[giả định]` ở chỗ tương ứng; PO đồng ý thì bỏ nhãn.
+
+| Mã | Chỗ | Đang ghi | Nơi |
+|---|---|---|---|
+| D01 | "Khôi phục vào Backlog" (B12) vào bucket nào | Bucket "Tuần tới", đầu bucket, giống Shift+Z | G06 BR-14, UC-06 A8 |
+| D02 | Con số ngưỡng tự lưu trữ (B10 chỉ chốt "cố định") | Vẫn là 4 ngày `[giả định]` | QC-04 mục 5 |
+| D03 | "Xoá tất cả" trong Lưu trữ khi mất mạng (thao tác hàng loạt) | Nút mờ, MSG-27 "Cần có mạng để xoá tất cả" | G06 SCR-05 #3 |
+| D04 | Vị trí nút "Gỡ khỏi lịch" trên một block (B22) | Hiện khi hover hoặc chọn block | G05 SCR-05 #9 |
+| D05 | "Task kế tiếp hôm nay" ở menu khay (B23) | Task chưa xong đầu tiên của hôm nay; không còn thì ẩn mục | G07 BR-23 |
+| D06 | Bấm thông báo "timer chạy quá 4 giờ" (G07 MSG-11) và nhắc ritual (G08 MSG-11) | Mở chi tiết task (task đang chạy timer / task ghi chép ritual) | G12 bảng loại thông báo 1.0 |
+| D07 | "Hỏi trước khi ghi đè" ở G10 UC-05 A3 (C46) | Áp cho việc soạn lại nháp highlights (MSG-39) | G10 UC-05 A3 |
+| D08 | Mã lỗi mới của B45 và G01 (`CLAUDE_CODE_ACCOUNT_BLOCKED`, `CLAUDE_CODE_RETRYING`, `CLAUDE_CODE_OUTPUT_TRUNCATED`, `MCP_DISCONNECTED`, `EXPORT_FORBIDDEN`) | Tên tạm; tech chốt khi viết code | G10, G01 bảng mã lỗi |
+| D09 | Chữ của các MSG mới (khoảng 40 câu) | Viết theo giọng văn DS-07; duyệt cùng brief từng nhóm | SRS các nhóm |
+

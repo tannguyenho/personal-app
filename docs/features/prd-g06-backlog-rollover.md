@@ -98,7 +98,7 @@ Rollover idempotent theo người dùng + ngày: chạy lại không chuyển ha
 | Giữ priority khi rollover | Tập mức được giữ | Tập rỗng (không giữ) | Mức không giữ → về Normal (C16) |
 | Tự lưu trữ | Bật / tắt | Bật `[giả định]` | Toggle trong panel Lưu trữ |
 | Ngưỡng Tự lưu trữ | Số ngày bị hoãn (QC-04), chỉ đếm ngày có trong lịch làm việc của task (QC-02 mục 6, Q32) | 4 `[giả định]` | Như Sunsama về con số; khác Sunsama ở chỗ không đếm ngày nghỉ của task. Cố định, không chỉnh trên giao diện ở 1.0 (B10) |
-| Miễn tự lưu trữ | Task có subtask đã tích hoặc đã có thời gian thực tế không bị lưu trữ `stale` (B11). Instance lặp bị lỡ đã sửa riêng hoặc đã có thời gian thực tế không bị lưu trữ `skipped`, rollover như task thường (B08) | — | Chốt 09/11/2026 |
+| Miễn tự lưu trữ | Task có subtask đã tích hoặc đã có thời gian thực tế không bị lưu trữ `stale` (B11). Instance lặp bị lỡ đã sửa riêng hoặc đã có thời gian thực tế không bị lưu trữ `skipped`, rollover như task thường; chỉ ở rollover (B08) | — | Chốt 09/11/2026 |
 | Timebox ngày cũ khi rollover | Theo QC-05: timebox quá khứ gỡ liên kết, task về projection; timebox tương lai giữ | — | Sự kiện quá khứ trên lịch ngoài **giữ lại** làm lịch sử (Q6) |
 | Timebox khi tự lưu trữ hoặc lưu trữ do trùng series | Theo dòng "Tự lưu trữ (`stale`), lưu trữ do trùng series (`skipped`)" của QC-05: như "Đưa vào backlog" — timebox tương lai gỡ, sự kiện ngoài bị xoá; timebox quá khứ gỡ liên kết, sự kiện giữ | — | Q42 (`stale`), D6 (`skipped`) |
 | Hoàn tác rollover / tự lưu trữ | Không có | — | Job hệ thống, chỉ ghi nhật ký (Q41, QC-05) |
@@ -168,6 +168,8 @@ AC04: Shift+B mở panel Backlog gọn ở panel phải: cùng các bucket với
 
 AC05: Tải Backlog lỗi → vẫn hiện dữ liệu trên máy, kèm "Chưa tải được. Thử lại" tại chỗ (QC-MSG-02, C07).
 
+AC06: Mất mạng vẫn thêm task, sửa folder, kéo task trong Backlog, đưa task ra ngày và khôi phục từ Lưu trữ được: thay đổi hiện ngay, có dấu "Chờ đồng bộ" và được gửi lên khi có mạng (QC-08 mục 7, A6). "Xoá tất cả" trong Lưu trữ cần mạng `[giả định]`.
+
 ### US2.2 Folder
 
 AC01: "Thêm folder" tạo folder tên 1–50 ký tự; kéo task vào folder; task trong folder vẫn thuộc bucket của nó.
@@ -220,7 +222,7 @@ AC01: Instance lặp cũ chưa xong, series đã có instance hôm nay → khôn
 
 AC02: Instance lưu trữ `skipped` xử lý timebox như "Đưa vào backlog": timebox tương lai bị gỡ và sự kiện trên lịch ngoài bị xoá; timebox quá khứ chỉ gỡ liên kết, sự kiện giữ lại; timer không dừng (D6, dòng "lưu trữ do trùng series" của QC-05). Áp cho mọi đường lưu trữ `skipped` (rollover, phím D, shutdown "Ngày mai").
 
-AC03: Instance cũ chưa xong nhưng đã sửa riêng hoặc đã có thời gian thực tế → không vào Lưu trữ "bị bỏ qua"; rollover về hôm nay như task thường, kể cả khi hôm nay đã có instance của series (chốt 09/11/2026, B08).
+AC03: Instance cũ chưa xong nhưng đã sửa riêng hoặc đã có thời gian thực tế → không vào Lưu trữ "bị bỏ qua"; rollover về hôm nay như task thường, kể cả khi hôm nay đã có instance của cùng series (ngoại lệ của QC-06), và không làm instance khác bị bỏ qua. Chỉ áp cho rollover; phím D và shutdown "Ngày mai" giữ QC-06 (chốt 09/11/2026, B08).
 
 ### US3.4 Chế độ chỉ đọc (bản 1.1)
 

@@ -8,11 +8,11 @@
 | UC | Flow | Màn chính | Nhánh A / E (1.0) |
 |---|---|---|---|
 | [UC-01](#uc-01-chuyển-task-vào-backlog) | Chuyển task vào backlog | SCR-02 Menu chọn bucket, SCR-03 Menu Ngày dự định | 5 / 4 |
-| [UC-02](#uc-02-xem-và-tổ-chức-backlog) | Xem và tổ chức backlog | SCR-01 Trang Backlog, SCR-09 Panel Backlog gọn, SCR-04 Tạo / sửa folder | 9 / 4 |
-| [UC-03](#uc-03-đưa-task-từ-backlog-ra-ngày) | Đưa task từ backlog ra ngày | SCR-01, SCR-03 | 6 / 3 |
+| [UC-02](#uc-02-xem-và-tổ-chức-backlog) | Xem và tổ chức backlog | SCR-01 Trang Backlog, SCR-09 Panel Backlog gọn, SCR-04 Tạo / sửa folder | 9 / 5 |
+| [UC-03](#uc-03-đưa-task-từ-backlog-ra-ngày) | Đưa task từ backlog ra ngày | SCR-01, SCR-03 | 6 / 4 |
 | [UC-04](#uc-04-rollover-hằng-ngày-job-rollover) | Rollover hằng ngày (job) | SCR-07 Nhãn "Dời {n} ngày" trên board | 11 / 3 |
 | [UC-05](#uc-05-tự-lưu-trữ-trong-job-rollover) | Tự lưu trữ (trong job) | SCR-05 Panel Lưu trữ | 4 / 0 |
-| [UC-06](#uc-06-xem-lưu-trữ-khôi-phục-và-xoá-tất-cả) | Xem Lưu trữ, khôi phục, xoá tất cả | SCR-05, SCR-06 Xác nhận "Xoá tất cả", SCR-08 Chi tiết task chỉ xem | 9 / 3 |
+| [UC-06](#uc-06-xem-lưu-trữ-khôi-phục-và-xoá-tất-cả) | Xem Lưu trữ, khôi phục, xoá tất cả | SCR-05, SCR-06 Xác nhận "Xoá tất cả", SCR-08 Chi tiết task chỉ xem | 9 / 4 |
 | [UC-07](#uc-07-đảm-bảo-rollover-theo-yêu-cầu-rolloverensure) | Đảm bảo rollover theo yêu cầu | Không có màn riêng; board (G04), Daily planning (G08) | 4 / 2 |
 
 ---
@@ -230,11 +230,17 @@ flowchart TD
   a4p -.->|"E3 · folder thứ 51, LIMIT_FOLDERS"| e3m>"MSG-07 · Inline<br/>Bạn đã có tối đa {max} folder"]
   e1m -.-> a4u
   e2m -.-> a4u
+  a4p -.->|"E5 · mất mạng, cả A3, A5, A6"| e5["Chạy trên máy, hàng đợi QC-08 mục 7<br/>dấu Chờ đồng bộ ở folder / task vừa đổi"]
+  a5p -.->|"E5"| e5
+  e5 -.->|"có mạng, gửi lên"| a4e
+  e5 -.->|"server từ chối: trùng tên / quá 50 folder"| e5m(["Bỏ thay đổi trên máy<br/>MSG-06 / MSG-07"])
 
   class s1 happy
   class a4,a4u,a4p,a5m,a5p alt
   class a4e,a5e done
   class e1m,e2m,e3m err
+  class e5 sync
+  class e5m fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
   classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
@@ -263,6 +269,7 @@ flowchart TD
 | E2 | Tên folder trùng | Chặn | MSG-06 |
 | E3 | Folder thứ 51 | Chặn | MSG-07 |
 | E4 | BacklogList lỗi | Dữ liệu trên máy, Thử lại | QC-MSG-02 |
+| E5 | Mất mạng khi thêm task, sửa folder, kéo task | Chạy trên máy, Chờ đồng bộ, gửi lên khi có mạng (QC-08 mục 7) | MSG-06 / MSG-07 nếu server từ chối |
 
 ---
 
@@ -325,12 +332,17 @@ flowchart TD
   e3m -.-> fail
   p1 -.->|"E4 · VERSION_CONFLICT"| e4m>"MSG-23 · Toast<br/>Task đã thay đổi trên thiết bị khác"]
   e4m -.-> e4(["Task vẽ theo server"])
+  p1 -.->|"E5 · mất mạng"| e5["Task hiện ở cột D trên máy<br/>hàng đợi, dấu Chờ đồng bộ QC-08 mục 7"]
+  e5 -.->|"có mạng, gửi lên cùng idempotency key"| ok
+  e5 -.->|"bị từ chối"| e3m
+  e5 -.->|"bị từ chối"| e4m
 
   class start,u1,p1,m3 happy
   class a1,a2,a3,a4s,a6,a6e alt
   class a5m warn
   class a3x link
   class e1m,e3m,e4m err
+  class e5 sync
   class ok done
   class fail,e4 fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -358,6 +370,7 @@ flowchart TD
 | E2 | Workspace chỉ đọc | Bỏ (1.1) | – |
 | E3 | D < hôm nay | Về bucket cũ | MSG-24 |
 | E4 | VERSION_CONFLICT | Vẽ theo server | MSG-23 |
+| E5 | Mất mạng | Cột D trên máy, Chờ đồng bộ, gửi lên khi có mạng (QC-08 mục 7) | – |
 
 ---
 
@@ -415,7 +428,7 @@ flowchart TD
   a7 -->|"ritual.shutdown.closed<br/>hoặc tới mốc + 2 giờ"| p2
   a7 --> a7x{{"→ G08 · UC-02"}}
   p3 -->|"A6 · không có task thoả BR-06"| a6(["Lượt XONG, số liệu 0"])
-  p3 -->|"A12 · instance lặp quá khứ đã sửa riêng<br/>hoặc có thời gian thực tế"| a12["Không lưu trữ skipped BR-11<br/>rollover như task thường"]
+  p3 -->|"A12 · instance lặp quá khứ đã sửa riêng<br/>hoặc có thời gian thực tế"| a12["Không lưu trữ skipped BR-11, chỉ ở rollover<br/>rollover vào hôm nay như task thường<br/>không làm instance khác thành skipped"]
   a12 --> p4
   p4 -->|"A5 · task đang chạy timer"| a5["Rollover bình thường, timer không dừng"]
   p4 -->|"A10 · hôm nay không có trong lịch, ví dụ Thứ Bảy"| a10["Vẫn chạy; số ngày bị hoãn không tăng<br/>nếu hôm nay không có trong lịch của task BR-10"]
@@ -493,7 +506,7 @@ flowchart TD
 | A9 | Lượt `DANG_CHAY` hết lease | Nhận lại, chạy từ bước 2 | – |
 | A10 | Hôm nay không có trong lịch | Vẫn chạy, n không tăng | – |
 | A11 | Muốn trả lại kết quả | Không Hoàn tác → [G04 UC-03](g04-board-ngay.md#uc-03-di-chuyển-task-giữa-các-ngày), [UC-01](#uc-01-chuyển-task-vào-backlog) | – |
-| A12 | Instance lặp quá khứ đã sửa riêng / có thời gian thực tế | Không `skipped`, rollover như task thường (B08) | – |
+| A12 | Instance lặp quá khứ đã sửa riêng / có thời gian thực tế | Không `skipped`, rollover vào hôm nay như task thường kể cả khi đã có instance cùng series; không làm instance khác thành `skipped`; chỉ ở rollover (B08, ngoại lệ QC-06) | – |
 | E1 | Lỗi CSDL | Rollback, `LOI`, lần 3 `THAT_BAI` | – |
 | E2 | G05 gỡ timebox lỗi | Không chặn, G05 thử lại | – |
 | E3 | `THAT_BAI` | Chạy bù khi mở app → [UC-07](#uc-07-đảm-bảo-rollover-theo-yêu-cầu-rolloverensure) | – |
@@ -682,10 +695,16 @@ flowchart TD
   e2m -.-> e2(["Lưu trữ giữ nguyên"])
   a3 -.->|"E4 · D < hôm nay, PAST_DATE"| e4m>"MSG-24 · Toast<br/>Không thể đặt task chưa xong vào ngày đã qua"]
   e4m -.-> e4(["Task ở lại Lưu trữ"])
+  p2 -.->|"E5 · mất mạng, cả A2, A3, A8"| e5["Chạy trên máy, hàng đợi QC-08 mục 7<br/>dấu Chờ đồng bộ ở task / công tắc vừa đổi"]
+  a3 -.->|"E5"| e5
+  e5 -.->|"có mạng, gửi lên"| ok
+  e5 -.->|"bị từ chối"| e1m
+  s1 -.->|"E5 · mất mạng, Xoá tất cả"| e5m>"MSG-27 · Tooltip trên nút mờ<br/>Cần có mạng để xoá tất cả"]
 
   class s1,u1,p2 happy
   class a1p,a3 alt
-  class e1m,e2m,e4m err
+  class e1m,e2m,e4m,e5m err
+  class e5 sync
   class ok done
   class e1,e2,e4 fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -716,6 +735,7 @@ flowchart TD
 | E2 | TaskRestore / ArchiveDeleteAll lỗi | Lưu trữ giữ nguyên | MSG-17 |
 | E3 | Workspace chỉ đọc | Bỏ (1.1) | – |
 | E4 | D < hôm nay | Ở lại Lưu trữ | MSG-24 |
+| E5 | Mất mạng | Khôi phục, Tự lưu trữ: chạy trên máy, Chờ đồng bộ, gửi lên khi có mạng; Xoá tất cả: nút mờ (QC-08 mục 7) | MSG-27 (Xoá tất cả) |
 
 ---
 
@@ -824,4 +844,5 @@ flowchart TD
 - ~~UC-05 bước 4: lượt chạy trong \[RolloverEnsure\] lúc mở app thì MSG-11 hiện ngay hay đợi lần mở sau~~ **Đã sửa 09/11/2026 (B07):** hiện ngay khi lượt chạy xong; lượt do job chạy trước thì hiện lần mở app kế tiếp (UC-05 bước 4, UC-07 bước 5).
 - ~~UC-03 A4 gộp G08 (1.0) và G09 Weekly planning (1.1)~~ **Đã sửa 09/11/2026 (A9):** SRS ghi "G09 Weekly planning (1.1)"; sơ đồ chỉ vẽ G08.
 - ~~IA có panel Backlog gọn (Shift+B) nhưng SRS chỉ có SCR-01~~ **Đã sửa 09/11/2026 (C09):** thêm SCR-09 Panel Backlog gọn (cùng bucket với SCR-01, bỏ phần lọc) và UC-02 A9.
+- Mới 09/11/2026 (A6): thêm nhánh mất mạng UC-02 E5, UC-03 E5, UC-06 E5 (chạy trên máy, dấu "Chờ đồng bộ"). "Xoá tất cả" khi mất mạng: nút mờ, MSG-27 `[giả định]`.
 - Mới 09/11/2026 (B08, B09, B11, B12): instance lặp đã sửa riêng / có thời gian thực tế không bị `skipped` (UC-04 A12); MSG-13 thành "Đã bỏ qua"; task có hoạt động không bị tự lưu trữ (UC-05 A4); khôi phục vào Backlog (UC-06 A8, MSG-26). Bucket đích khi khôi phục vào Backlog vẫn là `[giả định]` ("Tuần tới", đầu bucket).

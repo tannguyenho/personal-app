@@ -31,7 +31,7 @@ Nhiều việc lặp theo nhịp cố định: standup mỗi sáng, dọn hộp 
 - Biến một task có sẵn thành task lặp trong ≤ 10 giây: menu … → Lặp lại → chọn quy tắc → Lưu.
 - Instance có sẵn trên board 60 ngày tới để G04 tính khối lượng ngày và tuần.
 - Sửa một instance không bao giờ hỏi phạm vi; mọi thao tác trên cả series nằm ở một menu "Sửa series".
-- Hệ thống không bao giờ tự đặt hai instance của cùng series vào một ngày (QC-06).
+- Hệ thống không bao giờ tự đặt hai instance của cùng series vào một ngày (QC-06), trừ ngoại lệ B08: instance bị lỡ đã sửa riêng hoặc đã có thời gian thực tế vẫn rollover vào hôm nay.
 - Ngày người dùng đã bỏ (xoá instance) không bao giờ bị sinh lại.
 
 # 2. Người dùng
@@ -79,7 +79,7 @@ Instance có mặt sẵn trên các ngày tới ở dạng projection, không c�
 
 ## 4.3 Một series, một ngày, một instance
 
-Hệ thống không tự đặt hai instance cùng series vào một ngày (QC-06). Instance bị đưa vào ngày đã có instance qua đường tự động (rollover, phím D, shutdown "Ngày mai") chuyển vào Lưu trữ với lý do "bị bỏ qua". Người dùng chủ động kéo thả, chọn ngày hay khôi phục thì vẫn được đặt, kèm cảnh báo.
+Hệ thống không tự đặt hai instance cùng series vào một ngày (QC-06), trừ ngoại lệ B08. Instance bị đưa vào ngày đã có instance qua đường tự động (rollover, phím D, shutdown "Ngày mai") chuyển vào Lưu trữ với lý do "bị bỏ qua". Ngoại lệ B08 (chỉ ở rollover): instance bị lỡ đã sửa riêng hoặc đã có thời gian thực tế vẫn rollover vào hôm nay như task thường, không làm instance khác bị bỏ qua. Người dùng chủ động kéo thả, chọn ngày hay khôi phục thì vẫn được đặt, kèm cảnh báo.
 
 ## 4.4 Quá khứ không đổi
 
@@ -266,7 +266,7 @@ AC04: Khôi phục instance "bị bỏ qua" từ Lưu trữ được (G06); hôm
 
 AC05: Phím D hoặc shutdown "Ngày mai" đưa instance vào ngày đã có instance → instance đó vào Lưu trữ lý do "bị bỏ qua", có toast Hoàn tác (QC-06). Chữ toast do G04 (phím D) và G08 (shutdown) định nghĩa (C15).
 
-AC06: Instance cũ chưa xong nhưng đã sửa riêng hoặc đã có thời gian thực tế không vào Lưu trữ "bị bỏ qua"; được giữ và rollover như task thường, kể cả khi hôm nay đã có instance (chốt 09/11/2026, B08).
+AC06: Instance cũ chưa xong nhưng đã sửa riêng hoặc đã có thời gian thực tế không vào Lưu trữ "bị bỏ qua"; được giữ và rollover vào hôm nay như task thường, kể cả khi hôm nay đã có instance của cùng series, và không làm instance khác bị bỏ qua. Chỉ áp cho rollover; phím D và shutdown "Ngày mai" giữ như AC05 (chốt 09/11/2026, B08).
 
 ## UC6. Quản lý mọi task lặp
 
