@@ -1,4 +1,5 @@
 # Brief G02 Quản lý task — bản thử: tạo task và chi tiết task
+> **Đã thay** bằng brief G02 đầy đủ [`g02-quan-ly-task.md`](g02-quan-ly-task.md) (#11). Bản thử này chỉ giữ để tham khảo. Mã màn tạm của ô thêm nhanh toàn cục đã đổi thành mã SRS **SCR-08** (chốt 10/11/2026, O-19 brief G02).
 
 > **BẢN THỬ** để PO phản hồi về [khuôn](_khuon.md) ([ticket #9](https://github.com/tannguyenho/personal-app/issues/9)). Chỉ phủ một phần G02: ô soạn task, card ngay sau khi tạo, chi tiết task, menu "Khác". Brief G02 đầy đủ ([#11](https://github.com/tannguyenho/personal-app/issues/11)) sẽ viết lại từ bản này sau khi chốt khuôn, kiến trúc thông tin (#7) và FigJam (#10).
 >
@@ -16,7 +17,7 @@ Khoảnh khắc quan trọng nhất: **từ lúc mở ô soạn tới lúc task 
 ## 2. Phạm vi của brief
 
 **Trong bản thử**
-- Màn: SCR-01 Ô soạn task, SCR-N01 Ô thêm nhanh toàn cục, SCR-02 Task card (chỉ các trạng thái liên quan tới tạo và lưu), SCR-03 Chi tiết task, SCR-04 Menu "Khác".
+- Màn: SCR-01 Ô soạn task, SCR-08 Ô thêm nhanh toàn cục, SCR-02 Task card (chỉ các trạng thái liên quan tới tạo và lưu), SCR-03 Chi tiết task, SCR-04 Menu "Khác".
 - Flow: F-01 … F-08 (mục 5).
 
 **Không trong bản thử** (vào brief G02 đầy đủ #11, hoặc brief khác)
@@ -38,7 +39,7 @@ Khoảnh khắc quan trọng nhất: **từ lúc mở ô soạn tới lúc task 
 | Mã | Màn | Bề mặt | Điểm vào | Số trạng thái | Ưu tiên vẽ |
 |---|---|---|---|---|---|
 | SCR-01 | Ô soạn task | Inline, đầu (hoặc cuối) danh sách của cột ngày | Nút "Thêm task" trên cột; phím A; command menu "Thêm task" | 12 | P1 |
-| SCR-N01 | Ô thêm nhanh toàn cục | Cửa sổ nổi nhỏ `[chờ #7]` | Ctrl+Shift+A, kể cả khi app ở nền hoặc thu nhỏ (D11) | 4 | P2 |
+| SCR-08 | Ô thêm nhanh toàn cục | Cửa sổ nổi nhỏ `[chờ #7]` | Ctrl+Shift+A, kể cả khi app ở nền hoặc thu nhỏ (D11) | 4 | P2 |
 | SCR-02 | Task card (phần do tạo / lưu) | Trên cột ngày | Sau Enter ở SCR-01 | 4 | P1 |
 | SCR-03 | Chi tiết task | `[chờ #7]` panel phải, dialog hay cửa sổ riêng | Bấm tiêu đề card; Ctrl+Enter khi task đang chọn | 15 | P1 |
 | SCR-04 | Menu "Khác" | Menu thả xuống từ nút … | Nút … trên header SCR-03; chuột phải trên card `[đề xuất]` | 2 | P2 |
@@ -80,7 +81,7 @@ Chip có giá trị do AI gợi ý mang dấu ✨ ngay trước giá trị. Dấ
 - Channel: "Chưa phân loại"; context `work`: "#Thiết kế", "#Khách hàng ACB", "#Nội bộ"; context `personal`: "#Cá nhân", "#Sức khoẻ". Tên channel dài nhất 50 ký tự.
 - Thời lượng: 5 phút, 1 giờ 30 phút, 24 giờ (lớn nhất).
 
-### SCR-N01 Ô thêm nhanh toàn cục
+### SCR-08 Ô thêm nhanh toàn cục
 
 **Mục đích.** Ghi một việc vào hôm nay khi đang ở app khác, không phải mở cửa sổ chính.
 
@@ -198,7 +199,7 @@ Trong ô soạn, mở chip Ngày, chọn "Không ngày (backlog)" → SCR-01.S11
 
 ### F-06 Ghi nhanh từ bên ngoài app
 
-Đang ở app khác → Ctrl+Shift+A → SCR-N01.S01 → gõ → Enter → SCR-N01.S03 → cửa sổ đóng, focus trả về app trước. Task nằm ở Hôm nay.
+Đang ở app khác → Ctrl+Shift+A → SCR-08.S01 → gõ → Enter → SCR-08.S03 → cửa sổ đóng, focus trả về app trước. Task nằm ở Hôm nay.
 
 ### F-07 Mở chi tiết và bổ sung thông tin
 
@@ -227,7 +228,7 @@ Hover dòng subtask → bấm icon xoá → SCR-03.S08, toast MSG-21 → bấm "
 | CASE-04 | Channel đã ẩn | SCR-01.S07 | Không có trong danh sách; task cũ vẫn hiện channel đó | US5.1 AC03 |
 | **Thời gian** | | | | |
 | CASE-05 | Cột ngày đã qua | SCR-01 | `[chờ O-02]`; nếu vẫn mở được ô soạn thì Enter → MSG-20, nội dung giữ trong ô | UC-01 E6, QC-05 |
-| CASE-06 | Tạo task lúc 02:00 sáng, mốc đầu ngày 04:00 | SCR-N01 | "Hôm nay" là ngày làm việc hôm trước; dòng UI-08 ghi đúng ngày đó | QC-01 |
+| CASE-06 | Tạo task lúc 02:00 sáng, mốc đầu ngày 04:00 | SCR-08 | "Hôm nay" là ngày làm việc hôm trước; dòng UI-08 ghi đúng ngày đó | QC-01 |
 | CASE-07 | Đổi ngày dự định trong header sang ngày đã qua | SCR-03 header | Date picker không cho chọn ngày < hôm nay | UC-02 E7 |
 | CASE-08 | Đổi ngày instance lặp sang ngày đã có instance cùng series | SCR-03 header | Vẫn đổi; toast MSG-24 | UC-02 A11, QC-06 |
 | CASE-17 | Đổi channel sang channel có khung giờ riêng | SCR-03 header | Chỉ đổi chip Channel. Projection, sức chứa của cột tính lại ngay; cách báo "Theo khung #{channel}" trên card thuộc brief G04 | UC-02 A12, BR-23, BR-24 |
@@ -256,8 +257,8 @@ MSG-xx chép nguyên văn từ SRS G02 mục 9; nguồn vẫn là SRS. UI-xx là
 | UI-05 | Chip Ngày khi không ngày | Backlog | – | |
 | UI-06 | Lựa chọn trong date picker | Không ngày (backlog) | – | Có trong SRS SCR-01 #3 |
 | UI-07 | Danh sách channel rỗng | Không có channel "{từ khoá}" | {từ khoá} ≤ 50 ký tự | |
-| UI-08 | SCR-N01 | Thêm vào Hôm nay · {thứ, ngày} | {thứ, ngày} = "Thứ Năm 06/11" | |
-| UI-09 | SCR-N01 sau Enter | Đã thêm vào Hôm nay | – | |
+| UI-08 | SCR-08 | Thêm vào Hôm nay · {thứ, ngày} | {thứ, ngày} = "Thứ Năm 06/11" | |
+| UI-09 | SCR-08 sau Enter | Đã thêm vào Hôm nay | – | |
 | UI-10 | Tooltip icon chờ đồng bộ | Chưa đồng bộ. Sẽ gửi khi có mạng | – | |
 | UI-11 | Placeholder notes | Ghi chú, link, checklist… | – | |
 | UI-12 | Tooltip ✨ | Trợ lý AI gợi ý. Sửa để thay | – | Tên trợ lý chờ D16 và #25; không dùng chữ "Claude" |
@@ -281,7 +282,7 @@ MSG-xx chép nguyên văn từ SRS G02 mục 9; nguồn vẫn là SRS. UI-xx là
 | Phím | Ở đâu | Làm gì | Nguồn |
 |---|---|---|---|
 | A | Board | Mở ô soạn ở cột đang chọn, mặc định hôm nay | UC-01 |
-| Ctrl+Shift+A | Mọi nơi trên Windows | Mở SCR-N01 | D11 |
+| Ctrl+Shift+A | Mọi nơi trên Windows | Mở SCR-08 | D11 |
 | Enter | SCR-01 | Tạo task | UC-01 |
 | Esc | SCR-01 | Đóng, giữ bản nháp | UC-01 A3 |
 | # | Tiêu đề trong SCR-01 | Mở danh sách channel | UC-01 A5 |
@@ -354,7 +355,7 @@ MSG-xx chép nguyên văn từ SRS G02 mục 9; nguồn vẫn là SRS. UI-xx là
 |---|---|---|---|---|
 | O-01 | Chi tiết task mở ở panel phải, dialog hay cửa sổ riêng? | SCR-03 toàn bộ bố cục | **Đã chốt (IA-06):** dialog giữa màn, có "mở rộng" chiếm vùng chính | [IA](00-kien-truc-thong-tin.md) |
 | O-02 | Cột ngày đã qua có nút "Thêm task" không? | SCR-01, CASE-05 | **Đã chốt (IA-20):** không có nút; phím A trên cột đã qua mở ô soạn ở hôm nay | [IA](00-kien-truc-thong-tin.md) |
-| O-03 | Ô thêm nhanh toàn cục: hình thức cửa sổ; sau Enter đóng hay giữ để gõ tiếp? | SCR-N01 | **Đã chốt (IA-19):** cửa sổ nổi nhỏ giữa màn hình, luôn ở trên; đóng sau Enter, Shift+Enter để gõ tiếp | [IA](00-kien-truc-thong-tin.md) |
+| O-03 | Ô thêm nhanh toàn cục: hình thức cửa sổ; sau Enter đóng hay giữ để gõ tiếp? | SCR-08 | **Đã chốt (IA-19):** cửa sổ nổi nhỏ giữa màn hình, luôn ở trên; đóng sau Enter, Shift+Enter để gõ tiếp | [IA](00-kien-truc-thong-tin.md) |
 | O-04 | Bản nháp sau Esc: giữ theo từng cột, và mất khi nào (đóng app, sang ngày mới)? | SCR-01.S12 | Mỗi cột một bản nháp, giữ tới khi tạo task hoặc xoá hết chữ | PO, ghi vào SRS G02 |
 | O-05 | Claude Code hết hạn mức khi đang gợi ý trong ô soạn: im lặng hay báo? | CASE-10 | Im lặng ở ô soạn; báo một lần ở khu trợ lý AI (brief G10) | PO / brief G10 |
 | O-06 | Danh sách channel không có kết quả: có lối "Tạo channel {từ khoá}" không? | SCR-01.S08 | Có, tạo trong context đầu tiên, vì đỡ phải vào Cài đặt | PO, ghi vào SRS G02 |

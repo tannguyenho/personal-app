@@ -30,6 +30,10 @@ _Avoid_: TimeEntry (trong văn bản nghiệp vụ), log giờ
 Một việc người dùng cần làm, nằm ở đúng một trong năm trạng thái: Kế hoạch, Backlog, Hoàn thành, Lưu trữ, Đã xoá.
 _Avoid_: việc, item (item dùng cho dữ liệu nguồn tích hợp)
 
+**Priority**:
+Mức ưu tiên của task, một trong bốn mức Urgent, Priority, Normal (mặc định), Low. Thuật ngữ và tên bốn mức giữ tiếng Anh, kể cả trên giao diện tiếng Việt (chốt 10/11/2026, O-16 brief G02).
+_Avoid_: độ ưu tiên, Khẩn cấp / Cao / Bình thường / Thấp (tên mức trên giao diện)
+
 **Ngày dự định**:
 Ngày làm việc mà task đang được xếp vào. Không tự đổi khi người dùng đổi timezone.
 _Avoid_: ngày bắt đầu, due date

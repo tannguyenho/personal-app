@@ -141,6 +141,7 @@ Mốc cửa sổ hẹp theo [IA](00-kien-truc-thong-tin.md) mục 4 (1280 / 1024
 - Nhóm: Button, Input, Checkbox, Chip, Badge, Picker, Combobox, Menu, List, Card, Toast, Banner, Dialog, Panel, Nav, Editor, Icon, Skeleton. Thêm nhóm mới thì ghi vào đây.
 - Biến thể và trạng thái đặt bằng **property** của Figma, không đặt trong tên: `state=default|hover|focus|pressed|disabled`, `tone=neutral|accent|success|warning|danger|ai`, `size=sm|md`.
 - Brief viết tiếng Việt nhưng gọi component bằng tên tiếng Anh này (khuôn brief mục 9).
+- `Button` có `variant=primary|secondary|danger`; `danger` cho nút nguy hiểm (nền `danger/solid`), ví dụ "Xoá channel" (G02 SCR-07) (chốt 10/11/2026, O-18 [brief G02](g02-quan-ly-task.md); code chưa có biến thể này).
 
 ## 9. Khả năng truy cập
 
@@ -218,6 +219,7 @@ Bản tiếng Anh theo cùng quy tắc; sentence case cho mọi nhãn.
 | srs-g01 SCR-08 #1 | Ghi mặc định "Hệ thống" | DS-03 |
 | srs-g01 SCR-08 #4 | Mô tả hiệu ứng chúc mừng theo DS-16 | DS-16 |
 | `_khuon.md` mục Quy ước | Component theo DS-09 | DS-09 |
+| Mục 8 | `Button` thêm `variant=danger` | O-18 brief G02 (10/11/2026) |
 
 Còn mở, không thuộc ticket này:
 - Tên hiển thị của trợ lý AI (D16), chờ kết quả [#25](https://github.com/tannguyenho/personal-app/issues/25).

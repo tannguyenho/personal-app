@@ -111,7 +111,7 @@ Home board tự giảm số cột ngày hiện được khi cửa sổ hẹp l�
 | Đồng ý Điều khoản mới | Dialog chặn | Mở app khi có phiên bản mới | | G01 SCR-15 |
 | Xác nhận | Dialog nhỏ | Theo từng thao tác | Xoá channel (G02 SCR-07), xoá instance (G03 SCR-04), ngắt kết nối lịch (G05 SCR-08), xoá tất cả lưu trữ (G06 SCR-06), giờ dừng timer (G07 SCR-06), xoá tài khoản (G01 SCR-12), xung đột hoàn tác AI (G10 SCR-06), gửi phản hồi AI (G10 SCR-08), folder (G06 SCR-04) | – |
 | Trung tâm thông báo | Popover cạnh chuông | 🔔 ở sidebar | Bấm dòng → mở đúng đích (IA-10) | G12 SCR-11 |
-| Popover khác | Popover | Theo từng thao tác | Chọn ngày (G04 SCR-04), sắp xếp (G04 SCR-05), lọc (G04 SCR-06), menu "Khác" (G02 SCR-04), chọn bucket (G06 SCR-02), menu ngày dự định (G06 SCR-03), picker lặp (G03 SCR-01), sửa series (G03 SCR-03), xung đột timebox (G05 SCR-07) | – |
+| Popover khác | Popover | Theo từng thao tác | Chọn ngày (G04 SCR-04), sắp xếp (G04 SCR-05), lọc (G04 SCR-06), menu "Khác" (G02 SCR-04), chọn channel (G02 SCR-09), chọn bucket (G06 SCR-02), menu ngày dự định (G06 SCR-03), picker lặp (G03 SCR-01), sửa series (G03 SCR-03), xung đột timebox (G05 SCR-07) | – |
 
 ## 6. Màn toàn cửa sổ và cửa sổ riêng
 
@@ -120,7 +120,7 @@ Home board tự giảm số cột ngày hiện được khi cửa sổ hẹp l�
 | Đăng ký, mã xác minh, đăng nhập, quên mật khẩu | Chưa đăng nhập | Toàn cửa sổ, không có sidebar, nội dung đặt giữa (IA-12) | G01 SCR-01 … SCR-04 |
 | Onboarding 5 bước | Lần đăng nhập đầu, hoặc onboarding còn dở | Như trên. Bước nhập task trông giống ô soạn thật. Xong thì vào Home hôm nay với Daily planning ở chế độ có hướng dẫn thay vùng chính (IA-12, sửa theo F3 ngày 06/11/2026; G01 US2.2) | G01 SCR-05 |
 | Focus mode | F; sidebar Focus | Ẩn sidebar và panel phải. Esc / nút thoát về màn trước, timer vẫn chạy (IA-03) | G07 SCR-03 |
-| Ô thêm nhanh toàn cục | Ctrl+Shift+A ở bất kỳ đâu trên Windows | Cửa sổ nổi nhỏ, không viền, ở giữa màn hình đang dùng, luôn ở trên. Click ra ngoài thì đóng, giữ bản nháp. Enter: hiện "Đã thêm vào Hôm nay" ~1 giây rồi đóng, trả focus về app trước. Shift+Enter: thêm và giữ ô mở. Cửa sổ chính đang ở khay thì vẫn ở khay (IA-19) | G02 US1.1 AC07, D11 |
+| Ô thêm nhanh toàn cục | Ctrl+Shift+A ở bất kỳ đâu trên Windows | Cửa sổ nổi nhỏ, không viền, ở giữa màn hình đang dùng, luôn ở trên. Click ra ngoài thì đóng, giữ bản nháp. Enter: hiện "Đã thêm vào Hôm nay" ~1 giây rồi đóng, trả focus về app trước. Shift+Enter: thêm và giữ ô mở. Cửa sổ chính đang ở khay thì vẫn ở khay (IA-19) | G02 SCR-08, US1.1 AC07, D11 |
 
 ## 7. Cửa sổ, khay hệ thống và khởi động
 
@@ -178,7 +178,7 @@ Gom theo nơi hiện. Mã SCR là của SRS từng nhóm; `SCR-N` là màn mới
 | Popover | G12 SCR-11 · các popover ở mục 5 |
 | Trên card / trong chi tiết | G02 SCR-01, SCR-02 · G03 SCR-02, SCR-06 · G05 SCR-05, SCR-06 · G06 SCR-07 · G07 SCR-01 |
 | Banner / toast | G01 SCR-13 · G05 SCR-09 · G08 SCR-12 (lời nhắc) · toast của mọi nhóm |
-| Cửa sổ riêng | Ô thêm nhanh toàn cục (SCR-N, G02) |
+| Cửa sổ riêng | G02 SCR-08 (Ô thêm nhanh toàn cục) |
 | Ngoài app | Biểu tượng và menu khay · thông báo Windows (G12, D12) |
 
 ## 11. Điểm vào của từng tính năng bản 1.0
