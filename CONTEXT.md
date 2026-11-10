@@ -55,8 +55,8 @@ Quy tắc lặp của một task lặp lại, sinh ra các instance theo lịch.
 _Avoid_: task gốc, mẫu lặp
 
 **Instance**:
-Một task cụ thể do series sinh ra cho một ngày làm việc. Ngày mà quy tắc lặp sinh ra nó gọi là **ngày gốc**; ngày gốc không đổi khi instance bị dời.
-_Avoid_: bản sao, occurrence
+Một task cụ thể do series sinh ra cho một ngày làm việc. Ngày mà quy tắc lặp sinh ra nó gọi là **ngày gốc**; ngày gốc không đổi khi instance bị dời. Trên giao diện tiếng Việt gọi là **lần** ("lần kế tiếp", "Mở lần cuối", "Cập nhật mọi lần chưa xong theo task này"); "series" giữ nguyên trên giao diện (chốt 10/11/2026, O-17 brief G03).
+_Avoid_: bản sao, occurrence, "instance" (trên giao diện)
 
 **Ngày ngoại lệ**:
 Ngày gốc mà người dùng đã bỏ khỏi series (bằng cách xoá instance của ngày đó); series không bao giờ sinh lại instance cho ngày ngoại lệ.

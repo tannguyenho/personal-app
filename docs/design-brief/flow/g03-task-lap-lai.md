@@ -1,16 +1,16 @@
 # Flow G03 Task lặp lại
 
-> **Nguồn:** [srs-g03](../../features/srs-g03-task-lap-lai.md) (commit `8fac830`, sửa theo [chốt 09/11/2026](../../review/cau-hoi-chot-flow-2026-11-09.md)) · **Brief:** [G03](../g03-task-lap-lai.md) (chờ PO)
+> **Nguồn:** [srs-g03](../../features/srs-g03-task-lap-lai.md) (commit `8fac830`, sửa theo [chốt 09/11/2026](../../review/cau-hoi-chot-flow-2026-11-09.md) và chốt 10/11/2026 của brief G03) · **Brief:** [G03](../g03-task-lap-lai.md) (đã duyệt 10/11/2026)
 > **Quy ước:** [_quy-uoc.md](_quy-uoc.md) · **FigJam:** `[chờ]`
 
 ## Mục lục
 
 | UC | Flow | Màn chính | Nhánh A / E (1.0) |
 |---|---|---|---|
-| [UC-01](#uc-01-bật-lặp-cho-task) | Bật lặp cho task | SCR-01 Picker lặp lại, SCR-06 Dấu lặp trên card | 7 / 7 |
+| [UC-01](#uc-01-bật-lặp-cho-task) | Bật lặp cho task | SCR-09 Mục "Lặp lại", SCR-01 Picker lặp lại, SCR-06 Dấu lặp trên card | 7 / 7 |
 | [UC-02](#uc-02-sinh-instance-job-recurrencegenerate) | Sinh instance (job) | Không có màn riêng; kết quả ở SCR-06 trên board | 2 / 1 |
 | [UC-03](#uc-03-xem-và-sửa-một-instance) | Xem và sửa một instance | SCR-02 Banner series (trong G02 SCR-03) | 9 / 3 |
-| [UC-04](#uc-04-sửa-series-đổi-tần-suất-đặt-giờ-áp-nội-dung) | Sửa series: đổi tần suất, đặt giờ, áp nội dung | SCR-03 Menu "Sửa series", SCR-01, SCR-07 Bộ chọn giờ bắt đầu | 7 / 4 |
+| [UC-04](#uc-04-sửa-series-đổi-tần-suất-đặt-giờ-áp-nội-dung) | Sửa series: đổi tần suất, đặt giờ, áp nội dung | SCR-03 Menu "Sửa series", SCR-01, SCR-07 Bộ chọn giờ bắt đầu | 7 / 5 |
 | [UC-05](#uc-05-dừng-lặp--xoá-mọi-instance-chưa-xong) | Dừng lặp / xoá mọi instance chưa xong | SCR-03, SCR-04 Xác nhận xoá, SCR-08 Xác nhận dừng lặp | 4 / 3 |
 | [UC-06](#uc-06-xử-lý-instance-trùng-series-trong-một-ngày-qc-06-rollover-g06-phím-d-g04-shutdown-g08) | Instance trùng series trong một ngày (QC-06) | Không có màn riêng; G06 SCR-05 Lưu trữ | 7 / 1 |
 | [UC-07](#uc-07-quản-lý-mọi-task-lặp) | Quản lý mọi task lặp | SCR-05 Quản lý mọi task lặp | 2 / 3 |
@@ -26,7 +26,7 @@
 ```mermaid
 flowchart TD
   start(["Task card hoặc G02 SCR-03 Chi tiết task<br/>task Kế hoạch / Backlog"])
-  u1[/"Menu ... chọn Lặp lại<br/>hoặc Ctrl+K → Lặp lại"/]
+  u1[/"Menu ... chọn Lặp lại SCR-09<br/>hoặc Ctrl+K → Lặp lại"/]
   s1["SCR-01 Picker lặp lại<br/>mặc định theo startDate BR-03<br/>Lần đầu: ngày"]
   u2[/"Chọn quy tắc, thứ, Mỗi N,<br/>tuỳ chọn giờ Vào khoảng, bấm Lưu"/]
   p1[["Kiểm BR-01<br/>SeriesCreate kèm idempotency key"]]
@@ -62,7 +62,7 @@ flowchart TD
   ok(["Card có SCR-06 dấu lặp"])
   u1 ==> s1 ==> u2 ==> p2 ==> m1 ==> ok
 
-  u1 -->|"A3 · task đã thuộc series Đang lặp"| a3{{"→ UC-04 · SCR-01 chế độ Đổi tần suất"}}
+  u1 -->|"A3 · task đã thuộc series Đang lặp"| a3{{"→ UC-04 · SCR-09 giữ chữ Lặp lại<br/>SCR-01 chế độ Đổi tần suất; mất mạng → UC-04 E4"}}
   u1 -->|"A4 · task thuộc series Đã dừng"| a4["Tạo series mới từ task này BR-12"]
   a4 --> s1
   s1 -->|"A5 · bấm ra ngoài / Esc"| a5(["SCR-01 đóng, không lưu"])
@@ -70,7 +70,7 @@ flowchart TD
   a2m -->|"vẫn cho lưu"| u2
   u2 -->|"A7 · Hằng tuần, N ≥ 2"| a7m>"MSG-26 · Hint<br/>Tuần tính từ {thứ}; giữ cố định cho task lặp này"]
   a7m --> u2
-  p2 -->|"A1 · task trong Backlog"| a1["Instance đầu đặt hôm nay BR-02"]
+  p2 -->|"A1 · task trong Backlog"| a1["Ngày dự định coi là hôm nay<br/>instance đầu = ngày khớp đầu tiên ≥ hôm nay BR-02"]
   a1 -->|"MSG-01 nêu ngày"| m1
   p2 -->|"A6 · ngày dự định không khớp quy tắc"| a6["Instance đầu = ngày khớp đầu tiên sau đó<br/>task dời sang ngày đó BR-02"]
   a6 -->|"MSG-01 nêu ngày"| m1
@@ -137,9 +137,9 @@ flowchart TD
 
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
-| A1 | Task trong Backlog | Instance đầu hôm nay | MSG-01 (nêu ngày) |
+| A1 | Task trong Backlog | Instance đầu = ngày khớp quy tắc đầu tiên ≥ hôm nay (O-05) | MSG-01 (nêu ngày) |
 | A2 | Ngày 29-31 / 29/2 | Vẫn lưu, có ghi chú | MSG-04 / MSG-05 |
-| A3 | Task đã thuộc series đang lặp | [→ UC-04](#uc-04-sửa-series-đổi-tần-suất-đặt-giờ-áp-nội-dung) | – |
+| A3 | Task đã thuộc series đang lặp | SCR-09 giữ chữ "Lặp lại" → SCR-01 chế độ Đổi tần suất [→ UC-04](#uc-04-sửa-series-đổi-tần-suất-đặt-giờ-áp-nội-dung); mất mạng: mục mờ (O-01) | MSG-27 khi mất mạng |
 | A4 | Task thuộc series đã dừng | Series mới từ task này | MSG-01 |
 | A5 | Bấm ra ngoài / Esc | SCR-01 đóng, không lưu | – |
 | A6 | Ngày dự định không khớp quy tắc | Task dời sang ngày khớp đầu tiên | MSG-01 (nêu ngày) |
@@ -284,14 +284,16 @@ flowchart TD
   a3 --> a3x{{"→ UC-04 · UC-05 · UC-07"}}
   s1 -->|"A5 · series Đã dừng"| a5m>"MSG-15 · Banner<br/>Series này đã dừng lặp<br/>ẩn Sửa series; Trước / Sau vẫn hiện, bỏ qua instance đã xoá"]
   a5m --> a1
-  e3s(["Board · mở chi tiết instance"]) -.->|"E3 · 404 NOT_FOUND, đã xoá ở thiết bị khác"| e3m>"MSG-17 · Toast<br/>Task hoặc series này không còn tồn tại"]
+  e3s(["Board · mở card, bấm Trước / Sau"]) -.->|"E3 · 404 NOT_FOUND, đã xoá ở thiết bị khác"| e3m>"MSG-17 · Toast<br/>Task hoặc series này không còn tồn tại"]
   e3m -.-> e3(["Không mở chi tiết, gỡ card khỏi board"])
+  s1 -.->|"E3 · instance đang mở bị xoá ở thiết bị khác, realtime"| e3r>"G02 MSG-38 · Toast<br/>Task này đã bị xoá trên thiết bị khác · Hoàn tác"]
+  e3r -.-> e3x{{"→ G02 · UC-02 E3 · chi tiết đóng"}}
   s1 -->|"A8 · instance đã tách khỏi series"| a8m>"MSG-25 · Banner thay SCR-02<br/>Lần này đã tách khỏi series #quot;{tiêu đề}#quot; do đổi tần suất<br/>không có Sửa series, Trước / Sau"]
 
   class s1,u2 happy
   class a1,a2m,a3,a5m,a8m alt
-  class a3x link
-  class e2,e3s,e3m err
+  class a3x,e3x link
+  class e2,e3s,e3m,e3r err
   class e3 fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
@@ -362,7 +364,7 @@ flowchart TD
 | A9 | Đổi giờ / thời lượng timebox | `customized` → [G05 UC-04](g05-lich-timebox.md#uc-04-dời-đổi-thời-lượng-gỡ-timebox) | – |
 | E1 | Lỗi khi lưu | Giá trị cũ | QC-MSG-01 (G02 MSG-10) |
 | E2 | Instance liền kề đã bị xoá | Mở instance kế tiếp còn tồn tại | – |
-| E3 | Mở instance đã bị xoá ở thiết bị khác | Không mở, gỡ card (C11) | MSG-17 |
+| E3 | Mở instance đã bị xoá ở thiết bị khác | Mở card / Trước / Sau: không mở, gỡ card (C11). Đang mở (realtime): chi tiết đóng, Hoàn tác được → [G02 UC-02](g02-quan-ly-task.md#uc-02-xem-và-sửa-chi-tiết-task) E3 (O-13) | MSG-17; G02 MSG-38 khi đang mở |
 
 ---
 
@@ -412,14 +414,17 @@ flowchart TD
   ok(["Instance theo quy tắc mới"])
   s1 ==> s2 ==> u3 ==> p1 ==> m1 ==> ok
 
-  s1 -->|"A1 · Cập nhật mọi instance chưa xong theo task này"| a1[["SeriesApplyFrom id instance đang mở<br/>BR-08 c, subtask gộp theo tiêu đề"]]
+  s1 -->|"A1 · Cập nhật mọi lần chưa xong theo task này"| a1[["SeriesApplyFrom id instance đang mở<br/>BR-08 c, subtask gộp theo tiêu đề"]]
   a1 --> a1m>"MSG-08 · Toast<br/>Đã cập nhật {n} lần chưa xong theo task này · Hoàn tác"]
+  a1 -->|"{n} = 0"| a1z>"MSG-34 · Toast<br/>Đã cập nhật task lặp theo task này · Hoàn tác"]
   s1 -->|"A2 · Đặt giờ bắt đầu"| a2["SCR-07 Bộ chọn giờ bắt đầu<br/>bước 15 phút, Xoá giờ"]
   a2 --> a2p[["SeriesUpdate approxTime, BR-08 e"]]
   a2p --> a2m>"MSG-18 · Toast<br/>Đã đặt giờ {giờ} cho các lần chưa xong · Hoàn tác"]
+  a2p -->|"bấm Xoá giờ"| a2x>"MSG-29 · Toast<br/>Đã xoá giờ của các lần chưa xong · Hoàn tác"]
   u3 -->|"A4 · quy tắc mới giống quy tắc cũ"| a4(["SCR-01 đóng, không gọi API"])
   p1 -->|"A5 · instance quá khứ, hôm nay, đã xong,<br/>Lưu trữ, Đã xoá"| a5["Giữ nguyên EC-29, C12"]
   a5 --> m1
+  p1 -->|"{n} = 0"| m0>"MSG-33 · Toast<br/>Đã đổi tần suất · Hoàn tác"]
   p1 -->|"A6 · instance tương lai đã dời / sửa riêng /<br/>chạy timer / có thời gian thực tế, ngày gốc không khớp"| a6[["Dừng timer nếu đang chạy<br/>giữ instance, tách khỏi series BR-17"]]
   a6 --> a6m>"MSG-07 dòng 1, MSG-24 dòng 2 · Một toast QC-13<br/>Đã đổi tần suất, {n} lần sắp tới được cập nhật · Hoàn tác<br/>{k} lần đã dời, sửa riêng hoặc có thời gian thực tế được giữ lại"]
   a7s(["SCR-05 dòng series · menu Đổi tần suất"]) -->|"A7 · không mở instance"| s2
@@ -427,10 +432,11 @@ flowchart TD
   a1m -->|"A3"| a3
   a2m -->|"A3"| a3
   a6m -->|"A3"| a3
+  a2x -->|"A3"| a3
   a3 --> a3e(["Quy tắc, mẫu, instance về như trước"])
 
   class s1,s2,u3,p1,m1 happy
-  class a1,a1m,a2,a2p,a2m,a5,a6,a3,a3e,a7s alt
+  class a1,a1m,a1z,a2,a2p,a2m,a2x,a5,a6,a3,a3e,a7s,m0 alt
   class a6m warn
   class a4 fail
   class ok done
@@ -462,13 +468,18 @@ flowchart TD
   e1m -.->|"SCR-01 giữ mở với quy tắc mới nhất"| s2
   p1 -.->|"E3 · 5xx / timeout"| e3m>"MSG-12 QC-MSG-01 · Toast<br/>Chưa lưu được thay đổi. Thử lại"]
   e3m -.-> fail(["Series không đổi"])
-  e4s(["SCR-03 hoặc dòng SCR-05"]) -.->|"E4 · mất mạng"| e4m>"MSG-27 · Tooltip trên nút mờ<br/>Cần có mạng để sửa cả chuỗi"]
+  e4s(["SCR-03, dòng SCR-05<br/>hoặc SCR-09 trên instance đang lặp"]) -.->|"E4 · mất mạng"| e4m>"MSG-27 · Tooltip trên nút mờ<br/>Cần có mạng để sửa cả chuỗi"]
   e4m -.-> e4(["Không gọi API, series không đổi"])
+  p1 -.->|"E5 · 409 SERIES_STOPPED, đã dừng ở thiết bị khác"| e5{"Mở từ đâu?"}
+  e5 -.->|"banner SCR-02"| e5b>"MSG-15 · Banner<br/>Series này đã dừng lặp"]
+  e5b -.-> e5c(["SCR-01 / SCR-07 đóng<br/>làm mới chi tiết, không toast"])
+  e5 -.->|"dòng SCR-05"| e5t>"MSG-15 · Toast<br/>Series này đã dừng lặp"]
+  e5t -.-> e5d(["SCR-01 đóng<br/>dòng sang tab Đã dừng"])
 
   class s2,u3,p1 happy
-  class e2m,e1,e1m,e3m,e4s,e4m err
+  class e2m,e1,e1m,e3m,e4s,e4m,e5,e5b,e5t err
   class ok done
-  class fail,e4 fail
+  class fail,e4,e5c,e5d fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
   classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
@@ -484,17 +495,18 @@ flowchart TD
 
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
-| A1 | Cập nhật mọi instance chưa xong theo task này | Mẫu và instance trong phạm vi theo instance đang mở | MSG-08 |
-| A2 | Đặt giờ bắt đầu | SCR-07 → `approxTime` mới cho mẫu và instance trong phạm vi (C12) | MSG-18 |
+| A1 | Cập nhật mọi lần chưa xong theo task này | Mẫu và instance trong phạm vi theo instance đang mở | MSG-08; {n} = 0 → MSG-34 (O-08) |
+| A2 | Đặt giờ bắt đầu | SCR-07 → `approxTime` mới cho mẫu và instance trong phạm vi (C12) | MSG-18; Xoá giờ → MSG-29 (O-10) |
 | A3 | Bấm Hoàn tác | Về như trước (BR-09) | – |
 | A4 | Quy tắc mới giống cũ | SCR-01 đóng, không gọi API | – |
-| A5 | Instance quá khứ, hôm nay, đã xong, Lưu trữ, Đã xoá | Giữ nguyên | MSG-07 |
+| A5 | Instance quá khứ, hôm nay, đã xong, Lưu trữ, Đã xoá | Giữ nguyên, không tính vào {n} (O-07) | MSG-07; {n} = 0 → MSG-33 (O-08) |
 | A6 | Instance đã dời / sửa riêng / có timer, thời gian thực tế, ngày gốc không khớp | Giữ, tách khỏi series (banner MSG-25 ở [UC-03](#uc-03-xem-và-sửa-một-instance) A8) | MSG-07 + MSG-24, một toast hai dòng (QC-13 mục 3) |
 | A7 | Đổi tần suất từ dòng SCR-05 | SCR-01 ngay trên dòng, không mở instance (B15) | MSG-07 |
 | E1 | VERSION_CONFLICT | Tải lại, SCR-01 giữ mở | MSG-16 |
 | E2 | Vi phạm BR-01 | Lưu disabled | MSG-02 / MSG-03 |
 | E3 | 5xx / timeout | Series không đổi | MSG-12 (QC-MSG-01) |
-| E4 | Mất mạng | Nút mờ, không gọi API (QC-08 mục 7) | MSG-27 |
+| E4 | Mất mạng | Nút mờ, kể cả SCR-09 trên instance đang lặp (O-01); không gọi API (QC-08 mục 7) | MSG-27 |
+| E5 | Series đã dừng ở thiết bị khác, 409 `SERIES_STOPPED` | Từ banner: SCR-02 chuyển MSG-15, làm mới; từ dòng SCR-05: toast, dòng sang tab Đã dừng (O-12) | MSG-15 |
 
 ---
 
@@ -540,27 +552,36 @@ flowchart TD
   ok(["Series Đã dừng"])
   s1 ==> u1 ==> p1 ==> m1 ==> ok
 
-  s1 -->|"A1 · Xoá mọi instance chưa xong và dừng lặp"| a1["SCR-04 Xác nhận xoá instance chưa xong"]
+  s1 -->|"A1 · Xoá mọi lần chưa xong và dừng lặp"| a1["SCR-04 Xác nhận xoá instance chưa xong<br/>{n} tính trên máy O-11"]
   a1 --> a1m>"MSG-10 · Dialog<br/>Xoá {n} lần chưa xong của #quot;{tiêu đề}#quot; và dừng lặp? Các lần đã xong<br/>và các lần đã có thời gian thực tế được giữ lại. Task xoá nằm trong Thùng rác 30 ngày"]
   a1m -->|"Huỷ"| a1c(["SCR-04 đóng, không thay đổi"])
+  a1 -->|"{n} = 0"| a1z>"MSG-32 · Dialog<br/>Dừng lặp #quot;{tiêu đề}#quot;? Không còn lần chưa xong nào để xoá"]
+  a1z -->|"Huỷ"| a1c
+  a1z -->|"Xoá và dừng lặp"| a1p
   a1m -->|"Xoá và dừng lặp"| a1p[["SeriesStop deleteIncomplete=true<br/>BR-08 d, ngày ngoại lệ BR-15"]]
   a1p --> a1t>"MSG-11 · Toast<br/>Đã xoá {n} lần và dừng lặp · Hoàn tác"]
   p1 -->|"A2 · instance trong phạm vi đang chạy timer"| a2[["Dừng timer G07<br/>instance có thời gian thực tế: giữ BR-17"]]
   a1p -->|"A2"| a2
-  a2 --> a2m>"MSG-09 / MSG-11 dòng 1, MSG-24 dòng 2 · Một toast QC-13<br/>{k} lần đã dời, sửa riêng hoặc có thời gian thực tế được giữ lại"]
+  a2 -->|"Dừng lặp"| a2m>"MSG-09 dòng 1, MSG-24 dòng 2 · Một toast QC-13<br/>{k} lần đã dời, sửa riêng hoặc có thời gian thực tế được giữ lại"]
+  a2 -->|"Xoá và dừng lặp"| a2n>"MSG-11 dòng 1, MSG-30 dòng 2 · Một toast QC-13<br/>{k} lần đã có thời gian thực tế được giữ lại"]
+  a1t -->|"có lần có thời gian thực tế được giữ"| a2n
   p1 -->|"có instance được giữ, bước 3"| a2m
   m1 -->|"A3 · bấm Hoàn tác"| a3[["Khôi phục instance, series Đang lặp BR-09<br/>timer đã dừng không chạy lại"]]
   a1t -->|"A3"| a3
   a2m -->|"A3"| a3
+  a2n -->|"A3"| a3
   a3 --> a3e(["Series Đang lặp như trước"])
   a4s(["SCR-05 dòng series · menu Dừng lặp"]) -->|"A4 · không mở instance"| a4["SCR-08 Xác nhận dừng lặp"]
   a4 --> a4m>"MSG-28 · Dialog<br/>Dừng lặp #quot;{tiêu đề}#quot;? {n} lần sắp tới sẽ bị xoá. Các lần đã dời,<br/>sửa riêng hoặc có thời gian thực tế được giữ lại"]
   a4m -->|"Dừng lặp"| p1
   a4m -->|"Huỷ"| a4c(["SCR-08 đóng, không thay đổi"])
+  a4 -->|"{n} = 0"| a4z>"MSG-31 · Dialog<br/>Dừng lặp #quot;{tiêu đề}#quot;? Không có lần sắp tới nào bị xoá"]
+  a4z -->|"Dừng lặp"| p1
+  a4z -->|"Huỷ"| a4c
 
   class s1,u1,p1,m1 happy
-  class a1,a1m,a1p,a1t,a2,a3,a3e,a4s,a4,a4m alt
-  class a2m warn
+  class a1,a1m,a1p,a1t,a1z,a2,a3,a3e,a4s,a4,a4m,a4z alt
+  class a2m,a2n warn
   class ok done
   class a1c,a4c fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -586,9 +607,11 @@ flowchart TD
   s1 ==> u1 ==> p1 ==> ok
   s1 -->|"A1 · Xoá và dừng lặp"| a1p
 
-  p1 -.->|"E1 · 409 SERIES_STOPPED, đã dừng ở thiết bị khác"| e1m>"MSG-15 · Banner<br/>Series này đã dừng lặp"]
+  p1 -.->|"E1 · 409 SERIES_STOPPED, đã dừng ở thiết bị khác"| e1m>"MSG-15 · Banner SCR-02<br/>Series này đã dừng lặp"]
   a1p -.->|"E1"| e1m
-  e1m -.-> e1(["Làm mới chi tiết instance"])
+  e1m -.-> e1(["Làm mới chi tiết instance, không toast"])
+  e1s(["SCR-08 từ dòng SCR-05 · Dừng lặp"]) -.->|"E1 · 409 SERIES_STOPPED"| e1t>"MSG-15 · Toast<br/>Series này đã dừng lặp"]
+  e1t -.-> e1u(["SCR-08 đóng, dòng sang tab Đã dừng"])
   p1 -.->|"E2 · 5xx / timeout"| e2m>"MSG-12 QC-MSG-01 · Toast<br/>Chưa lưu được thay đổi. Thử lại"]
   a1p -.->|"E2"| e2m
   e2m -.-> e2(["Không xoá instance nào<br/>series Đang lặp"])
@@ -597,9 +620,9 @@ flowchart TD
 
   class s1,u1,p1 happy
   class a1p alt
-  class e1m,e2m,e3s,e3m err
+  class e1m,e1s,e1t,e2m,e3s,e3m err
   class ok done
-  class e1,e2,e3 fail
+  class e1,e1u,e2,e3 fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
   classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
@@ -615,11 +638,11 @@ flowchart TD
 
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
-| A1 | Xoá mọi instance chưa xong và dừng lặp | SCR-04 → "Xoá và dừng lặp" (C13) → xoá mềm, ngày ngoại lệ, series Đã dừng | MSG-10, MSG-11 |
-| A2 | Instance đang chạy timer | Dừng timer, giữ instance có thời gian thực tế | MSG-24, dòng 2 của toast MSG-09 / MSG-11 (QC-13 mục 3) |
+| A1 | Xoá mọi lần chưa xong và dừng lặp | SCR-04 ({n} tính trên máy, O-11) → "Xoá và dừng lặp" (C13) → xoá mềm, ngày ngoại lệ, series Đã dừng | MSG-10 ({n} = 0 → MSG-32, O-08), MSG-11 |
+| A2 | Instance đang chạy timer | Dừng timer, giữ instance có thời gian thực tế | Dòng 2 của toast (QC-13 mục 3): MSG-24 với MSG-09, MSG-30 với MSG-11 (O-09) |
 | A3 | Bấm Hoàn tác | Series Đang lặp, instance khôi phục | – |
-| A4 | Dừng lặp từ dòng SCR-05 | SCR-08 → như luồng chính, không mở instance (B15) | MSG-28, MSG-09 |
-| E1 | Series đã dừng ở thiết bị khác | Làm mới | MSG-15 |
+| A4 | Dừng lặp từ dòng SCR-05 | SCR-08 → như luồng chính, không mở instance (B15) | MSG-28 ({n} = 0 → MSG-31, O-08), MSG-09 |
+| E1 | Series đã dừng ở thiết bị khác | Từ banner: làm mới, không toast; từ SCR-08: dialog đóng, toast, dòng sang tab Đã dừng (O-12) | MSG-15 |
 | E2 | 5xx / timeout | Không xoá gì | MSG-12 (QC-MSG-01) |
 | E3 | Mất mạng | Nút mờ, không gọi API (QC-08 mục 7) | MSG-27 |
 
@@ -753,11 +776,11 @@ flowchart TD
 ```mermaid
 flowchart TD
   start(["SCR-03 Menu Sửa series<br/>hoặc Cài đặt → Task lặp lại"])
-  u1[/"Chọn Quản lý mọi task lặp"/]
+  u1[/"Chọn Quản lý mọi task lặp<br/>từ SCR-03: chi tiết task đóng trước O-14"/]
   p1[["SeriesList status=active"]]
   s1["SCR-05 Quản lý mọi task lặp<br/>tab Đang lặp, sắp theo lần kế tiếp"]
   u2[/"Menu dòng của một series"/]
-  x3{{"→ UC-03 · Mở lần kế tiếp"}}
+  x3{{"→ UC-03 · Mở lần kế tiếp<br/>Cài đặt đóng, board cuộn tới ngày đó O-14"}}
   x4{{"→ UC-04 A7 · Đổi tần suất, SCR-01 ngay trên dòng"}}
   x5{{"→ UC-05 A4 · Dừng lặp, SCR-08 ngay trên dòng"}}
 
@@ -788,8 +811,10 @@ flowchart TD
   p1 ==> s1
 
   s1 -->|"A1 · tab Đã dừng"| a1[["SeriesList status=stopped"]]
-  a1 --> a1s["SCR-05 tab Đã dừng<br/>chỉ có Mở instance cuối"]
+  a1 --> a1s["SCR-05 tab Đã dừng<br/>chỉ có Mở lần cuối"]
   a1s --> a1x{{"→ UC-03"}}
+  s1 -->|"SCR-05 #3 · lần kế tiếp ngoài 60 ngày"| o16a>"MSG-20 · Tooltip trên Mở lần kế tiếp mờ<br/>Lần kế tiếp: {ngày}"]
+  a1s -->|"SCR-05 #3 · không còn lần nào"| o16b>"MSG-35 · Tooltip trên Mở lần cuối mờ<br/>Không còn lần nào của series này"]
   p1 -->|"A2 · không có series"| a2m>"MSG-19 · Empty state<br/>Chưa có task lặp lại nào. Mở menu … của một task → #quot;Lặp lại#quot; để bắt đầu"]
 
   p1 -.->|"E1 · SeriesList lỗi"| e1m>"QC-MSG-02 · Tại chỗ trong SCR-05<br/>Chưa tải được. Thử lại"]
@@ -802,7 +827,7 @@ flowchart TD
   e3m -.->|"tải lại danh sách"| p1
 
   class p1,s1 happy
-  class a1,a1s,a2m alt
+  class a1,a1s,a2m,o16a,o16b alt
   class a1x link
   class e1m,e2m,e3m err
   class fail,e2 fail
@@ -821,8 +846,9 @@ flowchart TD
 
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
-| A1 | Lọc Đã dừng | Chỉ có "Mở instance cuối" → [UC-03](#uc-03-xem-và-sửa-một-instance) | – |
+| A1 | Lọc Đã dừng | Chỉ có "Mở lần cuối" → [UC-03](#uc-03-xem-và-sửa-một-instance) | – |
 | A2 | Không có series | Empty state | MSG-19 |
+| SCR-05 #3 | Lần kế tiếp chưa sinh; series đã dừng không còn lần nào | Mục mờ (O-16) | MSG-20 / MSG-35 |
 | E1 | SeriesList lỗi | Giữ dữ liệu lần cuối, Thử lại (C14) | QC-MSG-02 |
 | E2 | Mất mạng | Dữ liệu lần cuối, Đổi tần suất / Dừng lặp mờ (QC-08 mục 7) | MSG-27 |
 | E3 | Instance / series đã bị xoá ở thiết bị khác | Tải lại danh sách (C11) | MSG-17 |
@@ -844,4 +870,5 @@ flowchart TD
 - ~~UC-03 A5: series đã dừng thì Trước / Sau hiện hay ẩn~~ **Đã sửa 09/11/2026 (B16):** vẫn hiện, bỏ qua instance đã xoá; SCR-02 #3 sửa theo.
 - ~~Toast Hoàn tác khi instance vào Lưu trữ `skipped` do phím D / shutdown: G03 không định nghĩa~~ **Đã sửa 09/11/2026 (C15):** G03 chỉ trỏ sang G04 MSG-24 và G08 UC-02 A9 (BR-16, UC-03 A4, UC-06 A4).
 - ~~UC-01 E3: MSG-14 hiện ở đâu, "Quản lý mọi task lặp" có phải link~~ **Đã sửa 09/11/2026 (C16):** hiện ngay dưới ô Lặp (SCR-01 #10); là link mở Cài đặt → Task lặp lại.
+- **Chốt 10/11/2026 (brief G03 đã duyệt, O-01 … O-21):** mục "Lặp lại" thành SCR-09, giữ chữ, mờ khi mất mạng (UC-01 A3, UC-04 E4); thêm UC-04 E5 `SERIES_STOPPED` (O-12) và nhánh toast MSG-15 của UC-05 E1 từ SCR-08; UC-03 E3 tách nhánh instance đang mở → G02 MSG-38 (O-13); toast xoá giờ MSG-29 (O-10); dòng 2 của MSG-11 là MSG-30 (O-09); {n} = 0 dùng MSG-31 … MSG-34 (O-08); "Mở lần cuối" mờ MSG-35 (O-16); nhãn dùng "lần" thay "instance" (O-17). Đã vẽ.
 - Mới 09/11/2026 (B14, B08): "Dừng lặp" chỉ xoá instance tương lai chưa động tới, giữ instance đã dời / sửa riêng / có thời gian thực tế (bảng phạm vi, UC-05 bước 2); instance bị lỡ đã sửa riêng / có thời gian thực tế không bị `skipped` (UC-06 A7).

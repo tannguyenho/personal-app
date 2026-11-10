@@ -103,7 +103,7 @@ Home board tự giảm số cột ngày hiện được khi cửa sổ hẹp l�
 | Bề mặt | Kiểu | Đi tới bằng | Ghi chú | Nguồn |
 |---|---|---|---|---|
 | Chi tiết task | Dialog giữa màn | Bấm tiêu đề card; Ctrl+Enter; chip task trong chat | Nút "mở rộng" cho dialog chiếm hết vùng chính. Esc đóng, focus về card vừa mở (IA-06). Gồm banner series (G03 SCR-02), timebox (G05 SCR-06), timer (G07 SCR-01, SCR-02) | G02 SCR-03 |
-| Cài đặt | Lớp phủ gần kín cửa sổ | Avatar → Cài đặt; Ctrl+,; Ctrl+K "Mở cài đặt"; link "mở thẳng nhóm" từ nơi khác | Esc / × về màn trước (IA-04). Gồm mọi nhóm của G01 SCR-06, kể cả Context & channel (G02 SCR-06), Lịch (G05 SCR-01 … 03), Ritual (G08 SCR-13), Trợ lý AI (G10 SCR-09), Hoạt động AI (G10 SCR-12), Task lặp (G03 SCR-05), Thông báo (G12 SCR-10), Workspace (G12 SCR-12) | G01 SCR-06 … SCR-16 |
+| Cài đặt | Lớp phủ gần kín cửa sổ | Avatar → Cài đặt; Ctrl+,; Ctrl+K "Mở cài đặt"; link "mở thẳng nhóm" từ nơi khác | Esc / × về màn trước (IA-04). Gồm mọi nhóm của G01 SCR-06, kể cả Context & channel (G02 SCR-06), Lịch (G05 SCR-01 … 03), Ritual (G08 SCR-13), Trợ lý AI (G10 SCR-09), Hoạt động AI (G10 SCR-12), Task lặp lại (G03 SCR-05; chốt 10/11/2026, O-14 brief G03), Thông báo (G12 SCR-10), Workspace (G12 SCR-12) | G01 SCR-06 … SCR-16 |
 | Đồng ý dùng AI | Dialog | Lần đầu bấm ✨ / Ctrl+J / "Plan my day" / bật Trợ lý AI trong Cài đặt | Tiêu đề "Bật trợ lý AI" (B42) | G10 SCR-10 |
 | Thiết lập Planning Agent | Dialog `[đề xuất]` | Lần đầu "Plan my day"; Cài đặt → Trợ lý AI | | G10 SCR-01 |
 | Command menu | Dialog | Ctrl+K | | G04 SCR-08 |

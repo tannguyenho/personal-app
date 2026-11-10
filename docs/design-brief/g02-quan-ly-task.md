@@ -222,7 +222,7 @@ Tiêu đề các mục Subtask, Notes, Comment, Nhật ký: UI-37. Dòng do AI c
 | SCR-03.S10 | Due sớm hơn ngày dự định | Chọn due < ngày dự định | Vẫn lưu; MSG-06 dưới chip Hạn chót, kiểu cảnh báo | Sửa due / ngày dự định → hết | UC-02 A6, BR-07 |
 | SCR-03.S11 | Due quá hạn | Due < hôm nay, task chưa xong | Chip Hạn chót kiểu nguy hiểm, có icon (như SCR-02.S06) | Sửa due / hoàn thành | US2.3 AC03 |
 | SCR-03.S12 | Task đã xong | `HOAN_THANH` | ✓ lớn màu thành công; "Thực tế 0:02 · Kế hoạch 1:30" theo QC-07 mục 5 (kể cả `plannedAsActual`); subtask đều đã tích. Vẫn thêm subtask được: subtask mới chưa xong, task vẫn xong | Bấm ✓ / C → bỏ hoàn thành (F-10) | BR-08, BR-17 c, UC-02 A9 |
-| SCR-03.S13 | Instance lặp | Task thuộc series | Banner series (G03 SCR-02) trên tiêu đề; mục "Lặp lại" của SCR-04 đổi theo G03 | – | G03 |
+| SCR-03.S13 | Instance lặp | Task thuộc series | Banner series (G03 SCR-02) trên tiêu đề; mục "Lặp lại" của SCR-04 mở G03 SCR-01 chế độ "Đổi tần suất" (SCR-04.S02) | – | G03 |
 | SCR-03.S14 | Có link nguồn | Task tạo từ URL | Dòng dưới tiêu đề: icon link + tên miền ("docs.google.com"), tooltip UI-28; bấm hoặc phím G mở link | – | US1.2 AC02; SRS SCR-03 #9; O-05 |
 | SCR-03.S15 | Bị sửa trên thiết bị khác | Có thay đổi realtime | Trường không đang gõ nhận giá trị mới ngay, không báo. Trường đang gõ giữ nguyên; khi rời trường hiện MSG-12 dưới trường đó | – | UC-02 A7, QC-08 mục 3 |
 | SCR-03.S16 | Bị xoá trên thiết bị khác | Task chuyển `DA_XOA` khi đang mở | Dialog đóng, focus về board; toast MSG-38 có "Hoàn tác" (không dùng MSG-09) | Hoàn tác → task về như trước khi xoá | UC-02 E3; O-01 |
@@ -249,7 +249,7 @@ Tiêu đề các mục Subtask, Notes, Comment, Nhật ký: UI-37. Dòng do AI c
 | Mã | Trạng thái | Khi nào | Hiện gì | Ra khỏi trạng thái bằng | Tham chiếu |
 |---|---|---|---|---|---|
 | SCR-04.S01 | Task thường | Mọi task không thuộc series (kể cả task đã xong) | 4 mục như cấu trúc. "Sao chép link" → toast MSG-18; "Nhân bản" → F-13; "Xoá" → F-11; "Lặp lại" → G03 SCR-01 | Chọn mục / Esc / bấm ra ngoài | SRS SCR-04, UC-04, UC-05 |
-| SCR-04.S02 | Instance lặp | Task thuộc series | "Lặp lại" đổi thành mục sửa series (chữ, nội dung và trạng thái mất mạng thuộc G03 SCR-03 #7: mờ, tooltip G03 MSG-27); các mục khác như S01 | – | G03, QC-08 mục 7 |
+| SCR-04.S02 | Instance lặp | Task thuộc series đang lặp | Chữ giữ "Lặp lại"; chọn → G03 SCR-01 chế độ "Đổi tần suất". Mất mạng: mục mờ, tooltip G03 MSG-27 (G03 SCR-09); các mục khác như S01 (chốt 10/11/2026, O-01 brief G03) | – | G03 UC-01 A3, QC-08 mục 7 |
 
 **Dữ liệu mẫu.** Không có dữ liệu biến đổi; thử menu mở từ card sát mép phải màn (menu lật sang trái) và từ header dialog.
 

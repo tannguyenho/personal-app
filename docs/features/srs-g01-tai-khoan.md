@@ -567,7 +567,7 @@ Lớp phủ gần kín cửa sổ, khung app mờ phía sau (IA-04). Mở bằng
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
-| 1 | Cột trái: nhóm "Cá nhân" | Nav list | Chung · Hiển thị · Lịch làm việc (G01, SCR-14) · Ritual (G08) · Timebox (G05) · Phím tắt · Focus (G07) · Trợ lý AI (SCR-16 → G10; mặc định tắt, bật lần đầu qua màn đồng ý gọn của G10, QC-12 mục 7) · Beta (G10) · Thông báo (G12) |
+| 1 | Cột trái: nhóm "Cá nhân" | Nav list | Chung · Hiển thị · Lịch làm việc (G01, SCR-14) · Ritual (G08) · Timebox (G05) · Task lặp lại (G03 SCR-05; chốt 10/11/2026, O-14 brief G03) · Phím tắt · Focus (G07) · Trợ lý AI (SCR-16 → G10; mặc định tắt, bật lần đầu qua màn đồng ý gọn của G10, QC-12 mục 7) · Beta (G10) · Thông báo (G12) |
 | 2 | Cột trái: nhóm "Tài khoản" | Nav list | Hồ sơ · Tài khoản |
 | 3 | Cột trái: nhóm "Workspace" | Nav list | Context & channel (G02, gồm khung giờ channel) · Thành viên (G12, bản sau) · Privacy (G12, bản sau) · Billing (G12, 1.1) · Tích hợp (G05 / G11) |
 | 4 | Vùng nội dung | Panel | Nội dung nhóm đang chọn; mỗi nhóm có đường dẫn riêng để mở thẳng từ nơi khác trong app `[giả định — tech chốt]` |

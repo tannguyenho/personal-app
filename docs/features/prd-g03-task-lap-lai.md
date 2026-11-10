@@ -9,6 +9,8 @@
 > Cập nhật thêm theo vòng 5–6: quy tắc `WEEKDAYS` hiển thị là "Thứ Hai–Thứ Sáu", quy tắc lặp không theo lịch làm việc (Q43); sửa giờ timebox của instance là sửa riêng (Q44); bản 1.0 là app Windows cho một người dùng (Q35, Q45, [ADR-0005](../adr/0005-nen-tang-windows-truoc.md)).
 >
 > Cập nhật theo [câu hỏi chốt 09/11/2026](../review/cau-hoi-chot-flow-2026-11-09.md): B08, B14–B16, C10–C16, A1, A3, A6 (QC-08 mục 7, QC-13).
+>
+> Cập nhật 10/11/2026 theo [brief G03](../design-brief/g03-task-lap-lai.md) đã duyệt (mục 11, O-01 … O-21 chốt theo đề xuất của brief): trả lời các câu hỏi mở ở mục 10, sửa mục 3, mục 5 và AC liên quan.
 
 # 1. Bối cảnh và vấn đề
 
@@ -53,7 +55,7 @@ Nhiều việc lặp theo nhịp cố định: standup mỗi sáng, dọn hộp 
 - Sinh instance tự động tới 60 ngày phía trước, không sinh ngày đã qua; instance hiện dạng projection trên board.
 - Ngày ngoại lệ: ngày gốc của instance người dùng đã xoá, series không sinh lại.
 - Banner series trong chi tiết instance: mô tả quy tắc, vị trí trong series, Trước / Sau, "Sửa series".
-- Menu "Sửa series" 6 thao tác: Dừng lặp, Đổi tần suất, Cập nhật mọi instance chưa xong theo task này, Xoá mọi instance chưa xong và dừng lặp, Đặt giờ bắt đầu, Quản lý mọi task lặp; có bảng phạm vi cho từng thao tác.
+- Menu "Sửa series" 6 thao tác: Dừng lặp, Đổi tần suất, Cập nhật mọi lần chưa xong theo task này, Xoá mọi lần chưa xong và dừng lặp, Đặt giờ bắt đầu, Quản lý mọi task lặp; có bảng phạm vi cho từng thao tác. Chữ trên giao diện dùng "lần" thay "instance"; thứ tự hiển thị theo SRS SCR-03 (chốt 10/11/2026, O-17, O-18 brief G03).
 - Quy tắc instance trùng series trong một ngày (QC-06, G03 sở hữu): đường tự động (rollover G06, phím D G04, shutdown "Ngày mai" G08) lưu trữ instance thừa; đường thủ công cho phép kèm cảnh báo. Nhóm sở hữu từng đường thực thi.
 
 ## 3.2 Ngoài phạm vi
@@ -61,7 +63,7 @@ Nhiều việc lặp theo nhịp cố định: standup mỗi sáng, dọn hộp 
 - Rollover, Lưu trữ → G06. Board, projection, sắp xếp → G04.
 - Timebox và "Lập lịch cứng cho task lặp" → G05 (SRS G05 BR-23 / UC-09, cửa sổ 7 ngày `[giả định]`), phát hành **bản 1.1** (Q7). Bản 1.0 chỉ lưu và hiện giờ "khoảng", không tạo timebox.
 - Chế độ chỉ đọc (dừng sinh instance) → bản 1.1 (QC-09).
-- Ngày kết thúc series / số lần lặp tối đa → chưa đưa vào (xem Câu hỏi mở).
+- Ngày kết thúc series / số lần lặp tối đa → không có ở 1.0, picker không chừa chỗ (chốt 10/11/2026, O-20).
 - Lặp theo ngày hoàn thành ("3 ngày sau khi xong") → sau 1.1.
 - Gắn objective cho task lặp → G09 (bản 1.1); objective không sao chép sang instance.
 - Task lặp giao cho người khác → bản sau (Q35, [`02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md)); bản 1 chỉ một người dùng.
@@ -97,7 +99,7 @@ Xoá một instance thì ngày gốc của nó thành ngày ngoại lệ; series
 | Thứ Hai–Thứ Sáu (`WEEKDAYS`) | Cố định Thứ Hai – Thứ Sáu | — | Không có khoảng lặp. Nhãn là "Thứ Hai–Thứ Sáu", không gọi "Ngày làm việc"; không đổi theo lịch làm việc (Q43) |
 | Weekly | Chọn 1–7 thứ; mỗi N tuần, N = 1–99 | Thứ của ngày dự định của task; N = 1 | Ngày đầu tuần lấy theo cài đặt (G01) lúc tạo series và cố định cho series đó (C14) |
 | Monthly theo ngày | Ngày D = 1–31; mỗi N tháng | D = ngày của ngày dự định | D = 29–31 → ngày cuối tháng ở tháng ngắn hơn |
-| Monthly theo "thứ N" | Thứ nhất / hai / ba / tư / cuối cùng `[giả định]` + thứ trong tuần; mỗi N tháng | Suy từ ngày dự định (ví dụ "Thứ Tư đầu tiên") | Ngày là lần thứ 5 trong tháng → đề xuất "cuối cùng" |
+| Monthly theo "thứ N" | Thứ nhất / hai / ba / tư / cuối cùng + thứ trong tuần; mỗi N tháng | Suy từ ngày dự định (ví dụ "Thứ Tư đầu tiên") | Ngày là lần thứ 5 trong tháng → mặc định "cuối cùng"; lần thứ 4 → "thứ 4", người dùng tự đổi nếu muốn "cuối cùng" (chốt 10/11/2026, O-03) |
 | Yearly | Ngày / tháng; mỗi N năm | Ngày / tháng của ngày dự định | 29/2 → 28/2 ở năm không nhuận |
 | Giờ "khoảng" | Bước 15 phút `[giả định]`; trống được | Trống | Chỉ hiện trên card ở 1.0; thành timebox khi bật lập lịch cứng (G05, bản 1.1) |
 | Khoảng sinh trước | 60 ngày | — | Job sinh instance chạy hằng ngày; không sinh ngày < hôm nay |
@@ -111,6 +113,7 @@ Xoá một instance thì ngày gốc của nó thành ngày ngoại lệ; series
 | Comment, objective, timebox, thời gian thực tế, nhật ký | Không |
 
 - Các giới hạn là **cấu hình hệ thống**, không cố định trong code.
+- Mở picker để bật lặp: quy tắc chọn sẵn là Daily ("Hằng ngày"). Monthly theo ngày, Monthly theo "thứ N" và Yearly có ô chọn ngày / thứ N + thứ / ngày + tháng, mặc định suy từ ngày dự định (chốt 10/11/2026, O-02).
 - Instance đầu tiên chính là task ban đầu, đặt vào ngày khớp quy tắc đầu tiên tính từ ngày dự định của task (không trước hôm nay); ngày dự định đã khớp thì giữ nguyên. Các instance sau sinh theo quy tắc tính từ ngày đó (C14).
 - Không bật lặp cho task đã hoàn thành (C14).
 - **Quy tắc lặp không theo lịch làm việc** (Q43). Ngày sinh instance chỉ do quy tắc quyết định. Ví dụ: lịch làm việc có Thứ Bảy, quy tắc Thứ Hai–Thứ Sáu vẫn không sinh Thứ Bảy; lịch làm việc bỏ Thứ Tư, quy tắc Hằng ngày vẫn sinh Thứ Tư. Lịch làm việc của task (QC-02 mục 6) chỉ ảnh hưởng projection, sức chứa, số ngày bị hoãn và "ngày làm việc kế tiếp" của instance như task thường.
@@ -136,7 +139,7 @@ Bước 4 do G06 thực thi theo quy tắc của G03. PRD này tập trung bư�
 
 User Story: Là người dùng, tôi muốn đặt một task lặp theo ngày, Thứ Hai–Thứ Sáu, tuần, tháng hoặc năm, để không phải tạo lại việc định kỳ.
 
-AC01: Menu … của task (card hoặc chi tiết) có mục "Lặp lại"; mở picker với các ô Lặp (6 quy tắc), Vào (thứ, khi Weekly), Mỗi N tuần / tháng / năm, Vào khoảng (giờ), Lưu.
+AC01: Menu … của task (card hoặc chi tiết) có mục "Lặp lại"; mở picker với các ô Lặp (6 quy tắc), Vào (thứ khi Weekly; ngày, thứ N + thứ, ngày + tháng khi Monthly / Yearly, chốt 10/11/2026, O-02), Mỗi N tuần / tháng / năm, Vào khoảng (giờ), Lưu. Task đã lặp thì mục vẫn ghi "Lặp lại", mở picker ở chế độ đổi tần suất; mất mạng thì mục này mờ, tooltip "Cần có mạng để sửa cả chuỗi" (chốt 10/11/2026, O-01).
 
 AC02: Giá trị mặc định suy từ ngày dự định của task (thứ, ngày trong tháng, "thứ N").
 
@@ -144,7 +147,7 @@ AC03: Lưu → task ban đầu thành instance đầu, đặt vào ngày khớp 
 
 AC04: Khoảng lặp ngoài 1–99 hoặc Weekly không chọn thứ nào → nút Lưu disabled, hiện lỗi tại ô.
 
-AC05: Task trong backlog (không có ngày) bật lặp → instance đầu đặt vào hôm nay `[giả định]`, toast nói rõ ngày.
+AC05: Task trong backlog (không có ngày) bật lặp → ngày dự định coi là hôm nay; instance đầu đặt vào ngày khớp quy tắc đầu tiên tính từ hôm nay (hôm nay nếu khớp), toast nói rõ ngày (chốt 10/11/2026, O-05).
 
 AC06: Task đã hoàn thành → mục "Lặp lại" disabled, tooltip giải thích (C14).
 
@@ -184,7 +187,7 @@ AC02: Trước / Sau mở instance liền kề theo ngày; instance đầu thì 
 
 AC03: Series đã dừng → banner "Series này đã dừng lặp"; Trước / Sau vẫn hiện, bỏ qua các instance đã xoá (chốt 09/11/2026, B16).
 
-AC04: Mở một instance đã bị xoá ở thiết bị khác → thông báo "Task hoặc series này không còn tồn tại", card được gỡ khỏi board (C11).
+AC04: Mở một instance đã bị xoá ở thiết bị khác → thông báo "Task hoặc series này không còn tồn tại", card được gỡ khỏi board (C11). Instance đang mở thì bị xoá ở thiết bị khác → như task thường bị xoá khi đang mở (G02): chi tiết đóng, toast có Hoàn tác (chốt 10/11/2026, O-13).
 
 ### US2.3 Sửa một instance
 
@@ -236,6 +239,8 @@ AC02: Bản 1.0 không tạo timebox. "Lập lịch cứng cho task lặp" do G0
 
 AC03: Instance đã có timebox (người dùng tự timebox) → chỉ đổi giờ "khoảng", không dời timebox.
 
+AC04: Đặt giờ và "Xoá giờ" đều có toast Hoàn tác (chốt 10/11/2026, O-10).
+
 ## UC4. Dừng lặp và xoá
 
 ### US4.1 Dừng lặp
@@ -248,9 +253,9 @@ AC03: Instance đang chạy timer bị ảnh hưởng → dừng timer; instance
 
 ### US4.2 Xoá mọi instance chưa xong và dừng lặp
 
-AC01: Hiện xác nhận có số instance sẽ xoá (khác Sunsama về mức hỏi; thao tác hàng loạt nên hỏi `[giả định]`); nút xác nhận là "Xoá và dừng lặp" (C13).
+AC01: Hiện xác nhận có số instance sẽ xoá (khác Sunsama về mức hỏi; thao tác hàng loạt nên hỏi, vẫn có Hoàn tác, chốt 10/11/2026, O-19); nút xác nhận là "Xoá và dừng lặp" (C13).
 
-AC02: Mọi instance chưa xong vào Thùng rác (G02) và ngày gốc của chúng thành ngày ngoại lệ; instance đã xong, đã có thời gian thực tế, trong Lưu trữ giữ nguyên; series dừng; toast có Hoàn tác (C12, C13).
+AC02: Mọi instance chưa xong vào Thùng rác (G02) và ngày gốc của chúng thành ngày ngoại lệ; instance đã xong, đã có thời gian thực tế, trong Lưu trữ giữ nguyên; series dừng; toast có Hoàn tác, dòng 2 nêu số lần đã có thời gian thực tế được giữ (C12, C13; chốt 10/11/2026, O-09).
 
 ## UC5. Instance bị bỏ lỡ
 
@@ -274,7 +279,7 @@ AC06: Instance cũ chưa xong nhưng đã sửa riêng hoặc đã có thời gi
 
 AC01: "Sửa series" → "Quản lý mọi task lặp" (hoặc Cài đặt → Task lặp lại) liệt kê series: tiêu đề, quy tắc, giờ "khoảng", channel, lần kế tiếp, trạng thái.
 
-AC02: Từ mỗi dòng: mở instance kế tiếp, đổi tần suất (mở picker ngay trên dòng), dừng lặp (hộp xác nhận ngay trên dòng); không cần mở instance trước (chốt 09/11/2026, B15).
+AC02: Từ mỗi dòng: mở instance kế tiếp, đổi tần suất (mở picker ngay trên dòng), dừng lặp (hộp xác nhận ngay trên dòng); không cần mở instance trước (chốt 09/11/2026, B15). "Quản lý mọi task lặp" là nhóm "Task lặp lại" trong Cài đặt (nhóm "Cá nhân", sau "Timebox"); mở từ chi tiết task thì chi tiết đóng trước; mở lần kế tiếp thì Cài đặt đóng, board cuộn tới ngày đó và mở chi tiết (chốt 10/11/2026, O-14).
 
 AC03: Lọc "Đang lặp" / "Đã dừng".
 
@@ -304,11 +309,11 @@ AC04: Tải danh sách lỗi → "Chưa tải được. Thử lại" tại chỗ
 
 # 10. Câu hỏi mở
 
-- Có cần ngày kết thúc series / số lần lặp ở 1.0 không?
+- Có cần ngày kết thúc series / số lần lặp ở 1.0 không? **Chốt 10/11/2026 (O-20):** không có ở 1.0; picker không chừa chỗ (mục 3.2).
 - Instance mới có sao chép priority và subtask không (Sunsama chưa kiểm chứng)?
 - "Dừng lặp" có xoá instance tương lai đã sinh hay giữ lại? **Chốt 09/11/2026 (B14):** xoá các instance tương lai chưa động tới; giữ instance đã dời, đã sửa riêng hoặc đã có thời gian thực tế (US4.1 AC01).
-- Xoá mọi instance chưa xong có cần hộp xác nhận hay chỉ toast Hoàn tác như xoá thường (G02)?
-- Monthly theo "thứ N" có lựa chọn "cuối cùng" không?
+- Xoá mọi instance chưa xong có cần hộp xác nhận hay chỉ toast Hoàn tác như xoá thường (G02)? **Chốt 10/11/2026 (O-19):** có cả hộp xác nhận và toast Hoàn tác (US4.2 AC01, SRS BR-08 d).
+- Monthly theo "thứ N" có lựa chọn "cuối cùng" không? **Chốt 10/11/2026 (O-03):** có; ngày là lần thứ 5 trong tháng → mặc định "cuối cùng", lần thứ 4 → "thứ 4" (mục 5, SRS BR-01).
 - Đã chốt 04/11/2026: "hôm nay" là ngày làm việc, mốc đầu ngày mặc định 04:00, chỉnh trong 00:00–06:00 (Q2, QC-01).
 - Xoá task ban đầu (instance đầu) có dừng series không? Đề xuất: không.
 - Đã chốt 04/11/2026: lập lịch cứng cho task lặp do G05 sở hữu, phát hành bản 1.1; G03 chỉ giữ giờ "khoảng" (Q7).

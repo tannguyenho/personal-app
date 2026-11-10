@@ -194,7 +194,7 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | --- | --- | --- |
 | E1 | Vi phạm BR-01 | Lỗi tại trường (MSG-01 / MSG-02 / MSG-03), không gửi |
 | E2 | Subtask thứ 101 | MSG-04, chặn thêm |
-| E3 | Task bị xoá ở thiết bị khác khi đang mở | Đóng SCR-03, toast MSG-38 kèm "Hoàn tác" (thay MSG-09, chốt 10/11/2026, O-01); Hoàn tác → task về như trước khi xoá |
+| E3 | Task bị xoá ở thiết bị khác khi đang mở | Đóng SCR-03, toast MSG-38 kèm "Hoàn tác" (thay MSG-09, chốt 10/11/2026, O-01); Hoàn tác → task về như trước khi xoá. Instance lặp đang mở cũng theo nhánh này, không dùng G03 MSG-17 (chốt 10/11/2026, O-13 brief G03) |
 | E4 | \[TaskUpdate\] lỗi | Trả trường về giá trị cũ, MSG-10 |
 | E5 | Lệnh sửa (kể cả từ hàng đợi offline) tới task đã `DA_XOA` | 409 `TASK_DELETED`; bỏ lệnh khỏi hàng đợi, MSG-22 (QC-08 mục 4) |
 | E6 | Đổi ngày ở A11 trên phiên bản cụm vị trí cũ | 412 `VERSION_CONFLICT`; tải lại task, trả ngày về giá trị server, MSG-23 (QC-08 mục 2) |
@@ -419,7 +419,7 @@ Có biến thể **chỉ xem** cho task đang ở Lưu trữ: G06 SCR-08 (chốt
 
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
-| 1 | Lặp lại | Menu item | Mở cấu hình lặp (G03) |
+| 1 | Lặp lại | Menu item | Mở cấu hình lặp (G03 SCR-09). Task thuộc series đang lặp: chữ giữ "Lặp lại", mở G03 SCR-01 chế độ "Đổi tần suất"; mất mạng thì mờ, tooltip G03 MSG-27 (chốt 10/11/2026, O-01 brief G03) |
 | 2 | Gắn objective | Menu item | Ẩn ở 1.0 (G09) |
 | 3 | Nhân bản | Menu item | Ctrl+D → UC-05 |
 | 4 | Xoá | Menu item | Ctrl+Backspace → UC-04 |
