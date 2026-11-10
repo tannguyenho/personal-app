@@ -1,6 +1,6 @@
 # Flow G01 Tài khoản, onboarding và cài đặt
 
-> **Nguồn:** [srs-g01](../../features/srs-g01-tai-khoan.md) (commit `8fac830`) · **Brief:** `[chờ]`
+> **Nguồn:** [srs-g01](../../features/srs-g01-tai-khoan.md) (commit `8fac830`, sửa theo [chốt 09/11/2026](../../review/cau-hoi-chot-flow-2026-11-09.md)) · **Brief:** `[chờ]`
 > **Quy ước:** [_quy-uoc.md](_quy-uoc.md) · **FigJam:** `[chờ]`
 
 Bản 1.0 là app Windows cho một người dùng. Các nhánh của web / macOS, 2FA, trial, thanh toán, chế độ chỉ đọc, lời mời và workspace nhiều thành viên không vẽ, ghi "Bỏ (1.1)" ở bảng đối chiếu.
@@ -13,13 +13,13 @@ Bản 1.0 là app Windows cho một người dùng. Các nhánh của web / macO
 | [UC-02](#uc-02-đăng-ký--đăng-nhập-bằng-google-hoặc-microsoft) | Đăng ký / đăng nhập bằng Google hoặc Microsoft | SCR-01, SCR-03 (overlay chờ MSG-49) | 6 / 5 |
 | [UC-03](#uc-03-đăng-nhập-duy-trì-phiên-và-đăng-xuất) | Đăng nhập, duy trì phiên và đăng xuất | SCR-03 Đăng nhập | 4 / 5 |
 | [UC-04](#uc-04-quên-và-đặt-lại-mật-khẩu) | Quên và đặt lại mật khẩu | SCR-04 Quên / đặt lại mật khẩu | 2 / 3 |
-| [UC-05](#uc-05-onboarding-lần-đầu) | Onboarding lần đầu | SCR-05 Onboarding | 5 / 4 |
+| [UC-05](#uc-05-onboarding-lần-đầu) | Onboarding lần đầu | SCR-05 Onboarding | 6 / 4 |
 | [UC-06](#uc-06-xem-và-đổi-cài-đặt) | Xem và đổi cài đặt | SCR-06, SCR-07, SCR-08, SCR-09, SCR-13, SCR-16 | 7 / 3 |
-| [UC-07](#uc-07-hồ-sơ-và-bảo-mật-tài-khoản) | Hồ sơ và bảo mật tài khoản | SCR-10 Hồ sơ, SCR-11 Tài khoản | 5 / 7 |
-| [UC-08](#uc-08-xuất-dữ-liệu) | Xuất dữ liệu | SCR-11 | 1 / 3 |
-| [UC-09](#uc-09-xoá-tài-khoản) | Xoá tài khoản | SCR-12 Xoá tài khoản | 3 / 3 |
-| [UC-10](#uc-10-cài-đặt-lịch-làm-việc) | Cài đặt Lịch làm việc | SCR-14 Lịch làm việc | 3 / 3 |
-| [UC-11](#uc-11-rút-lại-đồng-ý-và-xin-đồng-ý-lại) | Rút lại đồng ý và xin đồng ý lại | SCR-15, SCR-11 | 3 / 3 |
+| [UC-07](#uc-07-hồ-sơ-và-bảo-mật-tài-khoản) | Hồ sơ và bảo mật tài khoản | SCR-10 Hồ sơ, SCR-11 Tài khoản, SCR-20 | 5 / 7 |
+| [UC-08](#uc-08-xuất-dữ-liệu) | Xuất dữ liệu | SCR-11, SCR-19 | 1 / 3 |
+| [UC-09](#uc-09-xoá-tài-khoản) | Xoá tài khoản | SCR-12 Xoá tài khoản, SCR-21 | 4 / 4 |
+| [UC-10](#uc-10-cài-đặt-lịch-làm-việc) | Cài đặt Lịch làm việc | SCR-14 Lịch làm việc | 3 / 4 |
+| [UC-11](#uc-11-rút-lại-đồng-ý-và-xin-đồng-ý-lại) | Rút lại đồng ý và xin đồng ý lại | SCR-15, SCR-11, SCR-22 | 3 / 4 |
 
 Không có UC thuần 1.1 trong SRS G01. Nhánh đã bỏ: UC-01 A4, UC-02 A3, UC-03 A3, A4, UC-08 A1, UC-09 A3, E1, một nửa UC-11 E2.
 
@@ -147,7 +147,7 @@ flowchart TD
   u2[/"Trong trình duyệt: chọn tài khoản, đồng ý"/]
   p2[["Nhà cung cấp trả kết quả về app, app lên trước<br/>AuthOAuthCallback kiểm state, lấy sub, email đã xác minh"]]
   p3[["provider + sub đã liên kết BR-01<br/>cấp token BR-08"]]
-  ok(["Home hoặc SCR-05 bước onboarding dở"])
+  ok(["G04 SCR-01 Home hoặc SCR-05 bước onboarding dở"])
 
   start ==> u1 ==> p1 ==> m1 ==> u2 ==> p2 ==> p3 ==> ok
 
@@ -173,7 +173,7 @@ flowchart TD
   m1>"MSG-49 · Overlay · Huỷ"]
   p2[["AuthOAuthCallback"]]
   p3[["provider + sub đã liên kết, cấp token"]]
-  ok(["Home hoặc SCR-05 bước dở"])
+  ok(["G04 SCR-01 Home hoặc SCR-05 bước dở"])
 
   u1 ==> p1 ==> m1 ==> p2 ==> p3 ==> ok
 
@@ -181,7 +181,7 @@ flowchart TD
   p3 -->|"A5 · email bên nhà cung cấp khác email chính"| a5["Đăng nhập theo provider + sub<br/>không đổi email chính"]
   a5 --> ok
 
-  p2 -->|"A1 · chưa liên kết, email chưa có tài khoản"| a1["SCR-01 rút gọn<br/>chỉ có ô đồng ý BR-06"]
+  p2 -->|"A1 · chưa liên kết, email chưa có tài khoản"| a1["SCR-18 Đăng ký rút gọn<br/>chỉ có ô đồng ý BR-06"]
   p2 -->|"A4 · chưa liên kết, email trùng<br/>tài khoản CHUA_XAC_MINH"| a4[["Thay thế bản ghi chưa xác minh BR-03<br/>huỷ mật khẩu, mã đang chờ; ghi BR-21"]]
   a4 --> a1
   a1 -->|"tick đồng ý, bấm Tạo tài khoản"| a1p[["Khởi tạo BR-05, cấp token"]]
@@ -191,10 +191,10 @@ flowchart TD
   a2m -->|"mật khẩu đúng"| a2p[["Liên kết provider + sub, đăng nhập<br/>không tự liên kết theo email"]]
   a2p --> ok
 
-  a6s(["Màn cần xác nhận lại BR-10<br/>SCR-11 dialog, SCR-12, sau MSG-48"]) -->|"A6 · purpose=reauth"| p1
+  a6s(["Màn cần xác nhận lại BR-10<br/>SCR-11 dialog, SCR-12, SCR-22"]) -->|"A6 · purpose=reauth"| p1
   p2 -->|"A6 · purpose=reauth"| d6{"provider + sub khớp<br/>tài khoản đang đăng nhập?"}
   d6 -->|"khớp"| a6ok(["reauthToken trả về màn đang mở<br/>không cấp phiên mới"])
-  d6 -->|"không khớp"| a6m>"MSG-11 · SCR-03<br/>Đăng nhập bằng {Google / Microsoft} chưa thành công. Thử lại"]
+  d6 -->|"không khớp"| a6m>"MSG-11 · dialog xác nhận lại<br/>Đăng nhập bằng {Google / Microsoft} chưa thành công. Thử lại"]
 
   class u1,p1,m1,p2,p3 happy
   class a7,a5,a1,a4,a1p,a2m,a2p,a6s,d6 alt
@@ -220,7 +220,7 @@ flowchart TD
   m1>"MSG-49 · Overlay · Huỷ"]
   u2[/"Chọn tài khoản trong trình duyệt"/]
   p2[["AuthOAuthCallback"]]
-  ok(["Home hoặc SCR-05 bước dở"])
+  ok(["G04 SCR-01 Home hoặc SCR-05 bước dở"])
   a2m>"MSG-13 · Dialog<br/>nhập mật khẩu để liên kết (A2)"]
 
   u1 ==> p1 ==> m1 ==> u2 ==> p2 ==> ok
@@ -229,7 +229,7 @@ flowchart TD
   u2 -.->|"E1 · khách huỷ trên trang nhà cung cấp"| e1m>"MSG-11 · SCR-03<br/>Đăng nhập bằng {Google / Microsoft} chưa thành công. Thử lại"]
   p2 -.->|"E1 · state sai / hết hạn<br/>E3 · nhà cung cấp lỗi / timeout"| e1m
   p2 -.->|"E2 · không trả email đã xác minh"| e2m>"MSG-12 · SCR-03<br/>Tài khoản {Google / Microsoft} chưa xác minh email.<br/>Hãy đăng nhập bằng email và mật khẩu"]
-  a2m -.->|"E4 · sai mật khẩu, tính vào BR-07"| e4m>"MSG-14 · SCR-03<br/>Email hoặc mật khẩu chưa đúng, hoặc đăng nhập tạm bị chặn.<br/>Thử lại sau ít phút hoặc dùng #quot;Quên mật khẩu#quot;"]
+  a2m -.->|"E4 · sai mật khẩu, tính vào BR-07"| e4m>"MSG-14 · dialog MSG-13<br/>Email hoặc mật khẩu chưa đúng, hoặc đăng nhập tạm bị chặn.<br/>Thử lại sau ít phút hoặc dùng #quot;Quên mật khẩu#quot;"]
   p1 -.->|"E5 · không mở được trình duyệt"| e5m>"MSG-50 · SCR-03<br/>Chưa nhận được kết quả đăng nhập từ trình duyệt.<br/>Thử lại, hoặc đăng nhập bằng email và mật khẩu"]
   m1 -.->|"E5 · quá thời gian chờ 5 phút"| e5m
   e1m -.-> fail(["SCR-03 kèm thông báo<br/>không tạo, không đăng nhập<br/>email + mật khẩu vẫn dùng được"])
@@ -256,24 +256,24 @@ flowchart TD
 
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
-| A1 | Chưa liên kết, email mới | SCR-01 rút gọn → SCR-05 bước 1 | – |
+| A1 | Chưa liên kết, email mới | SCR-18 Đăng ký rút gọn → SCR-05 bước 1 | – |
 | A2 | Email trùng tài khoản có mật khẩu | Nhập mật khẩu → liên kết, đăng nhập | MSG-13 |
 | A3 | Từ link mời workspace (bản sau, BR-26) | Bỏ (1.1) | – |
 | A4 | Email trùng tài khoản `CHUA_XAC_MINH` | Thay bản ghi, tiếp như A1 | – |
 | A5 | Email nhà cung cấp khác email chính | Đăng nhập, không đổi email chính | – |
-| A6 | `purpose=reauth` | `reauthToken` về màn đang mở; không khớp → MSG-11 | MSG-11 |
+| A6 | `purpose=reauth` | `reauthToken` về màn đang mở; không khớp → MSG-11 ở dialog xác nhận lại (C39) | MSG-11 |
 | A7 | Bấm "Huỷ" trên màn chờ | Màn trước, không lỗi | – |
 | E1 | Huỷ trên trang nhà cung cấp / `state` sai, hết hạn | SCR-03 | MSG-11 |
 | E2 | Không có email đã xác minh | SCR-03 | MSG-12 |
 | E3 | Nhà cung cấp lỗi / timeout | SCR-03 | MSG-11 |
-| E4 | A2 nhập sai mật khẩu | Tính vào BR-07 | MSG-14 |
+| E4 | A2 nhập sai mật khẩu | Tính vào BR-07; báo trong dialog MSG-13 | MSG-14 |
 | E5 | Không mở được trình duyệt / quá thời gian chờ | SCR-03 | MSG-50 |
 
 ---
 
 ## UC-03 Đăng nhập, duy trì phiên và đăng xuất
 
-**Mở đầu:** SCR-03, tài khoản `HOAT_DONG` (đang bị khoá BR-07 thì chỉ OAuth / quên mật khẩu). **Thành công:** có phiên hợp lệ (BR-08), mở Home hoặc bước onboarding dở. **Thất bại:** không có phiên, khách ở SCR-03.
+**Mở đầu:** SCR-03, tài khoản `HOAT_DONG` (đang bị khoá BR-07 thì chỉ OAuth / quên mật khẩu). **Thành công:** có phiên hợp lệ (BR-08), mở Home (G04 SCR-01) hoặc bước onboarding dở. **Thất bại:** không có phiên, khách ở SCR-03.
 
 ### Happy case
 
@@ -284,7 +284,7 @@ flowchart TD
   p1[["AuthLogin, kiểm BR-07"]]
   p2[["Cấp access token + refresh token<br/>lưu trên thiết bị BR-08"]]
   d1{"Onboarding HOAN_TAT?"}
-  ok(["Home"])
+  ok(["G04 SCR-01 Home"])
   ok2(["SCR-05 bước onboarding dở"])
   p3[["Trước khi access token hết hạn 1 phút<br/>AuthRefresh, token mới"]]
 
@@ -314,7 +314,7 @@ flowchart TD
   u1[/"Bấm Đăng nhập"/]
   p1[["AuthLogin, kiểm BR-07"]]
   p2[["Cấp token BR-08"]]
-  ok(["Home hoặc SCR-05 bước dở"])
+  ok(["G04 SCR-01 Home hoặc SCR-05 bước dở"])
 
   s1 ==> u1 ==> p1 ==> p2 ==> ok
 
@@ -359,7 +359,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  a1s(["Menu tài khoản · Đăng xuất"]) -->|"A1"| d1{"Còn thay đổi<br/>chưa đồng bộ?"}
+  a1s(["SCR-17 Menu tài khoản · Đăng xuất"]) -->|"A1"| d1{"Còn thay đổi<br/>chưa đồng bộ?"}
   d1 -->|"có"| a1m>"MSG-40 · Dialog<br/>Còn {n} thay đổi chưa đồng bộ trên thiết bị này.<br/>Đăng xuất bây giờ sẽ xoá các thay đổi đó · Huỷ · Vẫn đăng xuất"]
   a1m -->|"Huỷ"| a1k(["Giữ nguyên phiên"])
   a1m -->|"Vẫn đăng xuất"| a1p
@@ -426,7 +426,7 @@ flowchart TD
   m2>"MSG-19 · Trang web<br/>Đã đặt lại mật khẩu. Các thiết bị khác đã được đăng xuất"]
   u5[/"Quay lại app, nhập email và mật khẩu mới"/]
   x1{{"→ UC-03 Đăng nhập"}}
-  ok(["Home, đã đăng nhập"])
+  ok(["G04 SCR-01 Home, đã đăng nhập"])
 
   start ==> u1 ==> s1 ==> u2 ==> p1 ==> m1 ==> u3 ==> s2 ==> u4 ==> p2 ==> m2 ==> u5 ==> x1 ==> ok
 
@@ -464,7 +464,7 @@ flowchart TD
   a2 --> m2
 
   u3 -.->|"E1 · link hết hạn / đã dùng / bị link mới thay"| e1m>"MSG-18 · SCR-04<br/>Link đã hết hạn hoặc đã được dùng · Gửi link mới"]
-  e1m -.->|"Gửi link mới"| s1
+  e1m -.->|"Gửi link mới, điền sẵn email"| s1
   p2 -.->|"E2 · mật khẩu mới không đạt BR-02"| e2m>"MSG-02 / MSG-03 · Inline<br/>Mật khẩu cần từ 10 đến 128 ký tự /<br/>Mật khẩu này đã bị lộ trong một vụ rò rỉ dữ liệu. Hãy chọn mật khẩu khác"]
   e2m -.-> s2
   p1 -.->|"E3 · 429 / 5xx"| e3m>"MSG-09 / MSG-10 · Toast<br/>Bạn thao tác quá nhanh. Thử lại sau ít phút /<br/>Không kết nối được máy chủ. Thử lại"]
@@ -493,7 +493,7 @@ flowchart TD
 |---|---|---|---|
 | A1 | Tài khoản chỉ có Google / Microsoft | Thêm phương thức mật khẩu | MSG-19 |
 | A2 | Đang bị khoá BR-07 | Gỡ khoá mọi IP | MSG-19 |
-| E1 | Link hết hạn / đã dùng / bị thay | "Gửi link mới" | MSG-18 |
+| E1 | Link hết hạn / đã dùng / bị thay | "Gửi link mới" → SCR-04 phần 1, điền sẵn email (B39) | MSG-18 |
 | E2 | Mật khẩu mới không đạt BR-02 | SCR-04 phần 2 | MSG-02 / MSG-03 |
 | E3 | 429 / 5xx | Mật khẩu không đổi | MSG-09 / MSG-10 |
 
@@ -501,7 +501,7 @@ flowchart TD
 
 ## UC-05 Onboarding lần đầu
 
-**Mở đầu:** đã đăng nhập, onboarding `CHUA_BAT_DAU` hoặc `DANG_LAM`. **Thành công:** onboarding `HOAN_TAT`; ngôn ngữ, timezone, lịch làm việc, giờ plan đã lưu; ≥ 1 task hôm nay; Daily planning (G08) đang mở. **Thất bại:** giữ ở bước đang làm, dữ liệu bước trước đã lưu.
+**Mở đầu:** đã đăng nhập, onboarding `CHUA_BAT_DAU` hoặc `DANG_LAM`. **Thành công:** onboarding `HOAN_TAT`; ngôn ngữ, timezone, lịch làm việc, giờ plan đã lưu; task nhập ở bước 5 (nếu có) ở hôm nay; Daily planning (G08) đang mở. **Thất bại:** giữ ở bước đang làm, dữ liệu bước trước đã lưu.
 
 ### Happy case
 
@@ -514,13 +514,13 @@ flowchart TD
   s2["SCR-05 bước 2 · kết nối lịch"]
   u2[/"Chọn Google Calendar / Outlook"/]
   x1{{"→ G05 · UC-01<br/>kết nối qua trình duyệt hệ thống BR-25"}}
-  s2b["SCR-05 bước 2<br/>dấu tích Đã kết nối, email lịch"]
+  s2b["SCR-05 bước 2<br/>icon dấu tích kèm Đã kết nối, email lịch"]
   s3["SCR-05 bước 3 · công cụ đang dùng"]
   u3[/"Chọn nhiều, bấm Tiếp<br/>lưu workTools"/]
   s4["SCR-05 bước 4<br/>lịch làm việc BR-22, giờ plan ngày 09:00"]
   u4[/"Chỉnh, bấm Tiếp"/]
   s5["SCR-05 bước 5 · 3 ô task<br/>thời lượng, channel gợi ý theo G02"]
-  u5[/"Nhập 1-3 task<br/>bấm Bắt đầu ngày đầu tiên"/]
+  u5[/"Nhập 1-3 task, không bắt buộc<br/>bấm Bắt đầu ngày đầu tiên"/]
   p2[["Tạo task G02<br/>OnboardingComplete"]]
   x2{{"→ G08 · UC-01 A16<br/>Daily planning hôm nay, chế độ có hướng dẫn"}}
   ok(["Daily planning hôm nay đang mở<br/>onboarding HOAN_TAT"])
@@ -563,19 +563,22 @@ flowchart TD
   a3 -->|"A5 · timezone bước 1 khác thiết bị"| a5["Không hiện banner MSG-23<br/>trong lúc onboarding"]
   s3 -->|"A4 · chọn Không dùng công cụ nào"| a4["Bỏ chọn các ô khác"]
   a4 --> s4
+  s5 -->|"A6 · Bỏ qua ở bước 5"| a6[["Không tạo task<br/>OnboardingComplete"]]
+  a6 --> ok
 
-  x1 -.->|"E1 · kết nối lịch lỗi / bị từ chối quyền"| e1["SCR-05 bước 2, thông báo của G05<br/>vẫn Tiếp hoặc Bỏ qua được"]
+  x1 -.->|"E1 · kết nối lịch lỗi / bị từ chối quyền"| e1["SCR-05 bước 2, thông báo của G05 UC-01 E1-E5<br/>G05 MSG-02, MSG-03, MSG-36<br/>vẫn Tiếp hoặc Bỏ qua được"]
   e1 -.-> s3
   s4 -.->|"E2 · giờ kết thúc ≤ giờ bắt đầu"| e2m>"MSG-20 · Inline<br/>Giờ kết thúc phải sau giờ bắt đầu<br/>chặn Tiếp"]
   s4 -.->|"E2 · không chọn ngày làm việc nào"| e2bm>"MSG-46 · Inline<br/>Chọn ít nhất 1 ngày làm việc<br/>chặn Tiếp"]
-  s5 -.->|"E3 · chưa có task nào"| e3m>"MSG-21 · Inline<br/>Thêm ít nhất 1 task để bắt đầu<br/>nút disabled"]
+  s5 -.->|"E3 · bấm Bắt đầu khi chưa có task nào"| e3m>"MSG-21 · Inline<br/>Thêm ít nhất 1 task, hoặc bấm Bỏ qua<br/>nút vẫn bấm được, không gửi"]
+  e3m -.-> s5
   s1 -.->|"E4 · lưu bước lỗi, ở mọi bước"| e4m>"MSG-10 · Toast<br/>Không kết nối được máy chủ. Thử lại"]
   p2 -.->|"E4 · tạo task lỗi"| e4m
   e4m -.-> fail(["Giữ ở bước hiện tại, giữ nội dung"])
 
   class s1,s2,s3,s4,s5,p2 happy
   class x1 link
-  class a1,a2,a3s,a3,a5,a4 alt
+  class a1,a2,a3s,a3,a5,a4,a6 alt
   class e1,e2m,e2bm,e3m,e4m err
   class ok done
   class fail fail
@@ -599,9 +602,10 @@ flowchart TD
 | A3 | Đóng app / mất phiên giữa chừng | Lần sau vào đúng bước | – |
 | A4 | "Không dùng công cụ nào" | Bỏ chọn ô khác, sang bước 4 | – |
 | A5 | Timezone khác thiết bị khi mở lại | Không hiện banner | (không hiện MSG-23) |
-| E1 | Kết nối lịch lỗi / bị từ chối | Bước 2 → [G05 · UC-01](g05-lich-timebox.md) | Thông báo của G05 |
+| A6 | Bỏ qua ở bước 5 (B36) | Không tạo task, Daily planning hôm nay | – |
+| E1 | Kết nối lịch lỗi / bị từ chối | Bước 2 → [G05 · UC-01](g05-lich-timebox.md) | G05 MSG-02 / MSG-03 / MSG-36 (G05 UC-01 E1–E5; C38) |
 | E2 | Giờ kết thúc ≤ bắt đầu / không ngày nào | Chặn Tiếp | MSG-20 / MSG-46 |
-| E3 | Bước 5 chưa có task | Nút disabled | MSG-21 |
+| E3 | Bấm "Bắt đầu ngày đầu tiên" khi chưa có task | Nút vẫn bấm được, không gửi (B41) | MSG-21 |
 | E4 | Lưu bước / tạo task lỗi | Giữ bước, giữ nội dung | MSG-10 |
 
 Sang flow khác: kết nối lịch [G05 · UC-01](g05-lich-timebox.md), Daily planning [G08 · UC-01](g08-daily-rituals.md), tạo task theo [G02 · UC-01](g02-quan-ly-task.md#uc-01-tạo-task).
@@ -616,12 +620,12 @@ Sang flow khác: kết nối lịch [G05 · UC-01](g05-lich-timebox.md), Daily p
 
 ```mermaid
 flowchart TD
-  start(["Menu tài khoản → Cài đặt<br/>hoặc command menu Mở cài đặt"])
+  start(["SCR-17 Menu tài khoản → Cài đặt<br/>hoặc command menu Mở cài đặt"])
   p1[["SettingsGet"]]
   s1["SCR-06 Khung trang Cài đặt<br/>chọn sẵn SCR-07 Cài đặt Chung"]
   u1[/"Chọn nhóm Chung SCR-07 / Hiển thị SCR-08 /<br/>Phím tắt SCR-09, đổi một giá trị"/]
   p2[["Kiểm giới hạn; SettingsUpdate chỉ trường đổi<br/>áp dụng ngay"]]
-  m1>"MSG-22 · Inline cạnh trường<br/>dấu tích, Đã lưu"]
+  m1>"MSG-22 · Inline cạnh trường, icon dấu tích<br/>Đã lưu"]
   p3[["Phát settings.changed<br/>thiết bị khác cập nhật ≤ 5 giây"]]
   ok(["Giá trị mới áp dụng ngay"])
 
@@ -647,7 +651,7 @@ flowchart TD
   s1["SCR-06 Khung trang Cài đặt"]
   u1[/"Chọn nhóm, đổi một giá trị"/]
   p2[["SettingsUpdate"]]
-  m1>"MSG-22 · Inline cạnh trường<br/>dấu tích, Đã lưu"]
+  m1>"MSG-22 · Inline cạnh trường, icon dấu tích<br/>Đã lưu"]
 
   s1 ==> u1 ==> p2 ==> m1
 
@@ -698,7 +702,7 @@ flowchart TD
   p2 -.->|"E2 · SettingsUpdate lỗi"| e2["Trường về giá trị cũ"]
   e2 -.-> e2m>"MSG-26 · Toast<br/>Chưa lưu được cài đặt. Thử lại"]
   e2m -.-> fail(["Trường giữ giá trị cũ"])
-  p2 -.->|"E3 · mất mạng"| e3["Áp dụng ngay trên máy<br/>xếp hàng đợi"]
+  p2 -.->|"E3 · mất mạng"| e3["Áp dụng ngay trên máy, xếp hàng đợi<br/>dấu Chờ đồng bộ cạnh trường, QC-08 mục 7"]
   e3 -.->|"có mạng, đồng bộ"| p3
   e3 -.->|"có mạng, xung đột"| a6
 
@@ -733,7 +737,7 @@ flowchart TD
 | A7 | Chọn "Trợ lý AI" | SCR-16 → [G10 · UC-07](g10-tro-ly-ai.md) | – |
 | E1 | Ngưỡng khối lượng ngoài 1–24 giờ | Không gửi | MSG-25 |
 | E2 | SettingsUpdate lỗi | Giá trị cũ | MSG-26 |
-| E3 | Mất mạng | Hàng đợi, đồng bộ sau; xung đột theo A6 | – |
+| E3 | Mất mạng | Hàng đợi, dấu "Chờ đồng bộ" cạnh trường, đồng bộ sau rồi hiện MSG-22; xung đột theo A6 (C40) | – (dấu "Chờ đồng bộ", QC-08 mục 7) |
 
 ---
 
@@ -750,7 +754,7 @@ flowchart TD
   s1["SCR-10 Hồ sơ"]
   u2[/"Sửa tên hiển thị<br/>hoặc tải ảnh đại diện"/]
   p1[["Kiểm giới hạn; MeUpdate"]]
-  m1>"MSG-22 · Inline cạnh trường<br/>dấu tích, Đã lưu"]
+  m1>"MSG-22 · Inline cạnh trường, icon dấu tích<br/>Đã lưu"]
   ok(["Tên / ảnh mới ở menu tài khoản<br/>và comment G02"])
 
   start ==> u1 ==> s1 ==> u2 ==> p1 ==> m1 ==> ok
@@ -810,7 +814,7 @@ flowchart TD
   a4 --> rx
   rx -->|"reauthToken"| a1u
   a1 --> a1u[/"Nhập mật khẩu mới<br/>+ mật khẩu hiện tại hoặc reauthToken"/]
-  a1u --> a1p[["MeUpdate BR-02, BR-10<br/>thu hồi phiên khác [giả định]"]]
+  a1u --> a1p[["MeUpdate BR-02, BR-10<br/>thu hồi phiên khác, chốt B38"]]
   a1p --> a1m>"MSG-30 · Toast<br/>Đã đổi mật khẩu. Các thiết bị khác đã được đăng xuất"]
   a1m --> a1ok(["Mật khẩu mới có hiệu lực"])
 
@@ -819,7 +823,7 @@ flowchart TD
 
   a1p -.->|"E2 · mật khẩu hiện tại sai, tính vào BR-07"| e2m>"MSG-29 · Inline<br/>Mật khẩu hiện tại chưa đúng"]
   a1p -.->|"E3 · mật khẩu mới không đạt BR-02"| e3m>"MSG-02 / MSG-03 · Inline<br/>Mật khẩu cần từ 10 đến 128 ký tự /<br/>Mật khẩu này đã bị lộ trong một vụ rò rỉ dữ liệu. Hãy chọn mật khẩu khác"]
-  a1p -.->|"E7 · reauthToken hết hạn / không khớp"| e7m>"MSG-11 · SCR-03<br/>Đăng nhập bằng {Google / Microsoft} chưa thành công. Thử lại"]
+  a1p -.->|"E7 · reauthToken hết hạn / không khớp"| e7m>"MSG-11 · dialog SCR-11<br/>Đăng nhập bằng {Google / Microsoft} chưa thành công. Thử lại"]
   e7m -.->|"xác nhận lại"| rx
   a1p -.->|"E5 · lỗi 5xx"| e5m>"MSG-10 · Toast<br/>Không kết nối được máy chủ. Thử lại"]
   a3p -.->|"E5 · lỗi 5xx"| e5m
@@ -859,13 +863,13 @@ flowchart TD
   a2u --> a2p[["MeUpdate, gửi mã 6 số BR-03<br/>tới email mới"]]
   a2p --> a2m>"MSG-31 · Inline<br/>Đã gửi mã tới {email mới}.<br/>Email đăng nhập chỉ đổi khi bạn nhập đúng mã"]
   a2m --> a2s["Dialog Đổi email · bước 2, nhập mã"]
-  a2s --> a2v[["AuthVerifyEmail purpose=change_email"]]
-  a2v --> a2m2>"MSG-33 · Toast<br/>Đã đổi email đăng nhập thành {email}"]
+  a2s --> a2v[["AuthVerifyEmail purpose=change_email<br/>thu hồi phiên khác, chốt B38"]]
+  a2v --> a2m2>"MSG-33 · Toast<br/>Đã đổi email đăng nhập thành {email}. Các thiết bị khác đã được đăng xuất"]
   a2m2 --> a2ok(["Email đăng nhập mới<br/>email cũ nhận thư Không phải tôi, 72 giờ BR-17"])
 
   a2v -.->|"E4 · email mới không dùng được"| e4m>"MSG-32 · Inline<br/>Không đổi được sang email này"]
   a2p -.->|"E2 · mật khẩu hiện tại sai"| e2m>"MSG-29 · Inline<br/>Mật khẩu hiện tại chưa đúng"]
-  a2p -.->|"E7 · reauthToken hết hạn / không khớp"| e7m>"MSG-11 · SCR-03<br/>Đăng nhập bằng {Google / Microsoft} chưa thành công. Thử lại"]
+  a2p -.->|"E7 · reauthToken hết hạn / không khớp"| e7m>"MSG-11 · dialog SCR-11<br/>Đăng nhập bằng {Google / Microsoft} chưa thành công. Thử lại"]
   e7m -.->|"xác nhận lại"| rx
   a2p -.->|"E5 · lỗi 5xx"| e5m>"MSG-10 · Toast<br/>Không kết nối được máy chủ. Thử lại"]
   a2v -.->|"E5"| e5m
@@ -873,11 +877,11 @@ flowchart TD
   e2m -.-> fail
   e5m -.-> fail
 
-  a5s(["Thư gửi email cũ<br/>bấm Không phải tôi"]) -->|"A5 · trong 72 giờ"| a5w["Trang không cần đăng nhập<br/>trang web tối giản [giả định]"]
+  a5s(["Thư gửi email cũ<br/>bấm Không phải tôi"]) -->|"A5 · trong 72 giờ"| a5w["SCR-20 Trang Không phải tôi<br/>trang web tối giản, không cần đăng nhập"]
   a5w --> a5p[["EmailChangeRevert: email cũ là email chính<br/>thu hồi mọi phiên, gửi link đặt lại mật khẩu<br/>tới email cũ BR-17"]]
-  a5p --> a5m>"MSG-42 · Màn hình<br/>Đã huỷ việc đổi email. Mọi thiết bị đã được đăng xuất.<br/>Chúng tôi đã gửi link đặt lại mật khẩu tới {email cũ}"]
+  a5p --> a5m>"MSG-42 · SCR-20<br/>Đã huỷ việc đổi email. Mọi thiết bị đã được đăng xuất.<br/>Chúng tôi đã gửi link đặt lại mật khẩu tới {email cũ}"]
   a5m --> x4{{"→ UC-04 bước 3<br/>mở link đặt lại mật khẩu"}}
-  a5w -.->|"E6 · link quá 72 giờ / đã dùng"| e6m>"MSG-43 · Màn hình<br/>Link đã hết hạn hoặc đã được dùng.<br/>Nếu bạn không yêu cầu đổi email, hãy liên hệ hỗ trợ"]
+  a5w -.->|"E6 · link quá 72 giờ / đã dùng"| e6m>"MSG-43 · SCR-20<br/>Link đã hết hạn hoặc đã được dùng.<br/>Nếu bạn không yêu cầu đổi email, hãy liên hệ hỗ trợ"]
   e6m -.-> e6(["Không thay đổi gì"])
 
   class s11,s10 happy
@@ -901,18 +905,18 @@ flowchart TD
 
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
-| A1 | Đổi mật khẩu | Mật khẩu mới, thu hồi phiên khác | MSG-30 |
-| A2 | Đổi email | Email mới sau khi nhập đúng mã | MSG-31, MSG-33 |
+| A1 | Đổi mật khẩu | Mật khẩu mới, thu hồi phiên khác (B38) | MSG-30 |
+| A2 | Đổi email | Email mới sau khi nhập đúng mã, thu hồi phiên khác (B38) | MSG-31, MSG-33 |
 | A3 | Đăng xuất mọi thiết bị khác | Giữ phiên hiện tại | MSG-34 |
 | A4 | Chỉ có Google / Microsoft | "Tạo mật khẩu", xác nhận qua [UC-02 A6](#uc-02-đăng-ký--đăng-nhập-bằng-google-hoặc-microsoft) | – |
-| A5 | "Không phải tôi" trong 72 giờ | Email cũ khôi phục, mọi phiên thu hồi → [UC-04](#uc-04-quên-và-đặt-lại-mật-khẩu) | MSG-42 |
+| A5 | "Không phải tôi" trong 72 giờ | SCR-20; email cũ khôi phục, mọi phiên thu hồi → [UC-04](#uc-04-quên-và-đặt-lại-mật-khẩu) | MSG-42 |
 | E1 | Tên ngoài 1–80 / ảnh sai định dạng, > 2 MB | Không lưu | MSG-27 / MSG-28 |
 | E2 | Mật khẩu hiện tại sai | Tính vào BR-07 | MSG-29 |
 | E3 | Mật khẩu mới không đạt BR-02 | Không lưu | MSG-02 / MSG-03 |
 | E4 | Email mới không dùng được | Báo ở bước nhập mã | MSG-32 |
 | E5 | Lỗi 5xx | Giữ giá trị cũ | MSG-10 |
-| E6 | Link "Không phải tôi" quá hạn / đã dùng | Không thay đổi | MSG-43 |
-| E7 | `reauthToken` hết hạn / không khớp | Xác nhận lại | MSG-11 |
+| E6 | Link "Không phải tôi" quá hạn / đã dùng | SCR-20, không thay đổi | MSG-43 |
+| E7 | `reauthToken` hết hạn / không khớp | Xác nhận lại, báo trong dialog SCR-11 (C39) | MSG-11 |
 
 ---
 
@@ -929,7 +933,7 @@ flowchart TD
   p1[["DataExport"]]
   m1>"MSG-35 · Inline<br/>Đang chuẩn bị dữ liệu. Chúng tôi sẽ gửi email khi xong (tối đa 24 giờ)"]
   p2[["Job tạo gói zip BR-19 trong ≤ 24 giờ<br/>gửi email có link, hiệu lực 7 ngày"]]
-  u2[/"Bấm link trong email, đăng nhập nếu cần<br/>hoặc Tải xuống ở SCR-11 khi SAN_SANG"/]
+  u2[/"Bấm link trong email: SCR-19 Trang tải bản xuất<br/>đăng nhập nếu cần; hoặc Tải xuống ở SCR-11 khi SAN_SANG"/]
   ok(["Tải file zip JSON + CSV"])
 
   start ==> u1 ==> p1 ==> m1 ==> p2 ==> u2 ==> ok
@@ -959,18 +963,21 @@ flowchart TD
 
   u1 ==> p1 ==> p2 ==> u2 ==> ok
 
-  u2 -->|"A2 · link quá 7 ngày"| a2["SCR-11 trạng thái HET_HAN<br/>nút Tạo bản xuất mới"]
+  u2 -->|"A2 · link quá 7 ngày"| a2["SCR-11 trạng thái HET_HAN<br/>nút MSG-53 Tạo bản xuất mới"]
   a2 -->|"Tạo bản xuất mới"| u1
 
   p1 -.->|"E1 · đã có yêu cầu đang xử lý"| e1m>"MSG-36 · Inline<br/>Đã có một yêu cầu xuất dữ liệu đang xử lý"]
   e1m -.-> fail(["Không tạo yêu cầu mới"])
-  p2 -.->|"E2 · job lỗi sau 3 lần thử"| e2["SCR-11 trạng thái LOI, email báo<br/>nút Thử lại"]
-  e2 -.->|"Thử lại"| p1
-  u2 -.->|"E3 · mở link bằng tài khoản khác"| e3(["403, trang<br/>Link này thuộc tài khoản khác"])
+  p2 -.->|"E2 · job lỗi"| e2[["Tự thử lại 3 lần"]]
+  e2 -.->|"thành công"| u2
+  e2 -.->|"vẫn lỗi, LOI, email báo"| e2m>"MSG-51 · Inline SCR-11<br/>Chưa tạo được bản xuất dữ liệu. Hãy tạo bản xuất mới<br/>kèm nút MSG-53 Tạo bản xuất mới"]
+  e2m -.->|"Tạo bản xuất mới"| u1
+  u2 -.->|"E3 · mở link bằng tài khoản khác, 403"| e3m>"MSG-52 · SCR-19<br/>Link này thuộc tài khoản khác. Đăng nhập đúng tài khoản để tải"]
+  e3m -.-> e3(["Không tải được"])
 
   class u1,p1,p2,u2 happy
   class a2 alt
-  class e1m,e2 err
+  class e1m,e2,e2m,e3m err
   class ok done
   class fail,e3 fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -989,16 +996,16 @@ flowchart TD
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
 | A1 | Workspace chỉ đọc (1.1, QC-09) | Bỏ (1.1) | – |
-| A2 | Link quá 7 ngày | `HET_HAN`, "Tạo bản xuất mới" | – |
+| A2 | Link quá 7 ngày | `HET_HAN`, "Tạo bản xuất mới" | MSG-53 |
 | E1 | Đã có yêu cầu đang xử lý | Không tạo | MSG-36 |
-| E2 | Job lỗi sau 3 lần thử | `LOI`, email báo, "Thử lại" | – (chưa có MSG) |
-| E3 | Mở link bằng tài khoản khác | 403, trang "Link này thuộc tài khoản khác" | – (chưa có MSG) |
+| E2 | Job lỗi | Tự thử lại 3 lần; vẫn lỗi → `LOI`, email báo, "Tạo bản xuất mới" (B40) | MSG-51, MSG-53 |
+| E3 | Mở link bằng tài khoản khác | 403, SCR-19 | MSG-52 |
 
 ---
 
 ## UC-09 Xoá tài khoản
 
-**Mở đầu:** đã đăng nhập, SCR-11, không có yêu cầu xuất `DANG_XU_LY`. **Thành công:** tài khoản `CHO_XOA`, workspace cá nhân đã xoá (BR-20), người dùng ở màn MSG-38. **Thất bại:** tài khoản và workspace không đổi.
+**Mở đầu:** đã đăng nhập, SCR-11, không có yêu cầu xuất `DANG_XU_LY`. **Thành công:** tài khoản `CHO_XOA`, workspace cá nhân đã xoá (BR-20), người dùng ở SCR-21 (MSG-38). **Thất bại:** tài khoản và workspace không đổi.
 
 ### Happy case
 
@@ -1007,9 +1014,9 @@ flowchart TD
   start(["SCR-11 Tài khoản"])
   u1[/"Bấm Xoá tài khoản"/]
   s1["SCR-12 Xoá tài khoản<br/>hậu quả BR-20: số task, kết nối lịch / tích hợp bị thu hồi<br/>gợi ý Xuất dữ liệu trước"]
-  u2[/"Nhập mật khẩu hoặc xác nhận qua nhà cung cấp<br/>gõ XOÁ, bấm Xoá vĩnh viễn"/]
+  u2[/"Nhập mật khẩu, hoặc bấm Xác nhận bằng Google / Microsoft<br/>gõ XOÁ, bấm Xoá vĩnh viễn"/]
   p1[["AccountDelete, áp BR-20: CHO_XOA, xoá workspace cá nhân<br/>đăng xuất mọi phiên, thu hồi token G05, G11<br/>gửi email xác nhận"]]
-  m1>"MSG-38 · Màn hình<br/>Tài khoản đã được xoá. Dữ liệu sẽ bị xoá vĩnh viễn trong vòng 30 ngày"]
+  m1>"MSG-38 · SCR-21 Đã xoá tài khoản<br/>Tài khoản đã được xoá. Dữ liệu sẽ bị xoá vĩnh viễn trong vòng 30 ngày"]
   ok(["Tài khoản CHO_XOA, đã đăng xuất"])
 
   start ==> u1 ==> s1 ==> u2 ==> p1 ==> m1 ==> ok
@@ -1034,13 +1041,13 @@ flowchart TD
   s1["SCR-12 Xoá tài khoản"]
   u2[/"Mật khẩu, gõ XOÁ, Xoá vĩnh viễn"/]
   p1[["AccountDelete"]]
-  m1>"MSG-38 · Màn hình"]
+  m1>"MSG-38 · SCR-21"]
   ok(["Tài khoản CHO_XOA"])
 
   s1 ==> u2 ==> p1 ==> m1 ==> ok
 
   s1 -->|"A1 · Xuất dữ liệu trước"| a1x{{"→ UC-08<br/>đóng SCR-12"}}
-  u2 -->|"xác nhận qua nhà cung cấp"| rx{{"→ UC-02 · A6 reauth"}}
+  u2 -->|"A5 · tài khoản chỉ có Google / Microsoft<br/>bấm Xác nhận bằng Google / Microsoft"| rx{{"→ UC-02 · A6 reauth"}}
   rx -->|"reauthToken"| u2
   p1 -->|"A2 · đang có timer chạy"| a2x{{"→ G07 · UC-02<br/>dừng và lưu bản ghi thời gian trước khi xoá"}}
   a2x --> a4
@@ -1051,6 +1058,8 @@ flowchart TD
   u2 -.->|"E2 · chưa gõ đúng XOÁ"| e2bm>"MSG-39 · Inline<br/>Gõ #quot;XOÁ#quot; để xác nhận"]
   p1 -.->|"E2 · mật khẩu sai"| e2m>"MSG-29 · Inline<br/>Mật khẩu hiện tại chưa đúng"]
   p1 -.->|"E3 · lỗi 5xx"| e3m>"MSG-10 · Toast<br/>Không kết nối được máy chủ. Thử lại"]
+  p1 -.->|"E5 · reauthToken hết hạn / không khớp"| e5m>"MSG-11 · SCR-12<br/>Đăng nhập bằng {Google / Microsoft} chưa thành công. Thử lại"]
+  e5m -.->|"xác nhận lại"| rx
   e4m -.-> fail(["Tài khoản và workspace không đổi"])
   e2bm -.-> fail
   e2m -.-> fail
@@ -1059,7 +1068,7 @@ flowchart TD
   class s1,u2,p1,m1 happy
   class a4 alt
   class a1x,rx,a2x link
-  class e4m,e2bm,e2m,e3m err
+  class e4m,e2bm,e2m,e3m,e5m err
   class ok done
   class fail fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -1081,10 +1090,12 @@ flowchart TD
 | A2 | Đang có timer chạy | Dừng, lưu bản ghi → [G07 · UC-02](g07-focus-timer.md) | – |
 | A3 | Không phải `OWNER` (bản sau, BR-26) | Bỏ (1.1) | – |
 | A4 | `OWNER` workspace chỉ có mình | Xoá workspace cá nhân (phần huỷ gói: Bỏ (1.1)) | MSG-38 |
+| A5 | Tài khoản chỉ có Google / Microsoft | SCR-12 #3 là nút "Xác nhận bằng Google / Microsoft" → [UC-02 A6](#uc-02-đăng-ký--đăng-nhập-bằng-google-hoặc-microsoft) (B37) | – |
 | E1 | `OWNER`, workspace còn thành viên (bản sau) | Bỏ (1.1) | – |
 | E2 | Mật khẩu sai / chưa gõ đúng "XOÁ" | Không xoá | MSG-29 / MSG-39 |
 | E3 | Lỗi 5xx | Tài khoản giữ nguyên | MSG-10 |
 | E4 | Có yêu cầu xuất `DANG_XU_LY` | Nút xoá disabled | MSG-44 |
+| E5 | `reauthToken` hết hạn / không khớp | Xác nhận lại, tài khoản giữ nguyên (B37) | MSG-11 |
 
 ---
 
@@ -1101,7 +1112,7 @@ flowchart TD
   s1["SCR-14 Lịch làm việc<br/>7 ngày, ngày làm việc bật kèm giờ bắt đầu / kết thúc"]
   u1[/"Bật / tắt một ngày<br/>hoặc đổi giờ của một ngày"/]
   p2[["Kiểm BR-22<br/>SettingsUpdate workSchedule"]]
-  m1>"MSG-22 · Inline cạnh dòng<br/>dấu tích, Đã lưu"]
+  m1>"MSG-22 · Inline cạnh dòng, icon dấu tích<br/>Đã lưu"]
   m2>"MSG-24 · Inline dưới bảng<br/>Áp dụng từ ngày làm việc kế tiếp ({ngày})"]
   ok(["workSchedule mới, đồng bộ thiết bị khác<br/>G04, G05, G08, G09 đọc giá trị mới"])
 
@@ -1140,6 +1151,8 @@ flowchart TD
   u1 -.->|"E1 · tắt ngày làm việc cuối cùng"| e1m>"MSG-46 · Inline<br/>Chọn ít nhất 1 ngày làm việc<br/>không gửi"]
   u1 -.->|"E2 · giờ kết thúc ≤ giờ bắt đầu"| e2m>"MSG-20 · Inline<br/>Giờ kết thúc phải sau giờ bắt đầu<br/>không gửi"]
   p2 -.->|"E3 · SettingsUpdate lỗi, như UC-06 E2"| e3m>"MSG-26 · Toast<br/>Chưa lưu được cài đặt. Thử lại"]
+  p2 -.->|"E4 · mất mạng, như UC-06 E3"| e4s["Áp dụng ngay trên máy, xếp hàng đợi<br/>dấu Chờ đồng bộ cạnh dòng, QC-08 mục 7"]
+  e4s -.->|"có mạng, gửi lên"| m2
   p2 -.->|"E3 · xung đột 412, như UC-06 A6"| e3bm>"MSG-41 · Toast<br/>#quot;{tên cài đặt}#quot; vừa được đổi trên thiết bị khác thành {giá trị}.<br/>Thay đổi của bạn ở mục này chưa được lưu"]
   e1m -.-> fail(["Giữ lịch làm việc cũ"])
   e2m -.-> fail
@@ -1150,6 +1163,7 @@ flowchart TD
   class a1,a2s,a2 alt
   class a2x,a3x link
   class e1m,e2m,e3m,e3bm err
+  class e4s sync
   class fail fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
@@ -1172,6 +1186,7 @@ flowchart TD
 | E1 | Tắt ngày làm việc cuối cùng | Không gửi | MSG-46 |
 | E2 | Giờ kết thúc ≤ bắt đầu | Không gửi | MSG-20 |
 | E3 | SettingsUpdate lỗi / xung đột | Như UC-06 E2 / A6 | MSG-26 / MSG-41 |
+| E4 | Mất mạng | Như UC-06 E3: hàng đợi, dấu "Chờ đồng bộ" (C40) | – (QC-08 mục 7) |
 
 ---
 
@@ -1224,15 +1239,17 @@ flowchart TD
   a1s(["SCR-11 · Rút lại đồng ý xử lý dữ liệu"]) -->|"A1"| a1m>"MSG-48 · Dialog<br/>Rút lại đồng ý xử lý dữ liệu đồng nghĩa với việc chúng tôi<br/>không thể tiếp tục cung cấp dịch vụ.<br/>Tài khoản và dữ liệu sẽ bị xoá trong 30 ngày<br/>· Xuất dữ liệu trước · Huỷ · Rút lại đồng ý"]
   a1m -->|"Huỷ"| a1k(["Giữ nguyên đồng ý"])
   a1m -->|"Xuất dữ liệu trước"| x8
-  a1m -->|"Rút lại đồng ý"| a1r[/"Xác nhận lại BR-10: mật khẩu<br/>hoặc reauth qua nhà cung cấp"/]
+  a1m -->|"Rút lại đồng ý"| a1r[/"SCR-22 Dialog xác nhận lại BR-10: mật khẩu<br/>hoặc Xác nhận bằng Google / Microsoft"/]
   a1r --> a1p[["ConsentUpdate withdraw=true<br/>chạy như UC-09 bước 4, BR-20 [giả định]"]]
-  a1p --> a1x{{"→ UC-09 bước 4<br/>màn MSG-38, tài khoản CHO_XOA"}}
+  a1p --> a1x{{"→ UC-09 bước 4<br/>SCR-21 MSG-38, tài khoản CHO_XOA"}}
 
   a3s(["Muốn rút đồng ý Trợ lý AI<br/>hoặc Product updates"]) -->|"A3 · không ở đây"| a3a{{"→ G10 · UC-07 A6<br/>Cài đặt → Trợ lý AI SCR-16"}}
   a3s -->|"A3"| a3b{{"→ G12 · UC-08<br/>Cài đặt → Thông báo"}}
 
   u1 -.->|"E1 · chưa tick đồng ý"| e1m>"MSG-04 · Inline<br/>Bạn cần đồng ý với Điều khoản sử dụng<br/>và Chính sách quyền riêng tư"]
-  a1p -.->|"E2 · đang xuất dữ liệu, như UC-09 E4"| e2m>"MSG-44 · Inline<br/>Đang chuẩn bị bản xuất dữ liệu.<br/>Bạn có thể xoá tài khoản sau khi bản xuất sẵn sàng"]
+  a1p -.->|"E2 · đang xuất dữ liệu"| e2m>"MSG-54 · Inline dialog MSG-48<br/>Đang chuẩn bị bản xuất dữ liệu.<br/>Bạn có thể rút lại đồng ý sau khi bản xuất sẵn sàng"]
+  a1r -.->|"E4 · mật khẩu sai / reauthToken hỏng"| e4m>"MSG-29 / MSG-11 · SCR-22<br/>Mật khẩu hiện tại chưa đúng /<br/>Đăng nhập bằng {Google / Microsoft} chưa thành công. Thử lại"]
+  e4m -.->|"xác nhận lại"| a1r
   p2 -.->|"E3 · lỗi 5xx"| e3m>"MSG-10 · Toast<br/>Không kết nối được máy chủ. Thử lại"]
   a1p -.->|"E3 · lỗi 5xx"| e3m
   e1m -.-> fail(["Trạng thái đồng ý không đổi"])
@@ -1242,7 +1259,7 @@ flowchart TD
   class s1,u1,p2 happy
   class a1s,a1m,a1r,a1p,a3s alt
   class x8,x9,x3,a1x,a3a,a3b link
-  class e1m,e2m,e3m err
+  class e1m,e2m,e3m,e4m err
   class ok,a1k done
   class fail fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -1260,28 +1277,29 @@ flowchart TD
 
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
-| A1 | Rút lại đồng ý xử lý dữ liệu | Xác nhận lại → như [UC-09](#uc-09-xoá-tài-khoản) bước 4, `CHO_XOA` | MSG-48, MSG-38 |
+| A1 | Rút lại đồng ý xử lý dữ liệu | SCR-22 xác nhận lại → như [UC-09](#uc-09-xoá-tài-khoản) bước 4, SCR-21, `CHO_XOA` | MSG-48, MSG-38 |
 | A2 | Trên SCR-15 chọn Xuất / Xoá / Đăng xuất | [UC-08](#uc-08-xuất-dữ-liệu) / [UC-09](#uc-09-xoá-tài-khoản) / [UC-03](#uc-03-đăng-nhập-duy-trì-phiên-và-đăng-xuất) A1, không cần đồng ý mới | – |
 | A3 | Rút đồng ý Trợ lý AI / Product updates | [G10 · UC-07](g10-tro-ly-ai.md) / [G12 · UC-08](g12-workspace-billing.md) | – |
 | E1 | Chưa tick đồng ý | Không lưu | MSG-04 |
 | E2 | `OWNER` workspace còn thành viên (bản sau) | Bỏ (1.1) | – |
-| E2 | Đang xuất dữ liệu | Như UC-09 E4 | MSG-44 |
+| E2 | Đang xuất dữ liệu | Nút "Rút lại đồng ý" disabled tới khi bản xuất `SAN_SANG` / `LOI` (C41) | MSG-54 |
 | E3 | Lỗi 5xx | Không đổi | MSG-10 |
+| E4 | Xác nhận lại thất bại: mật khẩu sai / `reauthToken` hỏng | Ở SCR-22, xác nhận lại (B37) | MSG-29 / MSG-11 |
 
 ## Kiểm tra
 
 - [x] Mọi A# / E# của UC-01 … UC-11 bản 1.0 có trên sơ đồ hoặc ghi "Bỏ (1.1)".
-- [x] Mọi nút màn hình có mã SCR; mọi nút thông báo có mã MSG. Ngoại lệ là các màn SRS chưa đặt mã SCR, ghi ở dưới.
+- [x] Mọi nút màn hình có mã SCR; mọi nút thông báo có mã MSG. Các màn trước đây chưa có mã đã được đặt SCR-17 … SCR-22; Home trỏ G04 SCR-01 (C37).
 
 **Ghi chú cho brief G01**
-- **MSG-22 có ký tự ✓** ("✓ Đã lưu"). Quy ước cấm ký tự này trong nhãn, nên sơ đồ ghi "dấu tích, Đã lưu". SCR-05 bước 2 ("✓ Đã kết nối") cũng ghi là "dấu tích".
-- **Màn chưa có mã SCR:** menu tài khoản (UC-03 A1, UC-06 bước 1); Home (UC-02 bước 5, UC-03 bước 3, UC-04 bước 4); SCR-01 "rút gọn chỉ có ô đồng ý" (UC-02 A1); trang web tối giản / deep link của link đặt lại mật khẩu (UC-04 bước 3), link tải bản xuất (UC-08 bước 4) và link "Không phải tôi" (UC-07 A5); màn MSG-38 (UC-09), màn MSG-42 / MSG-43 (UC-07); dialog xác nhận lại sau MSG-48 (UC-11 A1). **Đã sửa 06/11/2026:** link đặt lại mật khẩu mở trên trang web tối giản (tech mục 1); UC-04 kết thúc bằng đăng nhập lại trong app.
-- **Thông báo không có mã MSG:** UC-08 E2 (trạng thái `LOI`, nút "Thử lại"), UC-08 E3 (trang 403 "Link này thuộc tài khoản khác"), UC-08 A2 (nhãn "Tạo bản xuất mới"; SCR-11 #6 chỉ ghi "Đã hết hạn"). UC-05 E1 dùng "thông báo của G05", G01 không có MSG.
-- **UC-08 `LOI` mâu thuẫn:** mục 4.2 ghi tự thử lại 3 lần "rồi báo người dùng tạo lại", UC-08 E2 ghi nút "Thử lại".
-- **MSG-11 sai nơi hiện khi xác nhận lại:** UC-02 A6 và UC-07 E7 dùng MSG-11 ("Đăng nhập bằng … chưa thành công"), nhưng MSG-11 ghi nơi hiện là SCR-03. Lúc đó người dùng đang ở dialog SCR-11 / SCR-12, không ở SCR-03. Tương tự, UC-02 E4 dùng MSG-14 (nơi hiện SCR-03) trong dialog MSG-13.
-- **SCR-12 không có lối xác nhận qua Google / Microsoft:** UC-09 bước 3 cho phép, nhưng SCR-12 chỉ có ô Mật khẩu (#3), và nút "Xoá vĩnh viễn" (#5) disabled tới khi #3 hợp lệ. Như vậy tài khoản chỉ có Google / Microsoft không xoá được. UC-09 và UC-11 A1 cũng không có nhánh lỗi cho xác nhận lại (mật khẩu sai ở UC-11, `reauthToken` hỏng ở cả hai). Sơ đồ chỉ nối tới UC-02 A6.
-- **UC-05 E3:** SRS ghi "Nút disabled, MSG-21". Nút đã disabled thì không rõ MSG-21 hiện lúc nào (ngay khi vào bước 5 hay sau khi xoá hết ô). UC-01 E3 thì cố ý để nút bấm được để hiện lỗi.
-- **UC-04 E1:** MSG-18 có nút "Gửi link mới" nhưng SRS không nói nút này mở lại SCR-04 phần 1 (nhập lại email) hay gửi thẳng. Sơ đồ đang giả định về SCR-04 phần 1.
-- **MSG-19, MSG-30** báo "Các thiết bị khác đã được đăng xuất", nhưng việc thu hồi phiên khác ở BR-09 và UC-07 A1 vẫn đang là `[giả định]`. Nếu PO bỏ quy tắc này thì phải sửa chữ của hai MSG.
-- **Đổi cài đặt khi mất mạng:** UC-10 E3 chỉ nói "như UC-06 E2 / A6", không nhắc mất mạng (UC-06 E3), trong khi mục 10 cho đổi Lịch làm việc khi offline. Sơ đồ UC-10 không vẽ nhánh mất mạng. UC-06 E3 cũng không có dấu hiệu "chờ đồng bộ" hay MSG nào trên màn Cài đặt.
-- **MSG-44 dùng cho UC-11 E2** (rút lại đồng ý khi đang xuất), nhưng chữ là "…có thể xoá tài khoản sau khi…", không khớp ngữ cảnh rút lại đồng ý.
+- ~~MSG-22 có ký tự dấu tích trong chữ; SCR-05 bước 2 cũng vậy~~ **Đã sửa 09/11/2026 (C36, A4):** MSG-22 chỉ còn "Đã lưu", dấu tích là icon đặt cạnh (cột nơi hiện); SCR-05 bước 2 và SCR-05 #3 ghi "icon dấu tích kèm Đã kết nối".
+- ~~**Màn chưa có mã SCR:** menu tài khoản (UC-03 A1, UC-06 bước 1); Home (UC-02 bước 5, UC-03 bước 3, UC-04 bước 4); SCR-01 "rút gọn chỉ có ô đồng ý" (UC-02 A1); trang web tối giản / deep link của link đặt lại mật khẩu (UC-04 bước 3), link tải bản xuất (UC-08 bước 4) và link "Không phải tôi" (UC-07 A5); màn MSG-38 (UC-09), màn MSG-42 / MSG-43 (UC-07); dialog xác nhận lại sau MSG-48 (UC-11 A1). **Đã sửa 06/11/2026:** link đặt lại mật khẩu mở trên trang web tối giản (tech mục 1); UC-04 kết thúc bằng đăng nhập lại trong app.~~ **Đã sửa 09/11/2026 (C37, A8):** SCR-17 Menu tài khoản, SCR-18 Đăng ký rút gọn, SCR-19 Trang tải bản xuất, SCR-20 Trang "Không phải tôi" (MSG-42 / 43), SCR-21 Đã xoá tài khoản (MSG-38), SCR-22 Dialog xác nhận lại; Home trỏ G04 SCR-01. Sơ đồ đã gắn mã.
+- ~~**Thông báo không có mã MSG:** UC-08 E2, E3, A2; UC-05 E1 dùng "thông báo của G05"~~ **Đã sửa 09/11/2026 (C38, A7):** MSG-51 (lỗi xuất dữ liệu), MSG-52 (trang 403), MSG-53 (nhãn "Tạo bản xuất mới"); UC-05 E1 trỏ G05 UC-01 E1–E5 (G05 MSG-02, MSG-03, MSG-36).
+- ~~**UC-08 `LOI` mâu thuẫn** giữa mục 4.2 và UC-08 E2~~ **Đã sửa 09/11/2026 (B40):** tự thử lại 3 lần; vẫn lỗi thì `LOI`, MSG-51 kèm nút "Tạo bản xuất mới"; mục 4.2 và E2 đã khớp, sơ đồ UC-08 vẽ lại nhánh E2.
+- ~~**MSG-11 sai nơi hiện khi xác nhận lại**; UC-02 E4 dùng MSG-14 trong dialog MSG-13~~ **Đã sửa 09/11/2026 (C39):** nơi hiện của MSG-11 thêm dialog xác nhận lại (SCR-11, SCR-12, SCR-22); MSG-14 thêm dialog liên kết MSG-13. Nhãn sơ đồ UC-02, UC-07, UC-09, UC-11 đã đổi theo.
+- ~~**SCR-12 không có lối xác nhận qua Google / Microsoft:** UC-09 bước 3 cho phép, nhưng SCR-12 chỉ có ô Mật khẩu (#3), và nút "Xoá vĩnh viễn" (#5) disabled tới khi #3 hợp lệ. Như vậy tài khoản chỉ có Google / Microsoft không xoá được. UC-09 và UC-11 A1 cũng không có nhánh lỗi cho xác nhận lại.~~ **Đã sửa 09/11/2026 (B37):** SCR-12 #3 thay ô mật khẩu bằng nút "Xác nhận bằng Google / Microsoft" khi tài khoản chỉ có Google / Microsoft (UC-09 A5); thêm UC-09 E5 (`reauthToken` hỏng, MSG-11) và UC-11 E4 (mật khẩu sai MSG-29 / `reauthToken` hỏng MSG-11). Sơ đồ UC-09, UC-11 đã vẽ.
+- ~~**UC-05 E3:** nút disabled nên không rõ MSG-21 hiện lúc nào~~ **Đã sửa 09/11/2026 (B41, B36):** nút luôn bấm được, bấm khi chưa có task thì hiện MSG-21 ("Thêm ít nhất 1 task, hoặc bấm Bỏ qua"); bước 5 có nút "Bỏ qua" (UC-05 A6), không bắt nhập task.
+- ~~**UC-04 E1:** "Gửi link mới" về đâu chưa rõ~~ **Đã sửa 09/11/2026 (B39):** về SCR-04 phần 1, điền sẵn email.
+- ~~**MSG-19, MSG-30** dựa trên quy tắc thu hồi phiên còn `[giả định]`~~ **Đã sửa 09/11/2026 (B38):** BR-09, UC-07 A1 bỏ `[giả định]`; đổi email cũng thu hồi phiên khác (BR-17, UC-07 A2), MSG-33 thêm câu "Các thiết bị khác đã được đăng xuất". Giữ chữ MSG-19, MSG-30.
+- ~~**Đổi cài đặt khi mất mạng:** UC-10 không có nhánh mất mạng, UC-06 E3 không có dấu "chờ đồng bộ"~~ **Đã sửa 09/11/2026 (C40, A6):** UC-06 E3 và UC-10 E4 mới: áp dụng ngay trên máy, dấu "Chờ đồng bộ" cạnh trường (QC-08 mục 7). Sơ đồ UC-06, UC-10 đã vẽ.
+- ~~**MSG-44 dùng cho UC-11 E2**, chữ không khớp ngữ cảnh~~ **Đã sửa 09/11/2026 (C41):** UC-11 E2 dùng MSG-54 "…rút lại đồng ý sau khi bản xuất sẵn sàng"; MSG-44 chỉ còn cho xoá tài khoản.

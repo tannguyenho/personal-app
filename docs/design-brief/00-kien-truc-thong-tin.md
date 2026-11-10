@@ -42,14 +42,14 @@ Thứ tự từ trên xuống (IA-14):
 | Nhóm | Mục | Phím | Mở |
 |---|---|---|---|
 | View hằng ngày | Home | H | Home board ở hôm nay, view cuối (G04 SCR-01) |
-| | Today | T | Today view: danh sách task và lịch của ngày (G04 UC-01 A1, G05 SCR-04) |
+| | Today | T | Today view: danh sách task và lịch của ngày (G04 SCR-10, G05 SCR-04) |
 | | Backlog | B | Trang Backlog đầy đủ (G06 SCR-01) |
 | | Focus | F | Focus mode, toàn cửa sổ (G07 SCR-03, IA-03) |
 | Ritual (sau đường kẻ) | Daily planning | P | Wizard ở vùng chính (G08 SCR-01 … SCR-07, IA-07) |
 | | Daily shutdown | O | Wizard ở vùng chính (G08 SCR-07 … SCR-11) |
 | Công cụ (dưới cùng) | ✨ Trợ lý | Ctrl+J | Mục Trợ lý ở panel phải (IA-08) |
 | | 🔔 Thông báo | – (Ctrl+K) | Popover trung tâm thông báo (G12 SCR-11, IA-10) |
-| | Avatar | – | Menu: Cài đặt (Ctrl+,) · Phím tắt (?) · Đăng xuất · Thoát app |
+| | Avatar | – | Menu tài khoản (G01 SCR-17): Cài đặt (Ctrl+,) · Phím tắt (?) · Đăng xuất · Thoát app |
 
 Mục ritual có chấm nhắc và nhãn "Đang dở" (G08 điểm vào). "Tuần" và "Lịch" **không** phải mục sidebar: chúng là các view Week và Calendar trong Home (IA-02).
 
@@ -58,17 +58,18 @@ Mục ritual có chấm nhắc và nhãn "Đang dở" (G08 điểm vào). "Tuầ
 | Màn | Đi tới bằng | Ghi chú | Nguồn |
 |---|---|---|---|
 | Home board | Mở app; H; sidebar | 6 view: Board, Calendar 1 ngày, 3 ngày, Weekdays, Week, Month; Tab xoay vòng. Luôn mở ở hôm nay (IA-18) | G04 SCR-01 … SCR-03, BR-13 |
-| Today view | T; sidebar | | G04 UC-01 A1 |
+| Today view | T; sidebar | | G04 SCR-10 |
 | Trang Backlog | B; sidebar | Khác panel Backlog ở panel phải: trang đầy đủ có folder, bucket | G06 SCR-01 |
-| Wizard Daily planning | P; sidebar; nút "Plan" trên header cột ngày ≥ hôm nay; tự mở một lần / ngày; lời nhắc | Sidebar và panel phải vẫn dùng được, để kéo từ Backlog / Lịch vào. Không thoát bằng Esc, chỉ bằng × (IA-16). × lưu tiến độ, về Home | G08 SCR-01 … SCR-07 |
+| Wizard Daily planning | P; sidebar; nút "Plan" trên header cột từ hôm nay tới hôm nay + 7 ngày (B29); tự mở một lần / ngày; lời nhắc | Sidebar và panel phải vẫn dùng được, để kéo từ Backlog / Lịch vào. Không thoát bằng Esc, chỉ bằng × (IA-16). × lưu tiến độ, về Home | G08 SCR-01 … SCR-07 |
 | Wizard Daily shutdown | O; sidebar; lời nhắc | Như trên | G08 SCR-07 … SCR-11 |
 | Planning Agent (trong wizard Daily planning) | Nút "Plan my day" | Nhập và chạy, rồi Review Plan, đều nằm trong wizard; không nằm trong chat | G10 SCR-02, SCR-03 |
 
 **Banner** nằm ở đầu vùng chính, **tối đa một** cùng lúc, theo thứ tự ưu tiên (IA-17):
-1. Offline (G04 SCR-01 #5)
+1. Offline (G04 SCR-01 #5, MSG-30) — banner offline duy nhất của app; wizard ritual không có banner offline riêng (chốt 09/11/2026, A5)
 2. Lịch cần kết nối lại (G05 SCR-09)
-3. Rollover lỗi (G04 MSG-27)
+3. Rollover lỗi (G06 MSG-25, G04 MSG-27 cùng nội dung; F2)
 4. Lệch timezone (G01 SCR-13)
+5. Nhắc ritual (G08 SCR-12) — luôn sau mọi banner lỗi và offline (A5)
 
 Banner thấp hơn chờ tới lượt và đồng thời vào trung tâm thông báo. Banner gói (G12 SCR-01) từ 1.1 thì xếp sau offline.
 
@@ -79,8 +80,8 @@ Banner thấp hơn chờ tới lượt và đồng thời vào trung tâm thông
 | Mục | Phím | Nội dung | Nguồn |
 |---|---|---|---|
 | Calendar | Shift+C | Lưới lịch một ngày, kéo task vào để timebox | G05 SCR-04 |
-| Tasks | Shift+T | Danh sách task của ngày đang xem, để kéo lên lưới lịch. **Chỉ hiện khi vùng chính là Calendar view** (IA-13) | Mới, ghi vào G04 |
-| Backlog | Shift+B | Panel Backlog gọn, kéo task ra board | G06 |
+| Tasks | Shift+T | Danh sách task của ngày đang xem, để kéo lên lưới lịch. **Chỉ hiện khi vùng chính là Calendar view** (IA-13) | G04 SCR-11 |
+| Backlog | Shift+B | Panel Backlog gọn, kéo task ra board | G06 SCR-09 |
 | Lưu trữ · Thùng rác | Shift+A (tab Lưu trữ); lệnh "Task đã xoá gần đây" (tab Thùng rác) | Một panel hai tab (IA-09) | G06 SCR-05, G02 SCR-05 |
 | Search | Ctrl+F | Tìm task | G04 SCR-07 |
 | Trợ lý | Ctrl+J; ✨ ở sidebar; Ctrl+K "Hỏi trợ lý" | Khung chat. Chưa đồng ý → dialog đồng ý (G10 SCR-10). Claude Code chưa sẵn sàng → thẻ hướng dẫn cài (G10 SCR-11) ngay trong mục này (IA-08) | G10 SCR-04, SCR-05, SCR-11 |
@@ -95,7 +96,7 @@ Banner thấp hơn chờ tới lượt và đồng thời vào trung tâm thông
 | < 1024 px | Thu thành cột icon | Lớp trượt |
 | Tối thiểu | 800 × 600 | |
 
-Home board tự giảm số cột ngày hiện được khi cửa sổ hẹp lại. Cài đặt ở cửa sổ hẹp theo G01 SCR-06 (cột trái thành danh sách, có nút ←).
+Home board tự giảm số cột ngày hiện được khi cửa sổ hẹp lại; cột ngày tối thiểu 200 px, thiếu chỗ thì cuộn ngang. Bản 1.0 không có chế độ 1 cột (chốt 09/11/2026, B01). Cài đặt ở cửa sổ hẹp theo G01 SCR-06 (cột trái thành danh sách, có nút ←).
 
 ## 5. Dialog, lớp phủ và popover
 
@@ -103,7 +104,7 @@ Home board tự giảm số cột ngày hiện được khi cửa sổ hẹp l�
 |---|---|---|---|---|
 | Chi tiết task | Dialog giữa màn | Bấm tiêu đề card; Ctrl+Enter; chip task trong chat | Nút "mở rộng" cho dialog chiếm hết vùng chính. Esc đóng, focus về card vừa mở (IA-06). Gồm banner series (G03 SCR-02), timebox (G05 SCR-06), timer (G07 SCR-01, SCR-02) | G02 SCR-03 |
 | Cài đặt | Lớp phủ gần kín cửa sổ | Avatar → Cài đặt; Ctrl+,; Ctrl+K "Mở cài đặt"; link "mở thẳng nhóm" từ nơi khác | Esc / × về màn trước (IA-04). Gồm mọi nhóm của G01 SCR-06, kể cả Context & channel (G02 SCR-06), Lịch (G05 SCR-01 … 03), Ritual (G08 SCR-13), Trợ lý AI (G10 SCR-09), Hoạt động AI (G10 SCR-12), Task lặp (G03 SCR-05), Thông báo (G12 SCR-10), Workspace (G12 SCR-12) | G01 SCR-06 … SCR-16 |
-| Đồng ý dùng AI | Dialog | Lần đầu bấm ✨ / Ctrl+J / "Plan my day" / bật Trợ lý AI trong Cài đặt | | G10 SCR-10 |
+| Đồng ý dùng AI | Dialog | Lần đầu bấm ✨ / Ctrl+J / "Plan my day" / bật Trợ lý AI trong Cài đặt | Tiêu đề "Bật trợ lý AI" (B42) | G10 SCR-10 |
 | Thiết lập Planning Agent | Dialog `[đề xuất]` | Lần đầu "Plan my day"; Cài đặt → Trợ lý AI | | G10 SCR-01 |
 | Command menu | Dialog | Ctrl+K | | G04 SCR-08 |
 | Bảng phím tắt | Dialog | ?; avatar → Phím tắt | | G04 SCR-09 |
@@ -127,7 +128,7 @@ Home board tự giảm số cột ngày hiện được khi cửa sổ hẹp l�
 
 - **Bấm ×** luôn thu app về khay, có timer hay không. Lần đầu thu về khay, app hiện một thông báo: "App vẫn chạy ở khay hệ thống". Cài đặt Chung có lựa chọn "Bấm × để thoát hẳn" (mặc định tắt).
   - Lý do: phím toàn cục (D11), nhắc ritual bằng thông báo Windows (D12) và MCP local cho Claude Code trong terminal (G10 UC-11) đều cần app đang chạy.
-- **Biểu tượng khay** đổi khi có timer đang chạy (D13). Menu chuột phải: Mở app · Thêm task (Ctrl+Shift+A) · Bật / dừng timer (kèm tên task) · Thoát.
+- **Biểu tượng khay** đổi khi có timer đang chạy (D13). Menu chuột phải: Mở app · Thêm task (Ctrl+Shift+A) · "Bật timer: {task kế tiếp hôm nay}" khi chưa có timer, "Dừng timer: {tiêu đề}" khi đang có timer (chốt 09/11/2026, B23, C25) · Thoát.
 - **Tự chạy khi Windows khởi động**: bật mặc định, chạy ẩn ở khay; tắt được trong Cài đặt Chung.
 - **Thu nhỏ** (nút −): như mọi app Windows, timer vẫn chạy (G07 BR-23).
 - **Mở lại cửa sổ**: luôn vào Home ở hôm nay với view cuối; panel phải như lần trước. Có timer đang chạy cũng vào Home, không vào Focus. Wizard ritual tự mở thì thay vùng chính.
@@ -171,8 +172,8 @@ Gom theo nơi hiện. Mã SCR là của SRS từng nhóm; `SCR-N` là màn mới
 | Nơi | Màn |
 |---|---|
 | Toàn cửa sổ | G01 SCR-01 … SCR-05 · G07 SCR-03 |
-| Vùng chính | G04 SCR-01 … SCR-03 (Home, 6 view) · Today view · G06 SCR-01 · G08 SCR-01 … SCR-11 · G10 SCR-02, SCR-03, SCR-07 (trong wizard) |
-| Panel phải | G05 SCR-04 (Calendar) · Tasks (SCR-N, G04) · Backlog (G06) · G06 SCR-05 + G02 SCR-05 (Lưu trữ · Thùng rác) · G04 SCR-07 · G10 SCR-04, SCR-05, SCR-11 |
+| Vùng chính | G04 SCR-01 … SCR-03 (Home, 6 view) · G04 SCR-10 (Today view) · G06 SCR-01 · G08 SCR-01 … SCR-11 · G10 SCR-02, SCR-03, SCR-07 (trong wizard) |
+| Panel phải | G05 SCR-04 (Calendar) · G04 SCR-11 (Tasks) · Backlog (G06) · G06 SCR-05 + G02 SCR-05 (Lưu trữ · Thùng rác) · G04 SCR-07 · G10 SCR-04, SCR-05, SCR-11 |
 | Dialog / lớp phủ | G02 SCR-03 · G01 SCR-06 … SCR-16 (Cài đặt, chứa cả G02 SCR-06, G03 SCR-05, G05 SCR-01 … 03, G08 SCR-13, G10 SCR-09, SCR-12, G12 SCR-10, SCR-12) · G10 SCR-01, SCR-10 · G04 SCR-08, SCR-09 · các xác nhận ở mục 5 |
 | Popover | G12 SCR-11 · các popover ở mục 5 |
 | Trên card / trong chi tiết | G02 SCR-01, SCR-02 · G03 SCR-02, SCR-06 · G05 SCR-05, SCR-06 · G06 SCR-07 · G07 SCR-01 |
@@ -192,7 +193,7 @@ Chỉ ghi điểm vào cấp app (từ khung, phím, khay, thông báo). Điểm
 | G04 Board ngày | Mở app → Home hôm nay · H · T · Tab · Ctrl+F · Ctrl+K · ? |
 | G05 Lịch và timebox | Panel phải → Calendar (Shift+C) · Calendar view trong Home · panel Tasks (Shift+T) khi ở Calendar view · Cài đặt → Lịch · onboarding bước "Kết nối lịch" · banner cần kết nối lại |
 | G06 Backlog, rollover, lưu trữ | Sidebar Backlog / B (trang) · panel phải Backlog (Shift+B) · panel Lưu trữ (Shift+A) · toast "Xem Lưu trữ" |
-| G07 Focus và timer | Sidebar Focus / F (toàn cửa sổ) · Space trên task · Ctrl+Shift+Space · khay → Bật / dừng timer · biểu tượng khay khi có timer · thông báo timer > 4 giờ |
+| G07 Focus và timer | Sidebar Focus / F (toàn cửa sổ) · Space trên task · Ctrl+Shift+Space · khay → Bật timer (task kế tiếp hôm nay) / Dừng timer · biểu tượng khay khi có timer · thông báo timer > 4 giờ |
 | G08 Daily planning, shutdown | Sidebar / P / O → wizard ở vùng chính · nút "Plan" trên cột ngày ≥ hôm nay · tự mở một lần / ngày · thông báo Windows nhắc ritual · banner nhắc (G08 SCR-12) |
 | G10 Trợ lý AI | ✨ ở sidebar / Ctrl+J / Ctrl+K "Hỏi trợ lý" → mục Trợ lý ở panel phải · "Plan my day" trong wizard · Cài đặt → Trợ lý AI, Hoạt động AI · toast khi Claude Code trong terminal đổi app |
 | G12 phần 1.0 | 🔔 ở sidebar → popover · thông báo Windows · Cài đặt → Thông báo, Workspace |

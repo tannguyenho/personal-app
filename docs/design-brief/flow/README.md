@@ -32,6 +32,8 @@ Khi vẽ, mỗi file ghi các chỗ SRS mâu thuẫn hoặc thiếu ở mục **
 
 Brief của từng tính năng xử lý các điểm này ở mục 11 "Chỗ còn mở". Chốt xong thì ghi ngược vào SRS và sửa flow trong cùng commit.
 
+**PO đã chốt ngày 09/11/2026** toàn bộ các ghi chú còn mở và câu "cần chốt" trong issue brief: [câu hỏi và kết quả](../../review/cau-hoi-chot-flow-2026-11-09.md) (10 quy tắc chung, 48 câu chọn, 52 mục sửa tài liệu). Quy tắc chung ghi vào QC-08 mục 7 và QC-13; SRS, PRD và flow từng nhóm đã sửa theo, ghi chú đã xử lý được gạch và ghi "Đã sửa 09/11/2026 (mã)".
+
 ## Đã sửa sau review nghiệp vụ (06/11/2026)
 
 Review flow phát hiện nhiều chỗ flow chép theo SRS cũ, trong khi nguồn cao hơn (QC, IA, tech) đã quyết khác. Các điểm đã có nguồn quyết được ghi ngược vào SRS rồi sửa flow:

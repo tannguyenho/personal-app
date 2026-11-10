@@ -17,6 +17,7 @@ Tài liệu này giữ các quy tắc mà nhiều nhóm cùng dùng. PRD/SRS c�
 | QC-09 | Chế độ chỉ đọc (1.1) | G12 | G03, G05, G06, G07, G08, G10, G11 |
 | QC-10 | Quyền theo gói (1.1) | G12 | G05, G11 |
 | QC-12 | Trợ lý AI qua Claude Code CLI và MCP local | G10 | G01, G02, G04, G05, G08, G11 |
+| QC-13 | Thông báo, Hoàn tác và phần của bản sau | G04 | Tất cả |
 | QC-11 | Danh mục tình huống biên (EC) | — | Tất cả |
 
 ---
@@ -108,7 +109,7 @@ Bảng ví dụ dùng làm ca kiểm thử chuẩn (cả cho bộ đánh giá AI
 2. **Không reset** (`firstPlannedDate` giữ nguyên) khi task bị đẩy sang ngày sau theo kiểu thụ động: rollover, phím D, shutdown chọn "Ngày mai" (kể cả "Áp dụng cho tất cả").
 3. **Reset** (`firstPlannedDate` = ngày dự định mới) khi người dùng đặt ngày có chủ đích hoặc task rời luồng ngày: chọn ngày bằng bộ chọn ngày, kéo sang ngày khác, "Hoãn 1 tuần", phím S, đưa vào backlog, hoàn thành, khôi phục từ Lưu trữ hoặc Thùng rác.
 4. **Hiển thị.** Card hiện nhãn "Dời {n} ngày" khi n ≥ 1. Bước "Xem lại hôm qua" của Daily planning lấy task có n ≥ 1.
-5. **Tự lưu trữ.** Khi n ≥ **4** `[giả định]`, rollover chuyển task sang `LUU_TRU` với lý do `stale`.
+5. **Tự lưu trữ.** Khi n ≥ **4** (chốt 10/11/2026, D02), rollover chuyển task sang `LUU_TRU` với lý do `stale`. Ngưỡng cố định, không chỉnh trên giao diện ở 1.0 (chốt 09/11/2026, B10). Task có ít nhất một subtask đã tích hoặc đã có thời gian thực tế được tính là có hoạt động và không bị tự lưu trữ (B11).
 6. **Chế độ chỉ đọc (1.1).** Các ngày workspace bị đóng băng không tính vào n (QC-09).
 
 ## QC-05. Đổi ngày task
@@ -139,7 +140,7 @@ Mọi đường làm thay đổi ngày dự định hoặc đưa task ra khỏi 
 ## QC-06. Instance trùng series trong một ngày
 
 1. Một ngày làm việc **đã có instance** của series S khi có instance của S mà ngày gốc hoặc ngày dự định bằng ngày đó, ở trạng thái `KE_HOACH` hoặc `HOAN_THANH`.
-2. **Đường tự động hoặc hàng loạt** đưa một instance của S vào ngày đã có instance của S: instance được đưa vào chuyển sang `LUU_TRU` với lý do `skipped`, kèm toast Hoàn tác (rollover thì không có toast, chỉ ghi nhật ký). Các đường này gồm: rollover, phím D, shutdown "Ngày mai".
+2. **Đường tự động hoặc hàng loạt** đưa một instance của S vào ngày đã có instance của S: instance được đưa vào chuyển sang `LUU_TRU` với lý do `skipped`, kèm toast Hoàn tác (rollover thì không có toast, chỉ ghi nhật ký). Các đường này gồm: rollover, phím D, shutdown "Ngày mai". **Ngoại lệ ở rollover** (chốt 09/11/2026, B08): instance đã sửa riêng (`customized`) hoặc đã có thời gian thực tế không chuyển `skipped` mà rollover như task thường, kể cả khi ngày đích đã có instance của S; nó không làm instance khác thành `skipped`. Phím D và shutdown giữ như trên.
 3. **Đường thủ công từng task** (kéo thả, chọn ngày, khôi phục): vẫn cho đặt, kèm cảnh báo "Ngày này đã có {tên series}". Thông báo gốc là **G03 MSG-21**; các nhóm khác (G02 MSG-24, G04 MSG-23, G06 MSG-21) giữ mã riêng nhưng dùng đúng nội dung này.
 
 ## QC-07. Bản ghi thời gian
@@ -162,6 +163,7 @@ Mọi đường làm thay đổi ngày dự định hoặc đưa task ra khỏi 
 4. Lệnh sửa vào task đã `DA_XOA` bị từ chối (`TASK_DELETED`). Hai thiết bị offline cùng bật lặp cho một task: lệnh tới sau bị từ chối (`ALREADY_REPEATING`).
 5. **Rollover tạm trên máy** chỉ để hiển thị, không bao giờ vào hàng đợi đồng bộ.
 6. **Bị đăng xuất từ xa** (`session.revoked`): giữ hàng đợi offline (mã hoá, gắn userId) và gửi lên khi đăng nhập lại đúng tài khoản. Chỉ xoá khi người dùng chủ động đăng xuất, sau khi đã cảnh báo còn thay đổi chưa đồng bộ.
+7. **Thao tác khi mất mạng** (chốt 09/11/2026, A6): thao tác đơn lẻ (đổi cài đặt, sửa / dời task, dời / gỡ timebox) chạy ngay trên máy, vào hàng đợi, kèm dấu "Chờ đồng bộ" ở nơi vừa đổi; có mạng thì gửi lên theo mục 1–4. Thao tác trên **cả chuỗi lặp** (G03 BR-08) cần mạng: nút mờ, tooltip "Cần có mạng để sửa cả chuỗi". Mỗi UC có thao tác ghi phải có nhánh E# mất mạng theo mục này.
 
 ## QC-09. Chế độ chỉ đọc (bản 1.1)
 
@@ -183,11 +185,11 @@ Mọi đường làm thay đổi ngày dự định hoặc đưa task ra khỏi 
 
 ## QC-10. Quyền theo gói (bản 1.1)
 
-Bản 1.0 miễn phí, không giới hạn, gắn nhãn Beta. Từ 1.1, các nhóm đọc hạn mức từ bảng cấu hình của G12; không nhóm nào viết cứng con số trong logic.
+Bản 1.0 miễn phí, không giới hạn, gắn nhãn Beta; ngoại lệ duy nhất là giới hạn kỹ thuật số tài khoản lịch kết nối (5, chốt 09/11/2026, B17). Từ 1.1, các nhóm đọc hạn mức từ bảng cấu hình của G12; không nhóm nào viết cứng con số trong logic.
 
 | Quyền | Trial / trả phí | Nhóm dùng |
 |---|---|---|
-| Số tài khoản lịch kết nối | 5 `[giả định]` | G05 |
+| Số tài khoản lịch kết nối | 5 (áp cả ở 1.0, chốt 09/11/2026, B17) | G05 |
 | Số tích hợp kết nối | Không giới hạn `[giả định]` | G11 |
 
 Trợ lý AI **không có hạn mức theo gói**: AI chạy bằng Claude Code CLI trên máy người dùng và dùng hạn mức của gói Claude của chính họ (QC-12).
@@ -207,6 +209,20 @@ Trợ lý AI **không có hạn mức theo gói**: AI chạy bằng Claude Code 
 6. **Dữ liệu tích hợp chỉ là dữ liệu.** Công cụ đọc dữ liệu tích hợp mặc định tắt. Khi đã bật, mọi thay đổi **sau lần đầu đọc dữ liệu tích hợp** trong cùng phiên AI đó chuyển thành **chờ duyệt** trong app thay vì áp dụng ngay, để chặn lệnh ẩn trong nội dung bên ngoài (D8).
 7. **Đồng ý.** Trợ lý AI mặc định tắt. Lần bật đầu tiên hiện một màn gọn nói rõ dữ liệu nào được đưa cho Claude Code; app lưu thời điểm đồng ý. Tắt trợ lý thì MCP server ngừng nhận kết nối.
 8. **Không có hạn mức theo gói** (QC-10). Lỗi hết hạn mức đến từ Claude Code thì app hiện thông báo của Claude Code và chuyển sang luồng thủ công (EC-39).
+
+## QC-13. Thông báo, Hoàn tác và phần của bản sau
+
+Chốt ngày 09/11/2026 ([câu hỏi chốt](review/cau-hoi-chot-flow-2026-11-09.md), A1–A4, A9, A10). Áp cho mọi nhóm; nhóm nào cần ngoại lệ thì ghi rõ.
+
+1. **Câu lỗi chung** (A1). Hai câu có mã riêng, nhóm nào cũng trỏ về đây, không khai báo lại cùng chữ:
+   - **QC-MSG-01** · Toast · "Chưa lưu được thay đổi. Thử lại" — lưu thất bại.
+   - **QC-MSG-02** · Tại chỗ (trong khung đang tải) · "Chưa tải được. Thử lại" — tải danh sách / dữ liệu thất bại.
+   Câu xung đột phiên bản theo QC-08 mục 2.
+2. **Kéo thả và Hoàn tác** (A2). Kéo đổi thứ tự trong cùng một cột / danh sách: không toast, hoàn tác bằng Ctrl+Z. Kéo sang nơi khác (ngày khác, vào / ra Backlog, lên lịch, sang bucket khác): có toast Hoàn tác giống khi làm cùng việc bằng phím hay menu.
+3. **Hai thông báo cùng lúc** (A3). Gộp thành **một** toast: dòng 1 là kết quả của thao tác chính và giữ nút Hoàn tác của nó; dòng 2 là thông tin phụ (ví dụ cảnh báo trùng series, đã gửi email).
+4. **Không có ký hiệu trong chữ** (A4). Dấu tích, mũi tên… là icon đặt cạnh chữ, không nằm trong nội dung MSG. Ví dụ "Đã lưu" kèm icon dấu tích.
+5. **Hoàn tác** (A10) đưa dữ liệu về đúng trạng thái ngay trước thao tác: ngày, vị trí, bucket, lý do lưu trữ; bản ghi vừa tạo (ví dụ bản ghi thời gian nhập tay) thì xoá.
+6. **Phần của bản sau** (A9). Thành phần, nhánh, chữ thuộc 1.1 / 1.2 thì **ẩn hẳn** ở 1.0 (không hiện mờ); SRS ghi nhãn "(1.1)" / "(1.2)" ngay tại chỗ.
 
 ## QC-11. Danh mục tình huống biên (EC)
 

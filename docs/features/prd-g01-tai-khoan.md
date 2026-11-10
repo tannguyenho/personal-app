@@ -30,7 +30,7 @@ Bản 1.0 là **app Windows (Flutter)** cho **một người dùng**, có tài k
 ## 1.3 Mục tiêu
 
 - Đăng ký xong trong ≤ 60 giây với Google / Microsoft, ≤ 2 phút với email + mật khẩu `[giả định]`.
-- Hết onboarding, người dùng có: timezone đúng, lịch làm việc, lịch đã kết nối (nếu chọn), ít nhất 1 task hôm nay, và đang ở Daily planning đầu tiên.
+- Hết onboarding, người dùng có: timezone đúng, lịch làm việc, lịch đã kết nối (nếu chọn), task hôm nay (nếu đã nhập; bước nhập task bỏ qua được, B36), và đang ở Daily planning đầu tiên.
 - Mọi cài đặt lưu và áp dụng ngay, không có nút Lưu; thiết bị khác thấy thay đổi ≤ 5 giây.
 - Người dùng tự đổi mật khẩu, email, đăng xuất mọi phiên, xuất dữ liệu và xoá tài khoản, không cần liên hệ hỗ trợ.
 
@@ -122,7 +122,7 @@ Không cho người ngoài biết một email đã đăng ký hay chưa. Không 
 | **Bước** | **Giai đoạn** | **Trải nghiệm** | **Đầu ra** |
 |---|---|---|---|
 | 1 | Đăng ký | Cài và mở app Windows; bấm "Tiếp tục với Google / Microsoft" (mở trình duyệt hệ thống, xong quay lại app) hoặc nhập email + mật khẩu, nhập mã 6 số | Tài khoản, workspace cá nhân, context `work` / `personal`, channel hệ thống "Chưa phân loại"; 1.0 không có trial (Beta miễn phí), từ 1.1 trial 14 ngày cho gói cá nhân một người dùng (G12, Q47) |
-| 2 | Onboarding | 5 bước: ngôn ngữ + timezone → kết nối lịch → công cụ công việc → lịch làm việc + giờ plan → 3 task đầu | Cài đặt cơ bản đúng, có task hôm nay |
+| 2 | Onboarding | 5 bước: ngôn ngữ + timezone → kết nối lịch → công cụ công việc → lịch làm việc + giờ plan → 3 task đầu (bỏ qua được) | Cài đặt cơ bản đúng, có task hôm nay nếu đã nhập |
 | 3 | Ngày đầu tiên | Daily planning có hướng dẫn (G08); tooltip giải thích projection, phím tắt khi gặp lần đầu | Ngày đầu tiên được lên kế hoạch |
 | 4 | Dùng hằng ngày | Đăng nhập một lần trên máy Windows, phiên tự gia hạn 30 ngày | Không phải đăng nhập lại mỗi ngày |
 | 5 | Điều chỉnh | Mở Cài đặt, đổi giá trị, thấy tác dụng ngay | App khớp cách làm việc |
@@ -184,13 +184,13 @@ AC03: Bước 3 chọn công cụ công việc đang dùng (chọn nhiều); 1.0
 
 AC04: Bước 4 lịch làm việc (mặc định Thứ Hai–Thứ Sáu, 09:00–17:00 `[giả định giờ]`, thêm được Thứ Bảy hoặc ngày khác) và giờ plan ngày (mặc định 09:00).
 
-AC05: Bước 5 có 3 ô nhập task cho hôm nay; cần ít nhất 1 task để hoàn tất `[giả định]`.
+AC05: Bước 5 có 3 ô nhập task cho hôm nay; không bắt nhập task, có nút "Bỏ qua" để hoàn tất mà không tạo task (chốt 09/11/2026, B36). Nút "Bắt đầu ngày đầu tiên" luôn bấm được; bấm khi chưa ô nào có task thì báo lỗi dưới ô, gợi ý thêm task hoặc bấm "Bỏ qua" (B41).
 
 AC06: Có nút ← quay lại; đóng app giữa chừng → mở lại tiếp tục đúng bước dở.
 
 ### US2.2 Daily planning đầu tiên có hướng dẫn
 
-AC01: Hoàn tất bước 5 → mở Daily planning của hôm nay (G08) ở chế độ có hướng dẫn, các task vừa tạo đã nằm trong danh sách.
+AC01: Hoàn tất hoặc bỏ qua bước 5 → mở Daily planning của hôm nay (G08) ở chế độ có hướng dẫn, các task vừa tạo (nếu có) đã nằm trong danh sách.
 
 AC02: Onboarding chỉ hiện một lần cho mỗi tài khoản.
 
@@ -224,7 +224,9 @@ AC02: Trong thời gian khoá vẫn dùng được "Quên mật khẩu"; đặt 
 
 AC01: Nhập email → luôn hiện "Nếu email có tài khoản, chúng tôi đã gửi link…", kể cả email chưa đăng ký.
 
-AC02: Link hiệu lực 30 phút, dùng 1 lần; đặt lại xong đăng nhập luôn, các thiết bị khác bị đăng xuất `[giả định]`.
+AC02: Link hiệu lực 30 phút, dùng 1 lần; đặt lại xong đăng nhập luôn, các thiết bị khác bị đăng xuất (chốt 09/11/2026, B38).
+
+AC03: Link hết hạn hoặc đã dùng → thông báo kèm "Gửi link mới"; bấm thì về màn nhập email, email điền sẵn (chốt 09/11/2026, B39).
 
 ### US3.4 Đăng nhập từ lời mời workspace (bản sau — xem `docs/02-tinh-nang-ban-sau.md`, Q35)
 
@@ -240,11 +242,13 @@ User Story: Là người dùng, tôi muốn đổi một cài đặt và thấy 
 
 AC01: Mở Cài đặt từ menu tài khoản; cột trái liệt kê các nhóm, cột phải là nội dung nhóm.
 
-AC02: Đổi giá trị nào lưu ngay giá trị đó, hiện dấu ✓ "Đã lưu" cạnh trường; giao diện áp dụng ngay.
+AC02: Đổi giá trị nào lưu ngay giá trị đó, hiện "Đã lưu" kèm icon dấu tích cạnh trường (dấu tích là icon, không nằm trong chữ; C36); giao diện áp dụng ngay.
 
 AC03: Nhóm do nhóm tính năng khác sở hữu mở trang con của nhóm đó; nhóm chưa phát hành ở bản hiện tại không hiện.
 
 AC04: Cùng một trường bị đổi trên hai thiết bị → bản server nhận sau thắng; thiết bị có giá trị bị ghi đè hiện thông báo kèm giá trị mới. Các trường khác không bị ảnh hưởng.
+
+AC05: Mất mạng → đổi cài đặt (kể cả Lịch làm việc) vẫn áp dụng ngay trên máy, cạnh trường hiện dấu "Chờ đồng bộ"; có mạng thì gửi lên và đổi thành "Đã lưu" (QC-08 mục 7; chốt 09/11/2026, C40).
 
 ### US4.2 Timezone và mốc đầu ngày
 
@@ -302,7 +306,7 @@ AC01: Đổi mật khẩu và đổi email đều cần xác nhận lại: nhậ
 
 AC02: Đổi email → gửi mã 6 số tới email mới; chỉ đổi khi nhập đúng mã; email cũ nhận thư thông báo có link "Không phải tôi".
 
-AC03: Đổi mật khẩu → các thiết bị khác bị đăng xuất `[giả định]`.
+AC03: Đổi mật khẩu hoặc đổi email → các thiết bị khác bị đăng xuất, thiết bị đang dùng giữ phiên (chốt 09/11/2026, B38).
 
 AC04: Bấm "Không phải tôi" trong 72 giờ → huỷ việc đổi email (email cũ trở lại là email đăng nhập), đăng xuất mọi thiết bị, gửi link đặt lại mật khẩu tới **email cũ**. Quá 72 giờ link hết hiệu lực.
 
@@ -320,9 +324,11 @@ AC02: File gồm JSON đầy đủ và CSV cho task, bản ghi thời gian; dùn
 
 AC03: Phạm vi xuất = dữ liệu mình sở hữu; thêm task được giao cho mình khi có giao task (bản sau, Q35).
 
+AC04: Tạo bản xuất lỗi → hệ thống tự thử lại 3 lần; vẫn lỗi → email báo, Cài đặt → Tài khoản hiện thông báo kèm nút "Tạo bản xuất mới" (chốt 09/11/2026, B40).
+
 ### US5.5 Xoá tài khoản
 
-AC01: Cần xác nhận lại (mật khẩu hoặc Google / Microsoft) và gõ "XOÁ" để xác nhận `[giả định]`.
+AC01: Cần xác nhận lại và gõ "XOÁ" để xác nhận `[giả định]`. Tài khoản có mật khẩu nhập mật khẩu; tài khoản chỉ đăng nhập bằng Google / Microsoft thấy nút "Xác nhận bằng Google / Microsoft" thay ô mật khẩu. Xác nhận lại thất bại → báo lỗi, tài khoản giữ nguyên, xác nhận lại được (chốt 09/11/2026, B37).
 
 AC02: Xoá → đăng xuất mọi phiên, thu hồi kết nối lịch / tích hợp, xoá workspace cá nhân (từ 1.1: huỷ gói, G12); dữ liệu bị xoá vĩnh viễn ≤ 30 ngày. Giữ lại có cơ sở pháp lý: hoá đơn, chứng từ 10 năm (G12); nhật ký bảo mật 1 năm, ẩn danh.
 
@@ -387,6 +393,7 @@ AC04: Đồng ý dùng Trợ lý AI là đồng ý riêng, qua màn gọn của 
 - Đã chốt 04/11/2026: nhắc ritual và nhắc timer > 4 giờ bằng thông báo Windows và trong app, từ 1.0 (D12; cài đặt Thông báo thuộc G12).
 - Xoá tài khoản có cho khôi phục trong 30 ngày không `[giả định: không]`?
 - Bản 1.0 hỗ trợ những ngôn ngữ nào (Tiếng Việt, English)?
-- Bước 5 onboarding bắt buộc ít nhất 1 task hay cho bỏ qua?
+- Bước 5 onboarding bắt buộc ít nhất 1 task hay cho bỏ qua? — **Chốt 09/11/2026 (B36):** không bắt; bước 5 có nút "Bỏ qua", hoàn tất mà không tạo task (US2.1 AC05).
+- **Chốt 09/11/2026 (B37–B41):** xoá tài khoản chỉ có Google / Microsoft dùng nút "Xác nhận bằng Google / Microsoft" (US5.5 AC01); đổi mật khẩu / email đăng xuất mọi thiết bị khác (US5.2 AC03); "Gửi link mới" về màn nhập email, điền sẵn email (US3.3 AC03); bản xuất lỗi tự thử lại 3 lần rồi hiện "Tạo bản xuất mới" (US5.4 AC04); nút ở bước nhập task luôn bấm được, bấm khi chưa hợp lệ thì báo lỗi (US2.1 AC05).
 - (Mới) Rút lại đồng ý xử lý dữ liệu bắt buộc thì tài khoản chuyển sang xoá, hay còn trạng thái tạm ngừng xử lý? Chưa đồng ý phiên bản Điều khoản mới thì được dùng những gì? Cần pháp chế xác nhận (C5).
 - (Mới) Đổi Lịch làm việc có hiệu lực ngay hay từ ngày làm việc kế tiếp `[giả định: từ ngày làm việc kế tiếp]`? Có cần ít nhất 1 ngày làm việc không `[giả định: có]`?

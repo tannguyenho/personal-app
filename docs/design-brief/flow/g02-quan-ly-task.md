@@ -1,6 +1,6 @@
 # Flow G02 Quản lý task
 
-> **Nguồn:** [srs-g02](../../features/srs-g02-quan-ly-task.md) (commit `8fac830`) · **Brief:** [bản thử G02](../_thu-g02-tao-va-chi-tiet-task.md), brief đầy đủ `[chờ #11]`
+> **Nguồn:** [srs-g02](../../features/srs-g02-quan-ly-task.md) (commit `8fac830`, sửa theo chốt 09/11/2026) · **Brief:** [bản thử G02](../_thu-g02-tao-va-chi-tiet-task.md), brief đầy đủ `[chờ #11]`
 > **Quy ước:** [_quy-uoc.md](_quy-uoc.md) · **FigJam:** `[chờ]`
 
 ## Mục lục
@@ -675,7 +675,7 @@ flowchart TD
   a7 --> m1
   g01(["G01 · lịch làm việc chung đổi"]) -->|"A8"| a8["Channel không có khung riêng theo lịch chung mới<br/>channel có khung riêng không đổi"]
   s1 -->|"A9 · thiết bị khác sửa khung giờ"| a9["Nhận qua realtime, gộp cả khối workWindow"]
-  a9 -->|"đang sửa dở, khi rời phần Khung giờ"| a9m>"MSG-12 · Inline<br/>Task vừa được cập nhật trên thiết bị khác"]
+  a9 -->|"đang sửa dở, khi rời phần Khung giờ"| a9m>"MSG-28 · Inline dưới phần Khung giờ<br/>Khung giờ của channel này vừa được sửa trên thiết bị khác"]
 
   u1 -.->|"E4 · giờ kết thúc không sau giờ bắt đầu"| e4m>"MSG-25 · Inline tại dòng<br/>Giờ kết thúc phải sau giờ bắt đầu<br/>nút Lưu disabled"]
   u1 -.->|"E5 · không bật ngày nào"| e5m>"MSG-26 · Inline<br/>Chọn ít nhất 1 ngày cho khung giờ của channel<br/>nút Lưu disabled"]
@@ -713,7 +713,7 @@ flowchart TD
 | A6 | Sửa khung đã bật | Khung chờ, hiệu lực ngày kế tiếp | MSG-27 |
 | A7 | Tắt khung giờ riêng | Theo lịch chung từ ngày kế tiếp | MSG-27 |
 | A8 | Lịch chung G01 đổi | Chỉ channel không có khung riêng đổi | – |
-| A9 | Thiết bị khác sửa khung giờ | Gộp cả khối | MSG-12 |
+| A9 | Thiết bị khác sửa khung giờ | Gộp cả khối | MSG-28 |
 | E1 | Tên trùng | Chặn | MSG-15 |
 | E2 | Tên có "#" / > 50 ký tự | Chặn | MSG-17 |
 | E3 | Xoá "Chưa phân loại" | Nút xoá ẩn | – |
@@ -728,4 +728,5 @@ flowchart TD
 - [x] Mọi nút màn hình có mã SCR; mọi nút thông báo có mã MSG.
 
 **Ghi chú cho brief G02 đầy đủ (#11)**
-- MSG-12 dùng chữ "Task vừa được cập nhật…" cho cả khung giờ channel (UC-06 A9); chữ này không đúng ngữ cảnh channel. Đề xuất thêm một MSG riêng.
+- ~~MSG-12 dùng chữ "Task vừa được cập nhật…" cho khung giờ channel (UC-06 A9).~~ **Đã sửa 09/11/2026 (C01):** thêm MSG-28 "Khung giờ của channel này vừa được sửa trên thiết bị khác"; UC-06 A9 thôi dùng MSG-12.
+- **Đã sửa 09/11/2026 (A1):** MSG-10 "Chưa lưu được thay đổi. Thử lại" là câu lỗi lưu chung QC-MSG-01 (QC-13 mục 1); G02 chỉ trỏ về, chữ không đổi.

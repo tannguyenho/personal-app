@@ -1,13 +1,13 @@
 # Flow G07 Focus và theo dõi thời gian
 
-> **Nguồn:** [srs-g07](../../features/srs-g07-focus-timer.md) (commit `8fac830`) · **Brief:** `[chờ]`
+> **Nguồn:** [srs-g07](../../features/srs-g07-focus-timer.md) (commit `8fac830`, cập nhật theo chốt 09/11/2026) · **Brief:** `[chờ]`
 > **Quy ước:** [_quy-uoc.md](_quy-uoc.md) · **FigJam:** `[chờ]`
 
 ## Mục lục
 
 | UC | Flow | Màn chính | Nhánh A / E (1.0) |
 |---|---|---|---|
-| [UC-01](#uc-01-bật-timer) | Bật timer | SCR-01 Điều khiển timer | 4 / 3 |
+| [UC-01](#uc-01-bật-timer) | Bật timer | SCR-01 Điều khiển timer | 5 / 3 |
 | [UC-02](#uc-02-dừng-timer) | Dừng timer | SCR-01 | 4 / 3 |
 | [UC-03](#uc-03-nhập-sửa-xoá-thời-gian-thực-tế) | Nhập, sửa, xoá thời gian thực tế | SCR-02 Thời gian thực tế | 6 / 4 |
 | [UC-04](#uc-04-focus-mode-và-âm-báo) | Focus mode và âm báo | SCR-03 Focus mode | 4 / 2 |
@@ -66,22 +66,24 @@ flowchart TD
   p1 -->|"A1 · task không thuộc hôm nay / backlog"| a1m>"MSG-01 · Toast<br/>Task này không thuộc hôm nay, timer vẫn đang chạy"]
   a1m --> s2
   s2 -->|"A2 · bật Vào Focus khi chạy timer"| a2x{{"→ UC-04 · SCR-03 Focus mode"}}
-  win(["Bất kỳ đâu trên Windows<br/>app ở khay hoặc nền"]) -->|"A4 · Ctrl+Shift+Space toàn cục"| a4[["Chọn task gần nhất đã chạy<br/>hoặc task đầu tiên chưa xong của hôm nay"]]
+  win(["Bất kỳ đâu trên Windows<br/>app ở khay hoặc nền, chưa có timer"]) -->|"A4 · Ctrl+Shift+Space toàn cục"| a4[["Chọn task gần nhất đã chạy<br/>hoặc task đầu tiên chưa xong của hôm nay"]]
   a4 --> p1
+  win -->|"A6 · menu khay Bật timer: {task kế tiếp hôm nay}"| a6[["Task chưa xong đầu tiên của hôm nay<br/>BR-23, B23"]]
+  a6 --> p1
   u1 -->|"A5 · có bản ghi TU_DONG đang chờ"| a5x{{"→ UC-06 · SCR-06 Xác nhận giờ dừng"}}
   a5x -->|"xác nhận xong, rồi mới bật"| p1
 
   p1 -.->|"E1 · mất mạng"| e1["Chạy trên máy, startedAt giờ máy<br/>xếp hàng đợi"]
   e1 -.-> e1x{{"→ UC-07 đồng bộ"}}
   p1 -.->|"E2 · task đã bị xoá / lưu trữ, 404 / 409"| e2["Huỷ đồng hồ"]
-  e2 -.-> e2m>"MSG-16 · Toast<br/>Task không còn tồn tại hoặc đã lưu trữ, timer đã dừng"]
+  e2 -.-> e2m>"MSG-24 · Toast<br/>Không bật được timer vì task đã bị xoá hoặc đã lưu trữ"]
   e2m -.-> fail(["Timer giữ như trước"])
   p1 -.->|"E4 · 5xx / timeout sau retry"| e4["Huỷ đồng hồ"]
   e4 -.-> e4m>"MSG-09 · Toast<br/>Chưa lưu được thời gian. Thử lại"]
   e4m -.-> fail
 
   class u1,p1,s2 happy
-  class win,a4 alt
+  class win,a4,a6 alt
   class a1m warn
   class a2x,a5x,e1x link
   class e1 sync
@@ -106,10 +108,11 @@ flowchart TD
 | A1 | Task không thuộc hôm nay / backlog | Vẫn chạy, không đổi ngày task | MSG-01 |
 | A2 | Bật "Vào Focus khi chạy timer" | SCR-03 → [UC-04](#uc-04-focus-mode-và-âm-báo) | – |
 | A3 | (SRS đã bỏ) | – | – |
-| A4 | Ctrl+Shift+Space toàn cục | Timer task gần nhất / task đầu tiên chưa xong hôm nay | MSG-02 nếu đổi task |
+| A4 | Ctrl+Shift+Space toàn cục, chưa có timer | Timer task gần nhất / task đầu tiên chưa xong hôm nay; đang có timer thì phím này dừng → [UC-02](#uc-02-dừng-timer) (C25) | – |
+| A6 | Menu khay "Bật timer: {task kế tiếp hôm nay}" (B23) | Timer task chưa xong đầu tiên của hôm nay | – |
 | A5 | Có bản ghi `TU_DONG` chờ | SCR-06 trước → [UC-06](#uc-06-giám-sát-timer-chạy-lâu-job-timerwatchdog), rồi bật | MSG-20 |
 | E1 | Mất mạng | Chạy trên máy, hàng đợi → [UC-07](#uc-07-đồng-bộ-timer-nhiều-thiết-bị-và-offline) | – |
-| E2 | Task đã xoá / lưu trữ | Huỷ đồng hồ | MSG-16 |
+| E2 | Task đã xoá / lưu trữ | Huỷ đồng hồ | MSG-24 (C28) |
 | E3 | Workspace chỉ đọc | Bỏ (1.1) | – |
 | E4 | 5xx / timeout sau retry | Huỷ đồng hồ | MSG-09 |
 
@@ -117,18 +120,18 @@ flowchart TD
 
 ## UC-02 Dừng timer
 
-**Mở đầu:** timer `DANG_CHAY` hoặc `CHAY_LAU`. **Thành công:** bản ghi thời gian đóng (BR-04), thực tế cộng dồn, block thực tế hiện trên lịch (G05). **Thất bại:** timer vẫn chạy.
+**Mở đầu:** timer `DANG_CHAY` hoặc `CHAY_LAU`; dừng từ card, chi tiết, Focus, hoặc Ctrl+Shift+Space và menu khay (C25). **Thành công:** bản ghi thời gian đóng (BR-04), thực tế cộng dồn, block thực tế hiện trên lịch (G05). **Thất bại:** timer vẫn chạy.
 
 ### Happy case
 
 ```mermaid
 flowchart TD
   start(["Timer DANG_CHAY / CHAY_LAU"])
-  u1[/"Space hoặc nút dừng trên card,<br/>chi tiết task, Focus mode"/]
+  u1[/"Space hoặc nút dừng trên card, chi tiết task, Focus mode<br/>hoặc Ctrl+Shift+Space, menu khay Dừng timer C25"/]
   s1["SCR-01 đồng hồ dừng ngay"]
   p1[["TimerStop<br/>server đặt endedAt BR-04"]]
   d1{"Lượt chạy < 10 giây?"}
-  p2[["Bỏ bản ghi"]]
+  p2[["Bỏ bản ghi, không báo BR-04, B26"]]
   p3[["Tính lại thực tế<br/>phát timer.changed, task.upserted"]]
   s2["SCR-01 thực tế H:MM<br/>G05 vẽ block thực tế trên lịch"]
   ok(["Bản ghi đóng, thực tế cộng dồn"])
@@ -155,7 +158,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  u1[/"Space / nút dừng"/]
+  u1[/"Space / nút dừng / Ctrl+Shift+Space / menu khay"/]
   p1[["TimerStop"]]
   s2["SCR-01 thực tế H:MM"]
   ok(["Bản ghi đóng"])
@@ -254,7 +257,9 @@ flowchart TD
   s1 ==> u2 ==> p2 ==> m1 ==> ok
 
   s1 -->|"A1 · sửa giờ một bản ghi tại chỗ"| a1[["TimeEntryUpdate<br/>bản ghi TU_DONG → needsReview = false"]]
-  a1 --> ok
+  a1 --> a1m>"MSG-25 · Inline cạnh dòng, kèm icon dấu tích<br/>Đã lưu"]
+  a1m --> ok
+  m1 -->|"Hoàn tác"| m1u[["Xoá bản ghi vừa nhập<br/>thực tế về như trước QC-13 mục 5"]]
   s1 -->|"A6 · sửa bản ghi ritual / timer"| a6["Như A1, giờ do người dùng đặt<br/>giữ source, giả định"]
   a6 --> a1
   s1 -->|"A2 · xoá bản ghi"| a2[["TimeEntryDelete"]]
@@ -277,7 +282,7 @@ flowchart TD
   e4m -.-> fail2(["Giữ nội dung đã nhập"])
 
   class s1,u2,p2,m1 happy
-  class a1,a6,a2,a2m,a2r,a3,a5 alt
+  class a1,a1m,m1u,a6,a2,a2m,a2r,a3,a5 alt
   class a4m warn
   class e1m,e2m,e3m,e4m err
   class ok done
@@ -297,7 +302,8 @@ flowchart TD
 
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
-| A1 | Sửa giờ một bản ghi | Bản ghi cập nhật; `TU_DONG` hết chờ xác nhận | – |
+| (bước 4) | Hoàn tác trên MSG-03 | Xoá bản ghi vừa nhập (C29) | MSG-03 |
+| A1 | Sửa giờ một bản ghi | Bản ghi cập nhật; `TU_DONG` hết chờ xác nhận | MSG-25 (C29) |
 | A2 | Xoá bản ghi | Xoá cứng, Hoàn tác tạo lại | MSG-04 |
 | A3 | Nhập cho subtask | Đích = subtask | MSG-03 |
 | A4 | Khoảng giờ chồng bản ghi đã đóng | Vẫn lưu | MSG-08 |
@@ -313,7 +319,7 @@ flowchart TD
 
 ## UC-04 Focus mode và âm báo
 
-**Mở đầu:** hôm nay có ≥ 1 task chưa xong hoặc có task đang chọn. **Thành công:** Focus mode hiện một task, điều khiển timer được từ Focus. **Thất bại:** ở lại màn hiện tại.
+**Mở đầu:** người dùng đã đăng nhập; không có task để focus thì đi nhánh A3 (C26). **Thành công:** Focus mode hiện một task, điều khiển timer được từ Focus. **Thất bại:** ở lại màn hiện tại.
 
 ### Happy case
 
@@ -366,18 +372,20 @@ flowchart TD
   a2 --> s1
   u3 -->|"A1 · bấm hoàn thành task"| a1x{{"→ G02 · UC-03"}}
   a1x --> a1["SCR-03 gợi ý task kế tiếp chưa xong của hôm nay<br/>Bắt đầu hoặc Thoát"]
-  a1 -->|"Bắt đầu"| s1
+  a1 -->|"Bắt đầu"| a1b[["Focus chuyển sang task kế tiếp<br/>bật timer luôn UC-01, B25"]]
+  a1b --> s1
   a1 -->|"Thoát"| ok
   m1 -->|"A4 · đã tắt âm báo trong cài đặt Focus"| a4["Chỉ hiện MSG-10, không phát âm"]
 
   s1 -.->|"E1 · task bị xoá khi đang ở Focus"| e1(["Focus đóng"])
   e1 -.-> e1m>"MSG-16 · Toast<br/>Task không còn tồn tại hoặc đã lưu trữ, timer đã dừng"]
-  m1 -.->|"E2 · không phát được âm thanh"| e2["Chỉ hiện MSG-10<br/>lần đầu gợi ý kiểm tra âm thanh"]
+  m1 -.->|"E2 · không phát được âm thanh"| e2["Chỉ hiện MSG-10"]
+  e2 -.->|"lần đầu"| e2m>"MSG-10 và MSG-23 · một toast QC-13 mục 3<br/>Không phát được âm báo. Kiểm tra âm thanh của Windows"]
 
   class p1,s1,u3,m1,u4 happy
-  class a3m,a2,a1,a4 alt
+  class a3m,a2,a1,a1b,a4 alt
   class a1x link
-  class e1m,e2 err
+  class e1m,e2,e2m err
   class ok done
   class e1 fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -395,12 +403,12 @@ flowchart TD
 
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
-| A1 | Hoàn thành task trong Focus | [G02 UC-03](g02-quan-ly-task.md#uc-03-hoàn-thành--bỏ-hoàn-thành-task), gợi ý task kế tiếp | Theo G02 |
+| A1 | Hoàn thành task trong Focus | [G02 UC-03](g02-quan-ly-task.md#uc-03-hoàn-thành--bỏ-hoàn-thành-task), gợi ý task kế tiếp; "Bắt đầu" chuyển task và bật timer luôn (B25) | Theo G02 |
 | A2 | Đổi task trong Focus | Task mới, timer không tự chuyển | – |
 | A3 | Không có task để focus | Empty state | MSG-19 |
 | A4 | Tắt âm báo | Chỉ toast | MSG-10 |
 | E1 | Task bị xoá khi ở Focus | Đóng Focus | MSG-16 |
-| E2 | Không phát được âm thanh | Chỉ toast, lần đầu gợi ý kiểm tra âm thanh | MSG-10 |
+| E2 | Không phát được âm thanh | Chỉ toast; lần đầu thêm dòng gợi ý kiểm tra âm thanh (C27) | MSG-10, lần đầu MSG-10 + MSG-23 (một toast) |
 
 Tab Pomodoro, nút "Nghỉ một chút (K)" trên SCR-03: Bỏ (1.1).
 
@@ -408,7 +416,7 @@ Tab Pomodoro, nút "Nghỉ một chút (K)" trên SCR-03: Bỏ (1.1).
 
 ## UC-06 Giám sát timer chạy lâu (job `timer.watchdog`)
 
-**Mở đầu:** có bản ghi thời gian `endedAt` trống. **Thành công:** timer > 4 giờ được nhắc đúng một lần; timer > 24 giờ tự đóng và chờ xác nhận, người dùng chọn giờ dừng thật. **Thất bại:** lượt sau xử lý lại (idempotent).
+**Mở đầu:** có bản ghi thời gian `endedAt` trống. SCR-06 hiện ngay nếu cửa sổ app đang mở, hoặc lần đầu cửa sổ được mở lên nếu app đang ở khay (B24). **Thành công:** timer > 4 giờ được nhắc đúng một lần; timer > 24 giờ tự đóng và chờ xác nhận, người dùng chọn giờ dừng thật. **Thất bại:** lượt sau xử lý lại (idempotent).
 
 ### Happy case
 
@@ -420,10 +428,10 @@ flowchart TD
   m1>"MSG-11 · Thông báo<br/>Timer cho #quot;{tiêu đề}#quot; đã chạy hơn 4 giờ. Bạn vẫn đang làm? · Dừng · Dừng lúc… · Vẫn đang làm"]
   d2{"Chạy > 24 giờ?"}
   p2[["Đóng theo BR-09: endedAt = startedAt + 24 giờ<br/>auto_closed, needsReview; timer.changed; nhật ký system"]]
-  u1[/"Lần mở app kế tiếp"/]
+  u1[/"Cửa sổ app đang mở: hiện ngay<br/>app ở khay: lần đầu cửa sổ được mở lên B24"/]
   s1["SCR-06 Xác nhận giờ dừng · dialog"]
   m2>"MSG-20 · Dialog<br/>Timer cho #quot;{tiêu đề}#quot; chạy hơn 24 giờ nên đã tự dừng. Bạn dừng lúc mấy giờ?"]
-  u2[/"Chọn giờ dừng thật, bấm Lưu"/]
+  u2[/"Chọn giờ dừng thật trong startedAt tới<br/>min(now, startedAt + 24 giờ), bấm Lưu"/]
   p3[["TimeEntryUpdate endedAt, needsReview: false<br/>thực tế tính lại"]]
   ok(["Bản ghi DA_DONG với giờ dừng thật"])
 
@@ -460,7 +468,7 @@ flowchart TD
 
   m1 -->|"A1 · bấm Dừng"| a1x{{"→ UC-02 với endedAt = now"}}
   m1 -->|"A2 · bấm Vẫn đang làm"| a2(["Giữ timer<br/>không nhắc lại trong lượt này"])
-  m1 -->|"A6 · bấm Dừng lúc…"| a6["Bộ chọn giờ như SCR-06 #2<br/>trong (startedAt, now], mặc định giờ hoạt động cuối"]
+  m1 -->|"A6 · bấm Dừng lúc…"| a6["Bộ chọn giờ như SCR-06 #2<br/>trong (startedAt, min(now, startedAt + 24 giờ)]<br/>mặc định giờ hoạt động cuối"]
   a6 -->|"Lưu"| a6p[["TimerStop endedAt, áp BR-04"]]
   a6p --> a6e(["Bản ghi đóng ở giờ đã chọn"])
   s1 -->|"A3 · Giữ 24 giờ"| a3[["needsReview = false, giữ endedAt"]]
@@ -500,7 +508,7 @@ flowchart TD
 | A3 | SCR-06 "Giữ 24 giờ" | Bản ghi 24 giờ | – |
 | A4 | SCR-06 "Xoá bản ghi" | Bản ghi xoá | MSG-04 |
 | A5 | SCR-06 không chọn được giờ | Mặc định giờ hoạt động cuối `[giả định]` | – |
-| A6 | Bấm "Dừng lúc…" trong MSG-11 | Bộ chọn giờ → TimerStop | – |
+| A6 | Bấm "Dừng lúc…" trong MSG-11 | Bộ chọn giờ, cùng khoảng với SCR-06 (B24) → TimerStop | – |
 | E1 | Gửi thông báo lỗi | Thử lại 3 lần, vẫn tự đóng | – |
 | E2 | Lỗi CSDL khi tự đóng | Rollback, lượt sau làm lại | – |
 
@@ -559,7 +567,7 @@ flowchart TD
   re(["Mở lại app sau khi đóng cửa sổ / tắt máy<br/>trong lúc timer chạy BR-23"]) -->|"A7"| a7[["TimerGet"]]
   a7 --> d7{"Timer đã quá 24 giờ?"}
   d7 -->|"không"| a7s["Home ở hôm nay, không vào Focus<br/>SCR-01 đồng hồ theo startedAt + độ lệch server"]
-  d7 -->|"có"| a7x{{"→ UC-06 · SCR-06"}}
+  d7 -->|"có"| a7x{{"→ UC-06 · SCR-06 hiện ngay khi cửa sổ mở lên"}}
   p2 -->|"A3 · lệnh dừng offline cho timer<br/>đã bị timer khác đóng"| a3["Bỏ lệnh dừng<br/>giữ mốc đóng sớm hơn"]
   a3 --> p3
   p2 -->|"A4 · bản ghi offline chồng bản ghi<br/>timer / auto_closed đã có"| a4["Cắt phần chồng của bản ghi tới sau<br/>còn < 10 giây thì bỏ"]
@@ -609,13 +617,13 @@ flowchart TD
 - [x] Mọi nút màn hình có mã SCR; mọi nút thông báo có mã MSG.
 
 **Ghi chú cho brief G07**
-1. **Phím toàn cục và menu khay chỉ có chiều "bật".** BR-17 và IA mục 8 ghi Ctrl+Shift+Space là "bật / dừng timer"; menu khay (BR-23) có "Bật / dừng timer (kèm tên task)". UC-01 A4 chỉ mô tả bật; UC-02 không có điểm vào nào là phím toàn cục hay menu khay. Menu khay khi chưa có timer bật task nào cũng chưa ghi. Sơ đồ chỉ vẽ phần SRS có.
-2. **Nút trong MSG-11 lệch PRD.** SRS MSG-11: "Dừng · Dừng lúc… · Vẫn đang làm"; PRD G07 US5.1 AC01: "Dừng / Dừng lúc… / Tiếp tục". Sơ đồ theo SRS.
-3. **"Lần mở app kế tiếp" (UC-06 bước 4, BR-09)** chưa rõ với app luôn chạy ở khay (BR-23, IA-05): SCR-06 hiện khi đưa cửa sổ lên từ khay, hay ngay khi job tự đóng lúc cửa sổ đang mở? Bộ chọn giờ cũng khác nhau: SCR-06 #2 trong (`startedAt`, `startedAt` + 24 giờ], "Dừng lúc…" (A6) trong (`startedAt`, now].
-4. **UC-04 tiền điều kiện mâu thuẫn A3.** Tiền điều kiện đòi "hôm nay có ≥ 1 task chưa xong hoặc có task đang chọn", nhưng A3 xử lý đúng trường hợp ngược lại (MSG-19).
-5. **UC-04 A1** "Bắt đầu" sau khi hoàn thành: chỉ chuyển Focus sang task kế tiếp hay bật timer luôn (UC-01)? Sơ đồ vẽ là về SCR-03 với task kế tiếp.
-6. **UC-04 E2** "lần đầu gợi ý kiểm tra âm thanh" chưa có mã MSG / chữ.
-7. **MSG-16** ("…timer đã dừng") dùng cho UC-01 E2, lúc bật timer thất bại (timer chưa từng chạy trên server); chữ không khớp ngữ cảnh. Đề xuất một MSG riêng hoặc sửa chữ.
-8. **BR-04 bỏ lượt chạy < 10 giây** không có phản hồi nào cho người dùng (đồng hồ đã chạy rồi biến mất). Cần chốt có toast hay không.
-9. **UC-03:** "Hoàn tác" trong MSG-03 chưa ghi cách xử lý (xoá bản ghi vừa tạo?); A1 sửa bản ghi không có thông báo xác nhận.
-10. **\[TimeEntryList\]** còn `[giả định — chưa có trong danh sách API]`.
+1. ~~**Phím toàn cục và menu khay chỉ có chiều "bật"**; menu khay khi chưa có timer chưa ghi.~~ **Đã sửa 09/11/2026 (B23 / C25):** Ctrl+Shift+Space và menu khay dừng timer khi đang có timer (UC-02 bước 1, BR-17, BR-23); menu khay khi chưa có timer có "Bật timer: {task kế tiếp hôm nay}" (UC-01 A6). Sơ đồ UC-01, UC-02 đã thêm.
+2. ~~**Nút trong MSG-11 lệch PRD.**~~ **Đã sửa 09/11/2026 (B27):** giữ "Dừng · Dừng lúc… · Vẫn đang làm" theo SRS; PRD US5.1 AC01 sửa theo.
+3. ~~**"Lần mở app kế tiếp" (UC-06 bước 4, BR-09)** chưa rõ với app ở khay; hai bộ chọn giờ khác khoảng.~~ **Đã sửa 09/11/2026 (B24):** SCR-06 hiện ngay nếu cửa sổ đang mở, nếu app ở khay thì hiện lần đầu cửa sổ được mở lên; giờ dừng chọn trong (`startedAt`, min(now, `startedAt` + 24 giờ)], chung cho SCR-06 và "Dừng lúc…".
+4. ~~**UC-04 tiền điều kiện mâu thuẫn A3.**~~ **Đã sửa 09/11/2026 (C26):** bỏ điều kiện "có ít nhất 1 task chưa xong hoặc có task đang chọn" khỏi tiền điều kiện; A3 xử lý trường hợp đó.
+5. ~~**UC-04 A1** "Bắt đầu" sau khi hoàn thành: chỉ chuyển task hay bật timer luôn?~~ **Đã sửa 09/11/2026 (B25):** chuyển sang task kế tiếp và bật timer luôn; sơ đồ UC-04 thêm bước bật timer.
+6. ~~**UC-04 E2** "lần đầu gợi ý kiểm tra âm thanh" chưa có mã MSG / chữ.~~ **Đã sửa 09/11/2026 (C27):** MSG-23 "Không phát được âm báo. Kiểm tra âm thanh của Windows", là dòng 2 của toast MSG-10 (QC-13 mục 3).
+7. ~~**MSG-16** dùng cho UC-01 E2, chữ không khớp ngữ cảnh.~~ **Đã sửa 09/11/2026 (C28):** UC-01 E2 dùng MSG-24 "Không bật được timer vì task đã bị xoá hoặc đã lưu trữ"; MSG-16 giữ cho timer đang chạy và lệnh offline.
+8. ~~**BR-04 bỏ lượt chạy dưới 10 giây** không có phản hồi.~~ **Đã sửa 09/11/2026 (B26):** không báo người dùng (thường là bấm nhầm).
+9. ~~**UC-03:** Hoàn tác của MSG-03 chưa ghi cách xử lý; A1 sửa bản ghi không có xác nhận.~~ **Đã sửa 09/11/2026 (C29):** Hoàn tác xoá bản ghi vừa nhập (QC-13 mục 5); sửa bản ghi hiện MSG-25 "Đã lưu" kèm icon dấu tích.
+10. ~~**\[TimeEntryList\]** còn `[giả định — chưa có trong danh sách API]`.~~ **Đã sửa 09/11/2026 (C30):** việc kỹ thuật, không cần PO; chốt khi viết code, SRS giữ nguyên.
