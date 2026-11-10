@@ -109,7 +109,7 @@ Bảng ví dụ dùng làm ca kiểm thử chuẩn (cả cho bộ đánh giá AI
 2. **Không reset** (`firstPlannedDate` giữ nguyên) khi task bị đẩy sang ngày sau theo kiểu thụ động: rollover, phím D, shutdown chọn "Ngày mai" (kể cả "Áp dụng cho tất cả").
 3. **Reset** (`firstPlannedDate` = ngày dự định mới) khi người dùng đặt ngày có chủ đích hoặc task rời luồng ngày: chọn ngày bằng bộ chọn ngày, kéo sang ngày khác, "Hoãn 1 tuần", phím S, đưa vào backlog, hoàn thành, khôi phục từ Lưu trữ hoặc Thùng rác.
 4. **Hiển thị.** Card hiện nhãn "Dời {n} ngày" khi n ≥ 1. Bước "Xem lại hôm qua" của Daily planning lấy task có n ≥ 1.
-5. **Tự lưu trữ.** Khi n ≥ **4** `[giả định]`, rollover chuyển task sang `LUU_TRU` với lý do `stale`. Ngưỡng cố định, không chỉnh trên giao diện ở 1.0 (chốt 09/11/2026, B10). Task có ít nhất một subtask đã tích hoặc đã có thời gian thực tế được tính là có hoạt động và không bị tự lưu trữ (B11).
+5. **Tự lưu trữ.** Khi n ≥ **4** (chốt 10/11/2026, D02), rollover chuyển task sang `LUU_TRU` với lý do `stale`. Ngưỡng cố định, không chỉnh trên giao diện ở 1.0 (chốt 09/11/2026, B10). Task có ít nhất một subtask đã tích hoặc đã có thời gian thực tế được tính là có hoạt động và không bị tự lưu trữ (B11).
 6. **Chế độ chỉ đọc (1.1).** Các ngày workspace bị đóng băng không tính vào n (QC-09).
 
 ## QC-05. Đổi ngày task

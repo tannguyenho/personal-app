@@ -429,8 +429,8 @@ Không có ở 1.0, 1.1; flow 1.0 không vẽ (QC-13 mục 6, C47).
 | --- | --- | --- | --- |
 | Nhắc Daily planning | G08 MSG-01 | Trong app, Windows | Wizard Daily planning hôm nay (G08 UC-01) |
 | Nhắc Daily shutdown | G08 MSG-02 | Trong app, Windows | Wizard Daily shutdown (G08 UC-02) |
-| Chia sẻ ritual chưa gửi được | G08 MSG-11 | Trong app | Nút "Thử lại" gửi lại ngay trên dòng (G08 UC-03 A4); bấm dòng mở chi tiết task ghi chép ritual của ngày đó (G02 SCR-03) `[giả định]` |
-| Timer chạy hơn 4 giờ | G07 MSG-11 | Trong app, Windows | Nút "Dừng" · "Dừng lúc…" · "Vẫn đang làm" trên dòng (G07 UC-06); bấm dòng mở chi tiết task đang chạy timer (G02 SCR-03) `[giả định]` |
+| Chia sẻ ritual chưa gửi được | G08 MSG-11 | Trong app | Nút "Thử lại" gửi lại ngay trên dòng (G08 UC-03 A4); bấm dòng mở chi tiết task ghi chép ritual của ngày đó (G02 SCR-03) (chốt 10/11/2026, D06) |
+| Timer chạy hơn 4 giờ | G07 MSG-11 | Trong app, Windows | Nút "Dừng" · "Dừng lúc…" · "Vẫn đang làm" trên dòng (G07 UC-06); bấm dòng mở chi tiết task đang chạy timer (G02 SCR-03) (chốt 10/11/2026, D06) |
 | Timebox bị gỡ vì sự kiện bị xoá / đổi thành cả ngày | G05 MSG-14, MSG-31 | Trong app | Chi tiết task (G02 SCR-03) |
 | Lịch cần kết nối lại | G05 SCR-09 (MSG-06) | Trong app, Windows | Cài đặt → Lịch (G05 SCR-01), nút "Kết nối lại" (G05 UC-08) |
 | Rollover lỗi (banner chờ lượt, IA-17) | G06 MSG-25 | Trong app | Home board hôm nay (G04 SCR-01), banner có "Thử lại" |

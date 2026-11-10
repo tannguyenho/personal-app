@@ -844,5 +844,5 @@ flowchart TD
 - ~~UC-05 bước 4: lượt chạy trong \[RolloverEnsure\] lúc mở app thì MSG-11 hiện ngay hay đợi lần mở sau~~ **Đã sửa 09/11/2026 (B07):** hiện ngay khi lượt chạy xong; lượt do job chạy trước thì hiện lần mở app kế tiếp (UC-05 bước 4, UC-07 bước 5).
 - ~~UC-03 A4 gộp G08 (1.0) và G09 Weekly planning (1.1)~~ **Đã sửa 09/11/2026 (A9):** SRS ghi "G09 Weekly planning (1.1)"; sơ đồ chỉ vẽ G08.
 - ~~IA có panel Backlog gọn (Shift+B) nhưng SRS chỉ có SCR-01~~ **Đã sửa 09/11/2026 (C09):** thêm SCR-09 Panel Backlog gọn (cùng bucket với SCR-01, bỏ phần lọc) và UC-02 A9.
-- Mới 09/11/2026 (A6): thêm nhánh mất mạng UC-02 E5, UC-03 E5, UC-06 E5 (chạy trên máy, dấu "Chờ đồng bộ"). "Xoá tất cả" khi mất mạng: nút mờ, MSG-27 `[giả định]`.
-- Mới 09/11/2026 (B08, B09, B11, B12): instance lặp đã sửa riêng / có thời gian thực tế không bị `skipped` (UC-04 A12); MSG-13 thành "Đã bỏ qua"; task có hoạt động không bị tự lưu trữ (UC-05 A4); khôi phục vào Backlog (UC-06 A8, MSG-26). Bucket đích khi khôi phục vào Backlog vẫn là `[giả định]` ("Tuần tới", đầu bucket).
+- Mới 09/11/2026 (A6): thêm nhánh mất mạng UC-02 E5, UC-03 E5, UC-06 E5 (chạy trên máy, dấu "Chờ đồng bộ"). "Xoá tất cả" khi mất mạng: nút mờ, MSG-27 (chốt 10/11/2026, D03).
+- Mới 09/11/2026 (B08, B09, B11, B12): instance lặp đã sửa riêng / có thời gian thực tế không bị `skipped` (UC-04 A12); MSG-13 thành "Đã bỏ qua"; task có hoạt động không bị tự lưu trữ (UC-05 A4); khôi phục vào Backlog (UC-06 A8, MSG-26). Bucket đích khi khôi phục vào Backlog: "Tuần tới", đầu bucket (chốt 10/11/2026, D01).

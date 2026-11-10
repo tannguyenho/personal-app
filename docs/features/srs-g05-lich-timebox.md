@@ -543,7 +543,7 @@ Cờ phụ đi kèm mọi trạng thái trên: `XUNG_DOT` (BR-14; không áp cho
 | 6 | Dấu xong (icon dấu tích, không phải ký tự trong chữ; QC-13 mục 4, C24) | Checkbox | Hoàn thành task (G02) |
 | 7 | (Bỏ — F5: không còn nhãn "Lệch ngày") | – | – |
 | 8 | Icon liên kết sự kiện | Icon | Chỉ timebox `LIEN_KET_SU_KIEN`; thân và cạnh không kéo được, tooltip MSG-26 (BR-21) |
-| 9 | "Gỡ khỏi lịch" | Icon button | Hiện khi hover / chọn block `[giả định cách hiển thị]`; chỉ gỡ block này (UC-04 A1, B22) |
+| 9 | "Gỡ khỏi lịch" | Icon button | Hiện khi hover / chọn block (chốt 10/11/2026, D04); chỉ gỡ block này (UC-04 A1, B22) |
 
 ### SCR-06 Timebox trên card và chi tiết task
 

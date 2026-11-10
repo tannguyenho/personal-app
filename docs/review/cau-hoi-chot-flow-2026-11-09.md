@@ -392,9 +392,9 @@ PO trả lời ngày 09/11/2026: "A đồng ý hết, B theo đề xuất, C đ�
 
 ## Điểm phát sinh khi ghi vào tài liệu (cần PO xem)
 
-Khi ghi quyết định vào SRS / PRD / flow, một số chỗ quyết định chưa nói đủ. Tài liệu đang theo cách dưới đây, gắn `[giả định]` ở chỗ tương ứng; PO đồng ý thì bỏ nhãn.
+Khi ghi quyết định vào SRS / PRD / flow, một số chỗ quyết định chưa nói đủ. **PO đồng ý cả D01–D09 ngày 10/11/2026**: tài liệu giữ đúng cách ghi ở cột "Đang ghi", đã bỏ nhãn `[giả định]` ở D01–D06 (ghi "chốt 10/11/2026, Dxx"). D08 vẫn là tên tạm cho tech chốt; D09 duyệt cùng brief.
 
-| Mã | Chỗ | Đang ghi | Nơi |
+| Mã | Chỗ | Đang ghi (đã chốt) | Nơi |
 |---|---|---|---|
 | D01 | "Khôi phục vào Backlog" (B12) vào bucket nào | Bucket "Tuần tới", đầu bucket, giống Shift+Z | G06 BR-14, UC-06 A8 |
 | D02 | Con số ngưỡng tự lưu trữ (B10 chỉ chốt "cố định") | Vẫn là 4 ngày `[giả định]` | QC-04 mục 5 |

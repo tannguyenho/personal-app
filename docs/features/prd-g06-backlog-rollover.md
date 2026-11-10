@@ -28,7 +28,7 @@ Không phải việc nào cũng làm hôm nay, và không phải việc nào lê
 
 - Hoãn một task vào backlog bằng 2 phím (Z + số bucket) hoặc 1 tổ hợp (Shift+Z).
 - 95% người dùng có task chưa xong của ngày cũ chuyển sang hôm nay trong ≤ 15 phút sau mốc đầu ngày (B6). Lượt lỗi được chạy bù ngay khi người dùng mở app.
-- Task bị hoãn ≥ 4 ngày làm việc `[giả định]` (chỉ đếm ngày có trong lịch làm việc của task, Q32) tự rời khỏi hôm nay (khi bật Tự lưu trữ), khôi phục được bằng 1 thao tác từ Lưu trữ.
+- Task bị hoãn ≥ 4 ngày làm việc (chỉ đếm ngày có trong lịch làm việc của task, Q32) tự rời khỏi hôm nay (khi bật Tự lưu trữ), khôi phục được bằng 1 thao tác từ Lưu trữ.
 - Bucket tới kỳ được nhắc lại trong Daily planning (G08) và Weekly planning (G09, bản 1.1).
 
 # 2. Người dùng
@@ -49,7 +49,7 @@ Không phải việc nào cũng làm hôm nay, và không phải việc nào lê
 - Chuyển task vào backlog: Z → chọn bucket (1, 2, 3, 4, 5, 0); Shift+Z lên đầu backlog; mục "Chuyển vào backlog" trong menu Ngày dự định; kéo thả vào panel.
 - Lấy task từ backlog ra ngày: kéo vào cột ngày, chọn ngày trong menu Ngày dự định, phím S về hôm nay.
 - Rollover tự động task chưa xong về hôm nay (job mỗi 15 phút `[giả định]`), chạy mọi ngày kể cả ngày không có trong lịch làm việc (Q32), có lease và trạng thái thất bại; API "đảm bảo rollover" chạy bù khi người dùng mở app, dùng chung với G08. Rollover không có Hoàn tác (Q41).
-- Lưu trữ (panel phải): Tự lưu trữ, task bị hoãn ≥ 4 ngày làm việc `[giả định]`, instance lặp "bị bỏ qua", khôi phục về hôm nay, "Xoá tất cả" có xác nhận. Tự lưu trữ không có Hoàn tác (Q41).
+- Lưu trữ (panel phải): Tự lưu trữ, task bị hoãn ≥ 4 ngày làm việc, instance lặp "bị bỏ qua", khôi phục về hôm nay, "Xoá tất cả" có xác nhận. Tự lưu trữ không có Hoàn tác (Q41).
 - Hai quy tắc dùng chung: số ngày bị hoãn (QC-04), bảng đổi ngày task (QC-05).
 
 ## 3.2 Ngoài phạm vi
@@ -116,7 +116,7 @@ Rollover idempotent theo người dùng + ngày: chạy lại không chuyển ha
 | 3 | Nhắc lại | Ritual hiện bucket tới kỳ (G08, G09) | Người dùng chọn việc đưa vào ngày |
 | 4 | Lên ngày | Kéo task từ backlog vào cột ngày (hôm nay hoặc sau) | Task có ngày dự định |
 | 5 | Chưa xong | Qua mốc đầu ngày, task tự chuyển sang hôm nay, card hiện "Dời {n} ngày" | Hôm nay đủ việc dở |
-| 6 | Dọn dẹp | Bị hoãn ≥ 4 ngày làm việc `[giả định]` → Lưu trữ; mở Lưu trữ để khôi phục hoặc xoá | Hôm nay gọn, không mất dữ liệu |
+| 6 | Dọn dẹp | Bị hoãn ≥ 4 ngày làm việc → Lưu trữ; mở Lưu trữ để khôi phục hoặc xoá | Hôm nay gọn, không mất dữ liệu |
 
 Bước 3 thuộc G08 / G09, chỉ nêu để thấy vị trí của G06. PRD này tập trung bước 1, 2, 4, 5, 6.
 
@@ -168,7 +168,7 @@ AC04: Shift+B mở panel Backlog gọn ở panel phải: cùng các bucket với
 
 AC05: Tải Backlog lỗi → vẫn hiện dữ liệu trên máy, kèm "Chưa tải được. Thử lại" tại chỗ (QC-MSG-02, C07).
 
-AC06: Mất mạng vẫn thêm task, sửa folder, kéo task trong Backlog, đưa task ra ngày và khôi phục từ Lưu trữ được: thay đổi hiện ngay, có dấu "Chờ đồng bộ" và được gửi lên khi có mạng (QC-08 mục 7, A6). "Xoá tất cả" trong Lưu trữ cần mạng `[giả định]`.
+AC06: Mất mạng vẫn thêm task, sửa folder, kéo task trong Backlog, đưa task ra ngày và khôi phục từ Lưu trữ được: thay đổi hiện ngay, có dấu "Chờ đồng bộ" và được gửi lên khi có mạng (QC-08 mục 7, A6). "Xoá tất cả" trong Lưu trữ cần mạng (chốt 10/11/2026, D03).
 
 ### US2.2 Folder
 
@@ -232,7 +232,7 @@ AC01: Workspace chỉ đọc → rollover dừng. Khi thoát chỉ đọc, rollo
 
 ### US4.1 Tự lưu trữ việc bị dời mãi
 
-AC01: Bật Tự lưu trữ, task có số ngày bị hoãn ≥ 4 `[giả định]` (ngưỡng cố định, không chỉnh trên giao diện ở 1.0, B10) → vào Lưu trữ (lý do `stale`) ngay trong lượt rollover, không còn trên hôm nay. Timebox xử lý như "Đưa vào backlog": timebox tương lai bị gỡ và sự kiện trên lịch ngoài bị xoá; timebox quá khứ chỉ gỡ liên kết, sự kiện giữ lại; timer không dừng (dòng "Tự lưu trữ" của QC-05, Q42).
+AC01: Bật Tự lưu trữ, task có số ngày bị hoãn ≥ 4 (ngưỡng cố định, không chỉnh trên giao diện ở 1.0, B10) → vào Lưu trữ (lý do `stale`) ngay trong lượt rollover, không còn trên hôm nay. Timebox xử lý như "Đưa vào backlog": timebox tương lai bị gỡ và sự kiện trên lịch ngoài bị xoá; timebox quá khứ chỉ gỡ liên kết, sự kiện giữ lại; timer không dừng (dòng "Tự lưu trữ" của QC-05, Q42).
 
 AC02: Có toast nêu số task vừa lưu trữ, link "Xem Lưu trữ": lượt rollover chạy ngay lúc mở app thì toast hiện ngay khi lượt chạy xong; lượt do job chạy trước đó thì toast hiện lần mở app kế tiếp (chốt 09/11/2026, B07). Toast viết "ngày làm việc" như nhãn trong Lưu trữ (C06). Toast không có Hoàn tác (Q41).
 
@@ -246,7 +246,7 @@ AC05: Task có hoạt động (ít nhất một subtask đã tích, hoặc đã 
 
 AC01: Panel phải → Lưu trữ liệt kê task lưu trữ, mới nhất trước, mỗi dòng có lý do theo SRS G06 MSG-12 / MSG-13: "Bị hoãn từ 4 ngày làm việc trở lên" (`stale`) hoặc "Đã bỏ qua" (`skipped`; instance bị bỏ qua luôn hiện trong Lưu trữ, chốt 09/11/2026, B09). Lưu trữ thủ công (`manual`, nhãn "Bạn đã lưu trữ") bỏ ở 1.0 (Q34, bản sau).
 
-AC02: "Khôi phục" có hai lựa chọn (chốt 09/11/2026, B12): "Khôi phục vào hôm nay" → task về đầu hôm nay; "Khôi phục vào Backlog" → task vào đầu bucket "Tuần tới" `[giả định]`. Số ngày bị hoãn về 0; toast có Hoàn tác. Kéo task vào ngày cụ thể chỉ cho ngày từ hôm nay trở đi, cũng có toast Hoàn tác (A2). Hoàn tác đưa task về lại Lưu trữ với lý do cũ (QC-13 mục 5, A10).
+AC02: "Khôi phục" có hai lựa chọn (chốt 09/11/2026, B12): "Khôi phục vào hôm nay" → task về đầu hôm nay; "Khôi phục vào Backlog" → task vào đầu bucket "Tuần tới" (chốt 10/11/2026, D01). Số ngày bị hoãn về 0; toast có Hoàn tác. Kéo task vào ngày cụ thể chỉ cho ngày từ hôm nay trở đi, cũng có toast Hoàn tác (A2). Hoàn tác đưa task về lại Lưu trữ với lý do cũ (QC-13 mục 5, A10).
 
 AC03: Khôi phục instance lặp vào ngày đã có instance cùng series → vẫn khôi phục, kèm cảnh báo "Ngày này đã có {tên series}" (QC-06).
 
@@ -306,5 +306,5 @@ AC03: Khôi phục một task như vậy từ Thùng rác đưa task về lại 
 - **Chốt 09/11/2026 (B09):** instance bị bỏ qua hiện trong Lưu trữ, nhãn "Đã bỏ qua" (US4.2 AC01).
 - **Chốt 09/11/2026 (B10):** ngưỡng Tự lưu trữ cố định, không chỉnh trên giao diện ở 1.0. Con số 4 vẫn là `[giả định]`.
 - **Chốt 09/11/2026 (B11):** subtask đã tích hoặc thời gian thực tế tính là "có hoạt động", task không bị tự lưu trữ (US4.1 AC05).
-- **Chốt 09/11/2026 (B12):** khôi phục từ Lưu trữ có hai lựa chọn "Khôi phục vào hôm nay" và "Khôi phục vào Backlog" (US4.2 AC02). Còn mở: bucket đích khi khôi phục vào Backlog (bản này giả định "Tuần tới", đầu bucket).
+- **Chốt 09/11/2026 (B12):** khôi phục từ Lưu trữ có hai lựa chọn "Khôi phục vào hôm nay" và "Khôi phục vào Backlog" (US4.2 AC02). **Chốt 10/11/2026 (D01):** khôi phục vào Backlog đưa task lên đầu bucket "Tuần tới".
 - **Chốt 09/11/2026 (B13):** Backlog không có mức ưu tiên riêng ở 1.0.
