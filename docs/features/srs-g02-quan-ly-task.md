@@ -12,7 +12,7 @@
 >
 > Cập nhật 06/11/2026 theo F4 ([quyết định 06/11](../review/quyet-dinh-chot-2026-11-06.md)): bỏ công tắc "Cho phép AI hoàn thành và xoá task"; khi trợ lý AI bật, AI luôn được hoàn thành và xoá task / subtask (vào Thùng rác, có Hoàn tác); task có liên kết tích hợp vẫn không bao giờ được AI hoàn thành hay xoá (D10).
 >
-> Cập nhật 10/11/2026 theo [brief G02](../design-brief/g02-quan-ly-task.md) đã duyệt (mục 11, O-01 … O-20 chốt theo đề xuất của brief): UC-01 A3, A5, A7; UC-02 A11, E3, E8; UC-03 A1; UC-04 E5; UC-05 E2; BR-04, BR-09, BR-14, BR-16, BR-22; SCR-02 #7, #12; SCR-03 #9; thêm **SCR-08** Ô thêm nhanh toàn cục, **SCR-09** Popover chọn channel và **MSG-29 … MSG-38** (O-19).
+> Cập nhật 10/11/2026 theo [brief G02](../design-brief/g02-quan-ly-task.md) đã duyệt (mục 11, O-01 … O-20 chốt theo đề xuất của brief): UC-01 A3, A5, A7; UC-02 A11, E3, E8; UC-03 A1; UC-04 E5; UC-05 E2; BR-04, BR-09, BR-14, BR-16, BR-22; SCR-02 #7, #12; SCR-03 #9; thêm **SCR-08** Ô thêm nhanh toàn cục, **SCR-09** Popover chọn channel và **MSG-29 … MSG-38** (O-19). Cùng ngày PO duyệt nốt mọi chi tiết `[đề xuất]` còn lại của brief, ghi "(chốt 10/11/2026, brief G02)": UC-01 bước 7, A1, A4; UC-06 E6; SCR-01 #8, SCR-05 #3, SCR-06 #3, SCR-07 #2, SCR-08 #3, #4, SCR-09 #4; chữ lỗi tên context MSG-39, MSG-40 (BR-14, UC-06 E1, E2, SCR-06 #2; O-17).
 
 ## 1. Tổng quan
 
@@ -57,7 +57,7 @@
 | BR-11 | **Xoá** là xoá mềm: task chuyển `DA_XOA` (`deletedAt`), lưu trạng thái trước khi xoá (`deletedFromStatus`) cho BR-12; không hỏi xác nhận, luôn có Hoàn tác. Timer và timebox theo QC-05 dòng "Xoá": dừng timer và lưu thời gian trước khi xoá; timebox tương lai bị gỡ, sự kiện ngoài bị xoá; timebox quá khứ chỉ gỡ liên kết, giữ sự kiện. Hoàn tác (toast / Ctrl+Z) khôi phục cả liên kết timebox, tạo lại sự kiện ngoài đã xoá với giờ cũ (QC-05). Xoá instance lặp → ngày gốc thành ngày ngoại lệ (G03 BR-15). Giữ trong Thùng rác 30 ngày (QC-03, Q28), sau đó xoá vĩnh viễn. Bản ghi thời gian của task đã xoá không tính (QC-07). Tác nhân `ai` (qua MCP local) chỉ được xoá khi thoả BR-21 |
 | BR-12 | **Khôi phục** từ Thùng rác: theo bảng QC-03 mục 3 (về đúng trạng thái trước khi xoá). Khôi phục reset số ngày bị hoãn (QC-04 mục 3). Instance lặp: áp QC-06 đường thủ công (cho khôi phục, cảnh báo MSG-24). Khôi phục từ Thùng rác (sau khi toast đã tắt) không tạo lại timebox. Khôi phục không gỡ ngày ngoại lệ của series (G03 BR-15) |
 | BR-13 | Mọi thay đổi ghi \[ActivityLog\]: tác nhân (`user` / `ai` / `integration` / `system`), trường, giá trị cũ, giá trị mới, thời điểm |
-| BR-14 | **Channel.** Tên 1–50 ký tự, không chứa "#", không trùng trong cùng context (không phân biệt hoa thường). Tên context 1–50 ký tự, không trùng giữa các context (không phân biệt hoa thường) (chốt 10/11/2026, O-17). Xoá channel phải chọn channel nhận task (mặc định "Chưa phân loại"); không xoá task. \[ChannelDelete\] chuyển **mọi** task của channel sang channel nhận, kể cả task `LUU_TRU`, `DA_XOA` (Thùng rác) và mẫu của series lặp (G03) (C10). Không xoá được channel hệ thống "Chưa phân loại" (B4). Channel hệ thống không thuộc context nào, hiện riêng ở đầu danh sách channel; không đổi tên, không ẩn được (chốt 10/11/2026, O-07). Bản 1.0 một người dùng: người dùng tạo, sửa, xoá channel tự do, không phân quyền; quyền tạo channel chung / riêng tư theo vai trò để bản sau (Q35). Cờ `isPrivate` ở 1.0 chỉ dùng cho G05 (sự kiện timebox ghi ra lịch ngoài thành Private); phần chia sẻ trong workspace để bản sau (Q37). Khung giờ channel theo BR-22 – BR-24 |
+| BR-14 | **Channel.** Tên 1–50 ký tự, không chứa "#", không trùng trong cùng context (không phân biệt hoa thường). Tên context 1–50 ký tự, không trùng giữa các context (không phân biệt hoa thường) (chốt 10/11/2026, O-17); tên context trùng → MSG-39, trống hoặc > 50 ký tự → MSG-40 (chốt 10/11/2026, brief G02). Xoá channel phải chọn channel nhận task (mặc định "Chưa phân loại"); không xoá task. \[ChannelDelete\] chuyển **mọi** task của channel sang channel nhận, kể cả task `LUU_TRU`, `DA_XOA` (Thùng rác) và mẫu của series lặp (G03) (C10). Không xoá được channel hệ thống "Chưa phân loại" (B4). Channel hệ thống không thuộc context nào, hiện riêng ở đầu danh sách channel; không đổi tên, không ẩn được (chốt 10/11/2026, O-07). Bản 1.0 một người dùng: người dùng tạo, sửa, xoá channel tự do, không phân quyền; quyền tạo channel chung / riêng tư theo vai trò để bản sau (Q35). Cờ `isPrivate` ở 1.0 chỉ dùng cho G05 (sự kiện timebox ghi ra lịch ngoài thành Private); phần chia sẻ trong workspace để bản sau (Q37). Khung giờ channel theo BR-22 – BR-24 |
 | BR-15 | Bản 1 chỉ một người dùng (Q35): người dùng chỉ thấy và sửa task của chính mình. Workspace nhiều thành viên, giao task, follow để bản sau, 1.2 trở đi; bản 1.1 vẫn chỉ một người dùng (Q47; G12, [`02-tinh-nang-ban-sau.md`](../02-tinh-nang-ban-sau.md)); khi làm, task được giao vào bucket backlog "Tuần sau", đặt lên đầu (Q36) |
 | BR-16 | Phím tắt một ký tự chỉ hoạt động khi không có ô nhập nào đang focus; lệnh có tác dụng phụ (C, Ctrl+Backspace) luôn có toast Hoàn tác. Chốt 10/11/2026 (O-10): (a) bỏ hoàn thành bằng ✓ / C có toast MSG-37 có "Hoàn tác" (UC-03 A1); (b) Ctrl+Z (khi không đang gõ trong ô nhập) hoàn tác thao tác gần nhất có toast Hoàn tác còn đang hiện (hoàn thành, bỏ hoàn thành, xoá task, xoá subtask, đổi ngày), và đổi thứ tự subtask (QC-13 mục 2); (c) Ctrl+Backspace khi đang gõ trong ô nhập giữ nghĩa xoá một từ, không xoá task |
 | BR-17 | **Subtask** (C9). (a) Chỉ một cấp: subtask không có subtask con. (b) Tích subtask cuối cùng **không** tự hoàn thành task. (c) Thêm subtask vào task `HOAN_THANH` → subtask `CHUA_XONG`, task giữ `HOAN_THANH`, không mở lại. (d) Xoá subtask không hỏi xác nhận, có toast Hoàn tác (MSG-21) ≥ 5 giây; Hoàn tác trả subtask về đúng vị trí, trạng thái, thời lượng, thời gian thực tế. Subtask đã xoá không vào Thùng rác `[giả định]`. (e) Timer chạy trên task cha, không chạy trên subtask (QC-07 mục 6) |
@@ -128,16 +128,16 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 | 4 | Hệ thống | Sau 400 ms ngừng gõ `[giả định]`, nếu đủ điều kiện BR-04 (trợ lý AI bật, đã đồng ý, có Claude Code, bật gợi ý) gọi \[TaskSuggest\] qua Claude Code CLI; điền thời lượng và channel có biểu tượng ✨ (BR-04) |
 | 5 | Người dùng | Tuỳ chọn sửa ngày, thời lượng, channel, priority, vị trí; nhấn Enter |
 | 6 | Hệ thống | Kiểm tra BR-01; gọi \[TaskCreate\] (idempotency key do client sinh); hiện task ngay theo BR-03 (cập nhật lạc quan) |
-| 7 | Hệ thống | Đóng ô soạn hoặc giữ mở để gõ task kế tiếp `[giả định: giữ mở]` |
+| 7 | Hệ thống | Giữ ô soạn mở, trống, để gõ task kế tiếp: chip Ngày giữ nguyên; chip Thời lượng, Channel, Priority về mặc định, không mang giá trị của task trước (chốt 10/11/2026, brief G02) |
 
 **Luồng thay thế**
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| A1 | Người dùng dán URL ở bước 3 | Gọi \[TaskFromUrl\]; tiêu đề = tiêu đề trang, không đọc được → dùng URL; task giữ link nguồn |
+| A1 | Người dùng dán URL ở bước 3 | Gọi \[TaskFromUrl\]; tiêu đề = tiêu đề trang, không đọc được → dùng URL; task giữ link nguồn. Enter khi đang đọc tiêu đề → tạo ngay với URL làm tiêu đề (chốt 10/11/2026, brief G02) |
 | A2 | Người dùng xoá ngày ở bước 5 | Task tạo vào backlog (BR-02), toast MSG-07 có link mở Backlog |
 | A3 | Người dùng nhấn Esc khi đã gõ | Đóng ô soạn, giữ bản nháp trên máy; mở lại ô soạn của cùng ngày thấy nội dung cũ. Mỗi ngày một bản nháp, giữ cả khi đóng app, tới khi tạo task hoặc xoá hết chữ; ngày của bản nháp thành ngày đã qua thì bản nháp chuyển sang ô soạn hôm nay (chốt 10/11/2026, O-02) |
-| A4 | \[TaskSuggest\] lỗi / chậm > 2s / tắt gợi ý / trợ lý AI tắt hoặc chưa đồng ý / máy không có Claude Code (QC-12 mục 2) / Claude Code báo hết hạn mức | Không có gợi ý AI, không gọi LLM nào khác (Q33); thời lượng trống, channel mặc định (BR-05); ô soạn không chờ, tạo task bình thường |
+| A4 | \[TaskSuggest\] lỗi / chậm > 2s / tắt gợi ý / trợ lý AI tắt hoặc chưa đồng ý / máy không có Claude Code (QC-12 mục 2) / Claude Code báo hết hạn mức | Không có gợi ý AI, không gọi LLM nào khác (Q33); thời lượng trống, channel mặc định (BR-05); ô soạn không chờ, tạo task bình thường. Gợi ý về muộn (sau khi task đã tạo) bị bỏ, không điền vào task đã tạo (chốt 10/11/2026, brief G02) |
 | A5 | Gõ "#" trong tiêu đề | Mở **SCR-09** Popover chọn channel (chữ sau "#" là từ khoá lọc); chọn → gán channel (nguồn `user`), xoá "#..." khỏi tiêu đề |
 | A6 | Phím A khi cột đang chọn là ngày đã qua | Ô soạn mở ở cột **hôm nay**, board cuộn tới cột hôm nay (IA-20) |
 | A7 | Phím toàn cục Ctrl+Shift+A, ở bất kỳ đâu trên Windows (US1.1 AC07, D11, IA-19) | Mở **SCR-08** Ô thêm nhanh toàn cục: cửa sổ nổi nhỏ, không viền, giữa màn hình đang dùng, luôn ở trên; ngày = hôm nay. Enter → tạo như bước 6, hiện MSG-29 khoảng 1 giây rồi đóng, trả focus về app trước. Shift+Enter → tạo và giữ ô mở. Click ra ngoài hoặc Esc → đóng, giữ bản nháp. Cửa sổ chính đang ở khay thì vẫn ở khay. Tắt phím tắt (G01 BR-15) thì phím này ngừng. Luồng lỗi E1–E4 như ô soạn |
@@ -341,12 +341,12 @@ Thuộc tính suy ra, **không phải trạng thái**: "Đã dời" (số ngày 
 
 | **Mã** | **Điều kiện** | **Xử lý** |
 | --- | --- | --- |
-| E1 | Tên trùng trong context | MSG-15 |
-| E2 | Tên chứa "#" hoặc > 50 ký tự | MSG-17 |
+| E1 | Tên trùng trong context | MSG-15. Tên context trùng với context khác → MSG-39 (BR-14, O-17) |
+| E2 | Tên chứa "#" hoặc > 50 ký tự | MSG-17. Tên context trống hoặc > 50 ký tự → MSG-40 (BR-14, O-17) |
 | E3 | Xoá channel hệ thống "Chưa phân loại" | Nút xoá ẩn (BR-14) |
 | E4 | Khung giờ: giờ kết thúc ≤ giờ bắt đầu ở một ngày | MSG-25 tại dòng đó; nút "Lưu" disabled; server trả `VALIDATION_FAILED` · field workWindow · `END_BEFORE_START` |
 | E5 | Khung giờ bật nhưng không ngày nào được bật | MSG-26; nút "Lưu" disabled; server trả `VALIDATION_FAILED` · field workWindow · `EMPTY` |
-| E6 | Mất mạng khi lưu khung giờ | Lưu vào hàng đợi trên máy (QC-08), dòng channel có biểu tượng "chờ đồng bộ" (MSG-30); ngày hiệu lực tính theo thời điểm server nhận `[giả định]` |
+| E6 | Mất mạng khi lưu khung giờ | Lưu vào hàng đợi trên máy (QC-08), dòng channel có biểu tượng "chờ đồng bộ" (MSG-30); ngày hiệu lực tính theo thời điểm server nhận, MSG-27 chỉ hiện (kèm ngày) khi server đã nhận (chốt 10/11/2026, brief G02) |
 | E7 | Đặt khung giờ cho channel hệ thống "Chưa phân loại" (gọi API trực tiếp; UI không có phần "Khung giờ" cho channel này) | Server trả `VALIDATION_FAILED` · field workWindow · `SYSTEM_CHANNEL`, không lưu (BR-22, D3) |
 
 ## 6. Điểm vào
@@ -379,7 +379,7 @@ Chữ nhãn, placeholder, tooltip và nhãn đọc màn hình (không phải th�
 | 5 | Channel | Dropdown có tìm | Không | Mở SCR-09; giá trị gợi ý có ✨ (chỉ khi có gợi ý AI, BR-04); danh sách nhóm theo context |
 | 6 | Objective | Dropdown | Không | Ẩn ở 1.0 (G09) |
 | 7 | Priority | Menu cờ | Không | 4 mức, phím 1–4 khi menu mở |
-| 8 | Vị trí | Toggle | Không | Đầu / cuối danh sách |
+| 8 | Vị trí | Toggle | Không | Đầu / cuối danh sách. Ẩn khi #3 là "Không ngày (backlog)": vị trí trong backlog theo G06 (chốt 10/11/2026, brief G02) |
 | 9 | Enter / nút tạo | Action | – | Disabled khi tiêu đề trống |
 
 ### SCR-02 Task card (trên cột ngày)
@@ -431,7 +431,7 @@ Có biến thể **chỉ xem** cho task đang ở Lưu trữ: G06 SCR-08 (chốt
 | --- | --- | --- | --- |
 | 1 | Tiêu đề + mô tả | Header | "Thùng rác · Task đã xoá trong 30 ngày qua" |
 | 2 | Danh sách task | List | Mới xoá nhất trước; mỗi dòng: tiêu đề, channel, thời lượng, ngày xoá |
-| 3 | "Khôi phục" | Button (theo dòng) | → UC-04 A1; mất mạng → mờ, tooltip MSG-31 (UC-04 E5) |
+| 3 | "Khôi phục" | Button (theo dòng) | Hiện khi hover / focus dòng (chốt 10/11/2026, brief G02); → UC-04 A1; mất mạng → mờ, tooltip MSG-31 (UC-04 E5) |
 | 4 | Trạng thái rỗng | Empty state | "Không có task nào bị xoá" |
 
 ### SCR-06 Context & channel
@@ -439,8 +439,8 @@ Có biến thể **chỉ xem** cho task đang ở Lưu trữ: G06 SCR-08 (chốt
 | **#** | **Thành phần** | **Loại** | **Bắt buộc** | **Validate / hành vi** |
 | --- | --- | --- | --- | --- |
 | 1 | "Tạo context", "Tạo channel" | Button | – | Mở dòng nhập mới |
-| 2 | Tên context / channel | Text | Có | BR-14; trùng → MSG-15; sai định dạng → MSG-17 |
-| 3 | Màu | Color picker | Có | 12 màu cố định, chia đều trên vòng màu, có biến thể nền tối; trên card hiện chấm màu + "#tên", trên lịch tô nhạt có viền trái ([DS](../design-brief/01-nen-tang-design-system.md) DS-12). Channel "Chưa phân loại" màu xám trung tính |
+| 2 | Tên context / channel | Text | Có | BR-14; tên channel trùng → MSG-15, sai định dạng → MSG-17; tên context trùng → MSG-39, trống hoặc > 50 ký tự → MSG-40 (O-17, chốt 10/11/2026, brief G02) |
+| 3 | Màu | Color picker | Có | 12 màu cố định, chia đều trên vòng màu, có biến thể nền tối; trên card hiện chấm màu + "#tên", trên lịch tô nhạt có viền trái ([DS](../design-brief/01-nen-tang-design-system.md) DS-12). Channel "Chưa phân loại" màu xám trung tính. Channel mới chọn sẵn màu kế tiếp chưa dùng (chốt 10/11/2026, brief G02) |
 | 4 | Riêng tư | Toggle | Không | Ở 1.0 chỉ ảnh hưởng hiển thị trên lịch ngoài (G05: sự kiện timebox luôn Private); chia sẻ trong workspace (G12) để bản sau (Q35, Q37) |
 | 5 | Bật / ẩn | Toggle | – | A2 UC-06 |
 | 6 | Xoá | Icon | – | Mở SCR-07; ẩn với channel hệ thống "Chưa phân loại" |
@@ -454,7 +454,7 @@ Có biến thể **chỉ xem** cho task đang ở Lưu trữ: G06 SCR-08 (chốt
 | **#** | **Thành phần** | **Loại** | **Hành vi** |
 | --- | --- | --- | --- |
 | 1 | Nội dung | Text | Tiêu đề MSG-33; nội dung MSG-34 (BR-14); channel chưa có task (n = 0) → MSG-35, không có #2; channel có khung giờ riêng → thêm dòng MSG-36 (BR-24) |
-| 2 | Channel nhận | Dropdown | Mặc định "Chưa phân loại", không chứa channel đang xoá |
+| 2 | Channel nhận | Dropdown | Mặc định "Chưa phân loại", không chứa channel đang xoá. Có focus khi mở dialog; Enter ở đây chỉ chọn channel, không tự xoá (chốt 10/11/2026, brief G02) |
 | 3 | "Xoá channel" | Button (nguy hiểm, `Button` `variant=danger`, chốt 10/11/2026, O-18) | Gọi \[ChannelDelete\]; toast MSG-19 |
 | 4 | "Huỷ" | Button | Đóng |
 
@@ -466,8 +466,8 @@ Cửa sổ riêng, nổi nhỏ, không viền, giữa màn hình đang dùng, lu
 | --- | --- | --- | --- | --- |
 | 1 | Dòng ngày | Text | – | "Thêm vào Hôm nay · {thứ, ngày}"; "hôm nay" là ngày làm việc (QC-01) |
 | 2 | Tiêu đề | Text nhiều dòng | Có | Như SCR-01 #1: 1–500 ký tự; dán URL → UC-01 A1; gõ "#" → SCR-09; quá 500 → MSG-01. Có focus khi mở; mở lại sau khi đóng thấy bản nháp (UC-01 A3, A7) |
-| 3 | Thời lượng, Channel, Priority | Chip | Không | Như SCR-01 #4, #5, #7 (gợi ý AI theo BR-04). Không có chip Ngày (luôn hôm nay) và Vị trí (theo cài đặt "Vị trí task mới", BR-03) `[giả định]` |
-| 4 | Gợi ý phím | Hint | – | "Enter để thêm. Shift+Enter để thêm tiếp. Esc để đóng". Không có nút tạo, chỉ dùng bằng phím `[giả định]` |
+| 3 | Thời lượng, Channel, Priority | Chip | Không | Như SCR-01 #4, #5, #7 (gợi ý AI theo BR-04). Không có chip Ngày (luôn hôm nay) và Vị trí (theo cài đặt "Vị trí task mới", BR-03) (chốt 10/11/2026, brief G02) |
+| 4 | Gợi ý phím | Hint | – | "Enter để thêm. Shift+Enter để thêm tiếp. Esc để đóng". Không có nút tạo, chỉ dùng bằng phím (chốt 10/11/2026, brief G02) |
 | 5 | Enter | Action | – | Tiêu đề trống → không làm gì (UC-01 E1). Tạo như UC-01 bước 6; nội dung cửa sổ thay bằng MSG-29 khoảng 1 giây rồi đóng, trả focus về app trước; cửa sổ chính ở khay thì vẫn ở khay. Mất mạng vẫn hiện MSG-29 (task vào hàng đợi, UC-01 E3). Lỗi 5xx sau khi đóng → card lỗi + MSG-10 trên board (cửa sổ chính ẩn → vào trung tâm thông báo, IA-21) |
 | 6 | Shift+Enter | Action | – | Tạo như #5; ô trống lại, chip về mặc định, MSG-29 hiện thay dòng #1 khoảng 1 giây; cửa sổ giữ mở |
 | 7 | Esc / bấm ra ngoài | Action | – | Đóng, giữ bản nháp (UC-01 A3), trả focus về app trước |
@@ -481,7 +481,7 @@ Popover mở ngay dưới chỗ gọi. Điểm vào: gõ "#" trong tiêu đề (
 | 1 | Ô tìm | Text | Placeholder "Tìm channel". Mở từ "#" trong tiêu đề thì ẩn ô tìm, chữ sau "#" là từ khoá |
 | 2 | "Chưa phân loại" | Dòng | Luôn ở đầu, không thuộc context nào (BR-14) |
 | 3 | Danh sách channel | List nhóm theo context | Tên context là tiêu đề nhóm; mỗi dòng: chấm màu + "#tên"; channel đang gán có dấu tích và được chọn sẵn. Channel ẩn không có trong danh sách (UC-06 A2); riêng channel đang gán của task nếu đã ẩn thì hiện ở đầu (trên "Chưa phân loại") với nhãn "Đã ẩn" |
-| 4 | Lọc | – | Có từ khoá → chỉ dòng khớp, phần khớp in đậm; nhóm context không còn dòng nào thì ẩn. So khớp không phân biệt hoa thường và dấu `[giả định]` |
+| 4 | Lọc | – | Có từ khoá → chỉ dòng khớp, phần khớp in đậm; nhóm context không còn dòng nào thì ẩn. So khớp không phân biệt hoa thường và dấu (chốt 10/11/2026, brief G02) |
 | 5 | Không có kết quả | Empty state | "Không có channel nào khớp với "{từ khoá}"" + link "Quản lý channel" mở SCR-06. Không có lối tạo channel nhanh ở 1.0 (chốt 10/11/2026, O-14) |
 | 6 | Bàn phím | – | ↑/↓ chọn; Enter (hoặc bấm dòng) gán channel, nguồn `user` (BR-04), đóng popover — trên task có sẵn gọi \[TaskUpdate\] `channelId` (UC-02 A12); mở từ "#…" thì xoá "#…" khỏi tiêu đề, con trỏ về tiêu đề. Esc đóng popover, giữ ô soạn / task như cũ ("#…" giữ nguyên trong tiêu đề) |
 
@@ -516,6 +516,8 @@ Popover mở ngay dưới chỗ gọi. Điểm vào: gõ "#" trong tiêu đề (
 | `VALIDATION_FAILED` · field notes / comment | MSG-03 |
 | `LIMIT_SUBTASKS` | MSG-04 |
 | `CHANNEL_NAME_TAKEN` | MSG-15 |
+| `CONTEXT_NAME_TAKEN` | MSG-39 (O-17, chốt 10/11/2026) |
+| `VALIDATION_FAILED` · field context name | MSG-40 (O-17, chốt 10/11/2026) |
 | `CONTEXT_NOT_EMPTY` | MSG-16 |
 | `NOT_FOUND` (task đã xoá vĩnh viễn) | MSG-14 |
 | `VALIDATION_FAILED` · field startDate · `PAST_DATE` | MSG-20 |
@@ -570,6 +572,8 @@ Popover mở ngay dưới chỗ gọi. Điểm vào: gõ "#" trong tiêu đề (
 | MSG-36 | Dòng thêm của dialog xác nhận khi channel có khung giờ riêng (SCR-07 #1) | Task chuyển sang sẽ theo lịch của channel nhận ngay từ hôm nay. Khung giờ của {tên} bị xoá cùng channel |
 | MSG-37 | Toast (UC-03 A1, BR-16) | Đã bỏ đánh dấu xong "{tiêu đề}" · Hoàn tác |
 | MSG-38 | Toast (UC-02 E3) | Task này đã bị xoá trên thiết bị khác · Hoàn tác |
+| MSG-39 | Inline dưới ô tên context (SCR-06 #2, UC-06 E1; BR-14, O-17) | Context này đã tồn tại |
+| MSG-40 | Inline dưới ô tên context (SCR-06 #2, UC-06 E2; BR-14, O-17) | Tên context 1–50 ký tự |
 
 Bản EN: `[chờ bổ sung]`.
 

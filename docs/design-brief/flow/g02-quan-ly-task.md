@@ -659,11 +659,13 @@ flowchart TD
 
   u2 -.->|"E1 · tên trùng trong context"| e1m>"MSG-15 · Inline<br/>Channel này đã tồn tại trong context"]
   u2 -.->|"E2 · có # hoặc > 50 ký tự"| e2m>"MSG-17 · Inline<br/>Tên channel 1-50 ký tự, không chứa #"]
+  u2 -.->|"E1 · tên context trùng"| e1c>"MSG-39 · Inline<br/>Context này đã tồn tại"]
+  u2 -.->|"E2 · tên context trống hoặc > 50 ký tự"| e2c>"MSG-40 · Inline<br/>Tên context 1-50 ký tự"]
   a1 -.->|"E1 / E2"| e1m
 
   class s1,u2,p1 happy
   class a1,a2,a3,a3p,a3m alt
-  class a4m,e1m,e2m,e3 err
+  class a4m,e1m,e2m,e1c,e2c,e3 err
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
   classDef err fill:#FDECEC,stroke:#B42318,color:#5C1010
@@ -729,8 +731,8 @@ flowchart TD
 | A7 | Tắt khung giờ riêng | Theo lịch chung từ ngày kế tiếp | MSG-27 |
 | A8 | Lịch chung G01 đổi | Chỉ channel không có khung riêng đổi | – |
 | A9 | Thiết bị khác sửa khung giờ | Gộp cả khối | MSG-28 |
-| E1 | Tên trùng | Chặn | MSG-15 |
-| E2 | Tên có "#" / > 50 ký tự | Chặn | MSG-17 |
+| E1 | Tên trùng | Chặn | MSG-15; tên context: MSG-39 (O-17) |
+| E2 | Tên có "#" / > 50 ký tự | Chặn | MSG-17; tên context trống / > 50 ký tự: MSG-40 (O-17) |
 | E3 | Xoá "Chưa phân loại" | Nút xoá ẩn | – |
 | E4 | Giờ kết thúc ≤ bắt đầu | Lưu disabled | MSG-25 |
 | E5 | Không ngày nào bật | Lưu disabled | MSG-26 |
@@ -746,3 +748,4 @@ flowchart TD
 - ~~MSG-12 dùng chữ "Task vừa được cập nhật…" cho khung giờ channel (UC-06 A9).~~ **Đã sửa 09/11/2026 (C01):** thêm MSG-28 "Khung giờ của channel này vừa được sửa trên thiết bị khác"; UC-06 A9 thôi dùng MSG-12.
 - **Đã sửa 09/11/2026 (A1):** MSG-10 "Chưa lưu được thay đổi. Thử lại" là câu lỗi lưu chung QC-MSG-01 (QC-13 mục 1); G02 chỉ trỏ về, chữ không đổi.
 - **Đã sửa 10/11/2026 (brief G02 duyệt, O-01 … O-20):** ô thêm nhanh toàn cục là SCR-08, popover chọn channel là SCR-09; "Đã thêm vào Hôm nay" là MSG-29, "Chờ đồng bộ" MSG-30; UC-02 E3 dùng MSG-38 thay MSG-09 (O-01); UC-02 A11 có toast G04 MSG-01 có Hoàn tác (O-13); UC-03 A1 có toast MSG-37 (O-10); thêm nhánh mất mạng UC-02 E8, UC-04 E5, UC-05 E2 (O-15).
+- **Đã sửa 10/11/2026 (PO duyệt nốt `[đề xuất]` còn lại của brief G02):** lỗi tên context có MSG-39 "Context này đã tồn tại", MSG-40 "Tên context 1–50 ký tự" ở UC-06 E1, E2 (BR-14, O-17); UC-06 E6 hết `[giả định]`: hiệu lực tính theo lúc server nhận, MSG-27 hiện khi server đã nhận (cạnh E6 → MSG-27 giữ nguyên).

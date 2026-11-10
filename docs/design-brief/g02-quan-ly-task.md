@@ -7,7 +7,7 @@
 >
 > Thay cho [bản thử](_thu-g02-tao-va-chi-tiet-task.md). Các câu O-01 … O-03, O-05 của bản thử đã chốt (IA-06, IA-19, IA-20, G10 BR-30), không hỏi lại; mã O ở mục 11 dưới đây đánh số lại, không trùng nghĩa với bản thử.
 >
-> **PO duyệt ngày 10/11/2026:** mọi câu O-01 … O-20 ở mục 11 chốt theo đề xuất của brief và đã ghi ngược vào PRD / SRS G02, QC-07, SRS G10, `CONTEXT.md`, nền tảng design system. Hai màn mang mã tạm `SCR-Nxx` (ô thêm nhanh toàn cục, popover chọn channel) thành **SCR-08**, **SCR-09** của SRS G02; chữ thông báo UI-xx thành **MSG-29 … MSG-38** (O-19).
+> **PO duyệt ngày 10/11/2026:** mọi câu O-01 … O-20 ở mục 11 chốt theo đề xuất của brief và đã ghi ngược vào PRD / SRS G02, QC-07, SRS G10, `CONTEXT.md`, nền tảng design system. Hai màn mang mã tạm `SCR-Nxx` (ô thêm nhanh toàn cục, popover chọn channel) thành **SCR-08**, **SCR-09** của SRS G02; chữ thông báo UI-xx thành **MSG-29 … MSG-38** (O-19). Cùng ngày PO duyệt nốt mọi chi tiết `[đề xuất]` còn lại (không thuộc câu O nào), bỏ nhãn; chi tiết hành vi đã ghi vào SRS G02 kèm "(chốt 10/11/2026, brief G02)"; chữ lỗi tên context là MSG-39, MSG-40 (O-17).
 
 ## 1. Tóm tắt cho người vẽ
 
@@ -90,9 +90,9 @@ Chip có giá trị do AI gợi ý mang dấu ✨ (`Badge/AI`) ngay trước gi�
 | SCR-01.S04 | Đang chờ gợi ý | Đủ điều kiện BR-04, đã ngừng gõ 400 ms, chưa có kết quả (tối đa 2 giây) | Như S03; chip Thời lượng và Channel có dấu đang chờ nhẹ (nhãn đọc màn hình UI-11). **Enter vẫn tạo được ngay**, không chờ | Có gợi ý → S05; quá 2 giây / lỗi → S03; gõ tiếp → chờ lại | UC-01 bước 4, A4; SRS mục 10 |
 | SCR-01.S05 | Có gợi ý | Claude Code trả về | Chip Thời lượng "✨ 0:30", chip Channel "✨ #Thiết kế"; tooltip ✨ UI-12. Gợi ý không bao giờ ghi đè chip người dùng đã chọn trước đó (giữ nguồn `user`) | Sửa một chip → S06 cho chip đó; Enter → tạo | BR-04, US1.3 AC01 |
 | SCR-01.S06 | Gợi ý đã bị sửa | Người dùng đổi giá trị chip có ✨ | Chip đó mất ✨, giữ giá trị người dùng chọn; chip còn lại giữ ✨ | – | US1.3 AC02 |
-| SCR-01.S07 | Đang đọc tiêu đề từ link | Dán URL vào ô | Ô tiêu đề hiện URL, cạnh đó dấu đang tải nhỏ (nhãn UI-13), tối đa 3 giây | Đọc được → tiêu đề trang thay URL; không đọc được → giữ URL; cả hai về S03 / S05. Enter trong lúc đọc → tạo với URL làm tiêu đề `[đề xuất]` | UC-01 A1, PRD mục 9 |
+| SCR-01.S07 | Đang đọc tiêu đề từ link | Dán URL vào ô | Ô tiêu đề hiện URL, cạnh đó dấu đang tải nhỏ (nhãn UI-13), tối đa 3 giây | Đọc được → tiêu đề trang thay URL; không đọc được → giữ URL; cả hai về S03 / S05. Enter trong lúc đọc → tạo với URL làm tiêu đề | UC-01 A1, PRD mục 9 |
 | SCR-01.S08 | Tiêu đề quá dài | > 500 ký tự sau khi cắt khoảng trắng | MSG-01 dưới ô (kiểu lỗi, kèm icon); nút "Thêm" `disabled`; Enter không tạo | Xoá bớt → S03 / S05 | UC-01 E2, BR-01 |
-| SCR-01.S09 | Không ngày (backlog) | Chọn "Không ngày (backlog)" (UI-09) trong chip Ngày | Chip Ngày ghi "Backlog" (UI-08); chip Vị trí ẩn (vị trí trong backlog theo G06) `[đề xuất]` | Enter → task vào backlog, toast MSG-07 (F-05) | UC-01 A2, BR-02 |
+| SCR-01.S09 | Không ngày (backlog) | Chọn "Không ngày (backlog)" (UI-09) trong chip Ngày | Chip Ngày ghi "Backlog" (UI-08); chip Vị trí ẩn (vị trí trong backlog theo G06) | Enter → task vào backlog, toast MSG-07 (F-05) | UC-01 A2, BR-02 |
 | SCR-01.S10 | Có bản nháp | Người dùng đã gõ rồi Esc / bấm ra ngoài, sau đó mở lại ô soạn **của cùng ngày** (kể cả sau khi đóng app). Ngày của bản nháp đã thành ngày đã qua: bản nháp hiện ở ô soạn hôm nay | Như S03 / S05 với nội dung và chip cũ; con trỏ ở cuối tiêu đề | Tạo task hoặc xoá hết chữ → hết bản nháp | UC-01 A3; O-02 |
 | SCR-01.S11 | Ngày đã qua khi gửi | Ô soạn mở trước mốc đầu ngày, Enter sau mốc; server trả `PAST_DATE` | MSG-20 dưới ô; chip Ngày ở kiểu cảnh báo; nội dung còn nguyên; card lạc quan (nếu đã hiện) bị gỡ | Đổi chip Ngày (picker chỉ cho ≥ hôm nay) rồi Enter → tạo | UC-01 E6, QC-05 |
 
@@ -102,7 +102,7 @@ Chip có giá trị do AI gợi ý mang dấu ✨ (`Badge/AI`) ngay trước gi�
 - Kiểm tra dấu: "Ếch ỗng Ữ Ặ kiểm tra dấu chồng hai tầng" ở cỡ chữ của ô soạn và của chip.
 - URL: `https://docs.google.com/document/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/edit` → tiêu đề trang "Kế hoạch quý 4 – Google Tài liệu".
 - Chip Ngày: "Hôm nay", "Thứ Năm 12/11", "Backlog". Thời lượng: "0:05", "1:30", "24:00" (lớn nhất).
-- Channel: "Chưa phân loại"; "#Thiết kế"; dài nhất 50 ký tự "#Dự án chuyển đổi số Ngân hàng Á Châu giai đoạn hai" (chip cắt "…" sau khoảng 20 ký tự, tooltip hiện đủ `[đề xuất]`).
+- Channel: "Chưa phân loại"; "#Thiết kế"; dài nhất 50 ký tự "#Dự án chuyển đổi số Ngân hàng Á Châu giai đoạn hai" (chip cắt "…" sau khoảng 20 ký tự, tooltip hiện đủ).
 - Priority: Urgent, Priority, Low (Normal không hiện chữ trên chip, chỉ icon).
 
 ### SCR-08 Ô thêm nhanh toàn cục
@@ -112,10 +112,10 @@ Chip có giá trị do AI gợi ý mang dấu ✨ (`Badge/AI`) ngay trước gi�
 **Cấu trúc.** Cửa sổ nổi nhỏ (`Panel/QuickAdd`), không viền, bo `radius/lg`, có `shadow/overlay` (DS-15). Từ trên xuống:
 1. Dòng nhỏ UI-14 "Thêm vào Hôm nay · Thứ Ba 10/11".
 2. Ô tiêu đề như SCR-01 (placeholder UI-02).
-3. Hàng chip **Thời lượng · Channel · Priority**. Không có chip Ngày (luôn hôm nay) và chip Vị trí (theo cài đặt) `[đề xuất]`.
+3. Hàng chip **Thời lượng · Channel · Priority**. Không có chip Ngày (luôn hôm nay) và chip Vị trí (theo cài đặt).
 4. Dòng gợi ý phím UI-16, chữ phụ.
 
-Không có nút "Thêm": cửa sổ chỉ dùng bằng phím `[đề xuất]`. Gợi ý AI, "#", dán URL chạy như SCR-01.
+Không có nút "Thêm": cửa sổ chỉ dùng bằng phím. Gợi ý AI, "#", dán URL chạy như SCR-01.
 
 **Trạng thái.**
 
@@ -129,7 +129,7 @@ Không có nút "Thêm": cửa sổ chỉ dùng bằng phím `[đề xuất]`. G
 | SCR-08.S06 | Đã thêm, giữ mở | Sau Shift+Enter | Ô tiêu đề trống lại, chip về mặc định; dòng MSG-29 hiện thay dòng UI-14 khoảng 1 giây rồi trả lại | Gõ task kế tiếp → S03 | UC-01 A7 |
 | SCR-08.S07 | Phím tắt đã tắt | Người dùng tắt "Phím tắt" (G01 BR-15) | Không mở gì. **Không vẽ**, chỉ ghi để dev biết | – | US1.1 AC07 |
 
-**Dữ liệu mẫu.** Dòng UI-14: "Thêm vào Hôm nay · Thứ Ba 10/11" và dài nhất "Thêm vào Hôm nay · Chủ Nhật 15/11". Tiêu đề: "Trả lời email chị Hà về báo giá", "Ếch ỗng Ữ Ặ kiểm tra dấu chồng hai tầng", tiêu đề 130 ký tự ở mục SCR-01 (cửa sổ cao lên theo nội dung, tối đa 5 dòng rồi cuộn `[đề xuất]`).
+**Dữ liệu mẫu.** Dòng UI-14: "Thêm vào Hôm nay · Thứ Ba 10/11" và dài nhất "Thêm vào Hôm nay · Chủ Nhật 15/11". Tiêu đề: "Trả lời email chị Hà về báo giá", "Ếch ỗng Ữ Ặ kiểm tra dấu chồng hai tầng", tiêu đề 130 ký tự ở mục SCR-01 (cửa sổ cao lên theo nội dung, tối đa 5 dòng rồi cuộn).
 
 ### SCR-09 Popover chọn channel
 
@@ -147,9 +147,9 @@ Không có nút "Thêm": cửa sổ chỉ dùng bằng phím `[đề xuất]`. G
 | Mã | Trạng thái | Khi nào | Hiện gì | Ra khỏi trạng thái bằng | Tham chiếu |
 |---|---|---|---|---|---|
 | SCR-09.S01 | Đầy đủ | Bấm chip Channel; phím Q / # trên task đang chọn; gõ "#" chưa kèm chữ | Như cấu trúc; dòng đang gán được chọn sẵn | Gõ từ khoá → S02; Enter / bấm dòng → gán, đóng | UC-01 A5, US5.2 AC01 |
-| SCR-09.S02 | Đang lọc | Có từ khoá ("#kh" trong tiêu đề, hoặc gõ vào ô tìm) | Chỉ dòng khớp, phần khớp in đậm; so khớp không phân biệt hoa thường và dấu `[đề xuất]`; nhóm context không còn dòng nào thì ẩn | Enter → gán; với "#…" trong tiêu đề: xoá "#…" khỏi tiêu đề, con trỏ về tiêu đề. Chip Channel không có ✨ (nguồn `user`) | UC-01 A5 |
+| SCR-09.S02 | Đang lọc | Có từ khoá ("#kh" trong tiêu đề, hoặc gõ vào ô tìm) | Chỉ dòng khớp, phần khớp in đậm; so khớp không phân biệt hoa thường và dấu; nhóm context không còn dòng nào thì ẩn | Enter → gán; với "#…" trong tiêu đề: xoá "#…" khỏi tiêu đề, con trỏ về tiêu đề. Chip Channel không có ✨ (nguồn `user`) | UC-01 A5 |
 | SCR-09.S03 | Không có kết quả | Từ khoá không khớp channel nào | Dòng UI-18 và link "Quản lý channel" (UI-19) mở SCR-06. Không có lối tạo channel nhanh ở 1.0 (O-14) | Xoá bớt từ khoá → S02; Esc → đóng, "#…" giữ nguyên trong tiêu đề | O-14 |
-| SCR-09.S04 | Task đang ở channel đã ẩn | Mở từ task có channel đã ẩn | Channel đó hiện ở đầu (trên "Chưa phân loại"), có nhãn "Đã ẩn" (UI-20) và dấu tích; channel ẩn khác vẫn không hiện `[đề xuất]` | Chọn channel khác → gán | UC-06 A2, US5.1 AC03 |
+| SCR-09.S04 | Task đang ở channel đã ẩn | Mở từ task có channel đã ẩn | Channel đó hiện ở đầu (trên "Chưa phân loại"), có nhãn "Đã ẩn" (UI-20) và dấu tích; channel ẩn khác vẫn không hiện | Chọn channel khác → gán | UC-06 A2, US5.1 AC03 |
 
 **Dữ liệu mẫu.** "Chưa phân loại"; context `work`: "#Thiết kế", "#Khách hàng ACB", "#Nội bộ", "#Dự án chuyển đổi số Ngân hàng Á Châu giai đoạn hai" (50 ký tự, cắt "…" theo chiều rộng popover, tooltip đủ); context `personal`: "#Cá nhân", "#Sức khoẻ", "#Ếch ỗng Ữ Ặ". Danh sách dài nhất để thử cuộn: 5 context, 40 channel. Từ khoá không khớp: "#kế toán nội bộ quý bốn".
 
@@ -232,7 +232,7 @@ Tiêu đề các mục Subtask, Notes, Comment, Nhật ký: UI-37. Dòng do AI c
 
 **Dữ liệu mẫu.**
 - Task đủ thông tin: "Chuẩn bị workshop thiết kế ACB" · "#Khách hàng ACB" · Priority · Thứ Năm 12/11 · Hạn Thứ Sáu 13/11 · Kế hoạch 2:00 · Thực tế 0:45.
-- Subtask: "Viết agenda" (0:15, xong lúc 09:40), "Soạn bộ câu hỏi phỏng vấn" (0:45), "In mẫu ghi chú" (0:10), "Đặt phòng họp tầng 3" (0:05), "Gửi lịch mời cho anh Minh, chị Hà và nhóm sản phẩm Ngân hàng Á Châu" (0:05, xuống 2 dòng), "Ếch ỗng Ữ Ặ" (không thời lượng). Danh sách dài nhất: 100 subtask (dialog cuộn, header luôn hiện `[đề xuất]`).
+- Subtask: "Viết agenda" (0:15, xong lúc 09:40), "Soạn bộ câu hỏi phỏng vấn" (0:45), "In mẫu ghi chú" (0:10), "Đặt phòng họp tầng 3" (0:05), "Gửi lịch mời cho anh Minh, chị Hà và nhóm sản phẩm Ngân hàng Á Châu" (0:05, xuống 2 dòng), "Ếch ỗng Ữ Ặ" (không thời lượng). Danh sách dài nhất: 100 subtask (dialog cuộn, header luôn hiện).
 - Notes: một đoạn 3 câu, checklist 3 dòng, một link. Notes dài nhất 50.000 ký tự (vùng notes cuộn trong dialog).
 - Comment: "Đã gửi agenda cho chị Hà, chờ phản hồi trước thứ Năm" · Bạn · 14:20.
 - Nhật ký: "Bạn đổi thời lượng 1:30 thành 2:00 · 5 phút trước"; "Trợ lý AI gợi ý channel #Khách hàng ACB · hôm qua"; "Bạn tạo task · hôm qua". 45 dòng để thử "Xem thêm".
@@ -259,7 +259,7 @@ Tiêu đề các mục Subtask, Notes, Comment, Nhật ký: UI-37. Dòng do AI c
 
 **Cấu trúc.** Tab "Thùng rác" (UI-45) trong panel "Lưu trữ · Thùng rác" (rộng 340 px). Từ trên xuống:
 1. Tiêu đề "Thùng rác" và mô tả "Task đã xoá trong 30 ngày qua" (UI-46).
-2. Danh sách (`List/TrashItem`), mới xoá nhất trước. Mỗi dòng: tiêu đề (1 dòng, cắt "…") · chấm màu + "#channel" · thời lượng · "Đã xoá Thứ Hai 09/11" (UI-48). Nút "Khôi phục" (`Button` `variant=secondary` `size=sm`, UI-47) hiện khi hover / focus dòng `[đề xuất]`.
+2. Danh sách (`List/TrashItem`), mới xoá nhất trước. Mỗi dòng: tiêu đề (1 dòng, cắt "…") · chấm màu + "#channel" · thời lượng · "Đã xoá Thứ Hai 09/11" (UI-48). Nút "Khôi phục" (`Button` `variant=secondary` `size=sm`, UI-47) hiện khi hover / focus dòng.
 
 Không có "Xoá vĩnh viễn" hay "Dọn Thùng rác" ở 1.0 (SRS chỉ có job tự xoá sau 30 ngày).
 
@@ -294,8 +294,8 @@ Tên, màu, riêng tư, bật / ẩn lưu ngay khi đổi. Chỉ phần Khung gi
 | Mã | Trạng thái | Khi nào | Hiện gì | Ra khỏi trạng thái bằng | Tham chiếu |
 |---|---|---|---|---|---|
 | SCR-06.S01 | Mặc định | Mở nhóm | Như cấu trúc; tài khoản mới có "Chưa phân loại" và hai context `work`, `personal` rỗng | – | UC-06 bước 1, B4 |
-| SCR-06.S02 | Đang tạo / sửa tên | Bấm "Tạo context" / "Tạo channel trong {context}" / bấm vào tên | Dòng nhập mới (placeholder UI-53) có focus; channel mới chọn sẵn màu kế tiếp chưa dùng `[đề xuất]`. Enter / rời ô → lưu, channel hiện ngay trong ô soạn và bộ lọc; Esc → huỷ dòng mới | Lưu / Esc | UC-06 bước 2–3, A1 |
-| SCR-06.S03 | Tên lỗi | Trùng trong cùng context (không phân biệt hoa thường) / có "#" / > 50 ký tự / trống | MSG-15 hoặc MSG-17 dưới ô; không lưu, ô giữ focus | Sửa tên → lưu | UC-06 E1, E2, BR-14 |
+| SCR-06.S02 | Đang tạo / sửa tên | Bấm "Tạo context" / "Tạo channel trong {context}" / bấm vào tên | Dòng nhập mới (placeholder UI-53) có focus; channel mới chọn sẵn màu kế tiếp chưa dùng. Enter / rời ô → lưu, channel hiện ngay trong ô soạn và bộ lọc; Esc → huỷ dòng mới | Lưu / Esc | UC-06 bước 2–3, A1 |
+| SCR-06.S03 | Tên lỗi | Tên channel: trùng trong cùng context (không phân biệt hoa thường) / có "#" / > 50 ký tự / trống. Tên context: trùng với context khác (không phân biệt hoa thường) / > 50 ký tự / trống | Channel: MSG-15 hoặc MSG-17 dưới ô; context: MSG-39 hoặc MSG-40 dưới ô; không lưu, ô giữ focus | Sửa tên → lưu | UC-06 E1, E2, BR-14, O-17 |
 | SCR-06.S04 | Channel đã ẩn | Tắt công tắc "Bật" | Dòng mờ, nhãn "Đã ẩn" (UI-20); khung giờ và task giữ nguyên | Bật lại | UC-06 A2 |
 | SCR-06.S05 | Không xoá được context | Bấm xoá context còn channel | MSG-16 ngay dưới tiêu đề context; context giữ nguyên | Chuyển / xoá hết channel rồi xoá lại | UC-06 A4 |
 | SCR-06.S06 | Khung giờ tắt | Mặc định của mọi channel | Phần Khung giờ: công tắc "Khung giờ riêng" tắt, chữ "Theo lịch làm việc chung" | Bật → S07 | SRS SCR-06 #7, BR-22 |
@@ -303,7 +303,7 @@ Tên, màu, riêng tư, bật / ẩn lưu ngay khi đổi. Chỉ phần Khung gi
 | SCR-06.S08 | Khung giờ lỗi | Giờ kết thúc ≤ giờ bắt đầu ở một dòng; hoặc không ngày nào bật | MSG-25 ngay tại dòng lỗi (có thể nhiều dòng cùng lúc); MSG-26 dưới danh sách ngày. Nút "Lưu" `disabled` | Sửa giờ / bật một ngày → S07 | UC-06 E4, E5 |
 | SCR-06.S09 | Đã lưu, có khung chờ | Lưu thành công (bật, sửa, hoặc tắt khung) | MSG-27 dưới phần Khung giờ ngay sau khi lưu; sau đó, tới ngày hiệu lực, dòng channel giữ chữ MSG-32 "Khung mới áp dụng từ {ngày}" cạnh tóm tắt khung đang áp (hôm nay vẫn dùng khung cũ) | Tới mốc đầu ngày của ngày hiệu lực → tóm tắt đổi, hết MSG-32 | UC-06 A5–A7, BR-24 |
 | SCR-06.S10 | Bị sửa trên thiết bị khác | Khung giờ đổi qua realtime khi đang mở | Không đang sửa: nhận giá trị mới, không báo. Đang sửa dở: giữ bản đang sửa; khi rời phần Khung giờ hiện MSG-28 | "Lưu" → bản này thắng cả khối; "Huỷ" → lấy bản server | UC-06 A9, C01 |
-| SCR-06.S11 | Chờ đồng bộ | Lưu khi mất mạng | Dòng channel có icon "Chờ đồng bộ" (MSG-30); MSG-27 tạm chưa hiện ngày, hiện khi server nhận (ngày hiệu lực tính theo lúc server nhận) `[đề xuất]` | Có mạng → S09 | UC-06 E6, QC-08 mục 7 |
+| SCR-06.S11 | Chờ đồng bộ | Lưu khi mất mạng | Dòng channel có icon "Chờ đồng bộ" (MSG-30); MSG-27 tạm chưa hiện ngày, hiện khi server nhận (ngày hiệu lực tính theo lúc server nhận) | Có mạng → S09 | UC-06 E6, QC-08 mục 7 |
 | SCR-06.S12 | Lưu lỗi | \[ChannelCreate\] / \[ChannelUpdate\] lỗi 5xx | Giá trị trả về như trước; toast MSG-10 có "Thử lại"; phần Khung giờ đang sửa giữ nguyên bản đang sửa | Thử lại | QC-13 mục 1 |
 
 **Dữ liệu mẫu.**
@@ -317,7 +317,7 @@ Tên, màu, riêng tư, bật / ẩn lưu ngay khi đổi. Chỉ phần Khung gi
 
 **Mục đích.** Xoá một channel mà không mất task: bắt chọn channel nhận.
 
-**Cấu trúc.** Dialog nhỏ (`Dialog`): tiêu đề MSG-33; nội dung MSG-34 (chữ SRS SCR-07 #1); dropdown channel nhận (`Combobox/Channel`, mặc định "Chưa phân loại", không có channel đang xoá); nút "Huỷ" (`Button` `secondary`) và "Xoá channel" (`Button` `variant=danger`, O-18) (UI-67). Focus ban đầu ở dropdown; Enter không tự xoá `[đề xuất]`.
+**Cấu trúc.** Dialog nhỏ (`Dialog`): tiêu đề MSG-33; nội dung MSG-34 (chữ SRS SCR-07 #1); dropdown channel nhận (`Combobox/Channel`, mặc định "Chưa phân loại", không có channel đang xoá); nút "Huỷ" (`Button` `secondary`) và "Xoá channel" (`Button` `variant=danger`, O-18) (UI-67). Focus ban đầu ở dropdown; Enter không tự xoá.
 
 **Trạng thái.**
 
@@ -340,7 +340,7 @@ Tên, màu, riêng tư, bật / ẩn lưu ngay khi đổi. Chỉ phần Khung gi
 |---|---|---|
 | 1 | Bấm "Thêm task" trên cột (hoặc chọn cột rồi nhấn A) | SCR-01.S02, chip Ngày = Thứ Năm 12/11 |
 | 2 | Gõ "Gọi anh Minh về hợp đồng" | SCR-01.S03 (không AI) hoặc S04 → S05 (có AI) |
-| 3 | Nhấn Enter | SCR-02.S01 ở đầu cột ≤ 100 ms; tổng cột cập nhật; ô soạn giữ mở, trống (SRS `[giả định: giữ mở]`) |
+| 3 | Nhấn Enter | SCR-02.S01 ở đầu cột ≤ 100 ms; tổng cột cập nhật; ô soạn giữ mở, trống (SRS UC-01 bước 7) |
 | 4 | Nhấn Esc | SCR-01.S01 |
 
 Nhánh: tiêu đề trống → CASE-01; > 500 ký tự → SCR-01.S08; mất mạng → CASE-27; lỗi 5xx → SCR-02.S09; ngày đã qua khi gửi → SCR-01.S11; cột đã qua + A → CASE-11.
@@ -352,7 +352,7 @@ Nhánh: tiêu đề trống → CASE-01; > 500 ký tự → SCR-01.S08; mất m�
 | Bước | Người dùng | Hệ thống / màn hình |
 |---|---|---|
 | 1 | Gõ task kế tiếp, Enter | Card mới theo chip Vị trí; ô soạn trống lại |
-| 2 | Lặp lại | Chip Ngày giữ nguyên; chip Thời lượng, Channel, Priority về mặc định, không mang giá trị của task trước `[đề xuất]` |
+| 2 | Lặp lại | Chip Ngày giữ nguyên; chip Thời lượng, Channel, Priority về mặc định, không mang giá trị của task trước |
 
 ### F-03 Tạo task từ link
 
@@ -562,7 +562,7 @@ Nhánh: Shift+Q nhận channel gợi ý → CASE-26.
 | CASE-21 | Hoàn thành khi bật "Tính planned là actual", task không có bản ghi thời gian | SCR-02.S07, SCR-03.S12 | "1:30 / 1:30" (actual = planned); không tạo bản ghi | UC-03 A6, QC-07 mục 4 |
 | **AI** | | | | |
 | CASE-22 | Gợi ý AI về sau khi người dùng đã chọn channel / thời lượng | SCR-01.S05 | Chip đã chọn giữ nguyên, không ✨; chỉ chip còn trống nhận gợi ý | BR-04 |
-| CASE-23 | Claude Code chậm > 2 giây hoặc báo hết hạn mức khi đang gợi ý | SCR-01.S04 → S03 | Bỏ gợi ý, không báo lỗi; gợi ý về muộn **không** điền vào task đã tạo `[đề xuất]` | UC-01 A4, G10 BR-30 |
+| CASE-23 | Claude Code chậm > 2 giây hoặc báo hết hạn mức khi đang gợi ý | SCR-01.S04 → S03 | Bỏ gợi ý, không báo lỗi; gợi ý về muộn **không** điền vào task đã tạo | UC-01 A4, G10 BR-30 |
 | CASE-24 | Trợ lý AI (Claude Code qua MCP local) hoàn thành task / subtask | SCR-02.S07 + S10 | Như người dùng hoàn thành; card có chip "AI"; Hoàn tác ở chip / G10. Không có toast MSG-08 trong G02 (thông báo thuộc G10) | UC-03 A7, BR-21 |
 | CASE-25 | Trợ lý AI xoá task / subtask; người dùng hoàn tác task do AI tạo trong chat | SCR-02, SCR-05 | Task biến khỏi board, vào Thùng rác như xoá thường; Hoàn tác ở G10 | UC-04 A3, A7, BR-21 |
 | CASE-26 | Shift+Q nhận channel gợi ý | SCR-09, SCR-03 | Giá trị giữ, mất ✨ (nguồn `user`); không có gợi ý thì không làm gì | US5.2 AC02, BR-04; O-03 |
@@ -627,6 +627,8 @@ MSG-xx chép nguyên văn từ SRS G02 mục 9 (nguồn vẫn là SRS). MSG củ
 | MSG-36 | Dòng thêm SCR-07.S03 | Task chuyển sang sẽ theo lịch của channel nhận ngay từ hôm nay. Khung giờ của {tên} bị xoá cùng channel | – | BR-24, US5.3 AC07. Trước là UI-66 |
 | MSG-37 | Toast bỏ hoàn thành (F-10) | Đã bỏ đánh dấu xong "{tiêu đề}" · Hoàn tác | {tiêu đề} | O-10; toast ≥ 5 giây. Trước là UI-68 |
 | MSG-38 | Toast (SCR-03.S16) | Task này đã bị xoá trên thiết bị khác · Hoàn tác | – | O-01, thay MSG-09 ở UC-02 E3. Trước là UI-69 |
+| MSG-39 | Inline dưới ô tên context (SCR-06.S03) | Context này đã tồn tại | – | Tên context trùng, không phân biệt hoa thường (BR-14, O-17); cùng giọng MSG-15 |
+| MSG-40 | Inline dưới ô tên context (SCR-06.S03) | Tên context 1–50 ký tự | – | Tên context trống hoặc > 50 ký tự (BR-14, O-17); cùng giọng MSG-17, context không có luật "#" |
 | G04 MSG-01 | Toast (CASE-12, CASE-13) | Đã chuyển "{tiêu đề}" sang {thứ, ngày} · Hoàn tác | {tiêu đề}, {thứ, ngày} | Nguồn G04; dùng cho đổi ngày trong SCR-03 (SRS UC-02 A11, O-13) |
 | G04 MSG-30 | Banner board | Đang offline. Thay đổi được lưu trên máy và tự đồng bộ khi có mạng | – | Nguồn G04; G02 không vẽ banner |
 | QC-MSG-01 | Tooltip icon lỗi trên card (SCR-02.S09) | Chưa lưu được thay đổi. Thử lại | – | QC-13 mục 1 |
@@ -874,18 +876,18 @@ Tầng theo [knowledge base component / snowflake](../design-system/00-knowledge
 | O-14 | Popover channel không có kết quả: có lối "Tạo channel {từ khoá}" không? | SCR-09.S03 | Không ở 1.0; chỉ có link "Quản lý channel" | PO | Theo đề xuất. Ghi PRD US5.2 AC04, mục 10; SRS SCR-09 #5 |
 | O-15 | Nhân bản và khôi phục từ Thùng rác khi mất mạng: UC-04, UC-05 chưa có nhánh E# mất mạng (QC-08 mục 7 yêu cầu); UC-02 chỉ nói gián tiếp ở E5 | SCR-03.S18, SCR-05.S07 | Nhân bản chạy trên máy, "Chờ đồng bộ" (đã có idempotency key); khôi phục cần mạng, nút mờ, UI-50 | PO, thêm E# vào SRS UC-02, UC-04, UC-05 | Theo đề xuất. Thêm SRS UC-02 E8, UC-04 E5, UC-05 E2; chữ UI-50 thành MSG-31 |
 | O-16 | Thứ tự tên mức priority và tên tiếng Anh "Urgent, Priority, Normal, Low" trên giao diện tiếng Việt (DS-07: không pha tiếng Anh ngoài thuật ngữ đã chốt) | `Chip/Priority`, `Menu/Priority` | Giữ như BR-06 (đã dùng trong PRD); ghi "priority" vào CONTEXT.md nếu giữ | PO | Theo đề xuất. Ghi `CONTEXT.md` (Priority), PRD US2.3 AC01, mục 10 |
-| O-17 | Quy tắc tên context (độ dài, trùng) chưa có trong SRS; MSG-17 chỉ nói channel | SCR-06.S03 | Như channel: 1–50 ký tự, không trùng (không phân biệt hoa thường) | PO, ghi SRS BR-14 | Theo đề xuất. Ghi SRS BR-14, PRD US5.1 AC07. Chữ lỗi cho tên context chưa có MSG (xem mục 12) |
+| O-17 | Quy tắc tên context (độ dài, trùng) chưa có trong SRS; MSG-17 chỉ nói channel | SCR-06.S03 | Như channel: 1–50 ký tự, không trùng (không phân biệt hoa thường) | PO, ghi SRS BR-14 | Theo đề xuất. Ghi SRS BR-14, PRD US5.1 AC07. Chữ lỗi cho tên context: MSG-39, MSG-40 (SRS BR-14, UC-06 E1, E2, SCR-06 #2) |
 | O-18 | `Button` trong code chỉ có `primary` / `secondary`; "Xoá channel" (SCR-07) cần kiểu nguy hiểm | SCR-07, mục 9 | Thêm `variant=danger` vào `Button` trong design system | PO (design system) | Theo đề xuất. Ghi nền tảng design system mục 8 (chỉ tài liệu, code chưa sửa) |
 | O-20 | Khung giờ channel: giờ kết thúc chọn được 24:00 không? BR-22 nói "không vắt qua nửa đêm (24:00)" nhưng không rõ 24:00 có nằm trong ngày | `Picker/Time` SCR-06 | Cho chọn 24:00 làm giờ kết thúc, để có khung tới hết ngày | PO, ghi SRS BR-22 | Theo đề xuất. Ghi SRS BR-22, SCR-06 #8 |
 | O-19 | Ghi ngược vào SRS khi PO duyệt brief (không phải câu hỏi) | SRS G02 | Thêm mã SCR cho ô thêm nhanh toàn cục và popover chọn channel (mã tạm `SCR-Nxx`); đổi UI-xx đã duyệt thành MSG (A7), nhất là UI-15, UI-27, UI-58 đã có chữ trong SRS mà chưa có mã | BA | Đã làm. SRS G02 thêm SCR-08, SCR-09; UI-15, UI-27, UI-50, UI-58, UI-63 … UI-66, UI-68, UI-69 thành MSG-29 … MSG-38; chữ nhãn tĩnh giữ mã UI-xx trong brief (SRS mục 7 trỏ về brief) |
 
 ## 12. Kiểm tra trước khi giao
 
-Tích lại ngày 10/11/2026, sau khi PO duyệt và đã ghi ngược mục 11.
+Tích lại ngày 10/11/2026, sau khi PO duyệt và đã ghi ngược mục 11; tích lại lần nữa cùng ngày sau khi PO duyệt nốt các `[đề xuất]` còn lại.
 
 - [x] Mỗi màn ở mục 3 có bảng trạng thái và dữ liệu mẫu (9 / 9 màn).
-- [ ] Mỗi trạng thái có chữ (MSG / UI) cho mọi chỗ hiện chữ. Hai chỗ chữ tạm đã chốt: SCR-03.S16 dùng MSG-38 (O-01), F-10 dùng MSG-37 (O-10). **Còn thiếu:** lỗi tên context (trùng, quá 50 ký tự, trống) theo BR-14 mới (O-17) chưa có MSG; SCR-06.S03 hiện chỉ có chữ cho channel (MSG-15, MSG-17).
+- [x] Mỗi trạng thái có chữ (MSG / UI) cho mọi chỗ hiện chữ. Hai chỗ chữ tạm đã chốt: SCR-03.S16 dùng MSG-38 (O-01), F-10 dùng MSG-37 (O-10). Lỗi tên context (trùng, quá 50 ký tự, trống) theo BR-14 (O-17) có MSG-39, MSG-40 ở SCR-06.S03, thêm ngày 10/11/2026.
 - [x] Mỗi flow ở mục 5 trỏ tới sơ đồ UC trong `flow/` (F-01 … F-06 → UC-01; F-07, F-08, F-17 → UC-02; F-09, F-10 → UC-03; F-11, F-12 → UC-04; F-13 → UC-05; F-14 … F-16 → UC-06). Đã kiểm lại anchor với tiêu đề trong file flow ngày 10/11/2026.
 - [x] Mọi luồng thay thế (A#) và luồng lỗi (E#) trong SRS của UC-01 … UC-06 đều có trong mục 4 hoặc mục 6, trừ UC-01 E5 (chỉ đọc, 1.1, không vẽ) và UC-04 E2 (SRS đã bỏ). Nhánh mới ngày 10/11/2026: UC-02 E8 → SCR-03.S18; UC-04 E5 → SCR-05.S07, F-11; UC-05 E2 → SCR-03.S18, F-13.
-- [ ] Không còn `[đề xuất]` chưa duyệt ở luồng chính (P1). Mọi `[đề xuất]` gắn với câu O và mọi chữ UI-xx đã bỏ nhãn. Còn các chi tiết hành vi không thuộc câu O nào, chưa được duyệt riêng (không chặn vẽ): Enter khi đang đọc link (SCR-01.S07), chip Vị trí ẩn khi chọn backlog (SCR-01.S09), tooltip chip channel dài (SCR-01), so khớp không phân biệt dấu (SCR-09.S02), channel ẩn khác không hiện (SCR-09.S04), header dialog luôn hiện khi cuộn (SCR-03), F-02 không mang giá trị sang task kế tiếp. Ngoài P1: SCR-08 không có chip Ngày / Vị trí và không có nút "Thêm", cửa sổ cao tối đa 5 dòng; nút "Khôi phục" chỉ hiện khi hover (SCR-05); màu kế tiếp cho channel mới (SCR-06.S02); MSG-27 chờ server nhận mới hiện ngày (SCR-06.S11); Enter không tự xoá (SCR-07); gợi ý về muộn không điền vào task đã tạo (CASE-23). Chỗ nào đã ghi vào SRS thì SRS gắn `[giả định]` (SCR-08 #3, #4; SCR-09 #4).
+- [x] Không còn `[đề xuất]` chưa duyệt. Mọi `[đề xuất]` gắn với câu O và mọi chữ UI-xx đã bỏ nhãn. Các chi tiết hành vi không thuộc câu O nào (Enter khi đang đọc link, chip Vị trí ẩn khi chọn backlog, so khớp không phân biệt dấu, channel ẩn khác không hiện, F-02 không mang giá trị sang task kế tiếp, SCR-08 không có chip Ngày / Vị trí và không có nút "Thêm", nút "Khôi phục" chỉ hiện khi hover / focus, màu kế tiếp cho channel mới, MSG-27 chờ server nhận mới hiện ngày, Enter không tự xoá ở SCR-07, gợi ý về muộn không điền vào task đã tạo) và cách trình bày (tooltip chip channel dài, header dialog luôn hiện khi cuộn, cửa sổ SCR-08 cao tối đa 5 dòng) PO đã duyệt ngày 10/11/2026, bỏ nhãn; chi tiết hành vi đã ghi vào SRS G02 (UC-01 bước 7, A1, A4; UC-06 E6; SCR-01 #8, SCR-05 #3, SCR-06 #3, SCR-07 #2, SCR-08 #3, #4, SCR-09 #4; SCR-09 #3 đã có sẵn), SRS bỏ `[giả định]` ở UC-01 bước 7, UC-06 E6, SCR-08 #3, #4, SCR-09 #4.
 - [x] Không còn câu hỏi mở chặn luồng chính (mục 11 đã chốt hết).
