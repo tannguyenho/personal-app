@@ -1,4 +1,5 @@
 # Brief G02 Quản lý task — bản thử: tạo task và chi tiết task
+> **Đã thay** bằng brief G02 đầy đủ [`g02-quan-ly-task.md`](g02-quan-ly-task.md) (#11). Bản thử này chỉ giữ để tham khảo.
 
 > **BẢN THỬ** để PO phản hồi về [khuôn](_khuon.md) ([ticket #9](https://github.com/tannguyenho/personal-app/issues/9)). Chỉ phủ một phần G02: ô soạn task, card ngay sau khi tạo, chi tiết task, menu "Khác". Brief G02 đầy đủ ([#11](https://github.com/tannguyenho/personal-app/issues/11)) sẽ viết lại từ bản này sau khi chốt khuôn, kiến trúc thông tin (#7) và FigJam (#10).
 >
