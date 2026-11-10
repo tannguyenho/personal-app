@@ -11,6 +11,8 @@
 > Cập nhật theo vòng 7: khung giờ channel một khoảng mỗi ngày, không vắt nửa đêm, bước 15 phút, đổi có hiệu lực từ ngày làm việc kế tiếp, "Chưa phân loại" không có khung riêng (D1–D3); AI hoàn thành / xoá áp cho cả subtask, AI không hoàn thành hay xoá task có liên kết tích hợp (D10); phím toàn cục Ctrl+Shift+A có ở 1.0 (D11); bản 1.1 vẫn chỉ một người dùng, nhiều thành viên từ 1.2 trở đi (Q47).
 >
 > Cập nhật 06/11/2026 theo F4 ([quyết định 06/11](../review/quyet-dinh-chot-2026-11-06.md)): bỏ công tắc "Cho phép AI hoàn thành và xoá task"; khi trợ lý AI bật, AI luôn được hoàn thành và xoá task / subtask (vào Thùng rác, có Hoàn tác); task có liên kết tích hợp vẫn không bao giờ được AI hoàn thành hay xoá (D10).
+>
+> Cập nhật 10/11/2026 theo [brief G02](../design-brief/g02-quan-ly-task.md) đã duyệt (mục 11, O-01 … O-20 chốt theo đề xuất của brief): trả lời các câu hỏi mở ở mục 10, sửa AC liên quan.
 
 # 1. Bối cảnh và vấn đề
 
@@ -71,6 +73,7 @@ Task là đơn vị trung tâm của sản phẩm: board theo ngày, lịch, tim
 - Trial, thanh toán (gói cá nhân một người dùng, không tính ghế) và chế độ chỉ đọc → bản 1.1 (QC-09, Q47, ADR-0002). Bản 1.0 miễn phí, không giới hạn, gắn nhãn Beta.
 - Đổi ngày task (phím D, kéo thả, rollover, backlog) → G04, G06 theo QC-05.
 - Gộp task (giữ Alt khi kéo) → sau 1.1.
+- Chọn nhiều task để xoá / đổi channel cùng lúc → không có ở 1.0 (chốt 10/11/2026, O-06).
 
 # 4. Nguyên tắc sản phẩm
 
@@ -138,7 +141,7 @@ AC02: Enter tạo task với ngày dự định = ngày của cột; task hiện
 
 AC03: Tiêu đề trống → Enter không tạo task.
 
-AC04: Esc khi đã gõ nội dung → giữ bản nháp, mở lại ô soạn thấy nội dung cũ (Sunsama bỏ luôn bản nháp; khác có chủ đích).
+AC04: Esc khi đã gõ nội dung → giữ bản nháp, mở lại ô soạn thấy nội dung cũ (Sunsama bỏ luôn bản nháp; khác có chủ đích). Bản nháp giữ trên máy, mỗi ngày một bản, kể cả khi đóng app, tới khi tạo task hoặc xoá hết chữ; ngày của bản nháp thành ngày đã qua thì bản nháp chuyển sang ô soạn hôm nay (chốt 10/11/2026, O-02).
 
 AC05: Ô soạn có sẵn các tuỳ chọn: ngày, thời lượng, channel, objective (1.1), priority, vị trí.
 
@@ -150,7 +153,7 @@ AC07: Phím toàn cục **Ctrl+Shift+A** (app Windows, có từ 1.0 — D11) m�
 
 AC01: Dán URL vào ô soạn → tiêu đề task lấy từ tiêu đề trang; không đọc được thì dùng chính URL.
 
-AC02: Task giữ link nguồn; phím G mở link.
+AC02: Task giữ link nguồn; phím G mở link. Card có icon link; chi tiết task có dòng tên miền ngay dưới tiêu đề, bấm để mở (chốt 10/11/2026, O-05).
 
 ### US1.3 Có gợi ý thời lượng và channel
 
@@ -190,9 +193,11 @@ AC06: Thêm subtask vào task đã hoàn thành → subtask mới ở trạng th
 
 AC07: Xoá subtask (icon xoá trên dòng subtask) không hỏi xác nhận; toast "Đã xoá subtask · Hoàn tác" ≥ 5 giây; Hoàn tác trả subtask về đúng vị trí, trạng thái, thời lượng và thời gian thực tế (C9).
 
+AC08: Subtask đã có bản ghi thời gian bị xoá → "Thực tế" của task trừ phần thời gian của subtask đó; Hoàn tác thì cộng lại (QC-07 mục 5; chốt 10/11/2026, O-09).
+
 ### US2.3 Đặt priority và hạn chót
 
-AC01: Priority chọn trong 4 mức hoặc phím 1–4 khi mở menu priority; task priority cao lên đầu danh sách ngày (khi bật tự sắp xếp).
+AC01: Priority chọn trong 4 mức hoặc phím 1–4 khi mở menu priority; task priority cao lên đầu danh sách ngày (khi bật tự sắp xếp). Tên bốn mức Urgent, Priority, Normal, Low giữ tiếng Anh trên giao diện tiếng Việt (thuật ngữ ở `CONTEXT.md`; chốt 10/11/2026, O-16).
 
 AC02: Priority khác Normal hiện chip trên card.
 
@@ -231,6 +236,10 @@ AC01: Bấm lại ✓ trong **cùng ngày làm việc** với lúc hoàn thành 
 AC02: Bấm lại ✓ ở **ngày làm việc khác** → chỉ xoá thời điểm hoàn thành; task ở Kế hoạch hôm nay; subtask giữ nguyên (QC-03 mục 4).
 
 AC03: Nhật ký ghi "đánh dấu chưa xong".
+
+AC04: Bỏ hoàn thành có toast Hoàn tác (chốt 10/11/2026, O-10).
+
+AC05: Bỏ hoàn thành ở ngày làm việc khác đưa instance lặp về hôm nay mà hôm nay đã có instance cùng series → vẫn về hôm nay (đường thủ công QC-06), toast kèm cảnh báo "Ngày này đã có {tên series}" (chốt 10/11/2026, O-08).
 
 ## UC4. Nhân bản, xoá và khôi phục
 
@@ -276,13 +285,19 @@ AC04: Xoá channel → hỏi chuyển task sang channel nào (mặc định "Ch�
 
 AC05: Channel hệ thống "Chưa phân loại" không xoá được (B4).
 
+AC06: "Chưa phân loại" không đổi tên, không ẩn được; không thuộc context nào, đứng riêng ở đầu danh sách channel (chốt 10/11/2026, O-07).
+
+AC07: Tên context 1–50 ký tự, không trùng (không phân biệt hoa thường) (chốt 10/11/2026, O-17).
+
 ### US5.2 Gán channel cho task
 
 AC01: Gõ "#" trong ô soạn hoặc phím Q / # trên task mở danh sách channel có ô tìm.
 
-AC02: Shift+Q nhận channel gợi ý.
+AC02: Shift+Q nhận channel gợi ý; giá trị nhận rồi mất biểu tượng ✨ (coi như người dùng chọn); không có gợi ý thì không làm gì (chốt 10/11/2026, O-03).
 
 AC03: Đổi channel của task → lịch làm việc của task theo channel mới (khung giờ channel nếu có, ngược lại lịch chung) (QC-02 mục 6).
+
+AC04: Tìm channel không có kết quả → chỉ có link "Quản lý channel"; không có lối tạo channel ngay trong danh sách ở 1.0 (chốt 10/11/2026, O-14).
 
 ### US5.3 Đặt khung giờ riêng cho channel
 
@@ -335,13 +350,13 @@ AC10: Số ngày bị hoãn của task tính theo lịch **hiện tại** của 
 # 10. Câu hỏi mở
 
 - Đã chốt 04/11/2026: Thùng rác giữ 30 ngày, khác có chủ đích với 7 ngày của Sunsama (Q28).
-- Esc giữ bản nháp hay bỏ luôn như Sunsama?
+- Esc giữ bản nháp hay bỏ luôn như Sunsama? **Chốt 10/11/2026 (O-02):** giữ bản nháp (khác Sunsama có chủ đích), mỗi ngày một bản nháp trên máy, tới khi tạo task hoặc xoá hết chữ; ngày thành ngày đã qua thì chuyển sang ô soạn hôm nay (US1.1 AC04).
 - Đã chốt 04/11/2026: channel mặc định là channel hệ thống "Chưa phân loại", tạo khi đăng ký, không xoá được; `work` / `personal` chỉ là context (B4).
-- Có cho chọn nhiều task để xoá / chuyển channel cùng lúc ở 1.0 không?
-- Comment ở 1.0 có cần không, khi bản 1 chỉ có một người dùng (Q35)? Nếu giữ thì comment chỉ là ghi chú theo thời gian của chính người dùng.
-- Channel hệ thống "Chưa phân loại" thuộc context nào (hay đứng riêng), có đổi tên / ẩn được không?
-- Bỏ hoàn thành ở ngày làm việc khác đưa instance lặp về hôm nay: nếu hôm nay đã có instance của cùng series thì áp QC-06 theo đường tự động (lưu trữ `skipped`) hay thủ công (cảnh báo)?
-- Xoá subtask đã có bản ghi thời gian: bản ghi đó còn tính vào thời gian thực tế của task không (QC-07 mới nói task đã xoá)?
+- Có cho chọn nhiều task để xoá / chuyển channel cùng lúc ở 1.0 không? **Chốt 10/11/2026 (O-06):** không có ở 1.0 (mục 3.2).
+- Comment ở 1.0 có cần không, khi bản 1 chỉ có một người dùng (Q35)? Nếu giữ thì comment chỉ là ghi chú theo thời gian của chính người dùng. **Chốt 10/11/2026 (O-04):** giữ comment ở 1.0 theo SRS, đặt sau notes trong chi tiết task (US2.4).
+- Channel hệ thống "Chưa phân loại" thuộc context nào (hay đứng riêng), có đổi tên / ẩn được không? **Chốt 10/11/2026 (O-07):** không thuộc context nào, đứng riêng ở đầu danh sách; không đổi tên, không ẩn được (US5.1 AC06, SRS BR-14).
+- Bỏ hoàn thành ở ngày làm việc khác đưa instance lặp về hôm nay: nếu hôm nay đã có instance của cùng series thì áp QC-06 theo đường tự động (lưu trữ `skipped`) hay thủ công (cảnh báo)? **Chốt 10/11/2026 (O-08):** đường thủ công, vẫn về hôm nay, cảnh báo ở dòng 2 toast (US3.2 AC05, SRS BR-09).
+- Xoá subtask đã có bản ghi thời gian: bản ghi đó còn tính vào thời gian thực tế của task không (QC-07 mới nói task đã xoá)? **Chốt 10/11/2026 (O-09):** không tính, "Thực tế" của task trừ phần đó; Hoàn tác thì cộng lại (US2.2 AC08, QC-07 mục 5).
 - Đã chốt 04/11/2026: gợi ý thời lượng / channel dùng trợ lý AI qua Claude Code CLI; trợ lý tắt hoặc không có Claude Code thì không có gợi ý AI; không gọi LLM nào khác (Q33, QC-12).
 - Đã chốt 04/11/2026: bỏ lưu trữ thủ công (`manual`) khỏi 1.0, để bản sau (Q34).
 - Đã chốt 04/11/2026: bản 1 chỉ một người dùng; người dùng tạo channel tự do; quyền tạo channel chung / riêng tư, giao task, follow để bản sau (Q35). Task được giao (bản sau) vào bucket "Tuần sau", đặt lên đầu (Q36).
@@ -353,3 +368,5 @@ AC10: Số ngày bị hoãn của task tính theo lịch **hiện tại** của 
 - Đã chốt 04/11/2026: channel hệ thống "Chưa phân loại" không có khung giờ riêng, luôn theo lịch chung (D3).
 - Đã chốt 04/11/2026: phím toàn cục Ctrl+Shift+A (thêm task) có ở 1.0 trên app Windows (D11).
 - **Chốt 09/11/2026 (A1, C01):** câu lỗi lưu "Chưa lưu được thay đổi. Thử lại" (SRS MSG-10) là câu chung QC-MSG-01 (QC-13); khung giờ channel bị sửa trên thiết bị khác có câu riêng (SRS MSG-28), không dùng câu "Task vừa được cập nhật…".
+- **Chốt 10/11/2026 (O-14):** tìm channel không có kết quả thì không có lối "Tạo channel {từ khoá}" ở 1.0, chỉ có link "Quản lý channel" (US5.2 AC04).
+- **Chốt 10/11/2026 (O-16):** tên bốn mức priority Urgent, Priority, Normal, Low giữ tiếng Anh trên giao diện; "priority" ghi vào [`CONTEXT.md`](../../CONTEXT.md) (US2.3 AC01).

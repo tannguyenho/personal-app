@@ -152,7 +152,7 @@ Mọi đường làm thay đổi ngày dự định hoặc đưa task ra khỏi 
    - Nhập theo **khoảng giờ**: kiểm tra chồng lấn, có vẽ lên lịch.
    - Mức tối thiểu 1 phút.
 4. **"Tính planned là actual"** là giá trị hiển thị, **không tạo bản ghi**. Lúc hoàn thành, task lưu cờ `plannedAsActual` theo cài đặt tại thời điểm đó. Bật hoặc tắt cài đặt sau này không làm đổi số liệu quá khứ.
-5. **Thời gian thực tế** của task = Σ bản ghi của task và subtask, cộng planned nếu `plannedAsActual` và không có bản ghi nào. G09 là nhóm duy nhất cộng số liệu theo ngày hoặc tuần. Bản ghi của task đã xoá không tính.
+5. **Thời gian thực tế** của task = Σ bản ghi của task và subtask, cộng planned nếu `plannedAsActual` và không có bản ghi nào. G09 là nhóm duy nhất cộng số liệu theo ngày hoặc tuần. Bản ghi của task đã xoá không tính. Bản ghi của **subtask đã xoá** (G02 BR-17 d) cũng không tính: "Thực tế" của task trừ phần đó; Hoàn tác xoá subtask thì cộng lại (chốt 10/11/2026, O-09 [brief G02](design-brief/g02-quan-ly-task.md)).
 6. Timer luôn chạy trên **task cha**, không chạy trên subtask.
 
 ## QC-08. Đồng bộ nhiều thiết bị và offline

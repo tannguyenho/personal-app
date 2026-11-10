@@ -1,17 +1,17 @@
 # Flow G02 Quản lý task
 
-> **Nguồn:** [srs-g02](../../features/srs-g02-quan-ly-task.md) (commit `8fac830`, sửa theo chốt 09/11/2026) · **Brief:** [bản thử G02](../_thu-g02-tao-va-chi-tiet-task.md), brief đầy đủ `[chờ #11]`
+> **Nguồn:** [srs-g02](../../features/srs-g02-quan-ly-task.md) (commit `8fac830`, sửa theo chốt 09/11/2026 và chốt 10/11/2026 của brief G02) · **Brief:** [G02](../g02-quan-ly-task.md) (đã duyệt 10/11/2026)
 > **Quy ước:** [_quy-uoc.md](_quy-uoc.md) · **FigJam:** `[chờ]`
 
 ## Mục lục
 
 | UC | Flow | Màn chính | Nhánh A / E (1.0) |
 |---|---|---|---|
-| [UC-01](#uc-01-tạo-task) | Tạo task | SCR-01 Ô soạn task, SCR-N01 Ô thêm nhanh toàn cục, SCR-02 Task card | 7 / 5 |
-| [UC-02](#uc-02-xem-và-sửa-chi-tiết-task) | Xem và sửa chi tiết task | SCR-03 Chi tiết task | 12 / 7 |
+| [UC-01](#uc-01-tạo-task) | Tạo task | SCR-01 Ô soạn task, SCR-08 Ô thêm nhanh toàn cục, SCR-09 Popover chọn channel, SCR-02 Task card | 7 / 5 |
+| [UC-02](#uc-02-xem-và-sửa-chi-tiết-task) | Xem và sửa chi tiết task | SCR-03 Chi tiết task | 12 / 8 |
 | [UC-03](#uc-03-hoàn-thành--bỏ-hoàn-thành-task) | Hoàn thành / bỏ hoàn thành | SCR-02, SCR-03 | 7 / 3 |
-| [UC-04](#uc-04-xoá-hoàn-tác-và-khôi-phục-task) | Xoá, hoàn tác, khôi phục | SCR-04 Menu "Khác", SCR-05 Thùng rác | 7 / 3 |
-| [UC-05](#uc-05-nhân-bản-task) | Nhân bản task | SCR-04, SCR-03 | 2 / 1 |
+| [UC-04](#uc-04-xoá-hoàn-tác-và-khôi-phục-task) | Xoá, hoàn tác, khôi phục | SCR-04 Menu "Khác", SCR-05 Thùng rác | 7 / 4 |
+| [UC-05](#uc-05-nhân-bản-task) | Nhân bản task | SCR-04, SCR-03 | 2 / 2 |
 | [UC-06](#uc-06-quản-lý-context-và-channel) | Quản lý context và channel | SCR-06, SCR-07 | 9 / 7 |
 
 ---
@@ -68,7 +68,7 @@ flowchart TD
 
   u2 -->|"A1 · dán URL"| a1[["TaskFromUrl<br/>không đọc được trong 3 giây thì giữ URL"]]
   a1 --> u3
-  u2 -->|"A5 · gõ #"| a5["SCR-01 danh sách channel có ô tìm"]
+  u2 -->|"A5 · gõ #"| a5["SCR-09 Popover chọn channel<br/>chữ sau # là từ khoá"]
   a5 -->|"chọn channel"| a5b["Chip Channel = #tên<br/>xoá #... khỏi tiêu đề"]
   a5b --> u2
   u2 -->|"A4 · AI tắt, chưa đồng ý, không có Claude Code,<br/>tắt gợi ý, chậm > 2s, lỗi, hết hạn mức"| a4["Không gợi ý: thời lượng trống,<br/>channel mặc định BR-05"]
@@ -85,7 +85,7 @@ flowchart TD
   e2m -.-> s1
   p2 -.->|"E6 · D đã thành ngày qua khi gửi<br/>qua mốc đầu ngày lúc ô soạn đang mở, PAST_DATE"| e6m>"MSG-20 · Inline<br/>Không thể đặt task chưa xong vào ngày đã qua"]
   e6m -.-> fail(["Không tạo, nội dung còn trong ô soạn"])
-  p2 -.->|"E3 · mất mạng"| e3["SCR-02 card có dấu chờ đồng bộ<br/>hàng đợi trên máy QC-08"]
+  p2 -.->|"E3 · mất mạng"| e3["SCR-02 card có dấu chờ đồng bộ<br/>tooltip MSG-30, hàng đợi trên máy QC-08"]
   e3 -.->|"có mạng, gửi lại cùng idempotency key"| ok
   p2 -.->|"E4 · lỗi 5xx"| e4["SCR-02 card trạng thái lỗi"]
   e4 -.-> e4m>"MSG-10 · Toast<br/>Chưa lưu được thay đổi. Thử lại"]
@@ -112,18 +112,18 @@ flowchart TD
 
 ### Nhánh thay thế: ô thêm nhanh toàn cục (A7)
 
-Màn: SCR-N01 (chưa có mã trong SRS, mã theo [bản thử brief G02](../_thu-g02-tao-va-chi-tiet-task.md)). Nguồn: UC-01 A7, US1.1 AC07, D11, IA-19.
+Màn: SCR-08 Ô thêm nhanh toàn cục (SRS G02, chốt 10/11/2026, O-19). Nguồn: UC-01 A7, US1.1 AC07, D11, IA-19.
 
 ```mermaid
 flowchart TD
   start(["Bất kỳ đâu trên Windows<br/>app đang mở, ở nền hoặc ở khay"])
   u1[/"Nhấn Ctrl+Shift+A"/]
   d0{"Phím tắt đang bật?<br/>G01 BR-15"}
-  s1["SCR-N01 Ô thêm nhanh toàn cục<br/>cửa sổ nổi nhỏ, giữa màn hình đang dùng<br/>luôn ở trên, ngày = hôm nay"]
+  s1["SCR-08 Ô thêm nhanh toàn cục<br/>cửa sổ nổi nhỏ, giữa màn hình đang dùng<br/>luôn ở trên, ngày = hôm nay"]
   u2[/"Gõ tiêu đề"/]
   u3[/"Enter"/]
   p1[["TaskCreate như bước 6"]]
-  s2["Đã thêm vào Hôm nay<br/>khoảng 1 giây"]
+  s2>"MSG-29 · Trong SCR-08, khoảng 1 giây<br/>Đã thêm vào Hôm nay"]
   ok(["Ô đóng, focus về app trước<br/>cửa sổ chính ở khay thì vẫn ở khay"])
 
   start ==> u1 ==> d0
@@ -134,7 +134,7 @@ flowchart TD
   s1 -->|"Click ra ngoài hoặc Esc"| a3(["Ô đóng, bản nháp giữ<br/>mở lại thấy nội dung cũ"])
   u3 -.->|"E1 · tiêu đề trống"| e1["Enter không làm gì"]
   u3 -.->|"E2 · > 500 ký tự"| e2m>"MSG-01 · Inline<br/>Tên task tối đa 500 ký tự"]
-  p1 -.->|"E3 · mất mạng"| e3["Hàng đợi trên máy QC-08<br/>vẫn hiện Đã thêm vào Hôm nay"]
+  p1 -.->|"E3 · mất mạng"| e3["Hàng đợi trên máy QC-08<br/>vẫn hiện MSG-29"]
   e3 -.-> ok
   p1 -.->|"E4 · lỗi 5xx"| e4m>"MSG-10 · Toast<br/>Chưa lưu được thay đổi. Thử lại"]
 
@@ -163,12 +163,12 @@ flowchart TD
 | A2 | Xoá ngày | Task trong Backlog | MSG-07 |
 | A3 | Esc khi đã gõ | Ô soạn đóng, giữ nháp | – |
 | A4 | Không có gợi ý AI | Về luồng chính, không chờ | – |
-| A5 | Gõ "#" | Chip Channel được gán | – |
+| A5 | Gõ "#" | SCR-09 → chip Channel được gán | – |
 | A6 | Phím A trên cột đã qua | Ô soạn mở ở cột hôm nay (IA-20) | – |
-| A7 | Ctrl+Shift+A toàn cục | Ô thêm nhanh, task vào hôm nay (IA-19) | "Đã thêm vào Hôm nay" (chưa có mã MSG) |
+| A7 | Ctrl+Shift+A toàn cục | SCR-08, task vào hôm nay (IA-19) | MSG-29 |
 | E1 | Tiêu đề trống | Nút tạo disabled | – |
 | E2 | > 500 ký tự | Chặn tạo | MSG-01 |
-| E3 | Mất mạng | Card chờ đồng bộ → gửi lại | – |
+| E3 | Mất mạng | Card chờ đồng bộ → gửi lại | MSG-30 (tooltip) |
 | E4 | Lỗi 5xx | Card lỗi, Thử lại | MSG-10 |
 | E5 | Workspace chỉ đọc | Bỏ (1.1) | – |
 | E6 | Ngày D thành ngày đã qua khi gửi | Không tạo | MSG-20 |
@@ -259,8 +259,9 @@ flowchart TD
   a6m --> p2
   u2 -->|"A11 · đổi ngày dự định ở header"| a11[["Đường chọn ngày QC-05<br/>timebox dời theo, reset số ngày bị hoãn<br/>gửi kèm positionVersion"]]
   a11 --> d11{"Instance lặp vào ngày<br/>đã có instance cùng series?"}
-  d11 -->|"có"| a11m>"MSG-24 · Toast<br/>Ngày này đã có tên series"]
-  d11 -->|"không"| s2
+  d11 -->|"không"| a11t>"G04 MSG-01 · Toast<br/>Đã chuyển tiêu đề sang thứ, ngày · Hoàn tác"]
+  d11 -->|"có"| a11m>"G04 MSG-01 kèm MSG-24 · một toast<br/>dòng 2: Ngày này đã có tên series"]
+  a11t --> s2
   a11m --> s2
   u2 -->|"A12 · đổi channel"| a12[["TaskUpdate channelId<br/>lịch làm việc theo channel mới từ hôm nay"]]
   a12 --> a12x{{"→ G04 tính lại projection, sức chứa"}}
@@ -276,11 +277,14 @@ flowchart TD
   a11 -.->|"E6 · 412 VERSION_CONFLICT"| e6["Tải lại task, ngày về giá trị server"]
   e6 -.-> e6m>"MSG-23 · Toast<br/>Task đã thay đổi trên thiết bị khác"]
   s1 -.->|"E3 · task bị xoá ở thiết bị khác khi đang mở"| e3(["SCR-03 đóng"])
-  e3 -.-> e3m>"MSG-09 · Toast<br/>Đã xoá · Hoàn tác (Ctrl+Z)"]
+  e3 -.-> e3m>"MSG-38 · Toast<br/>Task này đã bị xoá trên thiết bị khác · Hoàn tác"]
+  p2 -.->|"E8 · mất mạng"| e8["Giá trị mới hiện ngay, hàng đợi QC-08<br/>header SCR-03 và card có dấu chờ đồng bộ MSG-30"]
+  e8 -.->|"có mạng, gửi thành công"| s2
 
   class s1,u2,p2,s2 happy
-  class a11,d11,a12,a7 alt
+  class a11,d11,a11t,a12,a7 alt
   class a6m,a11m,a7m warn
+  class e8 sync
   class a12x link
   class e1m,e7,e4,e4m,e5m,e6,e6m,e3m err
   class e3 fail
@@ -309,15 +313,16 @@ flowchart TD
 | A8 | Xoá subtask | Dòng ẩn, Hoàn tác được | MSG-21 |
 | A9 | Thêm subtask vào task đã xong | Task giữ Hoàn thành | – |
 | A10 | Tích subtask cuối | Task không tự xong | – |
-| A11 | Đổi ngày dự định | Ngày mới | MSG-24 (instance trùng series) |
+| A11 | Đổi ngày dự định | Ngày mới, Hoàn tác được (O-13) | G04 MSG-01; kèm MSG-24 ở dòng 2 khi instance trùng series |
 | A12 | Đổi channel | Channel mới → [G04](g04-board-ngay.md) tính lại | – |
 | E1 | Vi phạm BR-01 | Không gửi | MSG-01 / 02 / 03 |
 | E2 | Subtask thứ 101 | Chặn | MSG-04 |
-| E3 | Task bị xoá khi đang mở | Dialog đóng | MSG-09 |
+| E3 | Task bị xoá khi đang mở | Dialog đóng, Hoàn tác được | MSG-38 (O-01) |
 | E4 | TaskUpdate lỗi | Giá trị cũ | MSG-10 |
 | E5 | Sửa task đã xoá | Bỏ lệnh | MSG-22 |
 | E6 | VERSION_CONFLICT khi đổi ngày | Ngày theo server | MSG-23 |
 | E7 | Đổi sang ngày đã qua | Không chọn được | MSG-20 |
+| E8 | Mất mạng khi sửa | Hàng đợi, chờ đồng bộ → gửi lại (O-15) | MSG-30 (tooltip) |
 
 ---
 
@@ -362,6 +367,7 @@ flowchart TD
   u1 ==> p1 ==> s1 ==> m1
 
   u1 -->|"A1 · task đã xong"| a1[["TaskUncomplete, BR-09"]]
+  a1 --> a1m>"MSG-37 · Toast<br/>Đã bỏ đánh dấu xong tiêu đề · Hoàn tác"]
   a1 --> d1{"Cùng ngày làm việc<br/>với completedAt?"}
   d1 -->|"có"| a2r["Về như trước khi hoàn thành:<br/>ngày / bucket, subtask, plannedAsActual"]
   d1 -->|"không"| a1r["Chỉ xoá completedAt<br/>task Kế hoạch hôm nay"]
@@ -386,7 +392,7 @@ flowchart TD
   p1 -.->|"E3 · 409 TASK_DELETED"| e3m>"MSG-22 · Toast<br/>Task này đã bị xoá trên thiết bị khác.<br/>Thay đổi chưa được lưu"]
 
   class u1,p1,s1,m1 happy
-  class a1,d1,a1r,a2,a2r,a3,a4,a5,a6 alt
+  class a1,a1m,d1,a1r,a2,a2r,a3,a4,a5,a6 alt
   class start7,a7 ai
   class a7x link
   class e1 sync
@@ -406,7 +412,7 @@ flowchart TD
 
 | Mã | Điều kiện | Kết thúc ở | Thông báo |
 |---|---|---|---|
-| A1 | Bấm dấu xong trên task đã xong | Kế hoạch (cùng ngày: về như cũ; khác ngày: hôm nay) | – |
+| A1 | Bấm dấu xong trên task đã xong | Kế hoạch (cùng ngày: về như cũ; khác ngày: hôm nay); Hoàn tác được (O-10) | MSG-37 (+ MSG-24 dòng 2 khi instance trùng series, O-08) |
 | A2 | Hoàn tác trong toast | Về như trước khi hoàn thành | – |
 | A3 | Timer chạy ở thiết bị khác | Timer dừng, task xong | MSG-08 |
 | A4 | Instance lặp ngày tương lai | Xong ở cột ngày đó | MSG-08 |
@@ -486,13 +492,17 @@ flowchart TD
   p1 -.->|"E4 · lệnh offline, 412 VERSION_CONFLICT"| e4m>"MSG-23 · Toast<br/>Task đã thay đổi trên thiết bị khác"]
   e3m -.-> e3(["Trạng thái trước đó"])
   e4m -.-> e3
+  p1 -.->|"E5 · mất mạng"| e5["Xoá chạy trên máy, hàng đợi QC-08<br/>toast như luồng chính"]
+  e5 -.-> m1
+  a1 -.->|"E5 · mất mạng"| e5r["SCR-05 nút Khôi phục mờ<br/>tooltip MSG-31 Cần có mạng để khôi phục"]
 
   class u1,p1,m1 happy
   class a2,a4,a1,a1p,a6,a1m,ai1 alt
   class a2l warn
   class ai0 ai
   class a5m warn
-  class e1m,e3m,e4m err
+  class e1m,e3m,e4m,e5r err
+  class e5 sync
   class ok done
   class e1,e3 fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
@@ -522,6 +532,7 @@ flowchart TD
 | E2 | (SRS đã bỏ) | – | – |
 | E3 | Lỗi xoá / khôi phục | Trạng thái trước | MSG-10 |
 | E4 | VERSION_CONFLICT | Trạng thái server | MSG-23 |
+| E5 | Mất mạng | Xoá: hàng đợi, như luồng chính; khôi phục: nút mờ (O-15) | MSG-09; MSG-31 (tooltip) |
 
 ---
 
@@ -569,10 +580,13 @@ flowchart TD
   a2 --> s1
   p1 -.->|"E1 · lỗi"| e1m>"MSG-10 · Toast<br/>Chưa lưu được thay đổi. Thử lại"]
   e1m -.-> fail(["Không mở bản sao"])
+  p1 -.->|"E2 · mất mạng"| e2["Bản sao tạo trên máy, idempotency key<br/>SCR-03 bản sao có dấu chờ đồng bộ MSG-30"]
+  e2 -.->|"có mạng, gửi lại cùng key"| s1
 
   class u1,p1,s1 happy
   class a1,a2 alt
   class e1m err
+  class e2 sync
   class fail fail
   classDef happy fill:#E6F4F1,stroke:#0F766E,color:#0B3B36
   classDef alt fill:#F1F3F5,stroke:#6B7280,color:#1F2937
@@ -592,6 +606,7 @@ flowchart TD
 | A1 | Nhân bản instance lặp | Task thường | – |
 | A2 | Nhân bản task đã xong | Kế hoạch hôm nay, không subtask | – |
 | E1 | Lỗi | Không mở bản sao | MSG-10 |
+| E2 | Mất mạng | Bản sao trên máy, chờ đồng bộ → gửi lại (O-15) | MSG-30 (tooltip) |
 
 ---
 
@@ -679,7 +694,7 @@ flowchart TD
 
   u1 -.->|"E4 · giờ kết thúc không sau giờ bắt đầu"| e4m>"MSG-25 · Inline tại dòng<br/>Giờ kết thúc phải sau giờ bắt đầu<br/>nút Lưu disabled"]
   u1 -.->|"E5 · không bật ngày nào"| e5m>"MSG-26 · Inline<br/>Chọn ít nhất 1 ngày cho khung giờ của channel<br/>nút Lưu disabled"]
-  p1 -.->|"E6 · mất mạng"| e6["Hàng đợi trên máy<br/>dòng channel có dấu chờ đồng bộ"]
+  p1 -.->|"E6 · mất mạng"| e6["Hàng đợi trên máy<br/>dòng channel có dấu chờ đồng bộ MSG-30"]
   e6 -.->|"có mạng; hiệu lực tính theo lúc server nhận"| m1
   api(["Gọi API trực tiếp cho Chưa phân loại"]) -.->|"E7"| e7(["VALIDATION_FAILED SYSTEM_CHANNEL<br/>không lưu; UI không có phần Khung giờ"])
 
@@ -719,7 +734,7 @@ flowchart TD
 | E3 | Xoá "Chưa phân loại" | Nút xoá ẩn | – |
 | E4 | Giờ kết thúc ≤ bắt đầu | Lưu disabled | MSG-25 |
 | E5 | Không ngày nào bật | Lưu disabled | MSG-26 |
-| E6 | Mất mạng khi lưu | Hàng đợi, chờ đồng bộ | – |
+| E6 | Mất mạng khi lưu | Hàng đợi, chờ đồng bộ | MSG-30 (tooltip) |
 | E7 | API đặt khung cho "Chưa phân loại" | Không lưu | – |
 
 ## Kiểm tra
@@ -730,3 +745,4 @@ flowchart TD
 **Ghi chú cho brief G02 đầy đủ (#11)**
 - ~~MSG-12 dùng chữ "Task vừa được cập nhật…" cho khung giờ channel (UC-06 A9).~~ **Đã sửa 09/11/2026 (C01):** thêm MSG-28 "Khung giờ của channel này vừa được sửa trên thiết bị khác"; UC-06 A9 thôi dùng MSG-12.
 - **Đã sửa 09/11/2026 (A1):** MSG-10 "Chưa lưu được thay đổi. Thử lại" là câu lỗi lưu chung QC-MSG-01 (QC-13 mục 1); G02 chỉ trỏ về, chữ không đổi.
+- **Đã sửa 10/11/2026 (brief G02 duyệt, O-01 … O-20):** ô thêm nhanh toàn cục là SCR-08, popover chọn channel là SCR-09; "Đã thêm vào Hôm nay" là MSG-29, "Chờ đồng bộ" MSG-30; UC-02 E3 dùng MSG-38 thay MSG-09 (O-01); UC-02 A11 có toast G04 MSG-01 có Hoàn tác (O-13); UC-03 A1 có toast MSG-37 (O-10); thêm nhánh mất mạng UC-02 E8, UC-04 E5, UC-05 E2 (O-15).
