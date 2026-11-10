@@ -1,6 +1,6 @@
 # Flow G03 Task lặp lại
 
-> **Nguồn:** [srs-g03](../../features/srs-g03-task-lap-lai.md) (commit `8fac830`, sửa theo [chốt 09/11/2026](../../review/cau-hoi-chot-flow-2026-11-09.md)) · **Brief:** `[chờ]`
+> **Nguồn:** [srs-g03](../../features/srs-g03-task-lap-lai.md) (commit `8fac830`, sửa theo [chốt 09/11/2026](../../review/cau-hoi-chot-flow-2026-11-09.md)) · **Brief:** [G03](../g03-task-lap-lai.md) (chờ PO)
 > **Quy ước:** [_quy-uoc.md](_quy-uoc.md) · **FigJam:** `[chờ]`
 
 ## Mục lục
