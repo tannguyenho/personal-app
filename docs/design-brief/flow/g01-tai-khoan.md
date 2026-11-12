@@ -3,7 +3,7 @@
 > **Nguồn:** [srs-g01](../../features/srs-g01-tai-khoan.md) (commit `8fac830`, sửa theo [chốt 09/11/2026](../../review/cau-hoi-chot-flow-2026-11-09.md)) · **Brief:** `[chờ]`
 > **Quy ước:** [_quy-uoc.md](_quy-uoc.md) · **FigJam:** `[chờ]`
 
-Bản 1.0 là app Windows cho một người dùng. Các nhánh của web / macOS, 2FA, trial, thanh toán, chế độ chỉ đọc, lời mời và workspace nhiều thành viên không vẽ, ghi "Bỏ (1.1)" ở bảng đối chiếu.
+Bản 1.0 là app Windows cho một người dùng. Các nhánh không vẽ, ghi ở bảng đối chiếu: web / macOS, 2FA, trial, thanh toán, chế độ chỉ đọc ghi "Bỏ (1.1)"; lời mời và workspace nhiều thành viên ghi "Bỏ (1.2)" (BR-26, Q47).
 
 ## Mục lục
 
@@ -121,7 +121,7 @@ flowchart TD
 | A1 | Email đã có tài khoản | SCR-02 như thường; email nhận thư "Bạn đã có tài khoản" | MSG-05 |
 | A2 | Gửi lại mã sau 60 giây | SCR-02, mã mới | – |
 | A3 | Đổi email trên SCR-02 | SCR-01 giữ email đã nhập | – |
-| A4 | Mở từ link mời workspace (bản sau, BR-26) | Bỏ (1.1) | – |
+| A4 | Mở từ link mời workspace (bản sau, BR-26) | Bỏ (1.2) | – |
 | E1 | Email sai định dạng | Không gửi | MSG-01 |
 | E2 | Mật khẩu ngoài 10–128 ký tự / bị lộ | Không gửi mã | MSG-02 / MSG-03 |
 | E3 | Chưa tick đồng ý | Không gửi | MSG-04 |
@@ -258,7 +258,7 @@ flowchart TD
 |---|---|---|---|
 | A1 | Chưa liên kết, email mới | SCR-18 Đăng ký rút gọn → SCR-05 bước 1 | – |
 | A2 | Email trùng tài khoản có mật khẩu | Nhập mật khẩu → liên kết, đăng nhập | MSG-13 |
-| A3 | Từ link mời workspace (bản sau, BR-26) | Bỏ (1.1) | – |
+| A3 | Từ link mời workspace (bản sau, BR-26) | Bỏ (1.2) | – |
 | A4 | Email trùng tài khoản `CHUA_XAC_MINH` | Thay bản ghi, tiếp như A1 | – |
 | A5 | Email nhà cung cấp khác email chính | Đăng nhập, không đổi email chính | – |
 | A6 | `purpose=reauth` | `reauthToken` về màn đang mở; không khớp → MSG-11 ở dialog xác nhận lại (C39) | MSG-11 |
@@ -394,7 +394,7 @@ flowchart TD
 | A1 | Đăng xuất | SCR-03; còn thay đổi chưa đồng bộ thì hỏi trước | MSG-40 |
 | A2 | Tài khoản `CHUA_XAC_MINH` | SCR-02, mã mới → [UC-01](#uc-01-đăng-ký-bằng-email-và-mật-khẩu) | MSG-05 |
 | A3 | Tài khoản bật 2FA (1.1) | Bỏ (1.1) | – |
-| A4 | Mở từ link mời workspace (bản sau, BR-26) | Bỏ (1.1) | – |
+| A4 | Mở từ link mời workspace (bản sau, BR-26) | Bỏ (1.2) | – |
 | A5 | Nhận `session.revoked` | SCR-03, giữ hàng đợi đã mã hoá | MSG-16 |
 | A6 | Đăng nhập lại sau A5 / E4 | Đúng tài khoản: gửi hàng đợi; khác: giữ, không gửi | – |
 | E1 | Sai email hoặc mật khẩu | SCR-03 | MSG-14 |
@@ -1088,10 +1088,10 @@ flowchart TD
 |---|---|---|---|
 | A1 | "Xuất dữ liệu trước" | Đóng SCR-12 → [UC-08](#uc-08-xuất-dữ-liệu) | – |
 | A2 | Đang có timer chạy | Dừng, lưu bản ghi → [G07 · UC-02](g07-focus-timer.md) | – |
-| A3 | Không phải `OWNER` (bản sau, BR-26) | Bỏ (1.1) | – |
+| A3 | Không phải `OWNER` (bản sau, BR-26) | Bỏ (1.2) | – |
 | A4 | `OWNER` workspace chỉ có mình | Xoá workspace cá nhân (phần huỷ gói: Bỏ (1.1)) | MSG-38 |
 | A5 | Tài khoản chỉ có Google / Microsoft | SCR-12 #3 là nút "Xác nhận bằng Google / Microsoft" → [UC-02 A6](#uc-02-đăng-ký--đăng-nhập-bằng-google-hoặc-microsoft) (B37) | – |
-| E1 | `OWNER`, workspace còn thành viên (bản sau) | Bỏ (1.1) | – |
+| E1 | `OWNER`, workspace còn thành viên (bản sau) | Bỏ (1.2) | – |
 | E2 | Mật khẩu sai / chưa gõ đúng "XOÁ" | Không xoá | MSG-29 / MSG-39 |
 | E3 | Lỗi 5xx | Tài khoản giữ nguyên | MSG-10 |
 | E4 | Có yêu cầu xuất `DANG_XU_LY` | Nút xoá disabled | MSG-44 |
@@ -1281,14 +1281,14 @@ flowchart TD
 | A2 | Trên SCR-15 chọn Xuất / Xoá / Đăng xuất | [UC-08](#uc-08-xuất-dữ-liệu) / [UC-09](#uc-09-xoá-tài-khoản) / [UC-03](#uc-03-đăng-nhập-duy-trì-phiên-và-đăng-xuất) A1, không cần đồng ý mới | – |
 | A3 | Rút đồng ý Trợ lý AI / Product updates | [G10 · UC-07](g10-tro-ly-ai.md) / [G12 · UC-08](g12-workspace-billing.md) | – |
 | E1 | Chưa tick đồng ý | Không lưu | MSG-04 |
-| E2 | `OWNER` workspace còn thành viên (bản sau) | Bỏ (1.1) | – |
+| E2 | `OWNER` workspace còn thành viên (bản sau) | Bỏ (1.2) | – |
 | E2 | Đang xuất dữ liệu | Nút "Rút lại đồng ý" disabled tới khi bản xuất `SAN_SANG` / `LOI` (C41) | MSG-54 |
 | E3 | Lỗi 5xx | Không đổi | MSG-10 |
 | E4 | Xác nhận lại thất bại: mật khẩu sai / `reauthToken` hỏng | Ở SCR-22, xác nhận lại (B37) | MSG-29 / MSG-11 |
 
 ## Kiểm tra
 
-- [x] Mọi A# / E# của UC-01 … UC-11 bản 1.0 có trên sơ đồ hoặc ghi "Bỏ (1.1)".
+- [x] Mọi A# / E# của UC-01 … UC-11 bản 1.0 có trên sơ đồ hoặc ghi "Bỏ (1.1)" / "Bỏ (1.2)".
 - [x] Mọi nút màn hình có mã SCR; mọi nút thông báo có mã MSG. Các màn trước đây chưa có mã đã được đặt SCR-17 … SCR-22; Home trỏ G04 SCR-01 (C37).
 
 **Ghi chú cho brief G01**
